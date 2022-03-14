@@ -50,7 +50,8 @@ export class TwoFactorAuthService {
         });
     }
 
-    public async verifyTwoFaCode(code: string, user: User) {
+    public async verifyTwoFaCode(code: string, username: string) {
+        const user = await this.userRepository.findOne({ username })
         return authenticator.verify({
             token: code,
             secret: user.twoFactorAuthSecret

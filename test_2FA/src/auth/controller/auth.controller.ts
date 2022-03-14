@@ -11,6 +11,8 @@ import { User } from "../entity/user.entity"
 import { JwtPayload } from "../interface/jwt-payload.interface"
 import { AuthService } from "../service/auth.service"
 import { FtOauthGuard } from '../../guards/ft-oauth.guard';
+import { GetProfile } from "../decorator/get-profile.decorator"
+import { Profile } from "passport-42"
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,24 +29,29 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('/')
-    ftAuthCallback() {
-        return;
+    @Redirect('/api')
+    async ftAuthCallback(@GetProfile() profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+        const userExist = await this.authService.userExists(profile.username);
+        if (userExist)
+            return this.authService.signIn(profile);
+        else
+            return this.authService.signUp(profile);
+
     }
 
-    @Post('/signup')
-    signUp(
-        @Body(ValidationPipe) signupCredentialsDto: SignupCredentialsDto
-    ): Promise<{ message: string }> {
-        return this.authService.signUp(signupCredentialsDto)
-    }
+    // @Post('/signup')
+    // signUp(
+    //     @GetProfile() profile: Profile
+    // ): Promise<{ message: string }> {
+    //     return this.authService.signUp(profile)
+    // }
 
-    @Post('/signin')
-    signIn(
-        @Body(ValidationPipe) signinCredentialsDto: SignInCredentialsDto
-    ): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }>{
-        return this.authService.signIn(signinCredentialsDto);
-    }
+    // @Post('/signin')
+    // signIn(
+    //     @GetProfile() profile: Profile
+    // ): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }>{
+    //     return this.authService.signIn(profile);
+    // }
 
     @ApiBearerAuth()
     // @UseGuards(JwtAuthenticationGuard)

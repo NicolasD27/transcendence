@@ -16,7 +16,7 @@ export class UserService {
     async getUser(
         user: User
     ): Promise<UserInfo> {
-        const userInfo = await this.userInfoRepository.findOne({ where : { id: user.user_info.id } })
+        const userInfo = await this.userInfoRepository.findOne({ where : { id: user.id } })
 
         if (!userInfo) {
             throw new NotFoundException("User not found.");

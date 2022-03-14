@@ -13,6 +13,8 @@ import { JwtTwoFaStrategy } from './strategy/jwt-2fa-strategy';
 
 // import * as config from 'config'
 import { ConfigService } from '@nestjs/config';
+import { FtStrategy } from './strategy/ft.strategy';
+import { SessionSerializer } from './session.serializer';
 
 // const dbConfig = config.get('jwt')
 
@@ -35,11 +37,14 @@ import { ConfigService } from '@nestjs/config';
         ConfigService,
         AuthService,
         TwoFactorAuthService,
+        FtStrategy,
         JwtStrategy,
         JwtRefreshStrategy,
-        JwtTwoFaStrategy
+        JwtTwoFaStrategy,
+        SessionSerializer
     ],
     exports: [
+        FtStrategy,
         JwtStrategy,
         JwtRefreshStrategy,
         PassportModule,

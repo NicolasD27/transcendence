@@ -5,7 +5,7 @@ const dbConfig = config.get('db')
 
 const typeOrmConfig: TypeOrmModuleOptions = {
     type: process.env.DB_TYPE || dbConfig.type,
-    host: process.env.DB_HOST || dbConfig.host,
+    host: "172.18.0.2",
     port: +process.env.DB_PORT || 5432,
     username: process.env.DB_USERNAME || dbConfig.username,
     password: process.env.DB_PASSWORD || dbConfig.password,

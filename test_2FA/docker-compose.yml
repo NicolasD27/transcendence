@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
     container_name: postgres-db
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./pgdata:/mnt/nfs/homes/nidescre/postgresql/data
   nestjs:
     build: 
       context: .
@@ -47,7 +47,7 @@ services:
     ports: 
       - "8080:80"
     volumes: 
-      - ./pgadmin-data:/var/lib/pgadmin
+      - ./pgadmin-data:/mnt/nfs/homes/nidescre/pgadmin
     depends_on: 
       - db
 volumes:

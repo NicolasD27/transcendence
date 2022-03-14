@@ -7,17 +7,19 @@ import { SignInCredentialsDto } from "../dto/signin-credentials.dto";
 import { User } from "../entity/user.entity";
 import { UserInfo } from "../../user/entity/user-info.entity";
 import { JwtPayload } from "../interface/jwt-payload.interface";
+import { Profile } from "passport-42";
+import { GetProfile } from "../decorator/get-profile.decorator";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-    async signUp(signupCredentialsDto: SignupCredentialsDto): Promise<{ message: string }> {
-        const { username, password } = signupCredentialsDto
+    async signUp(profile: Profile): Promise<{ message: string }> {
+        // const { username, password } = signupCredentialsDto
 
         const user = new User()
-        user.username = username
-        user.salt = await bcrypt.genSalt()
+        user.username = profile.username;
+        // user.salt = await bcrypt.genSalt()
         
-        user.password = await this.hashPassword(password, user.salt)
+        // user.password = await this.hashPassword(password, user.salt)
         
         try {
             const userInfo = new UserInfo()
@@ -36,11 +38,10 @@ export class UserRepository extends Repository<User> {
         }
     }
 
-    async validateUserPassword(signinCredentialDto: SignInCredentialsDto): Promise <JwtPayload> {
-        const { username, password } = signinCredentialDto
+    async findProfile(username: string): Promise <JwtPayload> {
+        // const { username, password } = signinCredentialDto
         const auth = await this.findOne({ username })
-
-        if (auth && await auth.validatePassword(password, auth.password)) {
+        if (auth) {
             return {
                 isTwoFactorEnable: auth.isTwoFactorEnable,
                 username: auth.username,

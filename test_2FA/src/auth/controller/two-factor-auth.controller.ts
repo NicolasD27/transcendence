@@ -6,6 +6,7 @@ import { User } from "../entity/user.entity";
 import { TwoFactorAuthService } from "../service/two-factor-auth.service";
 import { Response } from 'express';
 import { TwoFaAuthDto } from "../dto/two-fa-auth.dto";
+import { AuthenticatedGuard } from "src/guards/authenticated.guard";
 
 @ApiTags('Two FA')
 @Controller('2fa')
@@ -16,7 +17,7 @@ export class TwoFactorAuth {
     ) {}
     
     @ApiBearerAuth()
-    @UseGuards(JwtAuthenticationGuard)
+    @UseGuards(AuthenticatedGuard)
     @Post('generate-qr')
     async generateQrCode(
         @Res() response: Response, @GetUser() user: User
@@ -27,13 +28,14 @@ export class TwoFactorAuth {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthenticationGuard)
+    @UseGuards(AuthenticatedGuard)
     @Post('turn-on-qr')
     async activationOfTwoFa(
         @GetUser() user: User,
         @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto
     ) {
-        const isCodeValid = this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, user);
+        console.log("user controller", user);
+        const isCodeValid = this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, user.username);
         if (!isCodeValid) {
             throw new UnauthorizedException('Invalid authentication code');
         }
@@ -43,12 +45,12 @@ export class TwoFactorAuth {
     // This function will be called if 2FA is on (activationOfTwoFa method)
     @ApiBearerAuth()
     @Post('authenticate')
-    @UseGuards(JwtAuthenticationGuard)
+    @UseGuards(AuthenticatedGuard)
     async authenticate(
         @GetUser() user: User,
         @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto
     ) {
-        const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, user);
+        const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, user.username);
         if (!isCodeValid) {
             throw new UnauthorizedException('Invalid authentication code');
         }

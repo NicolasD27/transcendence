@@ -14,11 +14,11 @@ export class User extends BaseEntity {
     @Column({ type: "varchar" })
     username: string
 
-    @Column({ type: "varchar" })
-    password: string
+    // @Column({ type: "varchar" })
+    // password: string
 
-    @Column()
-    salt: string
+    // @Column()
+    // salt: string
 
     @Column({ nullable: true })
     @Exclude()
@@ -37,7 +37,7 @@ export class User extends BaseEntity {
     @JoinColumn()
     user_info: UserInfo
 
-    async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
-        return await bcrypt.compare(password, hashedPassword).then(result => result)
-    }
+    // async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
+    //     return await bcrypt.compare(password, hashedPassword).then(result => result)
+    // }
 }

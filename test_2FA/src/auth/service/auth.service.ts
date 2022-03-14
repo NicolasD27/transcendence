@@ -9,6 +9,7 @@ import { UserRepository } from "../repository/user.repository";
 import * as bcrypt from 'bcrypt'
 
 import * as config from 'config'
+import { Profile } from "passport-42";
 
 const dbConfig = config.get('jwt')
 
@@ -20,13 +21,15 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async signUp(signupCredentialsDto: SignupCredentialsDto): Promise<{ message: string }> {
-        return this.userRepository.signUp(signupCredentialsDto)
+    async signUp(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+        await this.userRepository.signUp(profile);
+        return this.signIn(profile);
+        
     }
 
-    async signIn(signInCredentialsDto: SignInCredentialsDto): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
-        const resp = await this.userRepository.validateUserPassword(signInCredentialsDto);
-        
+    async signIn(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+        const resp = await this.userRepository.findProfile(profile.username);
+
         if (!resp) {
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -48,6 +51,14 @@ export class AuthService {
             refreshToken,
             user: resp
         }
+    }
+
+    async userExists(username: string): Promise<boolean> {
+        const resp = await this.userRepository.findProfile(username);
+        if (resp)
+            return true;
+        else
+            return false;
     }
 
     async signOut(user: User) {
