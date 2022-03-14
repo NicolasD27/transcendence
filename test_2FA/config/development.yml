@@ -1,0 +1,10 @@
+db:
+  host: 'localhost'
+  username: 'postgres'
+  password: 'postgres'
+  synchronize: false
+
+jwt:
+  secret: 'anyKey'
+  refreshSecret: 'noKey'
+  twoFactorAppName: 'todo-app'
