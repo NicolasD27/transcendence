@@ -1,13 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import * as bodyParser from 'body-parser'
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
 import * as passport from 'passport';
 
 async function bootstrap() {
-  // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   const port = +process.env.APP_PORT || 3000
   app.setGlobalPrefix('api')
@@ -25,9 +23,6 @@ async function bootstrap() {
 
   app.enableCors()
 
-  // app.use(bodyParser.json({limit: '1mb'}))
-  // app.use(bodyParser.urlencoded({ limit:'1mb', extended: true }))
-  // app.use(bodyParser.text({type: 'text/html'}))
   app.use(
     session({ resave: false, saveUninitialized: false, secret: '!Paris' }),
   );

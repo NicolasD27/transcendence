@@ -1,6 +1,6 @@
 import { AuthService } from "./auth.service";
 import * as config from 'config';
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { User } from "../entity/user.entity";
 import { UserRepository } from "../repository/user.repository";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -63,7 +63,6 @@ export class TwoFactorAuthService {
             isTwoFaAuthenticated,
             isTwoFactorEnable: user.isTwoFactorEnable,
             username: user.username,
-            user_info: user.user_info
         }
         const accessToken = await this.authService.getAccessToken(data);
         const refreshToken = await this.authService.getRefreshToken(data);
@@ -75,7 +74,6 @@ export class TwoFactorAuthService {
             refreshToken,
             user: {
                 username: user.username,
-                user_info: user.user_info
             }
         };
     }

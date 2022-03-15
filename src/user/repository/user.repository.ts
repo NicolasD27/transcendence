@@ -2,10 +2,7 @@ import { EntityRepository, Repository } from "typeorm";
 import { ConflictException, InternalServerErrorException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
 
-import { SignupCredentialsDto } from "../dto/signup-credentials.dto";
-import { SignInCredentialsDto } from "../dto/signin-credentials.dto";
 import { User } from "../entity/user.entity";
-import { UserInfo } from "../../user/entity/user-info.entity";
 import { JwtPayload } from "../interface/jwt-payload.interface";
 import { Profile } from "passport-42";
 import { GetProfile } from "../decorator/get-profile.decorator";
@@ -17,15 +14,12 @@ export class UserRepository extends Repository<User> {
 
         const user = new User()
         user.username = profile.username;
+        user.avatar = profile._json.image_url;
         // user.salt = await bcrypt.genSalt()
         
         // user.password = await this.hashPassword(password, user.salt)
         
         try {
-            const userInfo = new UserInfo()
-            await userInfo.save()
-
-            user.user_info = userInfo
             await user.save()
 
             return { message: 'User successfully created !' }
@@ -39,13 +33,11 @@ export class UserRepository extends Repository<User> {
     }
 
     async findProfile(username: string): Promise <JwtPayload> {
-        // const { username, password } = signinCredentialDto
         const auth = await this.findOne({ username })
         if (auth) {
             return {
                 isTwoFactorEnable: auth.isTwoFactorEnable,
                 username: auth.username,
-                user_info: auth.user_info
             }
         } else {
             return null

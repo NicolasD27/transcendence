@@ -1,7 +1,14 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import * as bcrypt from "bcrypt"
-import { UserInfo } from "../../user/entity/user-info.entity";
 import { Exclude } from "class-transformer";
+
+export enum Status {
+    OFFLINE,
+    ONLINE,
+    SEARCHING,
+    PLAYING
+
+}
 
 @Entity()
 @Unique(['username'])
@@ -29,11 +36,15 @@ export class User extends BaseEntity {
     @Column({ default: false })
     public isTwoFactorEnable: boolean
 
-    
+    @Column({ nullable: true })
+    avatar: string
 
-    @OneToOne(type => UserInfo, { eager: true })
-    @JoinColumn()
-    user_info: UserInfo
+    @Column({ default: Status.ONLINE })
+    status: number
+
+    // @OneToOne(type => UserInfo, { eager: true })
+    // @JoinColumn()
+    // user_info: UserInfo
 
     // async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
     //     return await bcrypt.compare(password, hashedPassword).then(result => result)

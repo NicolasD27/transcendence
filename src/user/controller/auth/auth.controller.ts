@@ -1,17 +1,14 @@
-import { Post, Body, ValidationPipe, Controller, Get, UseGuards, Redirect } from "@nestjs/common"
+import { Post, Body, Controller, Get, UseGuards, Redirect } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
-import { JwtAuthenticationGuard } from "../../guards/jwt-authentication.guard"
-import { JwtRefreshTokenGuard } from "../../guards/jwt-refresh-token.guard"
-import { JwtTwoFactorGuard } from "../../guards/jwt-two-factor.guard"
-import { GetUser } from "../decorator/get-user.decorator"
-import { RefreshTokenDto } from "../dto/refresh-token.dto"
-import { SignInCredentialsDto } from "../dto/signin-credentials.dto"
-import { SignupCredentialsDto } from "../dto/signup-credentials.dto"
-import { User } from "../entity/user.entity"
-import { JwtPayload } from "../interface/jwt-payload.interface"
-import { AuthService } from "../service/auth.service"
-import { FtOauthGuard } from '../../guards/ft-oauth.guard';
-import { GetProfile } from "../decorator/get-profile.decorator"
+import { JwtRefreshTokenGuard } from "../../../guards/jwt-refresh-token.guard"
+import { JwtTwoFactorGuard } from "../../../guards/jwt-two-factor.guard"
+import { GetUser } from "../../decorator/get-user.decorator"
+import { RefreshTokenDto } from "../../dto/refresh-token.dto"
+import { User } from "../../entity/user.entity"
+import { JwtPayload } from "../../interface/jwt-payload.interface"
+import { AuthService } from "../../service/auth.service"
+import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
+import { GetProfile } from "../../decorator/get-profile.decorator"
 import { Profile } from "passport-42"
 
 @ApiTags('Auth')
@@ -39,22 +36,9 @@ export class AuthController {
 
     }
 
-    // @Post('/signup')
-    // signUp(
-    //     @GetProfile() profile: Profile
-    // ): Promise<{ message: string }> {
-    //     return this.authService.signUp(profile)
-    // }
-
-    // @Post('/signin')
-    // signIn(
-    //     @GetProfile() profile: Profile
-    // ): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }>{
-    //     return this.authService.signIn(profile);
-    // }
+    
 
     @ApiBearerAuth()
-    // @UseGuards(JwtAuthenticationGuard)
     @UseGuards(JwtTwoFactorGuard)
     @Get('/logout')
     logout(
@@ -74,7 +58,6 @@ export class AuthController {
         if (user_info) {
             const userInfo = {
                 username: user_info.username,
-                user_info: user_info.user_info
             }
 
             if (user.isTwoFactorEnable) {

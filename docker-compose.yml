@@ -14,7 +14,7 @@ services:
     build: 
       context: .
       dockerfile: ./Dockerfile
-    image: tusharchy/nest-and-postgres-application:latest
+    image: transcendence:latest
     environment: 
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}

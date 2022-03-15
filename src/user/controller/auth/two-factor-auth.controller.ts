@@ -1,11 +1,10 @@
 import { Body, ClassSerializerInterceptor, Controller, Post, Req, Res, UnauthorizedException, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthenticationGuard } from "../../guards/jwt-authentication.guard";
-import { GetUser } from "../decorator/get-user.decorator";
-import { User } from "../entity/user.entity";
-import { TwoFactorAuthService } from "../service/two-factor-auth.service";
+import { GetUser } from "../../decorator/get-user.decorator";
+import { User } from "../../entity/user.entity";
+import { TwoFactorAuthService } from "../../service/two-factor-auth.service";
 import { Response } from 'express';
-import { TwoFaAuthDto } from "../dto/two-fa-auth.dto";
+import { TwoFaAuthDto } from "../../dto/two-fa-auth.dto";
 import { AuthenticatedGuard } from "src/guards/authenticated.guard";
 
 @ApiTags('Two FA')
