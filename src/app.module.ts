@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import * as typeOrmConfig from './typeorm.config';
 import { configValidationSchema } from './config.schema';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { configValidationSchema } from './config.schema';
       validationSchema: configValidationSchema,
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
-    UserModule
+    UserModule,
+    FriendshipModule
   ]
 })
 export class AppModule {}
