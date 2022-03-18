@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import * as typeOrmConfig from './typeorm.config';
 import { configValidationSchema } from './config.schema';
+import { ChatModule } from './chat/chat.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -12,7 +14,9 @@ import { configValidationSchema } from './config.schema';
       validationSchema: configValidationSchema,
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
-    UserModule
-  ]
+    UserModule,
+    ChatModule
+  ],
+  controllers: [AppController]
 })
 export class AppModule {}

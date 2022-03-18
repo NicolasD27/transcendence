@@ -51,7 +51,9 @@ import { UserService } from './service/user/user.service';
         JwtStrategy,
         JwtRefreshStrategy,
         PassportModule,
-        JwtTwoFaStrategy
+        JwtTwoFaStrategy,
+		UserService,
+		TypeOrmModule
     ]
 })
 export class UserModule {}
