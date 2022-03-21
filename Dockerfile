@@ -11,7 +11,7 @@ COPY ./package.json  /app/
 RUN npm install --no-package-lock --verbose
 
 # Copy current directory to APP folder
-COPY . /app/
+# COPY . /app/
 
 EXPOSE 3000
 CMD ["npm", "run", "start:dev"]
