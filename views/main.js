@@ -22,7 +22,8 @@ const app = new Vue({
 			this.messages.push(message);
 		},
 		validateInput() {
-			return this.author.length > 0 && this.content.length > 0;	// need to be done server side too
+			// return this.author.length > 0 && this.content.length > 0;	// need to be done server side too
+			return true;
 		},
 		async getPrevousMessages() {
 			let msgs = await (await fetch('http://localhost:3000/channels/1')).json();	// chat/id of the channel
@@ -32,6 +33,8 @@ const app = new Vue({
 		}
 	},
 	created() {
+		let cookies = document.cookie;
+		console.log(cookies);
 		this.socket = io('http://localhost:3000');
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)

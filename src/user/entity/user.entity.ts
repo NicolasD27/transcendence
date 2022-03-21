@@ -50,7 +50,7 @@ export class User extends BaseEntity {
     @OneToMany(() => Friendship, friendship => friendship.following)
     followings: Friendship[];
 
-	@OneToMany(() => Msg, msg => msg.message)
+	@OneToMany(() => Msg, msg => msg.user)
     messages: Msg[];
 
     // async validatePassword(password: string, hashedPassword: string): Promise<boolean> {

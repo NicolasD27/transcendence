@@ -1,6 +1,5 @@
 import { User } from "src/user/entity/user.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 
 @Entity()
 export class Msg {
