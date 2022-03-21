@@ -5,10 +5,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { join } from 'path';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   const port = +process.env.APP_PORT || 3000
+  app.useGlobalFilters(new HttpExceptionFilter);
   app.setGlobalPrefix('api')
   console.log('Port running on: ', port)
 

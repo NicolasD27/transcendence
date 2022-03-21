@@ -1,6 +1,8 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import * as bcrypt from "bcrypt"
 import { Exclude } from "class-transformer";
+import { Friendship } from "src/friendship/entity/friendship.entity";
+import { Msg } from "src/chat/entity/msg.entity";
 
 export enum Status {
     OFFLINE,
@@ -42,9 +44,14 @@ export class User extends BaseEntity {
     @Column({ default: Status.ONLINE })
     status: number
 
-    // @OneToOne(type => UserInfo, { eager: true })
-    // @JoinColumn()
-    // user_info: UserInfo
+    @OneToMany(() => Friendship, friendship => friendship.follower)
+    followers: Friendship[];
+
+    @OneToMany(() => Friendship, friendship => friendship.following)
+    followings: Friendship[];
+
+	@OneToMany(() => Msg, msg => msg.message)
+    messages: Msg[];
 
     // async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
     //     return await bcrypt.compare(password, hashedPassword).then(result => result)

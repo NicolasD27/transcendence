@@ -6,17 +6,19 @@ import * as typeOrmConfig from './typeorm.config';
 import { configValidationSchema } from './config.schema';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      validationSchema: configValidationSchema,
-    }),
-    TypeOrmModule.forRoot(typeOrmConfig),
-    UserModule,
-    ChatModule
-  ],
-  controllers: [AppController]
+	imports: [
+		ConfigModule.forRoot({
+			envFilePath: '.env',
+			validationSchema: configValidationSchema,
+		}),
+		TypeOrmModule.forRoot(typeOrmConfig),
+		UserModule,
+		FriendshipModule,
+		ChatModule
+	],
+	controllers: [AppController]
 })
 export class AppModule {}
