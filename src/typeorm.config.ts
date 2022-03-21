@@ -15,7 +15,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
     logging: true,
     migrationsTableName: "migration",
     migrations: [__dirname + '/migration/**/*.ts', __dirname + '/migration/**/*.js'],
-    synchronize: false,
+    synchronize: true,
     cli: {
         migrationsDir: 'src/migration'
     }
