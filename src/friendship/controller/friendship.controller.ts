@@ -1,4 +1,3 @@
-import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Request, UseFilters, UseGuards, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { AuthenticatedGuard } from 'src/guards/authenticated.guard';
