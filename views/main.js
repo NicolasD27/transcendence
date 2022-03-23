@@ -33,8 +33,6 @@ const app = new Vue({
 		}
 	},
 	created() {
-		let cookies = document.cookie;
-		console.log(cookies);
 		this.socket = io('http://localhost:3000');
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)

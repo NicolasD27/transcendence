@@ -24,7 +24,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		
 		this.logger.log(createMsgDto);
 
-		console.log(req);
+		console.log(req.cookies);
 		
 		const message = await this.chatService.saveMsg(createMsgDto.content, req.user.username);
 
