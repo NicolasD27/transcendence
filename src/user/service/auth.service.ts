@@ -3,7 +3,6 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../entity/user.entity";
 import { JwtPayload } from "../interface/jwt-payload.interface";
-import { UserRepository } from "../repository/user.repository";
 import * as bcrypt from 'bcrypt'
 
 import * as config from 'config'

@@ -3,14 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAvatarDto } from 'src/user/dto/update-avatar.dto';
 import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
-import { UserRepository } from 'src/user/repository/user.repository';
 
 @Injectable()
 export class UserService {
     constructor(
         // @InjectRepository(User)
-		@InjectRepository(UserRepository)
-        private usersRepository: UserRepository) {}
+		@InjectRepository(User)
+        private usersRepository: Repository<User>) {}
 		// Repository<User>) {}
 
 
