@@ -17,6 +17,7 @@ import { FtStrategy } from './strategy/ft.strategy';
 import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
+import { User } from './entity/user.entity';
 
 // const dbConfig = config.get('jwt')
 
@@ -32,7 +33,7 @@ import { UserService } from './service/user/user.service';
         // }),
         PassportModule.register({}),
         JwtModule.register({}),
-        TypeOrmModule.forFeature([UserRepository])
+        TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController],
     providers: [

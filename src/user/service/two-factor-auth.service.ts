@@ -8,6 +8,7 @@ import { authenticator } from "otplib";
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { JwtPayload } from "../interface/jwt-payload.interface";
+import { Repository } from "typeorm";
 
 const dbConfig = config.get('jwt');
 
@@ -15,12 +16,12 @@ const dbConfig = config.get('jwt');
 export class TwoFactorAuthService {
     constructor(
         @InjectRepository(UserRepository)
-        private userRepository: UserRepository,
+        private userRepository: Repository<User>,
         private authService: AuthService
     ) {}
 
     public async generateTwoFactorAuthSecret(user: User) {
-        const auth = await this.userRepository.getUserInfoByUsername(user.username);
+        const auth = await this.userRepository.findOne(user.username);//getUserInfoByUsername(user.username);
         if (auth) {
             if (auth.isTwoFactorEnable) {
                 return {

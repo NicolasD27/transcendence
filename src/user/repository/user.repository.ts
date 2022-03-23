@@ -33,6 +33,7 @@ export class UserRepository extends Repository<User> {
     }
 
     async findProfile(username: string): Promise <JwtPayload> {
+        console.log('username', username)
         const auth = await this.findOne({ username })
         if (auth) {
             return {

@@ -6,12 +6,15 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { join } from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import * as cookieParser from 'cookie-parser';
+// somewhere in your initialization file
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   const port = +process.env.APP_PORT || 3000
   app.useGlobalFilters(new HttpExceptionFilter);
   app.setGlobalPrefix('api')
+  app.use(cookieParser());
   console.log('Port running on: ', port)
 
   const options = new DocumentBuilder()
