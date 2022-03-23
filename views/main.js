@@ -5,7 +5,16 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
-		socket: null
+		socket: null,
+		socketOptions: {
+			transportOptions: {
+				polling: {
+					extraHeaders: {
+						Authorization: 'my token',
+					}
+				}
+			}
+		},
 	},
 	methods: {
 		sendMessage() {
@@ -33,11 +42,11 @@ const app = new Vue({
 		}
 	},
 	created() {
-		this.socket = io('http://localhost:3000');
+		this.socket = io.connect('http://localhost:3000'); //, socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});
 	}
 });
 
-app.getPrevousMessages();
+// app.getPrevousMessages();

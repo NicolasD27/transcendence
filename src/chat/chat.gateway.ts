@@ -1,5 +1,12 @@
 import { UseGuards, Logger, Request } from '@nestjs/common';
-import {  MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { MessageBody,
+	OnGatewayConnection,
+	OnGatewayDisconnect,
+	OnGatewayInit,
+	SubscribeMessage,
+	WebSocketGateway,
+	WebSocketServer,
+	ConnectedSocket } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { AuthenticatedGuard } from 'src/guards/authenticated.guard';
 import { FtOauthGuard } from 'src/guards/ft-oauth.guard';
@@ -34,12 +41,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
+	
+	handleConnection(client: Socket, ...args: any[]) {
+		this.logger.log(`Client connected: ${client.id}`);
+		console.log(client.client);
+	}
 
 	handleDisconnect(client: Socket) {
 		this.logger.log(`Client disconnected: ${client.id}`);
-	}
-
-	handleConnection(client: Socket, ...args: any[]) {
-		this.logger.log(`Client connected: ${client.id}`);
 	}
 }

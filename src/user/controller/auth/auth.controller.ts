@@ -33,10 +33,7 @@ export class AuthController {
             return this.authService.signIn(profile);
         else
             return this.authService.signUp(profile);
-
     }
-
-    
 
     @ApiBearerAuth()
     @UseGuards(JwtTwoFactorGuard)
