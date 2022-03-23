@@ -4,17 +4,17 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { User } from "../entity/user.entity";
 import { JwtPayload } from "../interface/jwt-payload.interface";
-import { UserRepository } from "../repository/user.repository";
 
 import * as config from 'config'
+import { Repository } from "typeorm";
 
 const dbConfig = config.get('jwt')
 
 @Injectable()
 export class JwtTwoFaStrategy extends PassportStrategy(Strategy, 'jwt-two-factor') {
     constructor(
-        @InjectRepository(UserRepository)
-        private userRepository: UserRepository
+        @InjectRepository(User)
+        private  usersRepository: Repository<User>,
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
