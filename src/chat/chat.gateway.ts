@@ -16,7 +16,6 @@ import { ChatService } from './service/chat/chat.service';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { GetAuthor } from './decorator/get-author.decorator';
-import { MsgWithUser } from './dto/get-msg.dto';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -49,7 +48,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
 		const messages = await this.chatService.getAllMessages();
-		messages.forEach((message: MsgWithUser) => {
+		messages.forEach((message) => {
 			const createMsgDto = {
 				content: message.content,
 				author: message.user.username

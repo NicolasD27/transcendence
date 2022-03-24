@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MsgWithUser } from 'src/chat/dto/get-msg.dto';
 import { Msg } from 'src/chat/entity/msg.entity';
 import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -25,7 +24,7 @@ export class ChatService {
 	}
 
 	// async 
-	async getAllMessages(): Promise<MsgWithUser[]> {
+	async getAllMessages(): Promise<Msg[]> {
 		return this.msgRepo.find({ relations: ['user'],})
 	}
 
