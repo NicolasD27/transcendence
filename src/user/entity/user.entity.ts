@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGen
 import * as bcrypt from "bcrypt"
 import { Exclude } from "class-transformer";
 import { Friendship } from "src/friendship/entity/friendship.entity";
+import { Msg } from "src/chat/entity/msg.entity";
 
 export enum Status {
     OFFLINE,
@@ -48,6 +49,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Friendship, friendship => friendship.following)
     followings: Friendship[];
+
+	@OneToMany(() => Msg, msg => msg.user)
+    messages: Msg[];
 
     // async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
     //     return await bcrypt.compare(password, hashedPassword).then(result => result)

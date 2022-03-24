@@ -27,7 +27,7 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('/api')
+    @Redirect('/api/')
     async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
         let accessToken;
@@ -35,20 +35,18 @@ export class AuthController {
             accessToken = (await this.authService.signIn(profile)).accessToken;
         else
             accessToken = (await this.authService.signUp(profile)).accessToken;
-        console.log('res', res)
+        console.log('here', accessToken);
         res.cookie('accessToken', accessToken)
         return res;
     }
 
-    
-
     @ApiBearerAuth()
-    @UseGuards(JwtTwoFactorGuard)
+    // @UseGuards(JwtTwoFactorGuard)
     @Get('/logout')
     logout(
-        @GetUser() user: User
+        @GetProfile() profile: Profile
     ) {
-        this.authService.signOut(user)
+        this.authService.signOut(profile.username)
     }
 
     @ApiBearerAuth()

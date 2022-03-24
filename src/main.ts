@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { join } from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser';
 // somewhere in your initialization file
@@ -25,14 +26,13 @@ async function bootstrap() {
     
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('api', app, document)
-
+  const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
   app.enableCors()
 
-  app.use(
-    session({ resave: false, saveUninitialized: false, secret: '!Paris' }),
-  );
+  app.use(sessionMiddleware);
   app.use(passport.initialize());
   app.use(passport.session());
+  app.useStaticAssets(join(__dirname, '..', 'views'));
 
   await app.listen(port);
 }
