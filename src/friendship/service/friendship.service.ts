@@ -44,20 +44,18 @@ export class FriendshipService {
             throw new BadRequestException("Frienship already exist");
         return this.friendshipsRepository.save({
             follower: follower,
-            following: following
+            following: following,
         });
     }
 
     async update(username: string, id: string, newStatus: number): Promise<Friendship> {
         
-        const friendship = await this.friendshipsRepository.preload({
-            id: +id,
-            status: newStatus
-        });
+        const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
-        if ((username != friendship.follower.username || newStatus == FriendshipStatus.BLOCKED_BY_2) && (username != friendship.following.username || newStatus == FriendshipStatus.BLOCKED_BY_1))
+        if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_2 || friendship.status == FriendshipStatus.BLOCKED_BY_2)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_1 || friendship.status == FriendshipStatus.BLOCKED_BY_1)))
             throw new UnauthorizedException("you can't do that !");
+        friendship.status = newStatus;
         return this.friendshipsRepository.save(friendship);
 
     }
