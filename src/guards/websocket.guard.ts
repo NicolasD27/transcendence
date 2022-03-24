@@ -7,6 +7,7 @@ import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/commo
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { User } from 'src/user/entity/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 // @Injectable()
 // export class WsJwtGuard implements CanActivate {
@@ -57,31 +58,36 @@ import { User } from 'src/user/entity/user.entity';
 // console.log('SESSION ID',sessionId);
 // }
 
-// @Injectable()
-// export class WsGuard implements CanActivate {
+@Injectable()
+export class WsGuard implements CanActivate {
 
-// 	constructor(private userService: UserService) {
-// 	}
+	constructor(private userService: UserService,
+		private jwtService: JwtService) {
+	}
 
-// 	canActivate(
-// 		context: any,
-// 	): boolean | any | Promise<boolean | any> | Observable<boolean | any> {
-// 		const bearerToken = context.args[0].handshake.headers.authorization.split(' ')[1];
-// 		try {
-// 			const decoded = jwt.verify(bearerToken, jwtConstants.secret) as any;
-// 			return new Promise((resolve, reject) => {
-// 				return this.userService.findByUsername(decoded.username).then(user => {
-// 					if (user) {
-// 						resolve(user);
-// 					} else {
-// 						reject(false);
-// 					}
-// 				});
+	canActivate(
+		context: ExecutionContext,
+	): boolean | any | Promise<boolean | any> | Observable<boolean | any> {
+		const bearerToken = context.switchToWs().getClient().handshake.headers.authorization.split(' ')[1];
+		try {
+			const decoded = this.jwtService.verify(bearerToken) as any;
+			return new Promise((resolve, reject) => {
+				return this.userService.findByUsername(decoded.username).then(user => {
+					if (user) {
+						{
+							context.switchToWs().getData().author = user.username
+							resolve(user);
+						}
+					} else {
+						reject(false);
+					}
+				});
 
-// 			});
-// 		} catch (ex) {
-// 			console.log(ex);
-// 			return false;
-// 		}
-// 	}
-// }
+			});
+		} catch (ex) {
+			console.log(ex);
+			return false;
+		}
+        return true;
+	}
+}

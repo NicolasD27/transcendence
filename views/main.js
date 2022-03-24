@@ -10,7 +10,7 @@ const app = new Vue({
 			transportOptions: {
 				polling: {
 					extraHeaders: {
-						Authorization: 'my token',
+						Authorization: 'bearer ' + document.cookie.split('=')[1],
 					}
 				}
 			}
@@ -42,7 +42,8 @@ const app = new Vue({
 		}
 	},
 	created() {
-		this.socket = io.connect('http://localhost:3000'); //, socketOptions);
+		console.log("here", document.cookie.split('=')[1])
+		this.socket = io.connect('http://localhost:3000', this.socketOptions); //, socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});

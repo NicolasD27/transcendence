@@ -65,8 +65,8 @@ export class AuthService {
             return false;
     }
 
-    async signOut(user: User) {
-        await this.updateRefreshTokenInUser(null, user.username)
+    async signOut(username: string) {
+        await this.updateRefreshTokenInUser(null, username)
     }
 
     async updateRefreshTokenInUser(refreshToken, username) {

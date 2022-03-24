@@ -24,6 +24,13 @@ export class UserService {
         return user;
     }
 
+    async findByUsername(username: string): Promise<User> {
+        const user = await this.usersRepository.findOne({ username });
+        if (!user)
+            throw new NotFoundException(`User ${username} not found`);
+        return user;
+    }
+
     async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<User> {
         
         const user = await this.usersRepository.preload({

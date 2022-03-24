@@ -26,15 +26,12 @@ async function bootstrap() {
     
   const document = SwaggerModule.createDocument(app, options)
   SwaggerModule.setup('api', app, document)
-
+  const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
   app.enableCors()
 
-  app.use(
-    session({ resave: false, saveUninitialized: false, secret: '!Paris' }),
-  );
+  app.use(sessionMiddleware);
   app.use(passport.initialize());
   app.use(passport.session());
-
   app.useStaticAssets(join(__dirname, '..', 'views'));
 
   await app.listen(port);

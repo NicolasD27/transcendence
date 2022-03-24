@@ -1,8 +1,9 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Request, UnauthorizedException, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Request, Session, UnauthorizedException, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthenticatedGuard } from 'src/guards/authenticated.guard';
 import { UpdateAvatarDto } from 'src/user/dto/update-avatar.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/service/user/user.service';
+// import * as session from 'express-session';
 
 @Controller('users')
 export class UserController {
@@ -12,8 +13,8 @@ export class UserController {
 
     @UseGuards(AuthenticatedGuard)
     @Get()
-    findAll(): Promise<User[]> {
-        console.log('findAllUsers');
+    findAll(@Session() session: Record<string, any>): Promise<User[]> {
+        console.log('findAllUsers', session);
         return this.userService.findAll();
     }
 

@@ -17,6 +17,7 @@ import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
 import { User } from './entity/user.entity';
+import { config } from 'process';
 
 // const dbConfig = config.get('jwt')
 
@@ -24,14 +25,14 @@ import { User } from './entity/user.entity';
 @Module({
     imports: [
         // PassportModule.register({ defaultStrategy: 'jwt' }),
-        // JwtModule.register({
-        //     secret: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret,
-        //     signOptions: {
-        //         expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME || dbConfig.secret
-        //     }
-        // }),
+        JwtModule.register({
+            secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+            signOptions: {
+                expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME 
+            }
+        }),
         PassportModule.register({}),
-        JwtModule.register({}),
+        // JwtModule.register({}),
         TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController],
