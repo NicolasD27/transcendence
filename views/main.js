@@ -10,7 +10,9 @@ const app = new Vue({
 			transportOptions: {
 				polling: {
 					extraHeaders: {
-						Authorization: 'bearer ' + document.cookie.split('=')[1],
+						Authorization: 'bearer ' + document.cookie.split('; ')
+							.find((cookie) => cookie.startsWith('accessToken'))
+							.split('=')[1],
 					}
 				}
 			}

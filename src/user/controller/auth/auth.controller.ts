@@ -30,13 +30,14 @@ export class AuthController {
     @Redirect('/api/')
     async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
-        let accessToken;
+        let payload;
         if (userExist)
-            accessToken = (await this.authService.signIn(profile)).accessToken;
+            payload = (await this.authService.signIn(profile));
         else
-            accessToken = (await this.authService.signUp(profile)).accessToken;
-        console.log('here', accessToken);
-        res.cookie('accessToken', accessToken)
+            payload = (await this.authService.signUp(profile));
+        res.cookie('accessToken', payload.accessToken)
+        res.cookie('username', payload.user.username)
+        res.cookie('refreshToken', payload.refreshToken)
         return res;
     }
 

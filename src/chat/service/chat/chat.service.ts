@@ -24,10 +24,8 @@ export class ChatService {
 	}
 
 	// async 
-	getAllMessages() {
-		return this.msgRepo.find();
-		// ({ relations: ['content'],});
-		// return this.msgRepo.count();
+	async getAllMessages(): Promise<Msg[]> {
+		return this.msgRepo.find({ relations: ['user'],})
 	}
 
 	async getAllQuery()	{

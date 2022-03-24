@@ -36,7 +36,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 		console.log("author : ", author);
 		
-		// const message = await this.chatService.saveMsg(createMsgDto.content, req.user.username);
+		const message = await this.chatService.saveMsg(createMsgDto.content, author);
 
 		this.socket.emit('msg_to_client', createMsgDto);	// emit an event to every clients listening on msg_to_client
 	}
@@ -45,9 +45,16 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.logger.log('Init');
 	}
 	
-	handleConnection(socket: Socket, @Request() req, ...args: any[]) {
+	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
-
+		const messages = await this.chatService.getAllMessages();
+		messages.forEach((message) => {
+			const createMsgDto = {
+				content: message.content,
+				author: message.user.username
+			}
+			this.socket.emit('msg_to_client', createMsgDto);
+		})
 	}
 
 	handleDisconnect(client: Socket) {

@@ -40,11 +40,11 @@ export class AuthService {
         }
 
         const accessToken = await this.getAccessToken(resp);
-        if (resp.isTwoFactorEnable) {
-            return {
-                accessToken
-            }
-        }
+        // if (resp.isTwoFactorEnable) {
+        //     return {
+        //         accessToken
+        //     }
+        // }
 
         const refreshToken = await this.getRefreshToken(resp);
 
