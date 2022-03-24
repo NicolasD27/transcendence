@@ -9,6 +9,6 @@ export class Msg {
 	@Column()
 	public content: string;
 	
-	@ManyToOne(() => User, user => user.messages)	// when real users will be used
+	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 }

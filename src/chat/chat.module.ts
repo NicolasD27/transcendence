@@ -6,6 +6,7 @@ import { Msg } from './entity/msg.entity';
 import { ChatGateway } from './chat.gateway'
 import { User } from 'src/user/entity/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/user/service/auth.service';
 
 @Module({
 	imports: [
@@ -18,7 +19,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
         }),
 	],
 	controllers: [AppController],
-	providers: [ChatService, ChatGateway],
+	providers: [ChatService, ChatGateway, AuthService],
 	exports: [ChatService]
 })
 export class ChatModule {}
