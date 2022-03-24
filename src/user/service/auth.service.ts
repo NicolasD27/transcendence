@@ -3,37 +3,43 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../entity/user.entity";
 import { JwtPayload } from "../interface/jwt-payload.interface";
-import { UserRepository } from "../repository/user.repository";
 import * as bcrypt from 'bcrypt'
 
 import * as config from 'config'
 import { Profile } from "passport-42";
+import { Repository } from 'typeorm';
 
 const dbConfig = config.get('jwt')
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(UserRepository)
-        private userRepository: UserRepository,
+        @InjectRepository(User)
+        private  usersRepository: Repository<User>,
         private jwtService: JwtService
     ) {}
 
     async signUp(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
-        await this.userRepository.signUp(profile);
+        const user = this.usersRepository.create({
+            username: profile.username,
+            avatar: profile._json.image_url
+        })
+        await this.usersRepository.save(user);
         return this.signIn(profile);
         
     }
 
     async signIn(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
-        const resp = await this.userRepository.findProfile(profile.username);
-
+        const user = await this.usersRepository.findOne( {username: profile.username });
+        const resp = {
+            username: user.username,
+            isTwoFactorEnable: user.isTwoFactorEnable,
+        }
         if (!resp) {
             throw new UnauthorizedException('Invalid credentials');
         }
 
         const accessToken = await this.getAccessToken(resp);
-
         if (resp.isTwoFactorEnable) {
             return {
                 accessToken
@@ -52,7 +58,7 @@ export class AuthService {
     }
 
     async userExists(username: string): Promise<boolean> {
-        const resp = await this.userRepository.findProfile(username);
+        const resp = await this.usersRepository.findOne({ username });
         if (resp)
             return true;
         else
@@ -68,7 +74,7 @@ export class AuthService {
             refreshToken = await bcrypt.hash(refreshToken, 10)
         }
         
-        await this.userRepository.update({ username: username }, {
+        await this.usersRepository.update({ username: username }, {
             hashedRefreshToken:refreshToken
         })
     }
@@ -100,7 +106,7 @@ export class AuthService {
     }
 
     async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
-        const user = await this.userRepository.getUserInfoByUsername(username)
+        const user = await this.usersRepository.findOne({ username })
      
         const isRefreshTokenMatching = await bcrypt.compare(
           refreshToken,

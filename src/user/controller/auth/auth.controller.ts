@@ -1,4 +1,4 @@
-import { Post, Body, Controller, Get, UseGuards, Redirect } from "@nestjs/common"
+import { Post, Body, Controller, Get, UseGuards, Redirect, Res } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { JwtRefreshTokenGuard } from "../../../guards/jwt-refresh-token.guard"
 import { JwtTwoFactorGuard } from "../../../guards/jwt-two-factor.guard"
@@ -10,6 +10,7 @@ import { AuthService } from "../../service/auth.service"
 import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
 import { GetProfile } from "../../decorator/get-profile.decorator"
 import { Profile } from "passport-42"
+import { Response } from "express"
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,13 +28,16 @@ export class AuthController {
     @Get('42/return')
     @UseGuards(FtOauthGuard)
     @Redirect('/api')
-    async ftAuthCallback(@GetProfile() profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+    async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
+        let accessToken;
         if (userExist)
-            return this.authService.signIn(profile);
+            accessToken = (await this.authService.signIn(profile)).accessToken;
         else
-            return this.authService.signUp(profile);
-
+            accessToken = (await this.authService.signUp(profile)).accessToken;
+        console.log('res', res)
+        res.cookie('accessToken', accessToken)
+        return res;
     }
 
     

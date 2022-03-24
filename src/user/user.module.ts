@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controller/auth/auth.controller';
-import { UserRepository } from './repository/user.repository';
 import { AuthService } from './service/auth.service';
 import { JwtStrategy } from './strategy/jwt-strategy';
 import { JwtRefreshStrategy } from './strategy/jwt-refresh-strategy';
@@ -17,6 +16,7 @@ import { FtStrategy } from './strategy/ft.strategy';
 import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
+import { User } from './entity/user.entity';
 
 // const dbConfig = config.get('jwt')
 
@@ -32,7 +32,7 @@ import { UserService } from './service/user/user.service';
         // }),
         PassportModule.register({}),
         JwtModule.register({}),
-        TypeOrmModule.forFeature([UserRepository])
+        TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController],
     providers: [
