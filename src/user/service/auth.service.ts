@@ -107,17 +107,17 @@ export class AuthService {
 
     async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
         const user = await this.usersRepository.findOne({ username })
-     
+
         const isRefreshTokenMatching = await bcrypt.compare(
-          refreshToken,
-          user.hashedRefreshToken
+			refreshToken,
+			user.hashedRefreshToken
         );
-     
+
         if (isRefreshTokenMatching) {
             await this.updateRefreshTokenInUser(null, username)
-          return user;
+			return user;
         } else {
-            throw new UnauthorizedException()
+            throw new UnauthorizedException();
         }
     }
 }

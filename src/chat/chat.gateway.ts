@@ -27,34 +27,37 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	constructor(
 		private readonly chatService: ChatService
-	) {}
-
+		) {}
+		
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
 	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetAuthor() author: string) {
 		// this.logger.log(createMsgDto);
-
+		
 		console.log("author : ", author);
 		
 		const message = await this.chatService.saveMsg(createMsgDto.content, author);
-
+		
 		this.socket.emit('msg_to_client', createMsgDto);	// emit an event to every clients listening on msg_to_client
 	}
-
+	
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
 	
+	@UseGuards(WsGuard)
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
-		const messages = await this.chatService.getAllMessages();
-		messages.forEach((message) => {
-			const createMsgDto = {
-				content: message.content,
-				author: message.user.username
-			}
-			this.socket.emit('msg_to_client', createMsgDto);
-		})
+
+		// ? will send the content to every clients that are already connected
+		// const messages = await this.chatService.getAllMessages();
+		// messages.forEach((message) => {
+		// 	const createMsgDto = {
+		// 		content: message.content,
+		// 		author: message.user.username
+		// 	}
+		// 	this.socket.emit('msg_to_client', createMsgDto);
+		// })
 	}
 
 	handleDisconnect(client: Socket) {

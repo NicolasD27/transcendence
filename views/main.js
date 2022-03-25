@@ -46,7 +46,7 @@ const app = new Vue({
 			return true;
 		},
 		async getPrevousMessages() {
-			let msgs = await (await fetch('http://localhost:3000/channels/1')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://localhost:3000/api/channels/1')).json();	// chat/id of the channel
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
@@ -61,4 +61,4 @@ const app = new Vue({
 	}
 });
 
-// app.getPrevousMessages();
+app.getPrevousMessages();

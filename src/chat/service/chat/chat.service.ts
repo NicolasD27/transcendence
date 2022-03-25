@@ -25,12 +25,14 @@ export class ChatService {
 
 	// async 
 	async getAllMessages(): Promise<Msg[]> {
-		return this.msgRepo.find({ relations: ['user'],})
+		// return this.msgRepo.find({ relations: ['user'],});
+		return this.msgRepo.find();
+		// return this.msgRepo.query("SELECT id, content, userId FROM");
 	}
 
-	async getAllQuery()	{
+	async getFirstQuery()	{
 		// return (await this.msgRepo.query("SELECT * FROM msg;"));
-		const m = this.msgRepo.findOne({ where: {id: 23} });
+		const m = this.msgRepo.findOne({ where: {id: 1} });
 		return m;
 	}
 
