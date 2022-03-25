@@ -35,6 +35,7 @@ export class AuthController {
             payload = (await this.authService.signIn(profile));
         else
             payload = (await this.authService.signUp(profile));
+		// res.redirect('/api');
         res.cookie('accessToken', payload.accessToken)
         res.cookie('username', payload.user.username)
         res.cookie('refreshToken', payload.refreshToken)

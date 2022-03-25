@@ -1,3 +1,13 @@
+function getAccessTokenFromCookies() {
+	try {
+		return ('bearer ' + document.cookie.split('; ')
+						.find((cookie) => cookie.startsWith('accessToken'))
+						.split('=')[1]);
+	} catch (ex) {
+		return '';
+	}
+}
+
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -12,9 +22,7 @@ const app = new Vue({
 			transportOptions: {
 				polling: {
 					extraHeaders: {
-						Authorization: 'bearer ' + document.cookie.split('; ')
-							.find((cookie) => cookie.startsWith('accessToken'))
-							.split('=')[1],
+						Authorization: getAccessTokenFromCookies()
 					}
 				}
 			}
@@ -22,6 +30,7 @@ const app = new Vue({
 		match: []
 	},
 	methods: {
+		
 		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
@@ -40,7 +49,7 @@ const app = new Vue({
 			return true;
 		},
 		async getPrevousMessages() {
-			let msgs = await (await fetch('http://localhost:3000/channels/1')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://localhost:3000/api/channels/1')).json();	// chat/id of the channel
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
@@ -63,7 +72,7 @@ const app = new Vue({
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://localhost:3000', this.socketOptions); //, socketOptions);
+		this.socket = io.connect('http://localhost:3000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});
@@ -74,4 +83,4 @@ const app = new Vue({
 	}
 });
 
-// app.getPrevousMessages();
+app.getPrevousMessages();
