@@ -7,6 +7,7 @@ import { configValidationSchema } from './config.schema';
 import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 import { FriendshipModule } from './friendship/friendship.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
 	imports: [
@@ -17,7 +18,8 @@ import { FriendshipModule } from './friendship/friendship.module';
 		TypeOrmModule.forRoot(typeOrmConfig),
 		UserModule,
 		FriendshipModule,
-		ChatModule
+		ChatModule,
+		MatchModule
 	],
 	controllers: [AppController]
 })

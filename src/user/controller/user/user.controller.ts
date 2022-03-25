@@ -13,8 +13,8 @@ export class UserController {
 
     @UseGuards(AuthenticatedGuard)
     @Get()
-    findAll(@Session() session: Record<string, any>): Promise<User[]> {
-        console.log('findAllUsers', session);
+    findAll(): Promise<User[]> {
+        console.log('findAllUsers');
         return this.userService.findAll();
     }
 

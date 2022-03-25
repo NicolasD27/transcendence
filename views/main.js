@@ -5,6 +5,8 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
+		matchs: [],
+		room: '',
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -17,6 +19,7 @@ const app = new Vue({
 				}
 			}
 		},
+		match: []
 	},
 	methods: {
 		sendMessage() {
@@ -41,6 +44,22 @@ const app = new Vue({
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
+		},
+		connectToMatch() {
+			this.room += 'a';
+			this.socket.emit('connect_to', this.room)
+		},
+		
+		sendUp() {
+			this.socket.emit('update_to_server', {room: this.room, command: 'up'});
+		},
+		sendDown() {
+			this.socket.emit('update_to_server', {room: this.room, command: 'down'});
+		},
+		receiveUpdateMatch(match) {
+			console.log('here')
+			this.matchs.push(match)
+			console.log(this.matchs)
 		}
 	},
 	created() {
@@ -48,6 +67,10 @@ const app = new Vue({
 		this.socket = io.connect('http://localhost:3000', this.socketOptions); //, socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
+		});
+		
+		this.socket.on('update_to_client', (match) => {
+			this.receiveUpdateMatch(match)
 		});
 	}
 });

@@ -38,7 +38,10 @@ export class AuthController {
         res.cookie('accessToken', payload.accessToken)
         res.cookie('username', payload.user.username)
         res.cookie('refreshToken', payload.refreshToken)
-        return res;
+        return {
+            "url": '/api/',
+            "statusCode": 301
+          };
     }
 
     @ApiBearerAuth()
