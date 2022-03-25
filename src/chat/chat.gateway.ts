@@ -38,7 +38,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		
 		const message = await this.chatService.saveMsg(createMsgDto.content, author);
 		
-		this.socket.emit('msg_to_client', createMsgDto);	// emit an event to every clients listening on msg_to_client
+		this.socket.emit('msg_to_client', message);	// emit an event to every clients listening on msg_to_client
 	}
 	
 	afterInit(server: Server) {

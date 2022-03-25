@@ -25,8 +25,6 @@ export class WsGuard implements CanActivate {
 
 		try {
 			const bearerToken = context.switchToWs().getClient().handshake.headers.authorization.split(' ')[1];
-			if (! bearerToken)
-				throw new UnauthorizedException();
 			const refreshToken = context.switchToWs().getClient().handshake.headers.cookie
 				.split('; ')
 				.find((cookie: string) => cookie.startsWith('refreshToken'))
@@ -47,7 +45,7 @@ export class WsGuard implements CanActivate {
 								resolve(user);
 							}
 						} else {
-							reject(false);
+							reject(true);
 						}
 					});
 				});
@@ -72,7 +70,7 @@ export class WsGuard implements CanActivate {
 									resolve(user);
 								}
 							} else {
-								reject(false);
+								reject(true);
 							}
 						});
 					});
