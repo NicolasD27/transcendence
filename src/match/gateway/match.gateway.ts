@@ -26,19 +26,19 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to')						// this runs the function when the event msg_to_server is triggered
-	async connectToMatch(socket: Socket, ...args) {
+	async connectToMatch(socket: Socket, data: {room: string}) {
 		console.log(socket.rooms)
-		// socket.join(args)
-		console.log(args);
+		socket.join(data.room)
+		console.log("room : ", data.room);
 		
 	}
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
-	async updateMatch(socket: Socket, content: { room: string, command: string, author: string}) {
-		console.log(content)
-		const match = this.matchService.updatePositionCurrentMatch(content.author, content.command);
-		this.socket.to(content[0]).emit('update_to_client', match)
+	async updateMatch(socket: Socket, data: { room: string, command: string, author: string}) {
+		console.log(data)
+		const match = await this.matchService.updatePositionCurrentMatch(data.author, data.command);
+		this.socket.to(data.room).emit('update_to_client', match)
 		
 	}
 

@@ -5,7 +5,7 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
-		matchs: [],
+		match: {},
 		room: '',
 		socket: null,
 		socketOptions: {
@@ -47,7 +47,7 @@ const app = new Vue({
 		},
 		connectToMatch() {
 			this.room += 'a';
-			this.socket.emit('connect_to', this.room)
+			this.socket.emit('connect_to', {room: this.room})
 		},
 		
 		sendUp() {
@@ -57,9 +57,8 @@ const app = new Vue({
 			this.socket.emit('update_to_server', {room: this.room, command: 'down'});
 		},
 		receiveUpdateMatch(match) {
-			console.log('here')
-			this.matchs.push(match)
-			console.log(this.matchs)
+			this.match = match
+			console.log(this.match)
 		}
 	},
 	created() {

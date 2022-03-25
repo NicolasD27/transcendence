@@ -80,7 +80,7 @@ export class WsGuard implements CanActivate {
 		.split('; ')
 		.find((cookie: string) => cookie.startsWith('username'))
 		.split('=')[1];
-		console.log("hello ********", context.switchToWs().getClient().handshake.headers.authorization, ' and ', refreshToken)
+		console.log("hello ********", context.switchToWs().getData())
 		try {
 			const decoded = this.jwtService.verify(bearerToken) as any;
 			return new Promise((resolve, reject) => {

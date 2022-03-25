@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import * as bcrypt from "bcrypt"
 import { Exclude } from "class-transformer";
 import { Friendship } from "src/friendship/entity/friendship.entity";
@@ -54,8 +54,7 @@ export class User extends BaseEntity {
 	@OneToMany(() => Msg, msg => msg.user)
     messages: Msg[];
 
-    @OneToOne(() => Match)
-    currentMatch: Match;
+    
 
     @OneToMany(() => Match, match => match.user1)
     matchs1: Match[];

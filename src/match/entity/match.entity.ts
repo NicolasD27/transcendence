@@ -1,5 +1,5 @@
 import { User } from "src/user/entity/user.entity";
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
 
 export enum MatchStatus {
     INVITE_SEND,
@@ -22,6 +22,8 @@ export class Match {
 
     @ManyToOne(() => User, user => user.matchs2, { eager: true })	// when real users will be used
 	public user2: User;
+
+    
 
     @Column({ default: 0})
     public score1: number;

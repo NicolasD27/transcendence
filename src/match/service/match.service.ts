@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Msg } from 'src/chat/entity/msg.entity';
 import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
+import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match } from '../entity/match.entity';
@@ -59,16 +60,44 @@ export class MatchService {
         return this.matchsRepository.save(match);
     }
 
+	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<Match> {
+	// 	if (assignCurrentMatch.user1_id == assignCurrentMatch.user2_id)
+	// 		throw new BadRequestException("Cannot self match")
+	// 	const user1 = await this.usersRepository.findOne(assignCurrentMatch.user1_id)
+	// 	if (!user1)
+    //         throw new NotFoundException(`User #${assignCurrentMatch.user1_id} not found`);
+	// 	const user2 = await this.usersRepository.findOne(assignCurrentMatch.user2_id)
+	// 	if (!user2)
+	// 		throw new NotFoundException(`User #${assignCurrentMatch.user2_id} not found`);
+	// 	const match = await this.matchsRepository.findOne(assignCurrentMatch.match_id)
+	// 	if (!match)
+	// 		throw new NotFoundException(`Match #${assignCurrentMatch.match_id} not found`);
+	// 	user1.currentMatch = match;
+	// 	user2.currentMatch = match;
+	// 	// match.user1 = user1;
+	// 	// match.user2 = user2;
+	// 	await this.usersRepository.save(user1);
+	// 	await this.usersRepository.save(user2);
+	// 	return this.matchsRepository.save(match);
+	// }
+
 
 	async updatePositionCurrentMatch(username: string, command:string): Promise<Match> {
+		console.log('updating match...')
 		if (command != 'up' && command != 'down')
 			throw new BadRequestException("Command Unknown")
 		const user = await this.usersRepository.findOne({ username });
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
-		if (!user.currentMatch)
-		throw new NotFoundException("No Current Match")
-		const currentMatch = user.currentMatch;
+		const currentMatch = await this.matchsRepository.findOne({
+            relations: ['user1', 'user2'],
+            where: [
+                { user1: user },
+                { user2: user },
+            ],
+        });
+		if (!currentMatch)
+			throw new NotFoundException("No Current Match")
 		if (currentMatch.user1.username == username)
 			currentMatch.y1 += (command == 'up') ? 5 : -5;
 		else if (currentMatch.user2.username == username)

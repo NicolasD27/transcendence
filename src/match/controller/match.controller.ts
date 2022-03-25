@@ -3,6 +3,7 @@ import { AuthenticatedGuard } from 'src/guards/authenticated.guard';
 import { UpdateAvatarDto } from 'src/user/dto/update-avatar.dto';
 import { User } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/service/user/user.service';
+import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match } from '../entity/match.entity';
@@ -17,22 +18,18 @@ export class MatchController {
     @UseGuards(AuthenticatedGuard)
     @Get()
     findAll(): Promise<Match[]> {
-        console.log('findAllUsers',);
         return this.matchService.findAll();
     }
 
     @UseGuards(AuthenticatedGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<Match> {
-        console.log('findOneUser ', id);
         return this.matchService.findOne(id);
     }
 
     @UseGuards(AuthenticatedGuard)
     @Patch(':id')
-    updateMatch(@Param('id') id: string, @Body(ValidationPipe) updateMatchDto: UpdateMatchDto, @Request() req): Promise<Match> {
-        console.log('updateUser ', id);
-        
+    updateMatch(@Param('id') id: string, @Body(ValidationPipe) updateMatchDto: UpdateMatchDto, @Request() req): Promise<Match> {        
         return this.matchService.updateMatch(req.user.username, id, updateMatchDto);
     }
 
@@ -41,4 +38,10 @@ export class MatchController {
     createMatch(@Body(ValidationPipe) createMatchDto: CreateMatchDto): Promise<Match> {
         return this.matchService.createMatch(createMatchDto);
     }
+
+    // @UseGuards(AuthenticatedGuard)
+    // @Post('/current')
+    // aassignCurrentMatch(@Body(ValidationPipe) assignCurrentMatch: AssignCurrentMatch): Promise<Match> {
+    //     return this.matchService.assignCurrentMatch(assignCurrentMatch);
+    // }
 }
