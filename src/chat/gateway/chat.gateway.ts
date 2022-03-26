@@ -34,7 +34,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUser() author: string) {
 		// this.logger.log(createMsgDto);
 		
-		console.log("author : ", author);
 		
 		const message = await this.chatService.saveMsg(createMsgDto.content, author);
 		

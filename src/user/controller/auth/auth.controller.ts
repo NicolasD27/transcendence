@@ -1,7 +1,6 @@
-import { Post, Body, Controller, Get, UseGuards, Redirect, Res } from "@nestjs/common"
+import { Post, Body, Controller, Get, UseGuards, Redirect, Res, Req } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { JwtRefreshTokenGuard } from "../../../guards/jwt-refresh-token.guard"
-import { JwtTwoFactorGuard } from "../../../guards/jwt-two-factor.guard"
 import { GetUser } from "../../decorator/get-user.decorator"
 import { RefreshTokenDto } from "../../dto/refresh-token.dto"
 import { User } from "../../entity/user.entity"
@@ -10,7 +9,8 @@ import { AuthService } from "../../service/auth.service"
 import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
 import { GetProfile } from "../../decorator/get-profile.decorator"
 import { Profile } from "passport-42"
-import { Response } from "express"
+import { Response, Request } from "express"
+import { TwoFactorGuard } from '../../../guards/test.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -45,12 +45,22 @@ export class AuthController {
           };
     }
 
-    @ApiBearerAuth()
-    // @UseGuards(JwtTwoFactorGuard)
-    @Get('/logout')
-    logout(
+    // @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Post('/logout')
+    async logout(
+        @Res({ passthrough: true}) res: Response,
+        @Req() req: Request,
         @GetProfile() profile: Profile
     ) {
+        const userExist = await this.authService.userExists(profile.username);
+        let payload;
+        if (userExist)
+            payload = (await this.authService.signIn(profile));
+        res.clearCookie('accessToken', payload.accessToken)
+        res.clearCookie('username', payload.user.username)
+        res.clearCookie('refreshToken', payload.refreshToken)
+       req.logout();
         this.authService.signOut(profile.username)
     }
 

@@ -6,6 +6,7 @@ import { TwoFactorAuthService } from "../../service/two-factor-auth.service";
 import { Response } from 'express';
 import { TwoFaAuthDto } from "../../dto/two-fa-auth.dto";
 import { AuthenticatedGuard } from "src/guards/authenticated.guard";
+import { TwoFactorGuard } from '../../../guards/test.guard';
 
 @ApiTags('Two FA')
 @Controller('2fa')
@@ -15,7 +16,6 @@ export class TwoFactorAuth {
         private readonly twoFactorAuthService: TwoFactorAuthService
     ) {}
     
-    @ApiBearerAuth()
     @UseGuards(AuthenticatedGuard)
     @Post('generate-qr')
     async generateQrCode(
@@ -26,14 +26,12 @@ export class TwoFactorAuth {
         return this.twoFactorAuthService.qrCodeStreamPipe(response, otpAuthUrl);
     }
 
-    @ApiBearerAuth()
     @UseGuards(AuthenticatedGuard)
-    @Post('turn-on-qr')
+    @Post('turn-on-2FA')
     async activationOfTwoFa(
         @GetUser() user: User,
         @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto
     ) {
-        console.log("user controller", user);
         const isCodeValid = this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, user.username);
         if (!isCodeValid) {
             throw new UnauthorizedException('Invalid authentication code');
@@ -41,8 +39,17 @@ export class TwoFactorAuth {
         await this.twoFactorAuthService.activationOfTwoFa(user.username, true);
     }
 
-    // This function will be called if 2FA is on (activationOfTwoFa method)
     @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Post('turn-off-2FA')
+    async desactivationOfTwoFa(
+        @GetUser() user: User
+    ) {
+        
+        await this.twoFactorAuthService.desactivationOfTwoFa(user.username, false);
+    }
+
+    // This function will be called if 2FA is on (activationOfTwoFa method)
     @Post('authenticate')
     @UseGuards(AuthenticatedGuard)
     async authenticate(
@@ -56,6 +63,9 @@ export class TwoFactorAuth {
         }
         const payload = await this.twoFactorAuthService.signIn(user, true);
         res.cookie('accessToken', payload.accessToken)
+        res.cookie('refreshToken', payload.refreshToken)
         return payload;
     }
+
+
 }

@@ -14,7 +14,9 @@ export class UserService {
 
 
     async findAll(): Promise<User[]> {
-        return this.usersRepository.find();
+        return this.usersRepository.find({
+            relations: ['followers', 'followings', 'matchs1', 'matchs2']
+        });
     }
 
     async findOne(id: string): Promise<User> {

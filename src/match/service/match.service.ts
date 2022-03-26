@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
-import { Match } from '../entity/match.entity';
+import { Match, MatchStatus } from '../entity/match.entity';
 
 @Injectable()
 export class MatchService {
@@ -31,18 +31,17 @@ export class MatchService {
     
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<Match> {
         
-        const match = await this.matchsRepository.preload({
-            id: +id,
-            ...updateMatchDto
-        })
+        let match = await this.matchsRepository.findOne(id);
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
-        if (match.user1.username != current_username && match.user2.username != current_username)
+        if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
+		match.status = updateMatchDto.status;
+		match.score1 = updateMatchDto.score1;
+		match.score2 = updateMatchDto.score2;
         return this.matchsRepository.save(match);
     }
 
-    //just for dev
     async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
 		if (createMatchDto.user1_id == createMatchDto.user2_id)
 			throw new BadRequestException("Cannot self match")
@@ -92,8 +91,8 @@ export class MatchService {
 		const currentMatch = await this.matchsRepository.findOne({
             relations: ['user1', 'user2'],
             where: [
-                { user1: user },
-                { user2: user },
+                { user1: user, status: MatchStatus.ACTIVE },
+                { user2: user, status: MatchStatus.ACTIVE },
             ],
         });
 		if (!currentMatch)

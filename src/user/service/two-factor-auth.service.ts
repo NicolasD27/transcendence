@@ -44,8 +44,14 @@ export class TwoFactorAuthService {
         return toFileStream(stream, otpPathUrl);
     }
 
-    public async activationOfTwoFa(email: string, status: boolean) {
-        return await this.usersRepository.update({ username: email }, {
+    public async activationOfTwoFa(username: string, status: boolean) {
+        return await this.usersRepository.update({ username: username }, {
+            isTwoFactorEnable: status
+        });
+    }
+
+    public async desactivationOfTwoFa(username: string, status: boolean) {
+        return await this.usersRepository.update({ username: username }, {
             isTwoFactorEnable: status
         });
     }
@@ -77,4 +83,5 @@ export class TwoFactorAuthService {
             }
         };
     }
+
 }
