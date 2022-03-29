@@ -3,7 +3,7 @@ import { AppController } from 'src/app.controller';
 import { ChatService } from './service/chat/chat.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Msg } from './entity/msg.entity';
-import { ChatGateway } from './chat.gateway'
+import { ChatGateway } from './gateway/chat.gateway'
 import { User } from 'src/user/entity/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/user/service/auth.service';

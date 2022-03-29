@@ -11,11 +11,11 @@ import { Socket, Server } from 'socket.io';
 import { AuthenticatedGuard } from 'src/guards/authenticated.guard';
 import { FtOauthGuard } from 'src/guards/ft-oauth.guard';
 import { WsGuard } from 'src/guards/websocket.guard';
-import { CreateMsgDto } from './dto/create-msg.dto';
-import { ChatService } from './service/chat/chat.service';
+import { CreateMsgDto } from '../dto/create-msg.dto';
+import { ChatService } from '../service/chat/chat.service';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import { GetAuthor } from './decorator/get-author.decorator';
+import { GetUser } from '../decorator/get-user.decorator';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -31,10 +31,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
-	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetAuthor() author: string) {
+	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUser() author: string) {
 		// this.logger.log(createMsgDto);
 		
-		console.log("author : ", author);
 		
 		const message = await this.chatService.saveMsg(createMsgDto.content, author);
 		

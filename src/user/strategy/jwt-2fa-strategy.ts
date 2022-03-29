@@ -18,11 +18,37 @@ export class JwtTwoFaStrategy extends PassportStrategy(Strategy, 'jwt-two-factor
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret
+            secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret,
+        },
+        async (jwt_payload, done) => {
+            console.log(jwt_payload)
+            done(null, true)
+            // this one is typically a DB call.
+            // Assume that the returned user object is pre-formatted and ready for storing in JWT
+            // try {
+            //     const errMessage = { message: 'Incorrect email or password' };
+        
+            //     const user = await this.usersRepository.findOne({username});
+        
+            //     if (!user) {
+            //         return done(null, false, errMessage);
+            //     }
+        
+            //     const pwdValidation = await user.validPassword(password, user.password);
+            //     if (!pwdValidation) {
+            //         done(null, false, errMessage);
+            //     } else {
+            //         done(null, user, { message: 'Logged In Successfully' });
+            //     }
+            // } catch (err) {
+            //     console.log(err);
+            //     done(err);
+            // }
         })
     }
 
     async validate(payload: JwtPayload): Promise<User> {
+        console.log("payload", payload)
         const { username } = payload;
         const user = await this.usersRepository.findOne({ username });
 

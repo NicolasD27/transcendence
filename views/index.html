@@ -32,6 +32,15 @@
                         <br>
                         <button id="send" class="btn" @click.prevent="sendMessage">Send</button>
                     </div>
+                    <div id="match">
+                        <h1>Match</h1>
+                        <ul>
+                            <li v-for="match">{{ match.id }} : {{ match.y1 }}, {{ match.y2 }}, {{ match.bx }}, {{ match.by }}, {{ match.bvx }}, {{ match.bvy }}</li>
+                            <button id="send" class="btn" @click.prevent="connectToMatch">Connect</button>
+                            <button id="send" class="btn" @click.prevent="sendUp">Up</button>
+                            <button id="send" class="btn" @click.prevent="sendDown">Down</button>
+                        </ul>
+                    </div>
                 </div>
             </div>
     </div>
