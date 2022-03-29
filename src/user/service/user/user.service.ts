@@ -15,6 +15,7 @@ export class UserService {
 
     async findAll(): Promise<User[]> {
         return this.usersRepository.find({
+            select: ['username', 'avatar', 'status', 'isTwoFactorEnable'],
             relations: ['followers', 'followings', 'matchs1', 'matchs2']
         });
     }

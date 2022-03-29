@@ -19,7 +19,7 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async signUp(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+    async signUp(profile: Profile): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
         const user = this.usersRepository.create({
             username: profile.username,
             avatar: profile._json.image_url
@@ -29,7 +29,7 @@ export class AuthService {
         
     }
 
-    async signIn(profile: Profile): Promise<{ accessToken: string, refreshToken?: string, user?: JwtPayload }> {
+    async signIn(profile: Profile): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
         const user = await this.usersRepository.findOne( {username: profile.username });
         const resp = {
             username: user.username,
@@ -39,20 +39,21 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
+        if (resp.isTwoFactorEnable) {
+            return {
+                accessToken: '',
+                user: user
+            }
+        }
         const accessToken = await this.getAccessToken(resp);
-        // if (resp.isTwoFactorEnable) {
-        //     return {
-        //         accessToken
-        //     }
-        // }
+        
+        // const refreshToken = await this.getRefreshToken(resp);
 
-        const refreshToken = await this.getRefreshToken(resp);
-
-        await this.updateRefreshTokenInUser(refreshToken, resp.username);
+        // await this.updateRefreshTokenInUser(refreshToken, resp.username);
 
         return {
             accessToken,
-            refreshToken,
+            // refreshToken,
             user: resp
         }
     }
@@ -65,59 +66,79 @@ export class AuthService {
             return false;
     }
 
-    async signOut(username: string) {
-        await this.updateRefreshTokenInUser(null, username)
-    }
+    // async signOut(username: string) {
+    //     await this.updateRefreshTokenInUser(null, username)
+    // }
 
-    async updateRefreshTokenInUser(refreshToken, username) {
-        if (refreshToken) {
-            refreshToken = await bcrypt.hash(refreshToken, 10)
-        }
+    // async updateRefreshTokenInUser(refreshToken, username) {
+    //     if (refreshToken) {
+    //         refreshToken = await bcrypt.hash(refreshToken, 10)
+    //     }
         
-        await this.usersRepository.update({ username: username }, {
-            hashedRefreshToken:refreshToken
-        })
-    }
+    //     await this.usersRepository.update({ username: username }, {
+    //         hashedRefreshToken: refreshToken
+    //     })
+    // }
 
     async getAccessToken(payload: JwtPayload) {
+        console.log('new access token')
         const accessToken = await this.jwtService.sign(payload, {
             secret: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret,
             expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME || dbConfig.expiresIn
         })
+        console.log('new access token', accessToken)
         return accessToken
     }
 
-    async getRefreshToken(payload: JwtPayload) {
-        const refreshToken = await this.jwtService.sign(payload, {
-            secret: process.env.JWT_REFRESH_TOKEN_SECRET || dbConfig.refreshSecret,
-            expiresIn: +process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME || dbConfig.refreshExpiresIn
-        })
-        return refreshToken
-    }
+    // async getRefreshToken(payload: JwtPayload) {
+    //     const refreshToken = await this.jwtService.sign(payload, {
+    //         secret: process.env.JWT_REFRESH_TOKEN_SECRET || dbConfig.refreshSecret,
+    //         expiresIn: +process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME || dbConfig.refreshExpiresIn
+    //     })
+    //     return refreshToken
+    // }
 
-    async getNewAccessAndRefreshToken(payload: JwtPayload) {
-        const refreshToken = await this.getRefreshToken(payload)
-        await this.updateRefreshTokenInUser(refreshToken, payload.username)
-
+    async getTokens(username: string) {
+        const user = await this.usersRepository.findOne( {username: username });
+        const resp = {
+            username: user.username,
+            isTwoFactorEnable: user.isTwoFactorEnable,
+        }
+        if (!resp) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+        const accessToken = await this.getAccessToken(resp);
+        // const refreshToken = await this.getRefreshToken(resp);
         return {
-            accessToken: await this.getAccessToken(payload),
-            refreshToken: refreshToken
+            accessToken,
+            // refreshToken,
+            user: resp
         }
     }
 
-    async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
-        const user = await this.usersRepository.findOne({ username })
+    // async getNewAccessAndRefreshToken(payload: JwtPayload) {
+    //     const refreshToken = await this.getRefreshToken(payload)
+    //     await this.updateRefreshTokenInUser(refreshToken, payload.username)
 
-        const isRefreshTokenMatching = await bcrypt.compare(
-			refreshToken,
-			user.hashedRefreshToken
-        );
+    //     return {
+    //         accessToken: await this.getAccessToken(payload),
+    //         refreshToken: refreshToken
+    //     }
+    // }
 
-        if (isRefreshTokenMatching) {
-            await this.updateRefreshTokenInUser(null, username)
-			return user;
-        } else {
-            throw new UnauthorizedException();
-        }
-    }
+    // async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
+    //     const user = await this.usersRepository.findOne({ username })
+
+    //     const isRefreshTokenMatching = await bcrypt.compare(
+	// 		refreshToken,
+	// 		user.hashedRefreshToken
+    //     );
+
+    //     if (isRefreshTokenMatching) {
+    //         await this.updateRefreshTokenInUser(null, username)
+	// 		return user;
+    //     } else {
+    //         throw new UnauthorizedException();
+    //     }
+    // }
 }

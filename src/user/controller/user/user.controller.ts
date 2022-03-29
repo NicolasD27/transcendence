@@ -5,7 +5,7 @@ import { User } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/service/user/user.service';
 // import * as session from 'express-session';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { TwoFactorGuard } from '../../../guards/test.guard';
+import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 
 @Controller('users')
 export class UserController {

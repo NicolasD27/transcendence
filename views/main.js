@@ -15,6 +15,7 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
+		opponent_id: 2,
 		match: {},
 		room: '',
 		socket: null,
@@ -30,7 +31,10 @@ const app = new Vue({
 		match: []
 	},
 	methods: {
-		
+		connectToChannel() {
+			this.room = 'a';
+			this.socket.emit('connect_to_channel', {room: this.room})
+		},
 		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
@@ -49,21 +53,24 @@ const app = new Vue({
 			return true;
 		},
 		async getPrevousMessages() {
-			let msgs = await (await fetch('http://localhost:3000/api/channels/1')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://e2r10p7:3000/api/channels/1')).json();	// chat/id of the channel
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
 		},
+		// async findMatch() {
+		// 	const match = await (await fetch('http://e2r10p7:3000/api/matchs/matchmaking')).json();
+		// },
 		connectToMatch() {
-			this.room += 'a';
-			this.socket.emit('connect_to', {room: this.room})
+			// this.room = 'a';
+			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id})
 		},
 		
 		sendUp() {
-			this.socket.emit('update_to_server', {room: this.room, command: 'up'});
+			this.socket.emit('update_to_server', {match_id: this.match.id, command: 'up'});
 		},
 		sendDown() {
-			this.socket.emit('update_to_server', {room: this.room, command: 'down'});
+			this.socket.emit('update_to_server', {match_id: this.match.id, command: 'down'});
 		},
 		receiveUpdateMatch(match) {
 			this.match = match
@@ -72,7 +79,8 @@ const app = new Vue({
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://localhost:3000', this.socketOptions);
+		this.socket = io.connect('http://e2r12p13:3000', this.socketOptions);
+		this.socket.emit('connect_to_match', {room: 'a'})
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});
@@ -80,6 +88,7 @@ const app = new Vue({
 		this.socket.on('update_to_client', (match) => {
 			this.receiveUpdateMatch(match)
 		});
+		
 	}
 });
 

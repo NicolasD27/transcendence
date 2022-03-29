@@ -21,13 +21,13 @@ export class TwoFactorAuthService {
 
     public async generateTwoFactorAuthSecret(user: User) {
         const auth = await this.usersRepository.findOne({ username: user.username });
-        if (auth) {
-            if (auth.isTwoFactorEnable) {
-                return {
-                    msg: 'Already QR generated'
-                }
-            }
-        }
+        // if (auth) {
+        //     if (auth.isTwoFactorEnable) {
+        //         return {
+        //             msg: 'Already QR generated'
+        //         }
+        //     }
+        // }
 
         const secret = authenticator.generateSecret();
         const app_name = process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME || dbConfig.twoFactorAppName;
@@ -64,20 +64,20 @@ export class TwoFactorAuthService {
         });
     }
 
-    async signIn(user: User, isTwoFaAuthenticated: boolean): Promise<{ accessToken: string, refreshToken: string, user: JwtPayload }> {
+    async signIn(user: User, isTwoFaAuthenticated: boolean): Promise<{ accessToken: string, user: JwtPayload }> {
         const data = {
             isTwoFaAuthenticated,
             isTwoFactorEnable: user.isTwoFactorEnable,
             username: user.username,
         }
         const accessToken = await this.authService.getAccessToken(data);
-        const refreshToken = await this.authService.getRefreshToken(data);
+        // const refreshToken = await this.authService.getRefreshToken(data);
 
-        await this.authService.updateRefreshTokenInUser(refreshToken, user.username);
+        // await this.authService.updateRefreshTokenInUser(refreshToken, user.username);
 
         return {
             accessToken,
-            refreshToken,
+            // refreshToken,
             user: {
                 username: user.username,
             }

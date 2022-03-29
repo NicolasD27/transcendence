@@ -1,5 +1,6 @@
 import { User } from "src/user/entity/user.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+import { BALL_VX, BALL_VY } from "../match.constants";
 
 export enum MatchStatus {
     INVITE_SEND,
@@ -23,7 +24,8 @@ export class Match {
     @ManyToOne(() => User, user => user.matchs2, { eager: true })	// when real users will be used
 	public user2: User;
 
-    
+    @Column({ default: 3})
+    public sleep: number;
 
     @Column({ default: 0})
     public score1: number;
@@ -57,9 +59,9 @@ export class Match {
     @Column({ default: 50 })
     public by: number;
 
-    @Column({ default: 0 })
+    @Column({ default: BALL_VX })
     public bvx: number;
 
-    @Column({ default: 0 })
+    @Column({ default: BALL_VY })
     public bvy: number;
 }

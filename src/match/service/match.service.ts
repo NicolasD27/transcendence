@@ -7,6 +7,7 @@ import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match, MatchStatus } from '../entity/match.entity';
+import { ACCELERATION, BALL_VY, RACKET_HEIGHT, RACKET_THICKNESS } from '../match.constants';
 
 @Injectable()
 export class MatchService {
@@ -54,10 +55,71 @@ export class MatchService {
 		const match = {
 			user1: user1,
 			user2: user2,
-			mode: createMatchDto.mode
+			mode: createMatchDto.mode,
+			status: MatchStatus.ACTIVE // to remove, just for test !!!!
 		}
         return this.matchsRepository.save(match);
     }
+
+	async updatePositionMatch(match_id: number) {
+		const match = await this.matchsRepository.findOne(match_id)
+		console.log("update position of ", match.id)
+		if (match.sleep > 0) {
+			match.sleep -= 1
+		}
+		else {
+
+			match.bx = match.bx + match.bvx
+			match.by = match.by + match.bvy
+			if (match.bx < 0)
+				this.resetBall(match, "right")
+			else if (match.bx > 200)
+				this.resetBall(match, "left")
+			else if (match.bx < 4 && (match.y1 + 12 > match.bx && match.y1 - 12 < match.bx))
+				this.reboundBall(match, "left")
+			else if (match.bx > 196 && (match.y2 + 12 > match.bx && match.y2 - 12 < match.bx))
+				this.reboundBall(match, "right")
+			if (match.by < 0) {
+				match.by = - match.by;
+				match.bvy = - match.bvy
+			}
+			else if (match.by > 100) {
+				match.by = 100 - match.by;
+				match.bvy = - match.bvy
+			}
+		}
+		return this.matchsRepository.save(match)
+	}
+
+	private resetBall(match: Match, scoring_side: string): Match {
+		match.sleep = 2
+		match.bx = 100
+		match.by = 50
+		match.bvy = 2
+		if (scoring_side == "left") {
+			match.score1 += 1	
+			match.bvx = -2
+		}
+		else {
+			match.score2 += 1
+			match.bvx = -2
+		}
+		return match
+	}
+
+	private reboundBall(match: Match, side: string): Match {
+		match.bvx = - match.bvx * ACCELERATION
+		match.bx = 2 * RACKET_THICKNESS - match.bx
+		if (side == "left")
+		{
+			match.bvy = BALL_VY * (match.by - match.y1) / RACKET_HEIGHT;
+		}
+		else
+		{
+			match.bvy = -BALL_VY * (match.by - match.y1) / RACKET_HEIGHT;
+		}
+		return match
+	}
 
 	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<Match> {
 	// 	if (assignCurrentMatch.user1_id == assignCurrentMatch.user2_id)
@@ -81,20 +143,15 @@ export class MatchService {
 	// }
 
 
-	async updatePositionCurrentMatch(username: string, command:string): Promise<Match> {
+	async updatePositionCurrentMatch(match_id: string, username: string, command:string): Promise<Match> {
 		console.log('updating match...')
 		if (command != 'up' && command != 'down')
 			throw new BadRequestException("Command Unknown")
 		const user = await this.usersRepository.findOne({ username });
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
-		const currentMatch = await this.matchsRepository.findOne({
-            relations: ['user1', 'user2'],
-            where: [
-                { user1: user, status: MatchStatus.ACTIVE },
-                { user2: user, status: MatchStatus.ACTIVE },
-            ],
-        });
+		const currentMatch = await this.matchsRepository.findOne(match_id);
+		console.log(currentMatch.id)
 		if (!currentMatch)
 			throw new NotFoundException("No Current Match")
 		if (currentMatch.user1.username == username)

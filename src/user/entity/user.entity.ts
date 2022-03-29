@@ -29,9 +29,9 @@ export class User extends BaseEntity {
     // @Column()
     // salt: string
 
-    @Column({ nullable: true })
-    @Exclude()
-    public hashedRefreshToken?: string
+    // @Column({ nullable: true })
+    // @Exclude()
+    // public hashedRefreshToken?: string
 
     @Column({ nullable: true })
     twoFactorAuthSecret?: string
