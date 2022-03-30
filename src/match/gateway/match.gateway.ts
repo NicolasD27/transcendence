@@ -34,10 +34,11 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const user = await this.userService.findByUsername(data.author);
 		let match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
+		this.socket.to("match#" + match.id).emit('update_to_client', match)
 		setInterval(async () => {
 			match = await this.matchService.updatePositionMatch(match.id);
 			this.socket.to("match#" + match.id).emit('update_to_client', match)
-		}, 300) 
+		}, 100) 
 		
 	}
 

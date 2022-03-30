@@ -79,8 +79,7 @@ const app = new Vue({
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://e2r12p13:3000', this.socketOptions);
-		this.socket.emit('connect_to_match', {room: 'a'})
+		this.socket = io.connect('http://localhost:3000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});
