@@ -5,14 +5,14 @@ import { AuthGuard } from "@nestjs/passport";
 import { CreateMsgDto } from "./dto/create-msg.dto";
 import { AuthenticatedGuard } from "src/guards/authenticated.guard";
 
-@Controller('channels/:id')
-export class ChatController {
-	constructor (private readonly chatService: ChatService) {}
+// @Controller('channels/:id')
+// export class ChatController {
+	// constructor (private readonly chatService: ChatService) {}
 
-	@UseGuards(AuthenticatedGuard)	// ? need a fix : loops on login
-	@Get()
-	async findAll() {
-		return this.chatService.getAllMessages();
-	}
+	// @UseGuards(AuthenticatedGuard)
+	// @Get()
+	// async findAll() {
+	// 	return this.chatService.getAllMessages();
+	// }
 
-}
+// }

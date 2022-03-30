@@ -28,18 +28,35 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	constructor(
 		private readonly chatService: ChatService
 		) {}
-		
+
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
 	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUser() author: string) {
-		// this.logger.log(createMsgDto);
-		
-		
+
 		const message = await this.chatService.saveMsg(createMsgDto.content, author);
 		
 		this.socket.emit('msg_to_client', message);	// emit an event to every clients listening on msg_to_client
 	}
-	
+
+	// @UseGuards(WsGuard)
+	// @SubscribeMessage('connect_to_channel')
+	// async connectToMatch(socket: Socket, data: { opponent_id: string, author: string}) {
+	// 	console.log(socket.rooms)
+	// 	const user = await this.userService.findByUsername(data.author);
+	// 	let match: Match = await this.matchService.createMatch(
+	// 		{
+	// 			user1_id: user.id.toString(),
+	// 			user2_id: data.opponent_id,
+	// 			mode: CustomModes.NORMAL 
+	// 		});
+	// 	socket.join("match#" + match.id);
+	// 	setInterval(async () => {
+	// 		match = await this.matchService.updatePositionMatch(match.id);
+	// 		this.socket.to("match#" + match.id).emit('update_to_client', match)
+	// 	}, 300) 
+		
+	// }
+
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
@@ -47,16 +64,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@UseGuards(WsGuard)
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
-
-		// ? will send the content to every clients that are already connected
-		// const messages = await this.chatService.getAllMessages();
-		// messages.forEach((message) => {
-		// 	const createMsgDto = {
-		// 		content: message.content,
-		// 		author: message.user.username
-		// 	}
-		// 	this.socket.emit('msg_to_client', createMsgDto);
-		// })
 	}
 
 	handleDisconnect(client: Socket) {

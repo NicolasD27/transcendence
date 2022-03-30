@@ -7,11 +7,13 @@ import { ChatGateway } from './gateway/chat.gateway'
 import { User } from 'src/user/entity/user.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/user/service/auth.service';
-import { ChatController } from './chat.controller';
+import { ChannelController } from 'src/channel/channel.controller';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { Channel } from 'src/channel/entity/channel.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Msg, User]),
+		TypeOrmModule.forFeature([Msg, User, Channel]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {
@@ -19,8 +21,8 @@ import { ChatController } from './chat.controller';
             }
         }),
 	],
-	controllers: [ChatController],
-	providers: [ChatService, ChatGateway, AuthService],
+	controllers: [ChannelController],
+	providers: [ChatService, ChatGateway, AuthService, ChannelService],
 	exports: [ChatService]
 })
 export class ChatModule {}
