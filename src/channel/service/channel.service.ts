@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
 import { User } from 'src/user/entity/user.entity';
@@ -7,6 +7,7 @@ import { Msg } from 'src/chat/entity/msg.entity';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { throws } from 'assert';
+import { CreateMsgDto } from 'src/chat/dto/create-msg.dto';
 
 @Injectable()
 export class ChannelService {
@@ -66,8 +67,10 @@ export class ChannelService {
 				channel: channel.id
 			}});
 
-		if (participation)
-			return participation;
+		console.log(participation);
+
+		if (participation.length)
+			throw new UnauthorizedException("Channel already joined");
 
 		const newParticipation = await this.participationRepo.create({
 			user: user,
@@ -84,29 +87,37 @@ export class ChannelService {
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException();
-		const oui = await this.participationRepo.find({
+		const myParticipations = await this.participationRepo.find({
             relations: ['user'],
             where: [
                 { channel: myChannel },
             ],
         });
 		const users = [];
-		oui.forEach((participation) => {
+		myParticipations.forEach((participation) => {
 			users.push(participation.user)
 		})
 		return users;
-
-
 	}
 
-	async getMessages(id: string)//: Promise<CreateMsgDto[]>
+	async getChannelMessages(id: string): Promise<CreateMsgDto[]>
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException();
-		return await this.msgRepo.find({ where: { channel: id } });
+
+		const msg = await this.msgRepo.find({ where: { channel: id } });
+
+		const arrayMsgDto: CreateMsgDto[] = [];
+		msg.forEach((message) => {
+			arrayMsgDto.push({
+				content: message.content,
+				author: message.id
+			});
+		})
 		// return await this.msgRepo.query('SELECT user, content FROM msg WHERE "channelId" IS NULL;');
 
+		return arrayMsgDto;
 	}
 
 }
