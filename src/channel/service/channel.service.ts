@@ -5,7 +5,6 @@ import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { Msg } from 'src/chat/entity/msg.entity';
 import { CreateChannelDto } from '../dto/create-channel.dto';
-import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class ChannelService {
@@ -28,26 +27,29 @@ export class ChannelService {
 			name : createChannelDto.name,
 			description: createChannelDto.description,
 			owner : user,
-		})
+		});
 		await this.channelRepo.save(newChannel);
 		return newChannel;
 	}
 
-	async findOne(channelId: number): Promise<Channel> {
-		const myChannel = await this.channelRepo.findOne({ where: { id: channelId } });
+	async findAll(): Promise<Channel[]> {
+		return await this.channelRepo.find();
+	}
+
+	async findOne(channelId: string): Promise<Channel> {
+		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException();
 		return myChannel;
 	}
 
-	async getMessages(channelId: number): Promise<Msg[]> {
+	async getMessages(channelId: string): Promise<Msg[]> {
 
-		const myChannel = await this.channelRepo.findOne({ where: { id : channelId } });
-
+		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException();
-
-		return await this.msgRepo.find({ where: { channel: channelId } });
+		// return await this.msgRepo.find(myChannel); //{ where: { channel: channelId } });
+		return await this.msgRepo.query("SELECT * FROM msg WHERE \"channelId\" = 1;");
 	}
 
 }
