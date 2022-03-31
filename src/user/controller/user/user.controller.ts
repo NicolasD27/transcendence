@@ -6,6 +6,7 @@ import { UserService } from 'src/user/service/user/user.service';
 // import * as session from 'express-session';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
+import { GetUsername } from 'src/user/decorator/get-username.decorator';
 
 @Controller('users')
 export class UserController {
@@ -32,10 +33,10 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
-    updateAvatar(@Param('id') id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @Request() req): Promise<User> {
+    updateAvatar(@Param('id') id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @GetUsername() username): Promise<User> {
         console.log('updateUser ', id);
         
-        return this.userService.updateAvatar(req.user.username, id, updateAvatarDto);
+        return this.userService.updateAvatar(username, id, updateAvatarDto);
     }
 
     //seulement pour tester

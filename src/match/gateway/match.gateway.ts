@@ -8,10 +8,10 @@ import { MessageBody,
 	WebSocketServer,
 	 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { GetUser } from 'src/chat/decorator/get-user.decorator';
+import { GetUsername } from 'src/chat/decorator/get-username.decorator';
 import { WsGuard } from 'src/guards/websocket.guard';
 import { UserService } from 'src/user/service/user/user.service';
-import { CustomModes, Match } from '../entity/match.entity';
+import { CustomModes, Match, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 
 @WebSocketGateway()
@@ -30,7 +30,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_match')						// this runs the function when the event msg_to_server is triggered
 	async connectToMatch(socket: Socket, data: { opponent_id: string, author: string}) {
-		console.log(socket.rooms)
 		const user = await this.userService.findByUsername(data.author);
 		let match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
@@ -41,6 +40,27 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}, 100) 
 		
 	}
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('challenge_user')						// this runs the function when the event msg_to_server is triggered
+	async challengeUser(socket: Socket, data: { opponent_id: string, author: string}) {
+		const user = await this.userService.findByUsername(data.author);
+		const match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
+		socket.join("match#" + match.id);
+		console.log("match : ", match)
+		this.socket.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
+	}
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('accept_challenge')						// this runs the function when the event msg_to_server is triggered
+	async acceptMatchInvite(socket: Socket, data: { match_id: string, author: string}) {
+		const user = await this.userService.findByUsername(data.author);
+		const match = await this.matchService.updateMatch(data.author, data.match_id, {status: MatchStatus.ACTIVE});
+		socket.join("match#" + match.id);
+		
+		this.socket.to("match#" + match.id).emit('launch_match', match)		
+	}
+
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
@@ -56,9 +76,15 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.logger.log('Init');
 	}
 	
-	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
-		this.logger.log(`socket connected: ${socket.id}`);
-		
+	async handleConnection(socket: Socket) {
+		this.logger.log(`match socket connected: ${socket.id}`);
+		const cookies = socket.handshake.headers.cookie.split('; ')
+		if (cookies.find((cookie: string) => cookie.startsWith('username')))
+		{
+			const username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
+			const user = await this.userService.findByUsername(username);
+			socket.join("user#" + user.id);
+		}
 	}
 
 	handleDisconnect(client: Socket) {

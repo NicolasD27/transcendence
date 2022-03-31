@@ -15,7 +15,7 @@ import { CreateMsgDto } from '../dto/create-msg.dto';
 import { ChatService } from '../service/chat/chat.service';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import { GetUser } from '../decorator/get-user.decorator';
+import { GetUsername } from '../decorator/get-username.decorator';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -31,7 +31,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
-	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUser() author: string) {
+	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUsername() author: string) {
 		// this.logger.log(createMsgDto);
 		
 		

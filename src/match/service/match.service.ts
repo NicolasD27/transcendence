@@ -32,20 +32,23 @@ export class MatchService {
     
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<Match> {
         
-        let match = await this.matchsRepository.findOne(id);
+        const match = await this.matchsRepository.preload({
+			id: +id,
+			...updateMatchDto
+		});
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
-		match.status = updateMatchDto.status;
-		match.score1 = updateMatchDto.score1;
-		match.score2 = updateMatchDto.score2;
+		// match.status = updateMatchDto.status;
+		// match.score1 = updateMatchDto.score1;
+		// match.score2 = updateMatchDto.score2;
         return this.matchsRepository.save(match);
     }
 
     async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
-		if (createMatchDto.user1_id == createMatchDto.user2_id)
-			throw new BadRequestException("Cannot self match")
+		// if (createMatchDto.user1_id == createMatchDto.user2_id)
+		// 	throw new BadRequestException("Cannot self match")
 		const user1 = await this.usersRepository.findOne(createMatchDto.user1_id)
 		if (!user1)
             throw new NotFoundException(`User #${createMatchDto.user1_id} not found`);
@@ -67,8 +70,9 @@ export class MatchService {
 		{
 			console.log("creating match...")
 			return this.matchsRepository.save({
-				...createMatchDto,
-				status: MatchStatus.ACTIVE // to remove, just for test !!!!
+				user1: user1,
+				user2: user2,
+				mode: createMatchDto.mode
 			});
 		}
     }
@@ -85,20 +89,20 @@ export class MatchService {
 			match.by = match.by + match.bvy
 			if (match.bx <= RACKET_THICKNESS && (match.y1 + RACKET_HEIGHT > match.by && match.y1 < match.by))
 				this.reboundBall(match, "left")
-			else if (match.bx + BALL_RADIUS >= GAME_LENGTH - RACKET_THICKNESS && (match.y2 + RACKET_HEIGHT > match.by && match.y2 < match.by))
+			else if (match.bx >= GAME_LENGTH - RACKET_THICKNESS && (match.y2 + RACKET_HEIGHT > match.by && match.y2 < match.by))
 				this.reboundBall(match, "right")
 			else if (match.bx < 0)
 				this.resetBall(match, "right")
-			else if (match.bx + 2 * BALL_RADIUS >= GAME_LENGTH)
+			else if (match.bx >= GAME_LENGTH)
 				this.resetBall(match, "left")
 			if (match.by <= 0) {
 				if (match.by != 0)
-					match.by = - match.by; 
+					match.by = 0; 
 				match.bvy = - match.bvy
 			}
-			else if (match.by + BALL_RADIUS >= GAME_HEIGHT) {
-				if (match.by + BALL_RADIUS > GAME_HEIGHT)
-					match.by = 2 * GAME_HEIGHT - match.by - BALL_RADIUS;
+			else if (match.by >= GAME_HEIGHT) {
+				if (match.by > GAME_HEIGHT)
+					match.by = GAME_HEIGHT;
 				match.bvy = - match.bvy
 			}
 		}
@@ -133,7 +137,7 @@ export class MatchService {
 		}
 		else
 		{
-			match.bvy = BALL_VY * ((match.by - match.y2) * 2 - RACKET_HEIGHT) / RACKET_HEIGHT;
+			match.bvy = -BALL_VY * ((match.by - match.y2) * 2 - RACKET_HEIGHT) / RACKET_HEIGHT;
 		}
 		return match
 	}

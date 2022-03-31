@@ -15,7 +15,6 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
-		opponent_id: 2,
 		match: {},
 		room: '',
 		socket: null,
@@ -28,6 +27,9 @@ const app = new Vue({
 				}
 			}
 		},
+		opponent_id: null,
+		invite_choosen: null,
+		invites: [],
 		match: []
 	},
 	methods: {
@@ -35,7 +37,8 @@ const app = new Vue({
 			this.room = 'a';
 			this.socket.emit('connect_to_channel', {room: this.room})
 		},
-		sendMessage() {
+		sendMessage(message) {
+			console.log(message);
 			if(this.validateInput()) {
 				const message = {
 					content: this.content,
@@ -53,7 +56,7 @@ const app = new Vue({
 			return true;
 		},
 		async getPrevousMessages() {
-			let msgs = await (await fetch('http://e2r10p7:3000/api/channels/1')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://localhost:3000/api/channels/1')).json();	// chat/id of the channel
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
@@ -63,9 +66,25 @@ const app = new Vue({
 		// },
 		connectToMatch() {
 			// this.room = 'a';
-			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id})
+			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id});
 		},
-		
+		challengeUser() {
+			console.log("challenging user #", this.opponent_id)
+			this.socket.emit('challenge_user', {opponent_id: this.opponent_id});
+		},
+		acceptChallenge() {
+			console.log("accept challenge #", this.invite_choosen)
+			if (this.invite_choosen >= 0 && this.invite_choosen < this.invites.length)
+				this.socket.emit('accept_challenge', {match_id: this.invites[this.invite_choosen].id})
+		},
+		receiveMatchInvite(match) {
+			console.log("receiving invite... ", match)
+			this.invites.push(match);
+		},
+		launchMatch(match) {
+			this.match = match;
+			console.log("launching match : ", match);
+		},
 		sendUp() {
 			this.socket.emit('update_to_server', {match_id: this.match.id, command: 'up'});
 		},
@@ -73,19 +92,25 @@ const app = new Vue({
 			this.socket.emit('update_to_server', {match_id: this.match.id, command: 'down'});
 		},
 		receiveUpdateMatch(match) {
-			this.match = match
-			console.log(this.match)
+			this.match = match;
+			console.log(this.match);
 		}
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
 		this.socket = io.connect('http://localhost:3000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
-			this.receivedMessage(message)
+			this.receivedMessage(message);
 		});
 		
 		this.socket.on('update_to_client', (match) => {
-			this.receiveUpdateMatch(match)
+			this.receiveUpdateMatch(match);
+		});
+		this.socket.on('match_invite_to_client', (match) => {
+			this.receiveMatchInvite(match);
+		});
+		this.socket.on('launch_match', (match) => {
+			this.launchMatch(match);
 		});
 		
 	}

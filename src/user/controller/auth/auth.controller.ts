@@ -1,13 +1,12 @@
 import { Post, Body, Controller, Get, UseGuards, Redirect, Res, Req, NotFoundException } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { JwtRefreshTokenGuard } from "../../../guards/jwt-refresh-token.guard"
-import { GetUser } from "../../decorator/get-user.decorator"
+import { GetUsername } from "../../decorator/get-username.decorator"
 import { RefreshTokenDto } from "../../dto/refresh-token.dto"
 import { User } from "../../entity/user.entity"
 import { JwtPayload } from "../../interface/jwt-payload.interface"
 import { AuthService } from "../../service/auth.service"
 import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
-import { GetProfile } from "../../decorator/get-profile.decorator"
 import { Profile } from "passport-42"
 import { Response, Request } from "express"
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
@@ -27,21 +26,18 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('/api/')
-    async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile() profile: Profile): Promise<any> {
-        const userExist = await this.authService.userExists(profile.username);
+    @Redirect('/')
+    async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetUsername() username): Promise<any> {
+        const userExist = await this.authService.userExists(username);
         let payload;
         if (userExist)
-            payload = (await this.authService.signIn(profile));
+            payload = (await this.authService.signIn(username));
         else
-            payload = (await this.authService.signUp(profile));
+            payload = (await this.authService.signUp(username));
         res.cookie('accessToken', payload.accessToken)
         res.cookie('username', payload.user.username)
         // console.log(payload.refreshToken)
-        return {
-            "url": '/api/',
-            "statusCode": 301
-          };
+        return ;
     }
 
     // @ApiBearerAuth()
@@ -50,12 +46,12 @@ export class AuthController {
     async logout(
         @Res({ passthrough: true}) res: Response,
         @Req() req: Request,
-        @GetProfile() profile: Profile
+        @GetUsername() username
     ) {
-        const userExist = await this.authService.userExists(profile.username);
+        const userExist = await this.authService.userExists(username);
         let payload;
         if (userExist)
-            payload = (await this.authService.getTokens(profile.username));
+            payload = (await this.authService.getTokens(username));
         else
             throw new NotFoundException("user not found")
         res.clearCookie('accessToken', payload.accessToken)
@@ -68,10 +64,10 @@ export class AuthController {
     // @UseGuards(JwtRefreshTokenGuard)
     // @Post('/refresh-token')
     // async refreshToken(
-    //     @GetUser() user: User,
+    //     @GetUsername() user: User,
     //     @Body() token: RefreshTokenDto
     // ){
-    //     const user_info = await this.authService.getUserIfRefreshTokenMatches(token.refresh_token, user.username)
+    //     const user_info = await this.authService.GetUsernameIfRefreshTokenMatches(token.refresh_token, user.username)
     //     if (user_info) {
     //         const userInfo = {
     //             username: user_info.username,

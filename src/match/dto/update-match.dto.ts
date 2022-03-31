@@ -10,10 +10,10 @@ export class UpdateMatchDto {
     @ApiProperty()
     @IsNumber()
     @Min(0)
-    score1: number;
+    score1?: number;
 
     @ApiProperty()
     @IsNumber()
     @Min(0)
-    score2: number;
+    score2?: number;
 }
