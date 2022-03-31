@@ -23,7 +23,6 @@ export class WsGuard implements CanActivate {
 		context: ExecutionContext,
 	): boolean | any | Promise<boolean | any> | Observable<boolean | any> {
 
-		console.log("here******")
 		let accessToken;
 		let username;
 		const cookie_string = context.switchToWs().getClient().handshake.headers.cookie

@@ -10,6 +10,7 @@ import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
 import { Profile } from "passport-42"
 import { Response, Request } from "express"
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
+import { GetProfile42 } from "src/user/decorator/get-profile-42.decorator"
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,13 +28,13 @@ export class AuthController {
     @Get('42/return')
     @UseGuards(FtOauthGuard)
     @Redirect('/')
-    async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetUsername() username): Promise<any> {
-        const userExist = await this.authService.userExists(username);
+    async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile42() profile: Profile): Promise<any> {
+        const userExist = await this.authService.userExists(profile.username);
         let payload;
         if (userExist)
-            payload = (await this.authService.signIn(username));
+            payload = (await this.authService.signIn(profile.username));
         else
-            payload = (await this.authService.signUp(username));
+            payload = (await this.authService.signUp(profile));
         res.cookie('accessToken', payload.accessToken)
         res.cookie('username', payload.user.username)
         // console.log(payload.refreshToken)

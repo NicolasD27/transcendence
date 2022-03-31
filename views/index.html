@@ -37,13 +37,14 @@
             </div>
             <div id="invites" class="card-block">
                 <ul>
-                    <li v-for="invite of invites">{{ invite.user1.username }} challenged you !</li>
+                    <li v-for="(invite, index) in invites">invite #{{ index }} : {{ invite.user1.username }} challenged you !</li>
                 </ul>
-                <input type="text" v-model="invite_choosen">
+                <input type="text" v-model="invite_choosen" placeholder="invite # ?">
                 <button @click.prevent="acceptChallenge">Accept</button>
             </div>
         <div id="match">
             <h1>Match</h1>
+            <button @click.prevent="findMatch">Find Match</button>
             <input type="text" v-model="opponent_id">
             <button @click.prevent="challengeUser">Challenge</button>
             

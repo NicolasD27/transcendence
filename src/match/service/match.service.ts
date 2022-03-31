@@ -40,9 +40,6 @@ export class MatchService {
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
-		// match.status = updateMatchDto.status;
-		// match.score1 = updateMatchDto.score1;
-		// match.score2 = updateMatchDto.score2;
         return this.matchsRepository.save(match);
     }
 
@@ -77,6 +74,30 @@ export class MatchService {
 		}
     }
 
+	async matchmaking(username: string, mode: number): Promise<Match> {
+		const user = await this.usersRepository.findOne({ username })
+		if (!user)
+            throw new NotFoundException(`User ${username} not found`);
+		const match = await this.matchsRepository.findOne(
+			{
+				mode: mode,
+				status: MatchStatus.MATCH_MAKING
+			}
+		)
+		if (match) {
+			match.status = MatchStatus.ACTIVE
+			match.user2 = user;
+			return this.matchsRepository.save(match)
+		}
+		else {
+			return this.matchsRepository.save({
+				user1: user,
+				mode: mode,
+				status: MatchStatus.MATCH_MAKING
+			})
+		}
+	}
+
 	async updatePositionMatch(match_id: number) {
 		const match = await this.matchsRepository.findOne(match_id)
 		console.log("update position of ", match.id)
@@ -89,11 +110,11 @@ export class MatchService {
 			match.by = match.by + match.bvy
 			if (match.bx <= RACKET_THICKNESS && (match.y1 + RACKET_HEIGHT > match.by && match.y1 < match.by))
 				this.reboundBall(match, "left")
-			else if (match.bx >= GAME_LENGTH - RACKET_THICKNESS && (match.y2 + RACKET_HEIGHT > match.by && match.y2 < match.by))
+			else if (match.bx + BALL_RADIUS >= GAME_LENGTH - RACKET_THICKNESS && (match.y2 + RACKET_HEIGHT > match.by && match.y2 < match.by))
 				this.reboundBall(match, "right")
 			else if (match.bx < 0)
 				this.resetBall(match, "right")
-			else if (match.bx >= GAME_LENGTH)
+			else if (match.bx + BALL_RADIUS >= GAME_LENGTH)
 				this.resetBall(match, "left")
 			if (match.by <= 0) {
 				if (match.by != 0)
@@ -126,18 +147,20 @@ export class MatchService {
 	}
 
 	private reboundBall(match: Match, side: string): Match {
-		match.bvx = - match.bvx
-		if (match.bx < RACKET_THICKNESS)
-			match.bx = 2 * RACKET_THICKNESS - match.bx
-		else if (match.bx + BALL_RADIUS > GAME_LENGTH - RACKET_THICKNESS)
-		match.bx = 2 * RACKET_THICKNESS - match.bx - BALL_RADIUS
+		match.bvx = - match.bvx * ACCELERATION
+		if (match.bx <= RACKET_THICKNESS)
+			match.bx = RACKET_THICKNESS
+			// match.bx = 2 * RACKET_THICKNESS - match.bx
+		else if (match.bx + BALL_RADIUS >= GAME_LENGTH - RACKET_THICKNESS)
+			match.bx = GAME_LENGTH - RACKET_THICKNESS - BALL_RADIUS
+			// match.bx = 2 * GAME_LENGTH + RACKET_THICKNESS - match.bx - BALL_RADIUS
 		if (side == "left")
 		{
 			match.bvy = BALL_VY * ((match.by - match.y1) * 2  - RACKET_HEIGHT) / RACKET_HEIGHT;
 		}
 		else
 		{
-			match.bvy = -BALL_VY * ((match.by - match.y2) * 2 - RACKET_HEIGHT) / RACKET_HEIGHT;
+			match.bvy = BALL_VY * ((match.by - match.y2) * 2 - RACKET_HEIGHT) / RACKET_HEIGHT;
 		}
 		return match
 	}

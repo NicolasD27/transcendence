@@ -37,8 +37,22 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		setInterval(async () => {
 			match = await this.matchService.updatePositionMatch(match.id);
 			this.socket.to("match#" + match.id).emit('update_to_client', match)
-		}, 100) 
+		}, 30) 
 		
+	}
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('find_match')						// this runs the function when the event msg_to_server is triggered
+	async findMatch(socket: Socket, data: { author: string}) {
+		let match = await this.matchService.matchmaking(data.author, CustomModes.NORMAL );
+		socket.join("match#" + match.id);
+		if (match.status == MatchStatus.ACTIVE) {
+			this.socket.to("match#" + match.id).emit('launch_match', match)	
+			setInterval(async () => {
+				match = await this.matchService.updatePositionMatch(match.id);
+				this.socket.to("match#" + match.id).emit('update_to_client', match)
+			}, 100) 	
+		}
 	}
 
 	@UseGuards(WsGuard)
@@ -55,10 +69,14 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('accept_challenge')						// this runs the function when the event msg_to_server is triggered
 	async acceptMatchInvite(socket: Socket, data: { match_id: string, author: string}) {
 		const user = await this.userService.findByUsername(data.author);
-		const match = await this.matchService.updateMatch(data.author, data.match_id, {status: MatchStatus.ACTIVE});
+		let match = await this.matchService.updateMatch(data.author, data.match_id, {status: MatchStatus.ACTIVE});
 		socket.join("match#" + match.id);
 		
-		this.socket.to("match#" + match.id).emit('launch_match', match)		
+		this.socket.to("match#" + match.id).emit('launch_match', match)	
+		setInterval(async () => {
+			match = await this.matchService.updatePositionMatch(match.id);
+			this.socket.to("match#" + match.id).emit('update_to_client', match)
+		}, 100) 	
 	}
 
 

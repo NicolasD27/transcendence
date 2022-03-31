@@ -25,7 +25,7 @@ export class AuthService {
             avatar: profile._json.image_url
         })
         await this.usersRepository.save(user);
-        return this.signIn(profile);
+        return this.signIn(profile.username);
         
     }
 

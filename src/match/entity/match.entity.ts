@@ -4,6 +4,7 @@ import { BALL_VX, BALL_VY, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP } from '../match
 
 export enum MatchStatus {
     INVITE_SEND,
+    MATCH_MAKING,
     ACTIVE,
     FINISHED
 }
