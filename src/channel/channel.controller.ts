@@ -27,6 +27,13 @@ export class ChannelController {
 	}
 
 	// @UseGuards(AuthenticatedGuard)
+	@Get(':id/users')
+	async getChannelUsers(@Param() id: string)
+	{
+		return this.channelService.getChannelUsers(id);
+	}
+
+	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/messages')
 	async getMessages(@Param() id: string) : Promise<Msg[]> {
 

@@ -23,7 +23,6 @@ export class ChatService {
 		return newMsg;
 	}
 
-	// async 
 	async getAllMessages(): Promise<Msg[]> {
 		// return this.msgRepo.find({ relations: ['user'],});
 		return this.msgRepo.find();

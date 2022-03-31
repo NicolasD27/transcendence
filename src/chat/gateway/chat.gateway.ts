@@ -38,24 +38,16 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.socket.emit('msg_to_client', message);	// emit an event to every clients listening on msg_to_client
 	}
 
-	// @UseGuards(WsGuard)
-	// @SubscribeMessage('connect_to_channel')
-	// async connectToMatch(socket: Socket, data: { opponent_id: string, author: string}) {
-	// 	console.log(socket.rooms)
-	// 	const user = await this.userService.findByUsername(data.author);
-	// 	let match: Match = await this.matchService.createMatch(
-	// 		{
-	// 			user1_id: user.id.toString(),
-	// 			user2_id: data.opponent_id,
-	// 			mode: CustomModes.NORMAL 
-	// 		});
-	// 	socket.join("match#" + match.id);
-	// 	setInterval(async () => {
-	// 		match = await this.matchService.updatePositionMatch(match.id);
-	// 		this.socket.to("match#" + match.id).emit('update_to_client', match)
-	// 	}, 300) 
-		
-	// }
+	@UseGuards(WsGuard)
+	@SubscribeMessage('connect_to_channel')
+	async connectToChannel(socket: Socket) {
+		console.log(socket.rooms)
+		socket.join("channel#" + socket.rooms);
+		// setInterval(async () => {
+		// 	match = await this.matchService.updatePositionMatch(match.id);
+		// 	this.socket.to("match#" + match.id).emit('update_to_client', match)
+		// }, 300) 
+	}
 
 	afterInit(server: Server) {
 		this.logger.log('Init');

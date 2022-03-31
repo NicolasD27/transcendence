@@ -32,7 +32,7 @@ const app = new Vue({
 	},
 	methods: {
 		connectToChannel() {
-			this.room = 'a';
+			this.room = '1';
 			this.socket.emit('connect_to_channel', {room: this.room})
 		},
 		sendMessage() {
@@ -53,7 +53,7 @@ const app = new Vue({
 			return true;
 		},
 		async getPreviousMessages() {
-			let msgs = await (await fetch('http:// localhost:3000/api/channels/1')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://localhost:3000/api/channels/1/messages')).json();	// chat/id of the channel
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
