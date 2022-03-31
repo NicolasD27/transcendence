@@ -38,6 +38,7 @@ const app = new Vue({
 		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
+					activeChannelId: 3,
 					content: this.content,
 					author: this.author
 				}
@@ -80,7 +81,6 @@ const app = new Vue({
 	created() {
 		console.log("here", document.cookie.split('=')[1])
 		this.socket = io.connect('http://localhost:3000', this.socketOptions);
-		this.socket.emit('connect_to_match', {room: 'a'})
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message)
 		});
@@ -93,3 +93,4 @@ const app = new Vue({
 });
 
 app.getPreviousMessages();
+

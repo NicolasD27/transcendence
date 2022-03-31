@@ -9,5 +9,5 @@ export class CreateMsgDto {
 	readonly content: string;
 
 	@IsNumber()
-	readonly author: number;
+	readonly authorId: number;
 }

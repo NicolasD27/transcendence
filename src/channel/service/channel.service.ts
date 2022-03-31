@@ -112,7 +112,7 @@ export class ChannelService {
 		msg.forEach((message) => {
 			arrayMsgDto.push({
 				content: message.content,
-				author: message.id
+				authorId: message.user.id
 			});
 		})
 		// return await this.msgRepo.query('SELECT user, content FROM msg WHERE "channelId" IS NULL;');

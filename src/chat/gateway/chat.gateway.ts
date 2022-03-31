@@ -31,22 +31,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
-	async handleMessage(@MessageBody() createMsgDto: CreateMsgDto, @GetUser() author: string) {
+	async handleMessage(socket: Socket, data: { activeChannelId: string, author: string, content: string }) {
 
-		const message = await this.chatService.saveMsg(createMsgDto.content, author);
+		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, data.author);
 		
-		this.socket.emit('msg_to_client', message);	// emit an event to every clients listening on msg_to_client
+		this.socket.to("channel#" + data.activeChannelId).emit('update_to_client', message)
 	}
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: Socket) {
-		console.log(socket.rooms)
-		socket.join("channel#" + socket.rooms);
-		// setInterval(async () => {
-		// 	match = await this.matchService.updatePositionMatch(match.id);
-		// 	this.socket.to("match#" + match.id).emit('update_to_client', match)
-		// }, 300) 
+	async connectToChannel(socket: Socket, data: { channelId: string }) {
+		socket.join("channel#" + data.channelId);
 	}
 
 	afterInit(server: Server) {
