@@ -4,9 +4,8 @@ import { CreateChannelDto } from "./dto/create-channel.dto";
 import { ChannelService } from "./service/channel.service";
 import { Request } from "express";	// ? without this we can't access cookies
 import { ApiTags } from "@nestjs/swagger";
-import { Channel } from "./entity/channel.entity";
 import { Msg } from "src/chat/entity/msg.entity";
-import { string } from "joi";
+import { GetUser } from "src/user/decorator/get-user.decorator";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -22,20 +21,27 @@ export class ChannelController {
 
 	// @UseGuards(AuthenticatedGuard)
 	@Get(':id')
-	async findOne(@Param() id: string) {
+	async findOne(@Param('id') id: string) {
 		return this.channelService.findOne(id);
 	}
 
 	// @UseGuards(AuthenticatedGuard)
+	@Get(':id/join')
+	async join(@GetUser() user, @Param('id') id: string)
+	{
+		return this.channelService.join(user.username, id);
+	}
+
+	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/users')
-	async getChannelUsers(@Param() id: string)
+	async getChannelUsers(@Param('id') id: string)
 	{
 		return this.channelService.getChannelUsers(id);
 	}
 
 	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/messages')
-	async getMessages(@Param() id: string) : Promise<Msg[]> {
+	async getMessages(@Param('id') id: string) : Promise<Msg[]> {
 
 		console.log(`getting Messages on channel ${id}`);
 		// todo : need to check if password has been sent once

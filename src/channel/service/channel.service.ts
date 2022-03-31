@@ -5,6 +5,8 @@ import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { Msg } from 'src/chat/entity/msg.entity';
 import { CreateChannelDto } from '../dto/create-channel.dto';
+import { Participation } from '../entity/participation.entity';
+import { throws } from 'assert';
 
 @Injectable()
 export class ChannelService {
@@ -12,6 +14,9 @@ export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepo: Repository<Channel>,
+
+		@InjectRepository(Participation)
+		private participationRepo: Repository<Participation>,
 
 		@InjectRepository(Msg)
 		private msgRepo: Repository<Msg>,
@@ -29,6 +34,7 @@ export class ChannelService {
 			owner : user,
 		});
 		await this.channelRepo.save(newChannel);
+		this.join(username, newChannel.id.toString());
 		return newChannel;
 	}
 
@@ -45,12 +51,52 @@ export class ChannelService {
 		return myChannel;
 	}
 
-	async getChannelUsers(channelId: string)
+	async join(username: string, channelId: string)
 	{
-		const myChannel = await this.channelRepo.findOne(channelId);
+		const user = await this.userRepo.findOne({ username });
+		if (!user)
+			throw new NotFoundException("username not found");
+		const channel = await this.channelRepo.findOne(channelId);
+		if (!channel)
+			throw new NotFoundException("channel not found");
+
+		const participation = await this.participationRepo.find({
+			where: {
+				user: user.id,
+				channel: channel.id
+			}});
+
+		if (participation)
+			return participation;
+
+		const newParticipation = await this.participationRepo.create({
+			user: user,
+			channel: channel
+		});
+
+		await this.participationRepo.save(newParticipation);
+
+		return newParticipation; 
+	}
+
+	async getChannelUsers(id: string): Promise<User[]>
+	{
+		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException();
-		return await this.userRepo.find({ where: { channels: channelId } });
+		const oui = await this.participationRepo.find({
+            relations: ['user'],
+            where: [
+                { channel: myChannel },
+            ],
+        });
+		const users = [];
+		oui.forEach((participation) => {
+			users.push(participation.user)
+		})
+		return users;
+
+
 	}
 
 	async getMessages(id: string)//: Promise<CreateMsgDto[]>

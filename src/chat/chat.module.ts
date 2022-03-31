@@ -10,10 +10,11 @@ import { AuthService } from 'src/user/service/auth.service';
 import { ChannelController } from 'src/channel/channel.controller';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { Channel } from 'src/channel/entity/channel.entity';
+import { Participation } from 'src/channel/entity/participation.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Msg, User, Channel]),
+		TypeOrmModule.forFeature([Msg, User, Channel, Participation]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {

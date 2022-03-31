@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entity/user.entity";
 import { Msg } from "src/chat/entity/msg.entity";
+import { Participation } from "./participation.entity";
 
 @Entity()
 export class Channel {
@@ -19,6 +20,9 @@ export class Channel {
 
 	@OneToMany(() => Msg, msg => msg.channel)
 	messages: Msg[];
+
+	@OneToMany(() => Participation, participation => participation.channel)
+	participation: Participation[];
 
 	// @Column()
 	// password: string;	// needs to be hashed with salt grains
