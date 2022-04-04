@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Avatar } from '../components/Avatar';
 import mainTitle from '../asset/mainTitle.svg';
 import gameArea from '../asset/gameArea.svg';
 
@@ -21,8 +22,11 @@ const Profil = () => {
 				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
 				<div><button onClick={() => onProfil()} className='ButtonStyle navButton'>Profil</button></div>
 			</div >
-			<img src={gameArea} className='gameArea' />
-			<button onClick={() => onLogout()}>Logout</button>
+			<div className='boxNav'>
+				<img src={gameArea} className='gameArea' />
+				<Avatar />
+				<button onClick={() => onLogout()}>Logout</button>
+			</div>
 		</Fragment>
 	);
 };
