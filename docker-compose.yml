@@ -1,9 +1,9 @@
 version: '3'
-services: 
+services:
   db:
     image: postgres
     restart: always
-    environment: 
+    environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
@@ -11,11 +11,11 @@ services:
     volumes:
       - ./pgdata:/postgresql/data
   nestjs:
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfile
     image: transcendence:latest
-    environment: 
+    environment:
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}
       - POSTGRES_USER=${DB_USER}
@@ -28,27 +28,27 @@ services:
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
-    ports: 
+    ports:
       - "3000:3000" # expose-to-the-world : only-in-the-docker
     container_name: nest-transcendence
-    depends_on: 
+    depends_on:
       - db
-    volumes: 
+    volumes:
       - .:/app
       - /app/node_modules
   pgadmin:
     image: dpage/pgadmin4
     restart: always
     container_name: nest-pgadmin4
-    environment: 
+    environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
       - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
-    ports: 
+    ports:
       - "8080:80"
-    volumes: 
+    volumes:
       - ./pgadmin-data:/pgadmin
-    depends_on: 
+    depends_on:
       - db
 volumes:
   pgdata:

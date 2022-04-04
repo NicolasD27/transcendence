@@ -7,4 +7,4 @@ db:
 jwt:
   secret: 'anyKey'
   refreshSecret: 'noKey'
-  twoFactorAppName: 'transcendence'
+  twoFactorAppName: 'todo-app'

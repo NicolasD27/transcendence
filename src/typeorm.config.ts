@@ -1,23 +1,23 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import * as config from 'config'
 
-const dbConfig = config.get('db')
+
+const host = process.env.DB_HOST
 
 const typeOrmConfig: TypeOrmModuleOptions = {
-    type: process.env.DB_TYPE || dbConfig.type,
-    host: process.env.DB_HOST || dbConfig.host,
-    port: +process.env.DB_PORT || 5432,
-    username: process.env.DB_USERNAME || dbConfig.username,
-    password: process.env.DB_PASSWORD || dbConfig.password,
-    database: process.env.DB_NAME || dbConfig.database,
-    entities: [__dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js'],
-    migrationsRun: false,
+    type: "postgres",
+    host: "postgres-db",
+    port: 5432,
+    username: "postgres",
+    password: "postgres",
+    database: "transcendence",
+    entities: [__dirname + '/Back-end/**/*.entity.ts', __dirname + '/Back-end/**/*.entity.js'],
+    migrationsRun: true,
     logging: true,
     migrationsTableName: "migration",
-    migrations: [__dirname + '/migration/**/*.ts', __dirname + '/migration/**/*.js'],
+    migrations: [__dirname + '/Back-end/migration/**/*.ts', __dirname + '/Back-end/migration/**/*.js'],
     synchronize: true,
     cli: {
-        migrationsDir: 'src/migration'
+        migrationsDir: 'src/Back-end/migration'
     }
 }
 
