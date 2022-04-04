@@ -8,6 +8,8 @@ import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 import { FriendshipModule } from './friendship/friendship.module';
 import { MatchModule } from './match/match.module';
+import { ChannelController } from './channel/channel.controller';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
 	imports: [
@@ -19,8 +21,9 @@ import { MatchModule } from './match/match.module';
 		UserModule,
 		FriendshipModule,
 		ChatModule,
+		ChannelModule,
 		MatchModule
 	],
-	controllers: [AppController]
+	controllers: [AppController, ChannelController]
 })
 export class AppModule {}
