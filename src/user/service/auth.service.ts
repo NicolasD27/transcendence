@@ -25,12 +25,12 @@ export class AuthService {
             avatar: profile._json.image_url
         })
         await this.usersRepository.save(user);
-        return this.signIn(profile);
+        return this.signIn(profile.username);
         
     }
 
-    async signIn(profile: Profile): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
-        const user = await this.usersRepository.findOne( {username: profile.username });
+    async signIn(username: string): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
+        const user = await this.usersRepository.findOne( { username });
         const resp = {
             username: user.username,
             isTwoFactorEnable: user.isTwoFactorEnable,
@@ -126,7 +126,7 @@ export class AuthService {
     //     }
     // }
 
-    // async getUserIfRefreshTokenMatches(refreshToken: string, username: string) {
+    // async GetUsernameIfRefreshTokenMatches(refreshToken: string, username: string) {
     //     const user = await this.usersRepository.findOne({ username })
 
     //     const isRefreshTokenMatching = await bcrypt.compare(
