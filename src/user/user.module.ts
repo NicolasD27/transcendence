@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controller/auth/auth.controller';
-import { UserRepository } from './repository/user.repository';
 import { AuthService } from './service/auth.service';
 import { JwtStrategy } from './strategy/jwt-strategy';
 import { JwtRefreshStrategy } from './strategy/jwt-refresh-strategy';
@@ -17,6 +16,8 @@ import { FtStrategy } from './strategy/ft.strategy';
 import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
+import { User } from './entity/user.entity';
+import { config } from 'process';
 
 // const dbConfig = config.get('jwt')
 
@@ -24,15 +25,15 @@ import { UserService } from './service/user/user.service';
 @Module({
     imports: [
         // PassportModule.register({ defaultStrategy: 'jwt' }),
-        // JwtModule.register({
-        //     secret: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret,
-        //     signOptions: {
-        //         expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME || dbConfig.secret
-        //     }
-        // }),
+        JwtModule.register({
+            secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+            signOptions: {
+                expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME 
+            }
+        }),
         PassportModule.register({}),
-        JwtModule.register({}),
-        TypeOrmModule.forFeature([UserRepository])
+        // JwtModule.register({}),
+        TypeOrmModule.forFeature([User])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController],
     providers: [
@@ -51,7 +52,9 @@ import { UserService } from './service/user/user.service';
         JwtStrategy,
         JwtRefreshStrategy,
         PassportModule,
-        JwtTwoFaStrategy
+        JwtTwoFaStrategy,
+		UserService,
+		TypeOrmModule
     ]
 })
 export class UserModule {}
