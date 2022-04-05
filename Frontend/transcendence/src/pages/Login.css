@@ -1,3 +1,8 @@
+#bloc {
+	width: 1300px;
+	margin: auto
+}
+
 .boxNav {
 	display: flex;
 	flex-direction: row;
@@ -7,6 +12,7 @@
 	gap: 20px;
 	width: 100%;
 	height: 94px;
+	border: 1px solid blue
 }
 
 .titleNav {
@@ -46,12 +52,31 @@
 	box-shadow: 2px 1000px 1px transparent inset;
 }
 
+section {
+	border: 1px solid rgb(111, 226, 17);
+	display: flex;
+	justify-content: space-between;
+	margin-top: 90px;
+	width: 100%;
+	height: 500px;
+	padding-bottom: -50px;
+	margin-bottom: 20px;
+}
+
 .gameArea {
-	width: 66%;
-	padding-top: 52%;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-right: -50%;
-	transform: translate(-50%, -77%);
+	position: relative;
+	width: 65%;
+	height: 90%;
+	background:
+		linear-gradient(black, black) padding-box,
+		linear-gradient(to right, #C0F4FE, #E11515) border-box;
+	border-radius: 24px;
+	border: 4px solid transparent;
+}
+
+.chatArea{
+	width: 30%;
+	height: 90%;
+	border: 4px solid #E11515;
+	border-radius: 25px;
 }
