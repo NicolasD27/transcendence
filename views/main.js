@@ -17,7 +17,7 @@ const app = new Vue({
 		messages: [],
 		opponent_id: 2,
 		match: {},
-		room: '',
+		channelId: '',
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -32,13 +32,13 @@ const app = new Vue({
 	},
 	methods: {
 		connectToChannel() {
-			this.room = '1';
-			this.socket.emit('connect_to_channel', {room: this.room})
+			this.channelId = 1;
+			this.socket.emit('connect_to_channel', {channelId: this.channelId})
 		},
 		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
-					activeChannelId: 3,
+					activeChannelId: 1,
 					content: this.content,
 					author: this.author
 				}
@@ -54,14 +54,12 @@ const app = new Vue({
 			return true;
 		},
 		async getPreviousMessages() {
-			let msgs = await (await fetch('http://localhost:3000/api/channels/1/messages')).json();	// chat/id of the channel
+			let msgs = await (await fetch('http://localhost:3000/api/channels/1/messages')).json();
 			for (let i = 0; i < msgs.length; ++i) {
 				this.receivedMessage(msgs[i]);
 			}
 		},
-		// async findMatch() {
-		// 	const match = await (await fetch('http://e2r10p7:3000/api/matchs/matchmaking')).json();
-		// },
+
 		connectToMatch() {
 			// this.room = 'a';
 			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id})
@@ -92,5 +90,6 @@ const app = new Vue({
 	}
 });
 
+app.connectToChannel();
 app.getPreviousMessages();
 

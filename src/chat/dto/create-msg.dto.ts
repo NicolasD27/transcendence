@@ -10,4 +10,6 @@ export class CreateMsgDto {
 
 	@IsNumber()
 	readonly authorId: number;
+
+	readonly date: Date;
 }
