@@ -19,14 +19,15 @@ export class MatchService {
 	) {}
 
 	async findAll(): Promise<MatchDto[]> {
-        return this.matchsRepository.find();
+        return this.matchsRepository.find()
+			.then(items => items.map(e=> Match.toDto(e)));
     }
 
     async findOne(id: string): Promise<MatchDto> {
         const match = await this.matchsRepository.findOne(id);
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
-        return match;
+        return Match.toDto(match);
     }
 
     
@@ -40,12 +41,13 @@ export class MatchService {
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
-        return this.matchsRepository.save(match);
+        this.matchsRepository.save(match);
+		return Match.toDto(match)
     }
 
     async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
-		// if (createMatchDto.user1_id == createMatchDto.user2_id)
-		// 	throw new BadRequestException("Cannot self match")
+		if (createMatchDto.user1_id == createMatchDto.user2_id)
+			throw new BadRequestException("Cannot self match")
 		const user1 = await this.usersRepository.findOne(createMatchDto.user1_id)
 		if (!user1)
             throw new NotFoundException(`User #${createMatchDto.user1_id} not found`);
@@ -62,7 +64,7 @@ export class MatchService {
 		)
 		console.log("match : ", match)
 		if (match) 
-			return this.matchsRepository.save(match);
+			this.matchsRepository.save(match);
 		else
 		{
 			console.log("creating match...")

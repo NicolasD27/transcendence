@@ -1,6 +1,8 @@
+import { instanceToPlain, plainToInstance } from "class-transformer";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Msg } from "../../chat/entity/msg.entity";
+import { Msg } from "../../message/entity/msg.entity";
 import { User } from "../../user/entity/user.entity";
+import { ChannelDto } from "../dto/channel.dto";
 
 @Entity()
 export class Channel extends BaseEntity {
@@ -25,4 +27,8 @@ export class Channel extends BaseEntity {
 
 	// @Column()
 	// public privacy: number;
+
+	static toDto(channel: Channel) {
+		return plainToInstance(ChannelDto, instanceToPlain(channel), { excludeExtraneousValues: true })
+	}
 }

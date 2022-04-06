@@ -9,7 +9,7 @@ import { MessageBody,
 	ConnectedSocket } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { CreateMsgDto } from '../dto/create-msg.dto';
-import { ChatService } from '../service/chat/chat.service';
+import { ChatService } from '../service/message.service';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { GetUsername } from '../decorator/get-username.decorator';

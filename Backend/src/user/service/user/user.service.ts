@@ -9,10 +9,8 @@ import { User } from '../../entity/user.entity';
 @Injectable()
 export class UserService {
     constructor(
-        // @InjectRepository(User)
 		@InjectRepository(User)
         private usersRepository: Repository<User>) {}
-		// Repository<User>) {}
 
 
     async findAll(): Promise<UserDto[]> {
@@ -25,14 +23,14 @@ export class UserService {
         const user = await this.usersRepository.findOne(id);
         if (!user)
             throw new NotFoundException(`User #${id} not found`);
-        return user;
+        return User.toDto(user);
     }
 
     async findByUsername(username: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne({ username });
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
-        return user;
+        return User.toDto(user);
     }
 
     async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
@@ -45,7 +43,8 @@ export class UserService {
             throw new NotFoundException(`User #${id} not found`);
         if (user.username != current_username)
             throw new UnauthorizedException();
-        return this.usersRepository.save(user);
+        this.usersRepository.save(user);
+        return User.toDto(user)
     }
 
     //just for dev

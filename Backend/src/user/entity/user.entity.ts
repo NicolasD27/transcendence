@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Friendship } from "../../friendship/entity/friendship.entity";
-import { Msg } from "../../chat/entity/msg.entity";
+import { Msg } from "../../message/entity/msg.entity";
 import { Match } from "../../match/entity/match.entity";
 import { Channel } from "../../channel/entity/channel.entity";
 import { UserDto } from "../dto/user.dto";

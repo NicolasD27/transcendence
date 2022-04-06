@@ -4,7 +4,7 @@ import { ChannelService } from "../service/channel.service";
 import { Request } from "express";	// ? without this we can't access cookies
 import { ApiTags } from "@nestjs/swagger";
 import { Channel } from "../entity/channel.entity";
-import { Msg } from "../../chat/entity/msg.entity";
+import { Msg } from "../../message/entity/msg.entity";
 import { ChannelDto } from "../dto/channel.dto";
 
 @ApiTags('Channels')

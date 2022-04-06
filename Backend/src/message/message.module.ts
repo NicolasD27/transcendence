@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ChatService } from './service/chat/chat.service';
+import { ChatService } from './service/message.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Msg } from './entity/msg.entity';
-import { ChatGateway } from './gateway/chat.gateway'
+import { ChatGateway } from './gateway/message.gateway'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { User } from '../user/entity/user.entity';
 import { ChannelController } from '../channel/controller/channel.controller';

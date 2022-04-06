@@ -21,12 +21,12 @@ export class FriendshipService {
         if (!user)
             throw new NotFoundException(`user #${user_id} not found`)
         return this.friendshipsRepository.find({
-            relations: ['follower', 'following'],
             where: [
                 { follower: user },
                 { following: user },
             ],
-        });
+        })
+        .then(items => items.map(e=> Friendship.toDto(e)));;
     }
 
     async create(body: createFriendshipDto): Promise<FriendshipDto> {
@@ -43,10 +43,10 @@ export class FriendshipService {
         })
         if (friendship)
             throw new BadRequestException("Frienship already exist");
-        return this.friendshipsRepository.save({
+        return Friendship.toDto(await this.friendshipsRepository.save({
             follower: follower,
             following: following,
-        });
+        }));
     }
 
     async update(username: string, id: string, newStatus: number): Promise<FriendshipDto> {
@@ -57,7 +57,7 @@ export class FriendshipService {
         if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_2 || friendship.status == FriendshipStatus.BLOCKED_BY_2)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_1 || friendship.status == FriendshipStatus.BLOCKED_BY_1)))
             throw new UnauthorizedException("you can't do that !");
         friendship.status = newStatus;
-        return this.friendshipsRepository.save(friendship);
+        return Friendship.toDto(await  this.friendshipsRepository.save(friendship));
 
     }
 
@@ -68,7 +68,7 @@ export class FriendshipService {
             throw new NotFoundException(`Friendship #${id} not found`);
         if (friendship.status != 0 || (username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
-        return this.friendshipsRepository.remove(friendship);
+        return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
 
     }
 
