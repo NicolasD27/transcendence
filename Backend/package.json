@@ -24,7 +24,7 @@
 		"typeorm:generate": "npm run typeorm migration:generate -- -n",
 		"typeorm:run": "npm run typeorm migration:run",
 		"typeorm:revert": "npm run typeorm migration:revert"
-	},
+	},		
 	"dependencies": {
 		"@nestjs/cli": "^8.2.4",
 		"@nestjs/class-validator": "^0.13.4",
@@ -61,7 +61,7 @@
 		"rxjs": "^7.2.0",
 		"swagger-ui-express": "^4.3.0",
 		"typeorm": "^0.2.45"
-	},
+	},		
 	"devDependencies": {
 		"@nestjs/schematics": "^8.0.0",
 		"@nestjs/testing": "^8.0.0",
@@ -104,4 +104,5 @@
 		"coverageDirectory": "../coverage",
 		"testEnvironment": "node"
 	}
+	
 }

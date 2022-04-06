@@ -29,20 +29,20 @@ services:
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
     ports: 
-      - "3000:3000" # expose-to-the-world : only-in-the-docker
+      - "8000:8000" # expose-to-the-world : only-in-the-docker
     container_name: backend-transcendence
     depends_on: 
       - db
     volumes: 
       - ./Backend:/app
-      # - /app/node_modules
+      - /app/node_modules
   frontend:
     build:
       context: ./Frontend
       dockerfile: ./Dockerfile
     image: frontend:latest
     ports:
-      - "8000:8000"
+      - "3000:3000"
     container_name: frontend-transcendence
     volumes:
       - ./Frontend:/app

@@ -5,10 +5,10 @@ import { Msg } from './entity/msg.entity';
 import { ChatGateway } from './gateway/chat.gateway'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { User } from '../user/entity/user.entity';
-import { Channel } from 'diagnostics_channel';
 import { ChannelController } from '../channel/channel.controller';
 import { AuthService } from '../user/service/auth.service';
 import { ChannelService } from '../channel/service/channel.service';
+import { Channel } from '../channel/entity/channel.entity';
 
 @Module({
 	imports: [

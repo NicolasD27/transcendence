@@ -12,7 +12,7 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
 
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)
-	const port = +process.env.APP_PORT || 3000
+	const port = +process.env.APP_PORT || 8000
 	app.useGlobalFilters(new HttpExceptionFilter);
 	app.setGlobalPrefix('api')
 	app.use(cookieParser());

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
 import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
-import { channel } from 'diagnostics_channel';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../chat/entity/msg.entity';
 

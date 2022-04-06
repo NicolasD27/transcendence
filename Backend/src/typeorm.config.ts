@@ -12,11 +12,11 @@ const typeOrmConfig: TypeOrmModuleOptions = {
     username: process.env.DB_USERNAME || dbConfig.username,
     password: process.env.DB_PASSWORD || dbConfig.password,
     database: process.env.DB_NAME || dbConfig.database,
-    entities: ['/app/src/*/entity/*.ts', '/app/src/*/entity/*.js'],
+    entities: [join(__dirname, '**', '*.entity.{ts,js}')],
     migrationsRun: false,
     logging: true,
     migrationsTableName: "migration",
-    // migrations: [join(__dirname, '../migration/*.ts'), join(__dirname, '../migration/*.js')],
+    migrations: [join(__dirname, '**', '*.entity.{ts,js}')],
     synchronize: true,
     autoLoadEntities: false,
     cli: {

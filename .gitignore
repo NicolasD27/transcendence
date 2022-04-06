@@ -7,7 +7,7 @@
 /pgdata
 
 # migration folder
-./src/migration/*.ts
+./Backend/src/migration/*.ts
 
 # keep the migration folder
 !./src/migration/.gitkeep
