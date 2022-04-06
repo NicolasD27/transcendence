@@ -10,11 +10,11 @@ services:
     container_name: postgres-db
     volumes:
       - ./pgdata:/postgresql/data
-  nestjs:
+  backend:
     build: 
-      context: .
+      context: ./Backend
       dockerfile: ./Dockerfile
-    image: transcendence:latest
+    image: backend:latest
     environment: 
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}
@@ -29,13 +29,23 @@ services:
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
     ports: 
-      - "3000:3000" # expose-to-the-world : only-in-the-docker
-    container_name: nest-transcendence
+      - "8000:8000" # expose-to-the-world : only-in-the-docker
+    container_name: backend-transcendence
     depends_on: 
       - db
     volumes: 
-      - .:/app
+      - ./Backend:/app
       - /app/node_modules
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: ./Dockerfile
+    image: frontend:latest
+    ports:
+      - "3000:3000"
+    container_name: frontend-transcendence
+    volumes:
+      - ./Frontend:/app
   pgadmin:
     image: dpage/pgadmin4
     restart: always
