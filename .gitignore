@@ -1,13 +1,13 @@
 # compiled output
-/dist
-/node_modules
+*/dist
+*/node_modules
 
 # postgres storage
 /pgadmin-data
 /pgdata
 
 # migration folder
-./src/migration/*.ts
+./Backend/src/migration/*.ts
 
 # keep the migration folder
 !./src/migration/.gitkeep
