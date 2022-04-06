@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../chat/entity/msg.entity';
+import { ChannelDto } from '../dto/channel.dto';
 
 @Injectable()
 export class ChannelService {
@@ -32,7 +33,7 @@ export class ChannelService {
 		return newChannel;
 	}
 
-	async findOne(channelId: number): Promise<Channel> {
+	async findOne(channelId: number): Promise<ChannelDto> {
 		const myChannel = await this.channelRepo.findOne({ where: { id: channelId } });
 		if (!myChannel)
 			throw new NotFoundException();

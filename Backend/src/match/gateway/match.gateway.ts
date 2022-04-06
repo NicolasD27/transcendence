@@ -12,6 +12,8 @@ import { WsGuard } from '../../guards/websocket.guard';
 import { UserService } from '../../user/service/user/user.service';
 import { CustomModes, Match, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
+import Player  from '../interface/player.interface'
+import Ball from '../interface/ball.interface';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -23,7 +25,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	constructor(
 		private readonly matchService: MatchService,
-		private readonly userService: UserService
+		private readonly userService: UserService,
+		
 	) {}
 
 	@UseGuards(WsGuard)
@@ -47,12 +50,34 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		socket.join("match#" + match.id);
 		if (match.status == MatchStatus.ACTIVE) {
 			this.socket.to("match#" + match.id).emit('launch_match', match)	
-			setInterval(async () => {
-				match = await this.matchService.updatePositionMatch(match.id);
-				this.socket.to("match#" + match.id).emit('update_to_client', match)
-			}, 100) 	
+			
 		}
 	}
+	@UseGuards(WsGuard)
+	@SubscribeMessage('sendUpdateMatch')
+	updateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+		this.socket.to("match#" + data.match_id).emit('updateMatch', data);
+	}
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('askForUpdate')
+	askForUpdate(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+		this.socket.to("match#" + data.match_id).emit('askUpdateMatch');
+	}
+
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('slaveKeyPressed')
+	slaveKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
+		this.socket.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
+	}
+
+	@UseGuards(WsGuard)
+	@SubscribeMessage('masterKeyPressed')
+	masterKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
+		this.socket.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data);
+	}
+
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('challenge_user')						// this runs the function when the event msg_to_server is triggered
@@ -79,14 +104,14 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 
-	@UseGuards(WsGuard)
-	@SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
-	async updateMatch(socket: Socket, data: { match_id: string, command: string, author: string}) {
-		console.log(data)
-		const match = await this.matchService.updatePositionCurrentMatch(data.match_id, data.author, data.command);
-		this.socket.to("match#" + data.match_id).emit('update_to_client', match)
+	// @UseGuards(WsGuard)
+	// @SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
+	// async updateMatch(socket: Socket, data: { match_id: string, command: string, author: string}) {
+	// 	console.log(data)
+	// 	const match = await this.matchService.updatePositionCurrentMatch(data.match_id, data.author, data.command);
+	// 	this.socket.to("match#" + data.match_id).emit('update_to_client', match)
 		
-	}
+	// }
 
 
 	afterInit(server: Server) {
@@ -104,7 +129,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 	}
 
-	handleDisconnect(client: Socket) {
+	handleDisconnect(client: Socket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
+		console.log(args)
+		// this.socket.to("match#" + data.match_id).emit('playerDisconnect');
 	}
 }

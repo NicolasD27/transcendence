@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNumber, IsString } from "class-validator";
+import { IsEnum, IsString } from "class-validator";
 import { CustomModes, MatchStatus } from "../entity/match.entity";
 
 export class CreateMatchDto {

@@ -15,6 +15,7 @@ services:
       context: ./Backend
       dockerfile: ./Dockerfile
     image: backend:latest
+    restart: always
     environment: 
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}
@@ -41,6 +42,7 @@ services:
       context: ./Frontend
       dockerfile: ./Dockerfile
     image: frontend:latest
+    restart: always
     ports:
       - "3000:3000"
     container_name: frontend-transcendence

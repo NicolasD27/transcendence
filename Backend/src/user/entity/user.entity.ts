@@ -1,12 +1,12 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
-import * as bcrypt from "bcrypt"
-import { Exclude } from "class-transformer";
 import { Friendship } from "../../friendship/entity/friendship.entity";
 import { Msg } from "../../chat/entity/msg.entity";
 import { Match } from "../../match/entity/match.entity";
 import { Channel } from "../../channel/entity/channel.entity";
+import { UserDto } from "../dto/user.dto";
+import { instanceToPlain, plainToInstance } from "class-transformer";
 
-export enum Status {
+export enum UserStatus {
 	OFFLINE,
 	ONLINE,
 	SEARCHING,
@@ -24,16 +24,6 @@ export class User extends BaseEntity {
 	@Column({ type: "varchar" })
 	username: string
 
-	// @Column({ type: "varchar" })
-	// password: string
-
-	// @Column()
-	// salt: string
-
-	// @Column({ nullable: true })
-	// @Exclude()
-	// public hashedRefreshToken?: string
-
 	@Column({ nullable: true })
 	twoFactorAuthSecret?: string
 
@@ -43,7 +33,7 @@ export class User extends BaseEntity {
 	@Column({ nullable: true })
 	avatar: string
 
-	@Column({ default: Status.ONLINE })
+	@Column({ default: UserStatus.ONLINE })
 	status: number
 
 	@OneToMany(() => Friendship, friendship => friendship.follower)
@@ -64,7 +54,7 @@ export class User extends BaseEntity {
 	@OneToMany(() => Match, match => match.user2)
 	matchs2: Match[];
 
-	// async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
-	//	 return await bcrypt.compare(password, hashedPassword).then(result => result)
-	// }
+	static toDto(user: User) {
+		return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+	}
 }

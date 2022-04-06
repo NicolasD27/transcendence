@@ -3,7 +3,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Channel } from "./entity/channel.entity";
 import { ChannelService } from "./service/channel.service";
-import { ChannelController } from "./channel.controller";
+import { ChannelController } from "./controller/channel.controller";
 import { User } from "../user/entity/user.entity";
 import { Msg } from "../chat/entity/msg.entity";
 import { AuthService } from "../user/service/auth.service";

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
+import { MatchDto } from '../dto/match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match, MatchStatus } from '../entity/match.entity';
 import { ACCELERATION, BALL_VY, RACKET_HEIGHT, RACKET_THICKNESS, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP, BALL_VX, BALL_RADIUS, RACKET_MOV } from '../match.constants';
@@ -17,11 +18,11 @@ export class MatchService {
 		private usersRepository: Repository<User>,
 	) {}
 
-	async findAll(): Promise<Match[]> {
+	async findAll(): Promise<MatchDto[]> {
         return this.matchsRepository.find();
     }
 
-    async findOne(id: string): Promise<Match> {
+    async findOne(id: string): Promise<MatchDto> {
         const match = await this.matchsRepository.findOne(id);
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
@@ -29,7 +30,7 @@ export class MatchService {
     }
 
     
-    async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<Match> {
+    async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
         
         const match = await this.matchsRepository.preload({
 			id: +id,
@@ -164,7 +165,7 @@ export class MatchService {
 		return match
 	}
 
-	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<Match> {
+	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<MatchDto> {
 	// 	if (assignCurrentMatch.user1_id == assignCurrentMatch.user2_id)
 	// 		throw new BadRequestException("Cannot self match")
 	// 	const user1 = await this.usersRepository.findOne(assignCurrentMatch.user1_id)

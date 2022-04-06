@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { createFriendshipDto } from '../dto/create-friendship.dto';
+import { FriendshipDto } from '../dto/friendship.dto';
 import { updateFriendshipDto } from '../dto/update-friendship.dto';
 import { Friendship, FriendshipStatus } from '../entity/friendship.entity';
 
@@ -15,7 +16,7 @@ export class FriendshipService {
         private  usersRepository: Repository<User>
         ) {}
 
-    async findAllByUser(user_id: string): Promise<Friendship[]> {
+    async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
         const user = await this.usersRepository.findOne(user_id);
         if (!user)
             throw new NotFoundException(`user #${user_id} not found`)
@@ -28,7 +29,7 @@ export class FriendshipService {
         });
     }
 
-    async create(body: createFriendshipDto): Promise<Friendship> {
+    async create(body: createFriendshipDto): Promise<FriendshipDto> {
         const follower = await this.usersRepository.findOne(body.user1_id);
         const following = await this.usersRepository.findOne(body.user2_id);
         if (!follower)
@@ -48,7 +49,7 @@ export class FriendshipService {
         });
     }
 
-    async update(username: string, id: string, newStatus: number): Promise<Friendship> {
+    async update(username: string, id: string, newStatus: number): Promise<FriendshipDto> {
         
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
@@ -61,7 +62,7 @@ export class FriendshipService {
     }
 
     
-    async destroy(username: string, id: string): Promise<Friendship> {
+    async destroy(username: string, id: string): Promise<FriendshipDto> {
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
