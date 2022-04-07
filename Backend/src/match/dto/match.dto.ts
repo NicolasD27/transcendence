@@ -43,4 +43,40 @@ export class MatchDto {
     @Expose()
     @IsEnum(CustomModes)
     mode: CustomModes;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    sleep: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    y1: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    y2: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    bx: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    by: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    bvx: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    bvy: number;
+
 }

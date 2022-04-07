@@ -66,7 +66,7 @@ export class FriendshipService {
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
-        if (friendship.status != 0 || (username != friendship.follower.username && username != friendship.following.username))
+        if ((username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
         return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
 

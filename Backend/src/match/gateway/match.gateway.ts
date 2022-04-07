@@ -14,6 +14,7 @@ import { CustomModes, Match, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 import Player  from '../interface/player.interface'
 import Ball from '../interface/ball.interface';
+import { MatchDto } from '../dto/match.dto';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -33,7 +34,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('connect_to_match')						// this runs the function when the event msg_to_server is triggered
 	async connectToMatch(socket: Socket, data: { opponent_id: string, author: string}) {
 		const user = await this.userService.findByUsername(data.author);
-		let match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
+		let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		this.socket.to("match#" + match.id).emit('update_to_client', match)
 		setInterval(async () => {
@@ -83,7 +84,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('challenge_user')						// this runs the function when the event msg_to_server is triggered
 	async challengeUser(socket: Socket, data: { opponent_id: string, author: string}) {
 		const user = await this.userService.findByUsername(data.author);
-		const match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
+		const match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		console.log("match : ", match)
 		this.socket.to("user#" + data.opponent_id).emit('match_invite_to_client', match)

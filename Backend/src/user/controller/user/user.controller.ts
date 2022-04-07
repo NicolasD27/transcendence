@@ -24,6 +24,13 @@ export class UserController {
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
+    @Get('me')
+    findMe(@GetUsername() username): Promise<UserDto> {
+        return this.userService.findByUsername(username);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
     @Get(':id')
     findOne(@Param('id') id: string): Promise<UserDto> {
         console.log('findOneUser ', id);

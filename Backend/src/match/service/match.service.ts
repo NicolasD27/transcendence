@@ -37,6 +37,7 @@ export class MatchService {
 			id: +id,
 			...updateMatchDto
 		});
+		console.log(current_username, match)
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
@@ -45,7 +46,7 @@ export class MatchService {
 		return Match.toDto(match)
     }
 
-    async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
+    async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
 		if (createMatchDto.user1_id == createMatchDto.user2_id)
 			throw new BadRequestException("Cannot self match")
 		const user1 = await this.usersRepository.findOne(createMatchDto.user1_id)
@@ -54,7 +55,7 @@ export class MatchService {
 		const user2 = await this.usersRepository.findOne(createMatchDto.user2_id)
 		if (!user2)
 			throw new NotFoundException(`User #${createMatchDto.user2_id} not found`);
-		const match = await this.matchsRepository.findOne(
+		let match = await this.matchsRepository.findOne(
 			{
 				user1: user1,
 				user2: user2,
@@ -63,17 +64,18 @@ export class MatchService {
 			}
 		)
 		console.log("match : ", match)
-		if (match) 
+		if (match)
 			this.matchsRepository.save(match);
 		else
 		{
 			console.log("creating match...")
-			return this.matchsRepository.save({
+			match = await this.matchsRepository.save({
 				user1: user1,
 				user2: user2,
 				mode: createMatchDto.mode
 			});
 		}
+		return Match.toDto(match)
     }
 
 	async matchmaking(username: string, mode: number): Promise<Match> {

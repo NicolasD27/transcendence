@@ -36,7 +36,6 @@ services:
       - db
     volumes: 
       - ./Backend:/app
-      - /app/node_modules
   frontend:
     build:
       context: ./Frontend

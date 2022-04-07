@@ -1,4 +1,3 @@
-import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
 import { User } from "../../user/entity/user.entity";
 import { MatchDto } from "../dto/match.dto";
@@ -79,6 +78,13 @@ export class Match {
             score2: match.score2,
             mode: match.mode,
             date: match.date,
+            sleep: match.sleep,
+            y1: match.y1,
+            y2: match.y2,
+            bx: match.bx,
+            by: match.by,
+            bvx: match.bvx,
+            bvy: match.bvy,
         }
         return dto
 	}

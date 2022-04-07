@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, Req,  Session, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Request } from 'express';
+import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
@@ -28,8 +29,8 @@ export class MatchController {
 
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
-    updateMatch(@Param('id') id: string, @Body(ValidationPipe) updateMatchDto: UpdateMatchDto, @Req() req): Promise<MatchDto> {        
-        return this.matchService.updateMatch(req.user.username, id, updateMatchDto);
+    updateMatch(@Param('id') id: string, @Body(ValidationPipe) updateMatchDto: UpdateMatchDto, @GetUsername() username: string): Promise<MatchDto> {        
+        return this.matchService.updateMatch(username, id, updateMatchDto);
     }
 
     @UseGuards(TwoFactorGuard)

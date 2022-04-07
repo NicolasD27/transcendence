@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { User } from "../entity/user.entity";
 
 export const GetUsername = createParamDecorator((data, ctx: ExecutionContext): User => {
@@ -7,6 +7,6 @@ export const GetUsername = createParamDecorator((data, ctx: ExecutionContext): U
         return req.user.username;
     }
     catch {
-        return null;
+        throw new UnauthorizedException()
     }
 })
