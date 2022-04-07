@@ -24,7 +24,15 @@ export class ChannelController {
 	}
 
 	// @UseGuards(AuthenticatedGuard)
-	@Get(':id/join')
+	// @Get(':id/join')
+	// async join(@Req() request: Request, @Param('id') id: string) //@GetUser() user
+	// {
+	// 	// return this.channelService.join(user.username, id);
+	// 	return this.channelService.join(request.cookies.username, id);
+	// }
+
+	// @UseGuards(AuthenticatedGuard)
+	@Post(':id/join')
 	async join(@Req() request: Request, @Param('id') id: string) //@GetUser() user
 	{
 		// return this.channelService.join(user.username, id);

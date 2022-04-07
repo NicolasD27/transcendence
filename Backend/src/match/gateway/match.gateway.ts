@@ -6,7 +6,7 @@ import { MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	 } from '@nestjs/websockets';
+	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { WsGuard } from '../../guards/websocket.guard';
 import { UserService } from '../../user/service/user/user.service';
@@ -17,7 +17,7 @@ import { MatchService } from '../service/match.service';
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer()
-	socket: Server;
+	server: Server;
 
 	private logger: Logger = new Logger('MatchGateway');
 
@@ -32,10 +32,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const user = await this.userService.findByUsername(data.author);
 		let match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
-		this.socket.to("match#" + match.id).emit('update_to_client', match)
+		this.server.to("match#" + match.id).emit('update_to_client', match)
 		setInterval(async () => {
 			match = await this.matchService.updatePositionMatch(match.id);
-			this.socket.to("match#" + match.id).emit('update_to_client', match)
+			this.server.to("match#" + match.id).emit('update_to_client', match)
 		}, 30) 
 		
 	}
@@ -46,10 +46,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		let match = await this.matchService.matchmaking(data.author, CustomModes.NORMAL );
 		socket.join("match#" + match.id);
 		if (match.status == MatchStatus.ACTIVE) {
-			this.socket.to("match#" + match.id).emit('launch_match', match)	
+			this.server.to("match#" + match.id).emit('launch_match', match)	
 			setInterval(async () => {
 				match = await this.matchService.updatePositionMatch(match.id);
-				this.socket.to("match#" + match.id).emit('update_to_client', match)
+				this.server.to("match#" + match.id).emit('update_to_client', match)
 			}, 100) 	
 		}
 	}
@@ -61,7 +61,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const match: Match = await this.matchService.createMatch({user1_id: user.id.toString(), user2_id: data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		console.log("match : ", match)
-		this.socket.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
+		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
 	}
 
 	@UseGuards(WsGuard)
@@ -71,10 +71,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		let match = await this.matchService.updateMatch(data.author, data.match_id, {status: MatchStatus.ACTIVE});
 		socket.join("match#" + match.id);
 		
-		this.socket.to("match#" + match.id).emit('launch_match', match)	
+		this.server.to("match#" + match.id).emit('launch_match', match)	
 		setInterval(async () => {
 			match = await this.matchService.updatePositionMatch(match.id);
-			this.socket.to("match#" + match.id).emit('update_to_client', match)
+			this.server.to("match#" + match.id).emit('update_to_client', match)
 		}, 100) 	
 	}
 
@@ -84,7 +84,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async updateMatch(socket: Socket, data: { match_id: string, command: string, author: string}) {
 		console.log(data)
 		const match = await this.matchService.updatePositionCurrentMatch(data.match_id, data.author, data.command);
-		this.socket.to("match#" + data.match_id).emit('update_to_client', match)
+		this.server.to("match#" + data.match_id).emit('update_to_client', match)
 		
 	}
 
@@ -95,6 +95,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	
 	async handleConnection(socket: Socket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
+		if (!socket.handshake.headers.cookie)
+			return ;
 		const cookies = socket.handshake.headers.cookie.split('; ')
 		if (cookies.find((cookie: string) => cookie.startsWith('username')))
 		{

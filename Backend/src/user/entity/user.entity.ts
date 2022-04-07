@@ -45,7 +45,7 @@ export class User extends BaseEntity {
 	channels: Channel[];
 
 	@OneToMany(() => Participation, participation => participation.user)
-	participation: Participation[];
+	participations: Participation[];
 
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];

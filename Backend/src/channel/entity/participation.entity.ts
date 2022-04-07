@@ -9,10 +9,10 @@ export class Participation {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@ManyToOne(() => User, user => user.participation, { eager: true })
+	@ManyToOne(() => User, user => user.participations, { eager: true })
 	user: User;
 
-    @ManyToOne(() => Channel, channel => channel.participation, { eager: true })
+    @ManyToOne(() => Channel, channel => channel.participations, { eager: true })
 	channel: Channel;
 
 	// @Column()

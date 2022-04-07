@@ -8,6 +8,7 @@ import { CreateMsgDto } from 'src/chat/dto/create-msg.dto';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../chat/entity/msg.entity';
 
+
 @Injectable()
 export class ChannelService {
 
@@ -28,10 +29,21 @@ export class ChannelService {
 	async create(username: string, createChannelDto: CreateChannelDto)
 	{
 		const user = await this.userRepo.findOne({ username });
+
+		// const bcrypt = require ('bcrypt');
+		// const saltRounds = 10;
+
+		// bcrypt.genSalt(saltRounds, function(err, salt) {
+		// 	bcrypt.hash(createChannelDto.password, salt, function(err, hash) {
+		// 		console.log(createChannelDto.password + " => " + hash);
+		// 	});
+		// });
+
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
 			description: createChannelDto.description,
 			owner : user,
+			hashedPassword : createChannelDto.password, 
 		});
 		await this.channelRepo.save(newChannel);
 		this.join(username, newChannel.id.toString());

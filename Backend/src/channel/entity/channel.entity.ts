@@ -15,6 +15,9 @@ export class Channel extends BaseEntity {
 	@Column()
 	public description: string;
 
+	@Column()
+	hashedPassword: string;
+
 	@ManyToOne(() => User, user => user.channels, { eager: true })
 	owner: User;
 
@@ -22,7 +25,7 @@ export class Channel extends BaseEntity {
 	messages: Msg[];
 
 	@OneToMany(() => Participation, participation => participation.channel)
-	participation: Participation[];
+	participations: Participation[];
 
 	// @Column()
 	// password: string;	// needs to be hashed with salt grains
