@@ -41,6 +41,8 @@
                 </ul>
                 <input type="text" v-model="invite_choosen" placeholder="invite # ?">
                 <button @click.prevent="acceptChallenge">Accept</button>
+                <input type="text" v-model="status" placeholder="new status ?">
+                <button @click.prevent="sendStatusUpdate">Send new status</button>
             </div>
         <div id="match">
             <h1>Match</h1>

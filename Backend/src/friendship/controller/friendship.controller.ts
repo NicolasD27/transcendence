@@ -35,7 +35,7 @@ export class FriendshipController {
     @Patch(':id')
     update(@Param('id') id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
         console.log('updateFriendship', id);
-        return this.friendshipService.update(username, id, body.status);
+        return this.friendshipService.update(username, +id, body.status);
     }
 
     //pour supprimer les invitations (status == 0)

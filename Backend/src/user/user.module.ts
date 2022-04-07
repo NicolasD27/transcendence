@@ -18,6 +18,9 @@ import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
 import { User } from './entity/user.entity';
 import { config } from 'process';
+import { UserGateway } from './gateway/user.gateway';
+import { FriendshipService } from 'src/friendship/service/friendship.service';
+import { Friendship } from 'src/friendship/entity/friendship.entity';
 
 // const dbConfig = config.get('jwt')
 
@@ -33,7 +36,7 @@ import { config } from 'process';
         }),
         PassportModule.register({}),
         // JwtModule.register({}),
-        TypeOrmModule.forFeature([User])
+        TypeOrmModule.forFeature([User, Friendship])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController],
     providers: [
@@ -45,7 +48,9 @@ import { config } from 'process';
         JwtRefreshStrategy,
         JwtTwoFaStrategy,
         SessionSerializer,
-        UserService
+        UserService,
+        FriendshipService,
+        UserGateway
     ],
     exports: [
         FtStrategy,

@@ -4,7 +4,7 @@ import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance }
 import { UserDto } from 'src/user/dto/user.dto';
 import { Repository } from 'typeorm';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
-import { User } from '../../entity/user.entity';
+import { User, UserStatus } from '../../entity/user.entity';
 
 @Injectable()
 export class UserService {
@@ -43,6 +43,15 @@ export class UserService {
             throw new NotFoundException(`User #${id} not found`);
         if (user.username != current_username)
             throw new UnauthorizedException();
+        this.usersRepository.save(user);
+        return User.toDto(user)
+    }
+
+    async updateStatusByUsername(newStatus: UserStatus, username: string): Promise<UserDto> {
+        const user = await this.usersRepository.findOne({ username });
+        if (!user)
+            throw new NotFoundException(`User ${username} not found`);
+        user.status = newStatus
         this.usersRepository.save(user);
         return User.toDto(user)
     }

@@ -30,7 +30,8 @@ const app = new Vue({
 		opponent_id: null,
 		invite_choosen: null,
 		invites: [],
-		match: []
+		match: [],
+		status: 1
 	},
 	methods: {
 		connectToChannel() {
@@ -99,11 +100,15 @@ const app = new Vue({
 		receiveUpdateMatch(match) {
 			this.match = match;
 			console.log(this.match);
+		},
+		sendStatusUpdate() {
+			console.log("sending status Update")
+			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
 		}
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://localhost:3000', this.socketOptions);
+		this.socket = io.connect('http://localhost:8000', this.socketOptions);
 		this.socket.emit('connect_to_match', {room: 'a'})
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);

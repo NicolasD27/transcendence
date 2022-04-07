@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserDto } from 'src/user/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { createFriendshipDto } from '../dto/create-friendship.dto';
@@ -29,6 +30,24 @@ export class FriendshipService {
         .then(items => items.map(e=> Friendship.toDto(e)));;
     }
 
+    async findAllActiveFriendsByUser(user_id: number): Promise<UserDto[]> {
+        const user = await this.usersRepository.findOne(user_id);
+        if (!user)
+            throw new NotFoundException(`user #${user_id} not found`)
+        return this.friendshipsRepository.find({
+            where: [
+                { follower: user, status: 1 },
+                { following: user, status: 1 },
+            ],
+        })
+        .then(friendships => friendships.map((frienship) =>  {
+            if (frienship.follower.id == user_id)
+                return User.toDto(frienship.following)
+            else
+                return User.toDto(frienship.follower)
+        }));
+    }
+
     async create(body: createFriendshipDto): Promise<FriendshipDto> {
         const follower = await this.usersRepository.findOne(body.user1_id);
         const following = await this.usersRepository.findOne(body.user2_id);
@@ -49,7 +68,7 @@ export class FriendshipService {
         }));
     }
 
-    async update(username: string, id: string, newStatus: number): Promise<FriendshipDto> {
+    async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
         
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
