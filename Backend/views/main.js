@@ -108,7 +108,7 @@ const app = new Vue({
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);
 		});
-		
+
 		this.socket.on('update_to_client', (match) => {
 			this.receiveUpdateMatch(match);
 		});
@@ -118,8 +118,10 @@ const app = new Vue({
 		this.socket.on('launch_match', (match) => {
 			this.launchMatch(match);
 		});
-		
+
 	}
 });
 
 app.getPreviousMessages();
+
+//here
