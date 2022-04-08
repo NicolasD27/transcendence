@@ -32,7 +32,7 @@
                         <br>
                         <button id="send" class="btn" @click.prevent="sendMessage">Send</button>
                     </div>
-                    
+
                 </div>
             </div>
             <div id="invites" class="card-block">
@@ -47,7 +47,7 @@
             <button @click.prevent="findMatch">Find Match</button>
             <input type="text" v-model="opponent_id">
             <button @click.prevent="challengeUser">Challenge</button>
-            
+
             <ul>
                 <li >{{ match.id }} : {{ match.y1 }}, {{ match.y2 }}, {{ match.bx }}, {{ match.by }}, {{ match.bvx }}, {{ match.bvy }}</li>
             </ul>
@@ -55,19 +55,15 @@
                     <button id="send" class="btn" @click.prevent="connectToMatch">Connect</button>
                 <button id="send" class="btn" @click.prevent="sendUp">Up</button>
                 <button id="send" class="btn" @click.prevent="sendDown">Down</button>
-                    <div id="game_container">
-                        <div class="racket" id="racket1" :style="{'--y1': match.y1 * 2 + '%'}"></div>
-                        <div class="racket" id="racket2" :style="{'--y2': match.y2 * 2 + '%'}"></div>
-                        <div id="ball" :style="{'--bx': match.bx + '%', '--by': match.by * 2 + '%'}"></div>
-                    </div>
                 <!-- </div> -->
-                
-            
+
+
         </div>
     </div>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/addons/p5.sound.js"></script>
-<script src="main.js"></script>
+    <script src="client.js"></script>
+    <script src="main.js"></script>
 <script>
 	let cookies = document.cookie;
 	console.log(cookies);

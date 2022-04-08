@@ -123,5 +123,3 @@ const app = new Vue({
 });
 
 app.getPreviousMessages();
-
-//here

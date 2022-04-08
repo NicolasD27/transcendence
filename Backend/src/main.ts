@@ -24,7 +24,7 @@ async function bootstrap() {
     .setDescription('Trancendence documentation')
     .setVersion('1.0')
     .build()
-    
+
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api', app, document)
 	const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
@@ -36,5 +36,8 @@ async function bootstrap() {
 	app.useStaticAssets(join(__dirname, '..', 'views'));
 
 	await app.listen(port);
+
+	//possibilite de mettre la master clock ici ?
 }
+
 bootstrap();

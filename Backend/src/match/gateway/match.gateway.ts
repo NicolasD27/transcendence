@@ -15,6 +15,8 @@ import { MatchService } from '../service/match.service';
 import Player  from '../interface/player.interface'
 import Ball from '../interface/ball.interface';
 
+var test;
+
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
@@ -26,7 +28,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	constructor(
 		private readonly matchService: MatchService,
 		private readonly userService: UserService,
-		
+
 	) {}
 
 	@UseGuards(WsGuard)
@@ -37,10 +39,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		socket.join("match#" + match.id);
 		this.socket.to("match#" + match.id).emit('update_to_client', match)
 		setInterval(async () => {
-			match = await this.matchService.updatePositionMatch(match.id);
+			//match = await this.matchService.updatePositionMatch(match.id);
 			this.socket.to("match#" + match.id).emit('update_to_client', match)
-		}, 30) 
-		
+		}, 30)
+
 	}
 
 	@UseGuards(WsGuard)
@@ -49,35 +51,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		let match = await this.matchService.matchmaking(data.author, CustomModes.NORMAL );
 		socket.join("match#" + match.id);
 		if (match.status == MatchStatus.ACTIVE) {
-			this.socket.to("match#" + match.id).emit('launch_match', match)	
-			
+			this.socket.to("match#" + match.id).emit('launch_match', match)
+
 		}
 	}
-	@UseGuards(WsGuard)
-	@SubscribeMessage('sendUpdateMatch')
-	updateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
-		this.socket.to("match#" + data.match_id).emit('updateMatch', data);
-	}
-
-	@UseGuards(WsGuard)
-	@SubscribeMessage('askForUpdate')
-	askForUpdate(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
-		this.socket.to("match#" + data.match_id).emit('askUpdateMatch');
-	}
-
-
-	@UseGuards(WsGuard)
-	@SubscribeMessage('slaveKeyPressed')
-	slaveKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
-		this.socket.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
-	}
-
-	@UseGuards(WsGuard)
-	@SubscribeMessage('masterKeyPressed')
-	masterKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
-		this.socket.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data);
-	}
-
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('challenge_user')						// this runs the function when the event msg_to_server is triggered
@@ -95,29 +72,54 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const user = await this.userService.findByUsername(data.author);
 		let match = await this.matchService.updateMatch(data.author, data.match_id, {status: MatchStatus.ACTIVE});
 		socket.join("match#" + match.id);
-		
-		this.socket.to("match#" + match.id).emit('launch_match', match)	
+
+		this.socket.to("match#" + match.id).emit('launch_match', match)
 		setInterval(async () => {
-			match = await this.matchService.updatePositionMatch(match.id);
+			//match = await this.matchService.updatePositionMatch(match.id);
 			this.socket.to("match#" + match.id).emit('update_to_client', match)
-		}, 100) 	
+		}, 100)
 	}
 
 
-	// @UseGuards(WsGuard)
-	// @SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
-	// async updateMatch(socket: Socket, data: { match_id: string, command: string, author: string}) {
-	// 	console.log(data)
-	// 	const match = await this.matchService.updatePositionCurrentMatch(data.match_id, data.author, data.command);
-	// 	this.socket.to("match#" + data.match_id).emit('update_to_client', match)
-		
-	// }
 
+
+	//@UseGuards(WsGuard)		//-> does not work with this enabled (no username)
+	@SubscribeMessage('askConnectionNumber')
+	askConnectionNumber(socket: Socket, data: {match_id}) {
+		this.socket.emit('sendConnectionNb', 1);		//static test, only master
+		//send back the connection number of the client (1, 2, or +)
+		//this.socket.to("match#" + data.match_id).emit('sendConnectionNb', ("match#" + data.match_id).length)	-> should send back room length
+	}
+
+	//@UseGuards(WsGuard)
+	@SubscribeMessage('sendUpdateMatch')
+	updateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+		this.socket.to("match#" + data.match_id).emit('updateMatch', data);						//for everyone
+	}
+
+	//@UseGuards(WsGuard)
+	@SubscribeMessage('slaveKeyPressed')
+	slaveKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
+		this.socket.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);			//best if for master only
+	}
+
+	//@UseGuards(WsGuard)
+	@SubscribeMessage('masterKeyPressed')
+	masterKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
+		this.socket.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data);		//best if for master only
+	}
+
+	//@UseGuards(WsGuard)
+	@SubscribeMessage('readyToStart')
+	readyToStart(socket: Socket, data: {match_id: number}) {
+		this.socket.to("match#" + data.match_id).emit('readyToStart');							//for everyone
+		//if we add clock here, it's not going to be a master clock for all match
+	}
 
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
-	
+
 	async handleConnection(socket: Socket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
 		const cookies = socket.handshake.headers.cookie.split('; ')

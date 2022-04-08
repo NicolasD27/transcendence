@@ -29,9 +29,10 @@ function Match(playerOne, playerTwo, ball)
 
 function setup()
 {
-	socket = io.connect('http://localhost:8080');
+	socket = io.connect('http://localhost:8000');
 
 	createCanvas(800, 400);
+	background(0);
 
 	socket.emit('askConnectionNumber');
 	socket.on('sendConnectionNb', (data) =>
@@ -68,7 +69,7 @@ function setup()
 				}
 				else if (match.playerTwo.y < 400 - 100)
 					match.playerTwo.y += 5;
-				socket.emit('sendUpdateMatch', match);	//instant pos refresh, but can be laggy
+				//socket.emit('sendUpdateMatch', match);	//instant pos refresh, but can be laggy
 			});
 
 			socket.on('masterToMasterKeyPressed', data =>
@@ -80,7 +81,7 @@ function setup()
 				}
 				else if (match.playerOne.y < 400 - 100)
 					match.playerOne.y += 5;
-				socket.emit('sendUpdateMatch', match);	//instant pos refresh, but can be laggy
+				//socket.emit('sendUpdateMatch', match);	//instant pos refresh, but can be laggy
 			});
 
 			socket.on('launchMatch', () =>
