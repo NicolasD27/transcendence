@@ -28,8 +28,13 @@ export class ChannelService {
 
 	async create(username: string, createChannelDto: CreateChannelDto)
 	{
+
+		console.log("channel.create()");
+		console.log(createChannelDto);
+
 		const user = await this.userRepo.findOne({ username });
 
+		// todo : hash the password
 		// const bcrypt = require ('bcrypt');
 		// const saltRounds = 10;
 
@@ -46,7 +51,7 @@ export class ChannelService {
 			hashedPassword : createChannelDto.password, 
 		});
 		await this.channelRepo.save(newChannel);
-		this.join(username, newChannel.id.toString());
+		this.join(username, newChannel.id.toString(), createChannelDto.password);
 		return newChannel;
 	}
 
@@ -63,7 +68,7 @@ export class ChannelService {
 		return myChannel;
 	}
 
-	async join(username: string, channelId: string)
+	async join(username: string, channelId: string, notHashedPassword: string)
 	{
 		const user = await this.userRepo.findOne({ username });
 		if (!user)
@@ -71,6 +76,10 @@ export class ChannelService {
 		const channel = await this.channelRepo.findOne(channelId);
 		if (!channel)
 			throw new NotFoundException("channel not found");
+
+		// todo : use hashed password
+		if (notHashedPassword !== channel.hashedPassword)
+			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
 			where: {
@@ -97,7 +106,7 @@ export class ChannelService {
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
-			throw new NotFoundException();
+			throw new NotFoundException("channel not found");
 		const myParticipations = await this.participationRepo.find({
             relations: ['user'],
             where: [
@@ -115,7 +124,7 @@ export class ChannelService {
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
-			throw new NotFoundException();
+		throw new NotFoundException(`channel ${id} not found`);
 
 		const msg = await this.msgRepo.find({ where: { channel: id } });
 
@@ -134,7 +143,6 @@ export class ChannelService {
 
 	async checkUserJoinedChannel(username: string, channelId: string) : Promise<boolean>
 	{
-
 		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException(`channel ${channelId} not found`);

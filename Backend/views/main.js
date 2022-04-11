@@ -8,6 +8,8 @@ function getAccessTokenFromCookies() {
 	}
 }
 
+const g_channelId = 3;
+
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -34,14 +36,14 @@ const app = new Vue({
 	},
 	methods: {
 		connectToChannel() {
-			this.channelId = 1;
+			this.channelId = g_channelId;
 			this.socket.emit('connect_to_channel', {channelId: this.channelId})
 		},
 		sendMessage(message) {
 			console.log(message);
 			if(this.validateInput()) {
 				const message = {
-					activeChannelId: 1,
+					activeChannelId: g_channelId,
 					content: this.content,
 					author: this.author
 				}
@@ -57,8 +59,8 @@ const app = new Vue({
 			return true;
 		},
 		async getPreviousMessages() {
-			let msgs = await (await fetch('http://localhost:8000/api/channels/1/messages')).json();
-			for (let i = 0; i < msgs.length; ++i) {
+			let msgs = await (await fetch(`http://localhost:8000/api/channels/${g_channelId}/messages`)).json();
+			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
 		},
