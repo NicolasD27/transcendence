@@ -124,7 +124,7 @@ export class ChannelService {
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
-		throw new NotFoundException(`channel ${id} not found`);
+			throw new NotFoundException(`channel ${id} not found`);
 
 		const msg = await this.msgRepo.find({ where: { channel: id } });
 
@@ -151,18 +151,27 @@ export class ChannelService {
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
 
-		const myParticipations = await this.participationRepo.find({
-            relations: ['user'],
-            where: [
-				{ user: myUser},
-				{ channel: myChannel },
-            ],
-        });
+		// console.log("//channelID : " + channelId);
+		// console.log(channelId);
 
-		console.log(myParticipations);
+		// const myParticipations = await this.participationRepo.find({
+        //     relations: ['user', 'channel'],
+        //     where: [
+		// 		{ user: myUser},
+		// 		{ channel: myChannel },
+        //     ],
+        // });
 
-		if (myParticipations)
+		const myParticipations = await this.participationRepo.query(
+			`SELECT id FROM "participation" WHERE "userId" = ${channelId};`
+		);
+
+		// console.log("// myParticipations : ");
+		// console.log(myParticipations);
+
+		if (myParticipations.length > 0)
 			return true;
+
 		return false;
 	}
 

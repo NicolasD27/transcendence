@@ -39,8 +39,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("msg_to_server " + data.activeChannelId);
 
 		// * check if the user has joined that channel before
-		const res = await this.channelService.checkUserJoinedChannel(data.author, data.activeChannelId);
-		if (!res)
+		if (! await this.channelService.checkUserJoinedChannel(data.author, data.activeChannelId))
 			return ;
 
 		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, data.author);
@@ -55,8 +54,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: Socket, data: { channelId: string }) {
-		console.log("connect_to_channel channelId : " + data.channelId);
+	async connectToChannel(socket: Socket, @GetUsername() username: string, data: { channelId: string }) {
+		if (! await this.channelService.checkUserJoinedChannel(username, data.channelId))
+			return ;
+		console.log(`connect_to_channel ${username} on ${data.channelId}`);
 		socket.join("channel#" + data.channelId);
 	}
 

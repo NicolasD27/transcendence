@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Post,
+	Req,
+	UseGuards,
+	HttpException,
+	HttpStatus
+} from "@nestjs/common";
 import { CreateChannelDto } from "./dto/create-channel.dto";
 import { ChannelService } from "./service/channel.service";
 import { Request } from "express";	// ? without this we can't access cookies
@@ -33,11 +43,13 @@ export class ChannelController {
 
 	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/messages')
-	async getChannelMessages(@Param('id') id: string) : Promise<CreateMsgDto[]> {
+	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<CreateMsgDto[]> {
 		
+		if (! await this.channelService.checkUserJoinedChannel(request.cookies.username, id))
+			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
+
 		console.log(`getting Messages on channel ${id}`);
-		// todo : need to check if password has been sent once
-		
+
 		return this.channelService.getChannelMessages(id);
 	}
 
