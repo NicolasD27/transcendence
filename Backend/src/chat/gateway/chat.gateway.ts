@@ -14,6 +14,9 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { GetUsername } from '../decorator/get-username.decorator';
 import { WsGuard } from '../../guards/websocket.guard';
+import { Participation } from 'src/channel/entity/participation.entity';
+import { ParticipationService } from 'src/channel/service/participation.service';
+import { ChannelService } from 'src/channel/service/channel.service';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -24,7 +27,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	private logger: Logger = new Logger('ChatGateway');
 
 	constructor(
-		private readonly chatService: ChatService
+		private readonly chatService: ChatService,
+		private readonly channelService: ChannelService,
+		// private readonly participationService: ParticipationService,
 		) {}
 
 	@UseGuards(WsGuard)
@@ -32,7 +37,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async handleMessage(socket: Socket, data: { activeChannelId: string, author: string, content: string }) {
 
 		console.log("msg_to_server " + data.activeChannelId);
-	
+
+		// * check if the user has joined that channel before
+		const res = await this.channelService.checkUserJoinedChannel(data.author, data.activeChannelId);
+		if (!res)
+			return ;
+
 		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, data.author);
 		const msgDto: CreateMsgDto = {
 			content: message.content,

@@ -132,4 +132,30 @@ export class ChannelService {
 		return arrayMsgDto;
 	}
 
+	async checkUserJoinedChannel(username: string, channelId: string) : Promise<boolean>
+	{
+
+		const myChannel = await this.channelRepo.findOne(channelId);
+		if (!myChannel)
+			throw new NotFoundException(`channel ${channelId} not found`);
+
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+
+		const myParticipations = await this.participationRepo.find({
+            relations: ['user'],
+            where: [
+				{ user: myUser},
+				{ channel: myChannel },
+            ],
+        });
+
+		console.log(myParticipations);
+
+		if (myParticipations)
+			return true;
+		return false;
+	}
+
 }
