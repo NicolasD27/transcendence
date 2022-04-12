@@ -44,6 +44,8 @@
                 </ul>
                 <input type="text" v-model="invite_choosen" placeholder="invite # ?">
                 <button @click.prevent="acceptChallenge">Accept</button>
+                <input type="text" v-model="status" placeholder="new status ?">
+                <button @click.prevent="sendStatusUpdate">Send new status</button>
             </div>
         <div id="match">
             <h1>Match</h1>
@@ -68,7 +70,8 @@
             
         </div>
     </div>
-
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/addons/p5.sound.js"></script>
 <script src="main.js"></script>
 <script>
 	let cookies = document.cookie;

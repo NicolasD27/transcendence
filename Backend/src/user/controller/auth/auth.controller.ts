@@ -27,7 +27,7 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('http://localhost:3000')
+    @Redirect('/api')
     async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile42() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
         let payload;

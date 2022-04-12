@@ -4,10 +4,13 @@ import { Channel } from '../entity/channel.entity';
 import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
-import { CreateMsgDto } from 'src/chat/dto/create-msg.dto';
+import { CreateMsgDto } from 'src/message/dto/create-msg.dto';
 import { User } from '../../user/entity/user.entity';
-import { Msg } from '../../chat/entity/msg.entity';
+import { Msg } from '../../message/entity/msg.entity';
+import { ChannelDto } from '../dto/channel.dto';
 import * as bcrypt from 'bcrypt';
+import { MsgDto } from 'src/message/dto/message.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 
 
 @Injectable()
@@ -27,20 +30,21 @@ export class ChannelService {
 		private userRepo: Repository<User>,
 	) {}
 	
-		async findAll(): Promise<Channel[]>
-		{
-			return await this.channelRepo.find();
-		}
-	
-		async findOne(channelId: string): Promise<Channel>
-		{
-			const myChannel = await this.channelRepo.findOne(channelId);
-			if (!myChannel)
-				throw new NotFoundException();
-			return myChannel;
-		}
+	async findAll(): Promise<ChannelDto[]>
+	{
+		return await this.channelRepo.find()
+			.then(items => items.map(e=> Channel.toDto(e)));
+	}
 
-	async create(username: string, createChannelDto: CreateChannelDto)
+	async findOne(channelId: string): Promise<ChannelDto>
+	{
+		const myChannel = await this.channelRepo.findOne(channelId);
+		if (!myChannel)
+			throw new NotFoundException();
+		return Channel.toDto(myChannel);
+	}
+
+	async create(username: string, createChannelDto: CreateChannelDto): Promise<ChannelDto>
 	{
 
 		console.log("channel.create()");
@@ -67,7 +71,7 @@ export class ChannelService {
 		});
 		await this.channelRepo.save(newChannel);
 		this.join(username, newChannel.id.toString(), createChannelDto.password);
-		return newChannel;
+		return Channel.toDto(newChannel);
 	}
 
 	async join(username: string, channelId: string, notHashedPassword: string)
@@ -103,7 +107,7 @@ export class ChannelService {
 		return newParticipation; 
 	}
 
-	async getChannelUsers(id: string): Promise<User[]>
+	async getChannelUsers(id: string): Promise<UserDto[]>
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
@@ -118,28 +122,19 @@ export class ChannelService {
 		myParticipations.forEach((participation) => {
 			users.push(participation.user)
 		})
-		return users;
+		return users.map(e=> User.toDto(e));
 	}
 
-	async getChannelMessages(id: string): Promise<CreateMsgDto[]>
+	async getChannelMessages(id: string): Promise<MsgDto[]>
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`channel ${id} not found`);
 
-		const msg = await this.msgRepo.find({ where: { channel: id } });
+		const msgs = await this.msgRepo.find({ where: { channel: id } })
+			.then(items => items.map(e=> Msg.toDto(e)));
 
-		const arrayMsgDto: CreateMsgDto[] = [];
-		msg.forEach((message) => {
-			arrayMsgDto.push({
-				content: message.content,
-				authorId: message.user.id,
-				date: message.date,
-			});
-		})
-		// return await this.msgRepo.query('SELECT user, content FROM msg WHERE "channelId" IS NULL;');
-
-		return arrayMsgDto;
+		return msgs;
 	}
 
 	async checkUserJoinedChannel(username: string, channelId: string) : Promise<boolean>
