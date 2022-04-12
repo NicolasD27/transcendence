@@ -23,7 +23,7 @@ const Chat = () => {
 const Login = () => {
 	const navigate = useNavigate()
 	const onPlay = () => {
-		navigate("")
+		navigate("") //launch match component here
 	}
 	const onProfil = () => {
 		navigate("/profil")
