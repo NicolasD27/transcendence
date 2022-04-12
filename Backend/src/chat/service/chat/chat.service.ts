@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Channel } from 'src/channel/entity/channel.entity';
 import { Repository } from 'typeorm';
 import { User } from '../../../user/entity/user.entity';
 import { Msg } from '../../entity/msg.entity';
@@ -11,19 +12,21 @@ export class ChatService {
 		private msgRepo: Repository<Msg>,
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
+		@InjectRepository(Channel)
+		private channelRepo: Repository<Channel>
 	) {}
 
-	async saveMsg(content: string, username: string) {
+	async saveMsg(content: string, channelId: string, username: string) {
 
 		const user = await this.userRepo.findOne({username});
+		const channel = await this.channelRepo.findOne(channelId);
 		const newMsg = await this.msgRepo.create({
-			content, user
+			content, channel, user
 		})
 		await this.msgRepo.save(newMsg);
 		return newMsg;
 	}
 
-	// async 
 	async getAllMessages(): Promise<Msg[]> {
 		// return this.msgRepo.find({ relations: ['user'],});
 		return this.msgRepo.find();
