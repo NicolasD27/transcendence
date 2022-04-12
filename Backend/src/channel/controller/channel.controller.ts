@@ -75,4 +75,12 @@ export class ChannelController {
 		return this.channelService.join(request.cookies.username, id, body.password);
 	}
 
+	@Get(':id/leave')
+	@UseGuards(TwoFactorGuard)
+	async leave(@Req() request: Request, @Param('id') id: string)
+	{
+		await this.channelService.leave(request.cookies.username, id);
+		return ;
+	}
+
 }

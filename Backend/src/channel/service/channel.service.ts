@@ -107,6 +107,29 @@ export class ChannelService {
 		return newParticipation; 
 	}
 
+	async leave(username: string, channelId: string)
+	{
+		const user = await this.userRepo.findOne({ username });
+		if (! user)
+			throw new NotFoundException("username not found");
+		const channel = await this.channelRepo.findOne(channelId);
+		if (! channel)
+			throw new NotFoundException("channel not found");
+
+		const participation = await this.participationRepo.find({
+			where: {
+				user: user.id,
+				channel: channel.id
+			}});
+
+		if (! participation.length)
+			throw new UnauthorizedException("Channel was not joined");
+		
+		await this.participationRepo.delete(participation[0].id);
+
+		return true;
+	}
+
 	async getChannelUsers(id: string): Promise<UserDto[]>
 	{
 		const myChannel = await this.channelRepo.findOne(id);
