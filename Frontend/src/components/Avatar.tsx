@@ -19,9 +19,10 @@ export class Avatar extends Component {
 	};
 
 	componentDidMount() {
-		axios.get(`http://localhost:8000/api/users`)
+		axios.get(`http://localhost:8000/api/users`, {withCredentials: true	})
 			.then(res => {
 				const persons = res.data;
+				console.log(persons)
 				this.setState({ persons });
 			})
 	}
