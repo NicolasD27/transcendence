@@ -25,13 +25,6 @@ export class Msg {
 	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 
-	@Column({
-        nullable: false,
-        default: () => 'CURRENT_TIMESTAMP' ,
-        type: 'timestamp',
-      })
-    public date: Date;
-
 	static toDto(msg: Msg) {
 		return plainToInstance(MsgDto, instanceToPlain(msg), { excludeExtraneousValues: true })
 	}
