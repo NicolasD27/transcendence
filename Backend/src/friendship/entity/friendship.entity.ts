@@ -1,8 +1,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import * as bcrypt from "bcrypt"
-import { Exclude, instanceToPlain, plainToInstance } from "class-transformer";
+import { Exclude } from "class-transformer";
 import { User } from "../../user/entity/user.entity";
-import { FriendshipDto } from "../dto/friendship.dto";
 
 export enum FriendshipStatus {
     PENDING,
@@ -26,15 +25,6 @@ export class Friendship extends BaseEntity {
     @ManyToOne(() => User, user => user.followings, { eager: true })
     following: User;
 
-    static toDto(friendship: Friendship): FriendshipDto {
-		const dto: FriendshipDto = {
-            id: friendship.id,
-            status: friendship.status,
-            follower: User.toDto(friendship.follower),
-            following: User.toDto(friendship.following)
-        }
-        return dto
-	}
     
 
     

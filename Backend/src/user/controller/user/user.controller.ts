@@ -1,7 +1,6 @@
 import { Body, Controller, Get, NotFoundException, Param, Patch, Post, Request, Session, UnauthorizedException, UseGuards, ValidationPipe } from '@nestjs/common';
 // import * as session from 'express-session';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { UserDto } from 'src/user/dto/user.dto';
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 import { GetUsername } from '../../decorator/get-username.decorator';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
@@ -17,7 +16,7 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get()
-    findAll(): Promise<UserDto[]> {
+    findAll(): Promise<User[]> {
         console.log('findAllUsers');
         return this.userService.findAll();
     }
@@ -25,7 +24,7 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<UserDto> {
+    findOne(@Param('id') id: string): Promise<User> {
         console.log('findOneUser ', id);
         return this.userService.findOne(id);
     }
@@ -33,7 +32,7 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
-    updateAvatar(@Param('id') id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @GetUsername() username): Promise<UserDto> {
+    updateAvatar(@Param('id') id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @GetUsername() username): Promise<User> {
         console.log('updateUser ', id);
         
         return this.userService.updateAvatar(username, id, updateAvatarDto);
@@ -41,7 +40,7 @@ export class UserController {
 
     //seulement pour tester
     @Post()
-    create(): Promise<UserDto> {
+    create(): Promise<User> {
         return this.userService.create();
     }
 }

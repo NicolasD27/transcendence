@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
-import { UserDto } from 'src/user/dto/user.dto';
 import { Repository } from 'typeorm';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
 import { User } from '../../entity/user.entity';
@@ -9,31 +7,34 @@ import { User } from '../../entity/user.entity';
 @Injectable()
 export class UserService {
     constructor(
+        // @InjectRepository(User)
 		@InjectRepository(User)
         private usersRepository: Repository<User>) {}
+		// Repository<User>) {}
 
 
-    async findAll(): Promise<UserDto[]> {
-        
-        return this.usersRepository.find()
-            .then(items => items.map(e=> User.toDto(e)));
+    async findAll(): Promise<User[]> {
+        return this.usersRepository.find({
+            select: ['username', 'avatar', 'status', 'isTwoFactorEnable'],
+            relations: ['followers', 'followings', 'matchs1', 'matchs2']
+        });
     }
 
-    async findOne(id: string): Promise<UserDto> {
+    async findOne(id: string): Promise<User> {
         const user = await this.usersRepository.findOne(id);
         if (!user)
             throw new NotFoundException(`User #${id} not found`);
-        return User.toDto(user);
+        return user;
     }
 
-    async findByUsername(username: string): Promise<UserDto> {
+    async findByUsername(username: string): Promise<User> {
         const user = await this.usersRepository.findOne({ username });
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
-        return User.toDto(user);
+        return user;
     }
 
-    async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
+    async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<User> {
         
         const user = await this.usersRepository.preload({
             id: +id,
@@ -43,12 +44,11 @@ export class UserService {
             throw new NotFoundException(`User #${id} not found`);
         if (user.username != current_username)
             throw new UnauthorizedException();
-        this.usersRepository.save(user);
-        return User.toDto(user)
+        return this.usersRepository.save(user);
     }
 
     //just for dev
-    async create(): Promise<UserDto> {
+    async create(): Promise<User> {
         
         const user = {
             username: this.make_username(8)

@@ -1,8 +1,12 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from "react-router-dom";
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Profil from './pages/Profil';
+import axios from 'axios';
+import './pages/Home.css';
+import './pages/Login.css';
 import './pages/Home.css';
 import './pages/Login.css';
 

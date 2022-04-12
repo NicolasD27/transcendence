@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import * as typeOrmConfig from './typeorm.config';
 import { configValidationSchema } from './config.schema';
-import { ChatModule } from './message/message.module';
+import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 import { FriendshipModule } from './friendship/friendship.module';
 import { MatchModule } from './match/match.module';

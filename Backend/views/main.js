@@ -8,6 +8,8 @@ function getAccessTokenFromCookies() {
 	}
 }
 
+const g_channelId = 10;
+
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -16,7 +18,7 @@ const app = new Vue({
 		content: '',
 		messages: [],
 		match: {},
-		room: '',
+		channelId: '',
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -34,13 +36,14 @@ const app = new Vue({
 	},
 	methods: {
 		connectToChannel() {
-			this.room = 'a';
-			this.socket.emit('connect_to_channel', {room: this.room})
+			this.channelId = g_channelId;
+			this.socket.emit('connect_to_channel', {channelId: this.channelId})
 		},
 		sendMessage(message) {
 			console.log(message);
 			if(this.validateInput()) {
 				const message = {
+					activeChannelId: g_channelId,
 					content: this.content,
 					author: this.author
 				}
@@ -55,16 +58,12 @@ const app = new Vue({
 			// return this.author.length > 0 && this.content.length > 0;	// need to be done server side too
 			return true;
 		},
-
 		async getPreviousMessages() {
-			let msgs = await (await fetch('http:// localhost:3000/api/channels/1')).json();	// chat/id of the channel
-			for (let i = 0; i < msgs.length; ++i) {
+			let msgs = await (await fetch(`http://localhost:8000/api/channels/${g_channelId}/messages`)).json();
+			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
 		},
-		// async findMatch() {
-		// 	const match = await (await fetch('http://e2r10p7:3000/api/matchs/matchmaking')).json();
-		// },
 		connectToMatch() {
 			// this.room = 'a';
 			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id});
@@ -103,12 +102,11 @@ const app = new Vue({
 	},
 	created() {
 		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://localhost:3000', this.socketOptions);
-		this.socket.emit('connect_to_match', {room: 'a'})
+		this.socket = io.connect('http://localhost:8000', this.socketOptions);
+
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);
 		});
-
 		this.socket.on('update_to_client', (match) => {
 			this.receiveUpdateMatch(match);
 		});
@@ -118,8 +116,10 @@ const app = new Vue({
 		this.socket.on('launch_match', (match) => {
 			this.launchMatch(match);
 		});
-
+		
 	}
 });
 
+app.connectToChannel();
 app.getPreviousMessages();
+
