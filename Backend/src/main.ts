@@ -7,7 +7,7 @@ import * as passport from 'passport';
 import { join } from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser';
-// somewhere in your initialization file
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
@@ -34,6 +34,8 @@ async function bootstrap() {
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.useStaticAssets(join(__dirname, '..', 'views'));
+
+	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
 	await app.listen(port);
 }
