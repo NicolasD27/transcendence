@@ -13,6 +13,12 @@ const HistoryMatch = () => {
 				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
 				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
 				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
+				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
 			</div>
 		</Fragment>
 	);
