@@ -1,3 +1,6 @@
+import { Channel } from "../entity/channel.entity";
+import { Msg } from "../../message/entity/msg.entity";
+import { ChannelDto } from "../dto/channel.dto";
 import {
 	Body,
 	Controller,
@@ -9,14 +12,15 @@ import {
 	HttpException,
 	HttpStatus
 } from "@nestjs/common";
-import { CreateChannelDto } from "./dto/create-channel.dto";
-import { ChannelService } from "./service/channel.service";
+import { CreateChannelDto } from "../dto/create-channel.dto";
+import { ChannelService } from "../service/channel.service";
 import { Request } from "express";	// ? without this we can't access cookies
 import { ApiTags } from "@nestjs/swagger";
-import { CreateMsgDto } from "src/chat/dto/create-msg.dto";
-import { JoinChannelDto } from "./dto/join-channel.dto";
+import { JoinChannelDto } from "../dto/join-channel.dto";
 import { GetUsername } from "src/user/decorator/get-username.decorator";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
+import { CreateMsgDto } from "src/message/dto/create-msg.dto";
+import { MsgDto } from "src/message/dto/message.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -45,7 +49,7 @@ export class ChannelController {
 
 	@Get(':id/messages')
 	@UseGuards(TwoFactorGuard)
-	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<CreateMsgDto[]> { // @GetUsername() username: string
+	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<MsgDto[]> { // @GetUsername() username: string
 		
 		// todo: use something esle than cookies
 		const username = request.cookies.username;

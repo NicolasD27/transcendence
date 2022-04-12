@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'src/channel/entity/channel.entity';
 import { Repository } from 'typeorm';
-import { User } from '../../../user/entity/user.entity';
-import { Msg } from '../../entity/msg.entity';
+import { User } from '../../user/entity/user.entity';
+import { MsgDto } from '../dto/message.dto';
+import { Msg } from '../entity/msg.entity';
 
 @Injectable()
 export class ChatService {
@@ -24,12 +25,14 @@ export class ChatService {
 			content, channel, user
 		})
 		await this.msgRepo.save(newMsg);
-		return newMsg;
+		return Msg.toDto(newMsg);
 	}
 
-	async getAllMessages(): Promise<Msg[]> {
+	// async 
+	async getAllMessages(): Promise<MsgDto[]> {
 		// return this.msgRepo.find({ relations: ['user'],});
-		return this.msgRepo.find();
+		return this.msgRepo.find()
+			.then(items => items.map(e=> Msg.toDto(e)));;
 		// return this.msgRepo.query("SELECT id, content, userId FROM");
 	}
 
