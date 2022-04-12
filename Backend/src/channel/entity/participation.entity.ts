@@ -1,6 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entity/user.entity";
-import { Msg } from "src/chat/entity/msg.entity";
 import { Channel } from "./channel.entity";
 
 @Entity()
@@ -12,7 +11,7 @@ export class Participation {
 	@ManyToOne(() => User, user => user.participations, { eager: true })
 	user: User;
 
-    @ManyToOne(() => Channel, channel => channel.participations, { eager: true })
+	@ManyToOne(() => Channel, channel => channel.participations, { eager: true })
 	channel: Channel;
 
 	// @Column()
