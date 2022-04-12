@@ -7,49 +7,50 @@ import { access } from 'fs';
 
 @Injectable()
 export class TwoFactorGuard implements CanActivate {
-    constructor(private userService: UserService,
+	constructor(private userService: UserService,
 		private jwtService: JwtService,
 		private authService: AuthService
-		) {
+	) {
 	}
-  async canActivate(context: ExecutionContext): Promise<any> {
-    console.log("hello")
-			let accessToken;
-			let username;
-            const cookie_string = context.switchToHttp().getRequest().headers.cookie
-            if (!cookie_string)
-            throw new UnauthorizedException("No cookie");
-			const cookies = context.switchToHttp().getRequest().headers.cookie.split('; ')
-			if (cookies.find((cookie: string) => cookie.startsWith('username')))
-				username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
-			else
-				throw new UnauthorizedException("No username");
-			if (cookies.find((cookie: string) => cookie.startsWith('accessToken')))
-				accessToken = cookies.find((cookie: string) => cookie.startsWith('accessToken')).split('=')[1];
-			else
-				throw new UnauthorizedException("No accessToken");
-			try {
-				const decoded = this.jwtService.verify(accessToken) as any;
-				return new Promise((resolve, reject) => {
-					return this.userService.findByUsername(decoded.username).then(user => {
-						if (user) {
-								resolve(user);
-						} else {
-							reject(false);
-						}
-					});
+	async canActivate(context: ExecutionContext): Promise<any> {
+		console.log("hello")
+		let accessToken;
+		let username;
+		const cookie_string = context.switchToHttp().getRequest().headers.cookie
+		//console.log(context.switchToHttp().getRequest().headers);
+		if (!cookie_string)
+			throw new UnauthorizedException("No cookie");
+		const cookies = context.switchToHttp().getRequest().headers.cookie.split('; ')
+		if (cookies.find((cookie: string) => cookie.startsWith('username')))
+			username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
+		else
+			throw new UnauthorizedException("No username");
+		if (cookies.find((cookie: string) => cookie.startsWith('accessToken')))
+			accessToken = cookies.find((cookie: string) => cookie.startsWith('accessToken')).split('=')[1];
+		else
+			throw new UnauthorizedException("No accessToken");
+		try {
+			const decoded = this.jwtService.verify(accessToken) as any;
+			return new Promise((resolve, reject) => {
+				return this.userService.findByUsername(decoded.username).then(user => {
+					if (user) {
+						resolve(user);
+					} else {
+						reject(false);
+					}
 				});
-			}
-			catch (ex) {
-                console.log(ex);
-                return false;
-			}
+			});
+		}
+		catch (ex) {
+			console.log(ex);
+			return false;
+		}
 
 		// } catch (ex) {
 		// 	try {
 
-				
-				
+
+
 		// 		return new Promise((resolve, reject) => {
 		// 			return this.userService.findByUsername(username).then(user => {
 		// 				if (user && !user.isTwoFactorEnable) {

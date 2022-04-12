@@ -1,9 +1,16 @@
 .heading {
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
-	margin-top: 1rem;
 	font-weight: bold;
 
+}
+
+#input[type="file"] {
+	display: none;
+}
+
+.label {
+	width: 100%;
 }
 
 .img-holder {
@@ -16,30 +23,33 @@
 }
 
 .img {
+	background-size: cover;
 	width: 130px;
 	height: 130px;
-	object-fit: cover;
+	object-fit: fill;
 	border-radius: 130px;
+	opacity: 1;
+	transition: opacity 0.5s;
 }
 
-#input[type="file"] {
-	display: none;
-}
-
-.label {
-	width: 100%;
-	margin-top: 1rem;
-	display: flex;
-	justify-content: center;
+.img:hover {
+	opacity: 0.5;
 }
 
 .image-upload {
-	margin: auto;
-	width: 200px;
-	height: 50px;
+	position: absolute;
+	bottom: 82%;
+	left: 48%;
+	width: 120px;
+	outline: none;
+	color: transparent;
+	box-sizing: border-box;
 	color: white;
-	border-radius: 10px;
-	background-color: black;
-	text-align: center;
 	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.5s;
+}
+
+.image-upload:hover {
+	opacity: 1;
 }
