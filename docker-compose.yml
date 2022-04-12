@@ -15,6 +15,7 @@ services:
       context: ./Backend
       dockerfile: ./Dockerfile
     image: backend:latest
+    restart: always
     environment: 
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}
@@ -35,7 +36,6 @@ services:
       - db
     volumes: 
       - ./Backend:/app
-      - /app/node_modules
   frontend:
     build:
       context: ./Frontend
