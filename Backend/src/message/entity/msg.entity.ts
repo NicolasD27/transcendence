@@ -14,7 +14,14 @@ export class Msg {
 
 	@Column()
 	public content: string;
-	
+
+	@Column({
+        nullable: false,
+        default: () => 'CURRENT_TIMESTAMP' ,
+        type: 'timestamp',
+    })
+    public date: Date;
+
 	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 
