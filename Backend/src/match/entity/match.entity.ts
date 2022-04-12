@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
 import { User } from "../../user/entity/user.entity";
+import { MatchDto } from "../dto/match.dto";
 import { BALL_VX, BALL_VY, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP } from '../match.constants';
 
 export enum MatchStatus {
@@ -65,4 +66,26 @@ export class Match {
 
     @Column({ type: "float", default: BALL_VY })
     public bvy: number;
+
+    
+    static toDto(match: Match): MatchDto {
+		const dto: MatchDto = {
+            id: match.id,
+            status: match.status,
+            user1: User.toDto(match.user1),
+            user2: User.toDto(match.user2),
+            score1: match.score1,
+            score2: match.score2,
+            mode: match.mode,
+            date: match.date,
+            sleep: match.sleep,
+            y1: match.y1,
+            y2: match.y2,
+            bx: match.bx,
+            by: match.by,
+            bvx: match.bvx,
+            bvy: match.bvy,
+        }
+        return dto
+	}
 }

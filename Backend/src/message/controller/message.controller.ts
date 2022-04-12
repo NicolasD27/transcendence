@@ -1,7 +1,7 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
-import { ChatService } from "./service/chat/chat.service";
+import { ChatService } from "../service/message.service";
 import { AuthGuard } from "@nestjs/passport";
-import { CreateMsgDto } from "./dto/create-msg.dto";
+import { CreateMsgDto } from "../dto/create-msg.dto";
 
 // @Controller('channels/:id')
 // export class ChatController {
