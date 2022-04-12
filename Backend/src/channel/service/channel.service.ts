@@ -7,6 +7,7 @@ import { Participation } from '../entity/participation.entity';
 import { CreateMsgDto } from 'src/chat/dto/create-msg.dto';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../chat/entity/msg.entity';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -25,6 +26,19 @@ export class ChannelService {
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
 	) {}
+	
+		async findAll(): Promise<Channel[]>
+		{
+			return await this.channelRepo.find();
+		}
+	
+		async findOne(channelId: string): Promise<Channel>
+		{
+			const myChannel = await this.channelRepo.findOne(channelId);
+			if (!myChannel)
+				throw new NotFoundException();
+			return myChannel;
+		}
 
 	async create(username: string, createChannelDto: CreateChannelDto)
 	{
@@ -35,9 +49,10 @@ export class ChannelService {
 		const user = await this.userRepo.findOne({ username });
 
 		// todo : hash the password
-		// const bcrypt = require ('bcrypt');
-		// const saltRounds = 10;
+		const saltRounds = 10;
+		const hash = await bcrypt.hash(createChannelDto.password, saltRounds);
 
+		console.log(`${createChannelDto.password} -> ${hash}`);
 		// bcrypt.genSalt(saltRounds, function(err, salt) {
 		// 	bcrypt.hash(createChannelDto.password, salt, function(err, hash) {
 		// 		console.log(createChannelDto.password + " => " + hash);
@@ -48,37 +63,23 @@ export class ChannelService {
 			name : createChannelDto.name,
 			description: createChannelDto.description,
 			owner : user,
-			hashedPassword : createChannelDto.password, 
+			hashedPassword : hash, 
 		});
 		await this.channelRepo.save(newChannel);
 		this.join(username, newChannel.id.toString(), createChannelDto.password);
 		return newChannel;
 	}
 
-	async findAll(): Promise<Channel[]>
-	{
-		return await this.channelRepo.find();
-	}
-
-	async findOne(channelId: string): Promise<Channel>
-	{
-		const myChannel = await this.channelRepo.findOne(channelId);
-		if (!myChannel)
-			throw new NotFoundException();
-		return myChannel;
-	}
-
 	async join(username: string, channelId: string, notHashedPassword: string)
 	{
 		const user = await this.userRepo.findOne({ username });
-		if (!user)
+		if (! user)
 			throw new NotFoundException("username not found");
 		const channel = await this.channelRepo.findOne(channelId);
-		if (!channel)
+		if (! channel)
 			throw new NotFoundException("channel not found");
-
-		// todo : use hashed password
-		if (notHashedPassword !== channel.hashedPassword)
+		
+		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
@@ -162,12 +163,18 @@ export class ChannelService {
         //     ],
         // });
 
-		const myParticipations = await this.participationRepo.query(
-			`SELECT id FROM "participation" WHERE "userId" = ${channelId};`
-		);
+		// const myParticipations = await this.participationRepo.query(
+		// 	`SELECT id FROM "participation" WHERE "userId" = ${channelId};`
+		// );
 
-		// console.log("// myParticipations : ");
-		// console.log(myParticipations);
+		const myParticipations = await this.participationRepo.find({
+			where: {
+				user: myUser.id,
+				channel: myChannel.id,
+			}});
+
+		console.log("// myParticipations : ");
+		console.log(myParticipations);
 
 		if (myParticipations.length > 0)
 			return true;

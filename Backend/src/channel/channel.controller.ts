@@ -15,52 +15,56 @@ import { Request } from "express";	// ? without this we can't access cookies
 import { ApiTags } from "@nestjs/swagger";
 import { CreateMsgDto } from "src/chat/dto/create-msg.dto";
 import { JoinChannelDto } from "./dto/join-channel.dto";
+import { GetUsername } from "src/user/decorator/get-username.decorator";
+import { TwoFactorGuard } from "src/guards/two-factor.guard";
 
 @ApiTags('Channels')
 @Controller('channels/')
 export class ChannelController {
 	constructor (private readonly channelService: ChannelService) {}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Get()
+	@UseGuards(TwoFactorGuard)
 	async findAll() {
 		// const user = await this.channel
 		return this.channelService.findAll();
 	}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Get(':id')
+	@UseGuards(TwoFactorGuard)
 	async findOne(@Param('id') id: string) {
 		return this.channelService.findOne(id);
 	}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/users')
+	@UseGuards(TwoFactorGuard)
 	async getChannelUsers(@Param('id') id: string)
 	{
 		return this.channelService.getChannelUsers(id);
 	}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Get(':id/messages')
-	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<CreateMsgDto[]> {
+	@UseGuards(TwoFactorGuard)
+	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<CreateMsgDto[]> { // @GetUsername() username: string
 		
-		if (! await this.channelService.checkUserJoinedChannel(request.cookies.username, id))
-			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
+		// todo: use something esle than cookies
+		const username = request.cookies.username;
+		console.log(`// getChannelMessages() ${username} ${id}`);
 
-		console.log(`getting Messages on channel ${id}`);
+		if (! await this.channelService.checkUserJoinedChannel(username, id))
+			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
 
 		return this.channelService.getChannelMessages(id);
 	}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Post()
+	@UseGuards(TwoFactorGuard)
 	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto) {
 		return this.channelService.create(request.cookies.username, createChannelDto);
 	}
 
-	// @UseGuards(AuthenticatedGuard)
 	@Post(':id/join')
+	@UseGuards(TwoFactorGuard)
 	async join(@Req() request: Request, @Param('id') id: string, @Body() body: JoinChannelDto) //@GetUser() user
 	{
 		// return this.channelService.join(user.username, id);

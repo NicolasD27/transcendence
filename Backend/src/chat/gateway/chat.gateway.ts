@@ -36,7 +36,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
 	async handleMessage(socket: Socket, data: { activeChannelId: string, author: string, content: string }) {
 
-		console.log("msg_to_server " + data.activeChannelId);
+		console.log("// msg_to_server " + data.activeChannelId);
 
 		// * check if the user has joined that channel before
 		if (! await this.channelService.checkUserJoinedChannel(data.author, data.activeChannelId))
@@ -54,10 +54,26 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: Socket, @GetUsername() username: string, data: { channelId: string }) {
+	async connectToChannel(socket: Socket, data: { channelId: string }) {//, @GetUsername() username: string) {
+
+		// // const username = "oui";
+		// console.log(socket.request.headers.cookie);
+		
+		
+		let username: string = "";
+		
+		const cookie_string = socket.request.headers.cookie;
+		const cookies = cookie_string.split('; ')
+		if (cookies.find((cookie: string) => cookie.startsWith('username')))
+			username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
+		else
+			return ;
+		
+		console.log(`// connect_to_channel ${username} on ${data.channelId}`);
+		
 		if (! await this.channelService.checkUserJoinedChannel(username, data.channelId))
 			return ;
-		console.log(`connect_to_channel ${username} on ${data.channelId}`);
+
 		socket.join("channel#" + data.channelId);
 	}
 
