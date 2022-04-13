@@ -26,9 +26,7 @@ const Profil = () => {
 			</div >
 			<div className='boxProfil'>
 				<Avatar />
-				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil">
-					<img src={close} alt="submit" className="offImg" />
-				</button>
+				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
 				<ProgressBar completed={870} />
 				<div className='boxStats'>
 					<HistoryMatch />

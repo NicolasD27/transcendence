@@ -32,10 +32,11 @@
 	height: 48px;
 	width: 48px;
 	margin-right: 15px;
-	background-size: 48px;
+	background-size: 192px;
+	background-position: center;
+	border: transparent;
+	border-radius: 130px;
 }
-
-.offImg {}
 
 .boxStats {
 	display: flex;
