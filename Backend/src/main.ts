@@ -28,7 +28,13 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api', app, document)
 	const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
-	app.enableCors()
+	app.enableCors({
+		"origin": ["http://localhost:3000", "http://localhost:8000"],
+		"methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+		"preflightContinue": false,
+		credentials: true,
+		"optionsSuccessStatus": 204
+	  })
 
 	app.use(sessionMiddleware);
 	app.use(passport.initialize());

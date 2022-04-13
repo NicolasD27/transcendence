@@ -9,6 +9,7 @@ import './pages/Home.css';
 import './pages/Login.css';
 import './pages/Home.css';
 import './pages/Login.css';
+import './pages/Profil.css';
 
 function App() {
   return (
