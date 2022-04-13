@@ -21,6 +21,7 @@ import { GetUsername } from "src/user/decorator/get-username.decorator";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
 import { CreateMsgDto } from "src/message/dto/create-msg.dto";
 import { MsgDto } from "src/message/dto/message.dto";
+import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -81,6 +82,13 @@ export class ChannelController {
 	{
 		await this.channelService.leave(request.cookies.username, id);
 		return ;
+	}
+
+	@Post(':id/updatePassword')
+	@UseGuards(TwoFactorGuard)
+	async updatePassword(@Req() request: Request, @Param('id') id: string, @Body() updateChannelPassword: UpdateChannelPassword)
+	{
+		await this.channelService.updatePassword(id, request.cookies.username, updateChannelPassword);
 	}
 
 }

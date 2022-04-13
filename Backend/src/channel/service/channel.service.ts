@@ -11,6 +11,7 @@ import { ChannelDto } from '../dto/channel.dto';
 import * as bcrypt from 'bcrypt';
 import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
+import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 
 
 @Injectable()
@@ -29,7 +30,9 @@ export class ChannelService {
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
 	) {}
-	
+
+	saltRounds = 10;
+
 	async findAll(): Promise<ChannelDto[]>
 	{
 		return await this.channelRepo.find()
@@ -56,7 +59,7 @@ export class ChannelService {
 		{
 			// todo : using salt could be cool
 			const saltRounds = 10;
-			hash = await bcrypt.hash(createChannelDto.password, saltRounds);
+			hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 			// console.log(`${createChannelDto.password} -> ${hash}`);
 		}
 		
@@ -200,6 +203,36 @@ export class ChannelService {
 			return true;
 
 		return false;
+	}
+
+	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
+	{
+		const myChannel = await this.channelRepo.findOne(id);
+		if (!myChannel)
+			throw new NotFoundException(`channel ${id} not found`);
+
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+
+		if (myUser.id != myChannel.owner.id)
+			throw new UnauthorizedException("you are not owning this channel");
+
+		if (myChannel.hashedPassword === "") {
+			if (updateChannelPassword.previousPassword !== "")
+				throw new UnauthorizedException("wrong password");
+		}
+		else if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
+			throw new UnauthorizedException("wrong password");
+
+		if (updateChannelPassword.newPassword === "") {
+			myChannel.hashedPassword = "";
+		}
+		else
+			myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
+
+		await this.channelRepo.save(myChannel);
+
 	}
 
 }
