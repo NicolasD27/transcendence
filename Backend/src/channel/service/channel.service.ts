@@ -62,7 +62,6 @@ export class ChannelService {
 			hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 			// console.log(`${createChannelDto.password} -> ${hash}`);
 		}
-		
 
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
@@ -175,29 +174,15 @@ export class ChannelService {
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
 
-		// console.log("//channelID : " + channelId);
-		// console.log(channelId);
-
-		// const myParticipations = await this.participationRepo.find({
-        //     relations: ['user', 'channel'],
-        //     where: [
-		// 		{ user: myUser},
-		// 		{ channel: myChannel },
-        //     ],
-        // });
-
-		// const myParticipations = await this.participationRepo.query(
-		// 	`SELECT id FROM "participation" WHERE "userId" = ${channelId};`
-		// );
-
 		const myParticipations = await this.participationRepo.find({
 			where: {
 				user: myUser.id,
 				channel: myChannel.id,
-			}});
+			}
+		});
 
-		console.log("// myParticipations : ");
-		console.log(myParticipations);
+		// console.log("// myParticipations : ");
+		// console.log(myParticipations);
 
 		if (myParticipations.length > 0)
 			return true;
