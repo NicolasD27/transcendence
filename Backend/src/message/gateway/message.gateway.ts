@@ -33,7 +33,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		// private readonly participationService: ParticipationService,
 		) {}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
 	async handleMessage(socket: Socket, data: { activeChannelId: string, content: string }) {
 
@@ -53,7 +53,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.socket.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
 	}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: Socket, data: { channelId: string }) {
 
@@ -74,7 +74,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.logger.log('Init');
 	}
 	
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
 	}

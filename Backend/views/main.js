@@ -19,6 +19,7 @@ const app = new Vue({
 		channelId: '',
 		socket: null,
 		socketOptions: {
+			reconnection: false,
 			transportOptions: {
 				polling: {
 					extraHeaders: {
