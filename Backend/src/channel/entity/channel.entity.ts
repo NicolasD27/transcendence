@@ -30,6 +30,14 @@ export class Channel extends BaseEntity {
 	participations: Participation[];
 
 	static toDto(channel: Channel) {
-		return plainToInstance(ChannelDto, instanceToPlain(channel), { excludeExtraneousValues: true })
+		const dto: ChannelDto = {
+			id: channel.id,
+            name: channel.name,
+            owner: User.toDto(channel.owner),
+            description: channel.description
+		}
+		return dto;
 	}
+
+	
 }

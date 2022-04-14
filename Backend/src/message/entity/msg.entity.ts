@@ -26,6 +26,13 @@ export class Msg {
 	user: User;
 
 	static toDto(msg: Msg) {
-		return plainToInstance(MsgDto, instanceToPlain(msg), { excludeExtraneousValues: true })
+		const dto: MsgDto = {
+			id: msg.id,
+			channel: Channel.toDto(msg.channel),
+			user: User.toDto(msg.user),
+			content: msg.content,
+			date: msg.date
+		}
+		return dto;
 	}
 }
