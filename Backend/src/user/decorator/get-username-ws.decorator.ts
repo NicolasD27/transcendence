@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { User } from "../entity/user.entity";
 
-export const GetUsername = createParamDecorator((data, ctx: ExecutionContext): string => {
-    const cookie_string = ctx.switchToHttp().getRequest().headers.cookie
+export const GetUsernameWS = createParamDecorator((data, ctx: ExecutionContext): string => {
+    const cookie_string = ctx.switchToWs().getClient().handshake.headers.cookie
 		if (!cookie_string)
 			throw new UnauthorizedException("No cookie");
     const cookies = cookie_string.split('; ');
