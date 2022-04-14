@@ -29,12 +29,6 @@ export class Channel extends BaseEntity {
 	@OneToMany(() => Participation, participation => participation.channel)
 	participations: Participation[];
 
-	// @Column()
-	// password: string;	// needs to be hashed with salt grains
-
-	// @Column()
-	// public privacy: number;
-
 	static toDto(channel: Channel) {
 		const dto: ChannelDto = {
 			id: channel.id,
