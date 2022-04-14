@@ -16,8 +16,7 @@ const HistoryCard: React.FC<Props> = (props) => {
 	return (
 		<div className="boxCard">
 			<img src={avatarPlayer} alt="" id="img" className="imgCard" />
-			<div className="scoreStyle">{scorePlayer}</div>
-			<div className="scoreStyle">{scoreOppenent}</div>
+			<div className="scoreStyle">{scorePlayer}  -  {scoreOppenent}</div>
 			<img src={avatarOppenent} alt="" id="img" className="imgCard" />
 		</div>
 	);

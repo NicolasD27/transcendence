@@ -7,7 +7,7 @@
 	justify-content: flex-start;
 	margin: 0px auto;
 	width: 90%;
-	height: 600px;
+	height: 40vw;
 	background:
 		linear-gradient(black, black) padding-box,
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;
@@ -42,5 +42,5 @@
 	display: flex;
 	flex-direction: row;
 	margin-top: 26px;
-	gap: 130px
+	gap: 9vw;
 }

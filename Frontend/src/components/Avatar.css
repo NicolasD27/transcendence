@@ -38,9 +38,8 @@
 
 .image-upload {
 	position: absolute;
-	bottom: 82%;
-	left: 48%;
-	width: 120px;
+	top: 65px;
+	left: 49%;
 	outline: none;
 	color: transparent;
 	box-sizing: border-box;
