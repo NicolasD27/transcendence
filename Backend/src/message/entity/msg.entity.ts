@@ -25,7 +25,6 @@ export class Msg {
 	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 
-
 	static toDto(msg: Msg) {
 		const dto: MsgDto = {
 			id: msg.id,

@@ -50,18 +50,16 @@ export class ChannelService {
 		console.log("channel.create()");
 		console.log(createChannelDto);
 
-		const user = await this.userRepo.findOne({ username });
-
-		// todo : hash the password
-		const saltRounds = 10;
-		const hash = await bcrypt.hash(createChannelDto.password, saltRounds);
-
-		console.log(`${createChannelDto.password} -> ${hash}`);
-		// bcrypt.genSalt(saltRounds, function(err, salt) {
-		// 	bcrypt.hash(createChannelDto.password, salt, function(err, hash) {
-		// 		console.log(createChannelDto.password + " => " + hash);
-		// 	});
-		// });
+		const	user = await this.userRepo.findOne({ username });
+		let		hash = "";
+		if (createChannelDto.password !== "")
+		{
+			// todo : using salt could be cool
+			const saltRounds = 10;
+			hash = await bcrypt.hash(createChannelDto.password, saltRounds);
+			// console.log(`${createChannelDto.password} -> ${hash}`);
+		}
+		
 
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
@@ -83,7 +81,11 @@ export class ChannelService {
 		if (! channel)
 			throw new NotFoundException("channel not found");
 		
-		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
+		if (channel.hashedPassword === "") {
+			if (notHashedPassword !== "")
+				throw new UnauthorizedException("password not empty");
+		}
+		else if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
@@ -105,6 +107,29 @@ export class ChannelService {
 		await this.participationRepo.save(newParticipation);
 
 		return newParticipation; 
+	}
+
+	async leave(username: string, channelId: string)
+	{
+		const user = await this.userRepo.findOne({ username });
+		if (! user)
+			throw new NotFoundException("username not found");
+		const channel = await this.channelRepo.findOne(channelId);
+		if (! channel)
+			throw new NotFoundException("channel not found");
+
+		const participation = await this.participationRepo.find({
+			where: {
+				user: user.id,
+				channel: channel.id
+			}});
+
+		if (! participation.length)
+			throw new UnauthorizedException("Channel was not joined");
+		
+		await this.participationRepo.delete(participation[0].id);
+
+		return true;
 	}
 
 	async getChannelUsers(id: string): Promise<UserDto[]>

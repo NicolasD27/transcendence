@@ -18,7 +18,11 @@
                     <br>
                     <div id="status"></div>
                     <div id="chat">
-						<p>(display channels)</p>
+
+						channelId : {{ channelId }}
+						<input v-model="channelId" placeholder="edit me" type="number">
+						<button v-on:click="updateApp">update</button>
+
                         <div class="card">
                             <div id="messages" class="card-block">
                                 <ul>
