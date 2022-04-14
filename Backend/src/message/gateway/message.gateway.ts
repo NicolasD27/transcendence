@@ -17,6 +17,7 @@ import { WsGuard } from '../../guards/websocket.guard';
 import { Participation } from 'src/channel/entity/participation.entity';
 import { ParticipationService } from 'src/channel/service/participation.service';
 import { ChannelService } from 'src/channel/service/channel.service';
+import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -34,15 +35,15 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
-	async handleMessage(socket: Socket, data: { activeChannelId: string, author: string, content: string }) {
+	async handleMessage(socket: Socket, data: { activeChannelId: string, content: string }) {
 
 		console.log("// msg_to_server " + data.activeChannelId);
-
+		const username = getUsernameFromSocket(socket);
 		// * check if the user has joined that channel before
-		if (! await this.channelService.checkUserJoinedChannel(data.author, data.activeChannelId))
+		if (! await this.channelService.checkUserJoinedChannel(username, data.activeChannelId))
 			return ;
 
-		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, data.author);
+		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
 		const msgDto: CreateMsgDto = {
 			content: message.content,
 			authorId: message.user.id,
@@ -54,21 +55,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: Socket, data: { channelId: string }) {//, @GetUsername() username: string) {
+	async connectToChannel(socket: Socket, data: { channelId: string }) {
 
 		// // const username = "oui";
 		// console.log(socket.request.headers.cookie);
 		
 		
-		let username: string = "";
-		
-		const cookie_string = socket.request.headers.cookie;
-		const cookies = cookie_string.split('; ')
-		if (cookies.find((cookie: string) => cookie.startsWith('username')))
-			username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
-		else
-			return ;
-		
+		const username = getUsernameFromSocket(socket);
 		console.log(`// connect_to_channel ${username} on ${data.channelId}`);
 		
 		if (! await this.channelService.checkUserJoinedChannel(username, data.channelId))

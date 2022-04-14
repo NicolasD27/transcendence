@@ -8,7 +8,7 @@ function getAccessTokenFromCookies() {
 	}
 }
 
-const g_channelId = 10;
+const g_channelId = 1;
 
 const app = new Vue({
 	el: '#app',

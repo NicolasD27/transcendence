@@ -12,6 +12,8 @@ import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { WsGuard } from '../../guards/websocket.guard';
 import { UserStatus } from '../entity/user.entity';
 import { UserService } from '../service/user/user.service';
+import { TwoFactorGuard } from '../../guards/two-factor.guard';
+import { getUsernameFromSocket } from '../get-user-ws.function';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -29,11 +31,12 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendStatusUpdate')						// this runs the function when the event msg_to_server is triggered
-	async sendStatusUpdate(socket: Socket, data: { newStatus: UserStatus, author: string}) {
+	async sendStatusUpdate(socket: Socket, data: { newStatus: UserStatus}) {
 		console.log("receiving status update")
-		const user = await this.userService.updateStatusByUsername(data.newStatus, data.author);		
+		const username = getUsernameFromSocket(socket);
+		const user = await this.userService.updateStatusByUsername(data.newStatus, username);		
 		const friends = await this.friendshipService.findAllActiveFriendsByUser(user.id)
 		console.log(friends, user)
 		friends.forEach((friend) => {
@@ -41,29 +44,31 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		})	
 	}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendFriendRequest')						// this runs the function when the event msg_to_server is triggered
-	async sendFriendRequest(socket: Socket, data: { user_id: number, author: string}) {
+	async sendFriendRequest(socket: Socket, data: { user_id: number}) {
 		console.log("receiving friend request")
-		const user = await this.userService.findByUsername(data.author);		
+		const username = getUsernameFromSocket(socket);
+		const user = await this.userService.findByUsername(username);		
 		const friendship = await this.friendshipService.create({user1_id: user.id, user2_id: data.user_id})
 		this.server.to("users#" + data.user_id).emit('notifyFriendRequest', friendship);
 	}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('acceptFriendRequest')						// this runs the function when the event msg_to_server is triggered
-	async acceptFriendRequest(socket: Socket, data: { friendship_id: number, author: string}) {
+	async acceptFriendRequest(socket: Socket, data: { friendship_id: number}) {
 		console.log("accepting friend request")
-		const friendship = await this.friendshipService.update(data.author, data.friendship_id, 1)
+		const username = getUsernameFromSocket(socket);
+		const friendship = await this.friendshipService.update(username, data.friendship_id, 1)
 		this.server.to("users#" + friendship.following.id).emit('notifyFriendRequestAccepted', friendship);
 	}
 
 
 	// @UseGuards(WsGuard)
 	// @SubscribeMessage('update_to_server')						// this runs the function when the event msg_to_server is triggered
-	// async updateMatch(socket: Socket, data: { match_id: string, command: string, author: string}) {
+	// async updateMatch(socket: Socket, data: { match_id: string, command: string}) {
 	// 	console.log(data)
-	// 	const match = await this.matchService.updatePositionCurrentMatch(data.match_id, data.author, data.command);
+	// 	const match = await this.matchService.updatePositionCurrentMatch(data.match_id, username, data.command);
 	// 	this.socket.to("match#" + data.match_id).emit('update_to_client', match)
 		
 	// }
@@ -73,15 +78,13 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.logger.log('Init');
 	}
 	
+	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
-		const cookies = socket.handshake.headers.cookie.split('; ')
-		if (cookies.find((cookie: string) => cookie.startsWith('username')))
-		{
-			const username = cookies.find((cookie: string) => cookie.startsWith('username')).split('=')[1];
-			const user = await this.userService.findByUsername(username);
-			socket.join("user#" + user.id);
-		}
+		const username = getUsernameFromSocket(socket);
+		const user = await this.userService.findByUsername(username);
+		socket.join("user#" + user.id);
+		
 	}
 
 	handleDisconnect(client: Socket, ...args) {
