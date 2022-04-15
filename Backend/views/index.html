@@ -18,7 +18,11 @@
                     <br>
                     <div id="status"></div>
                     <div id="chat">
-						<p>(display channels)</p>
+
+						channelId : {{ channelId }}
+						<input v-model="channelId" placeholder="edit me" type="number">
+						<button v-on:click="updateApp">update</button>
+
                         <div class="card">
                             <div id="messages" class="card-block">
                                 <ul>
@@ -31,7 +35,7 @@
                         <br>
                         <button id="send" class="btn" @click.prevent="sendMessage">Send</button>
                     </div>
-                    
+
                 </div>
             </div>
             <div id="invites" class="card-block">
@@ -48,7 +52,7 @@
             <button @click.prevent="findMatch">Find Match</button>
             <input type="text" v-model="opponent_id">
             <button @click.prevent="challengeUser">Challenge</button>
-            
+
             <ul>
                 <li >{{ match.id }} : {{ match.y1 }}, {{ match.y2 }}, {{ match.bx }}, {{ match.by }}, {{ match.bvx }}, {{ match.bvy }}</li>
             </ul>
@@ -62,8 +66,8 @@
                         <div id="ball" :style="{'--bx': match.bx + '%', '--by': match.by * 2 + '%'}"></div>
                     </div>
                 <!-- </div> -->
-                
-            
+
+
         </div>
     </div>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>

@@ -11,6 +11,7 @@ import { ChannelDto } from '../dto/channel.dto';
 import * as bcrypt from 'bcrypt';
 import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
+import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 
 
 @Injectable()
@@ -29,12 +30,14 @@ export class ChannelService {
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
 	) {}
-	
+
 	async findAll(): Promise<ChannelDto[]>
 	{
 		return await this.channelRepo.find()
 			.then(items => items.map(e=> Channel.toDto(e)));
 	}
+
+	saltRounds = 10;
 
 	async findOne(channelId: string): Promise<ChannelDto>
 	{
@@ -50,24 +53,21 @@ export class ChannelService {
 		console.log("channel.create()");
 		console.log(createChannelDto);
 
-		const user = await this.userRepo.findOne({ username });
-
-		// todo : hash the password
-		const saltRounds = 10;
-		const hash = await bcrypt.hash(createChannelDto.password, saltRounds);
-
-		console.log(`${createChannelDto.password} -> ${hash}`);
-		// bcrypt.genSalt(saltRounds, function(err, salt) {
-		// 	bcrypt.hash(createChannelDto.password, salt, function(err, hash) {
-		// 		console.log(createChannelDto.password + " => " + hash);
-		// 	});
-		// });
+		const	user = await this.userRepo.findOne({ username });
+		let		hash = "";
+		if (createChannelDto.password !== "")
+		{
+			// todo : using salt could be cool
+			const saltRounds = 10;
+			hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
+			// console.log(`${createChannelDto.password} -> ${hash}`);
+		}
 
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
 			description: createChannelDto.description,
 			owner : user,
-			hashedPassword : hash, 
+			hashedPassword : hash,
 		});
 		await this.channelRepo.save(newChannel);
 		this.join(username, newChannel.id.toString(), createChannelDto.password);
@@ -82,8 +82,12 @@ export class ChannelService {
 		const channel = await this.channelRepo.findOne(channelId);
 		if (! channel)
 			throw new NotFoundException("channel not found");
-		
-		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
+
+		if (channel.hashedPassword === "") {
+			if (notHashedPassword !== "")
+				throw new UnauthorizedException("password not empty");
+		}
+		else if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
@@ -104,7 +108,30 @@ export class ChannelService {
 
 		await this.participationRepo.save(newParticipation);
 
-		return newParticipation; 
+		return newParticipation;
+	}
+
+	async leave(username: string, channelId: string)
+	{
+		const user = await this.userRepo.findOne({ username });
+		if (! user)
+			throw new NotFoundException("username not found");
+		const channel = await this.channelRepo.findOne(channelId);
+		if (! channel)
+			throw new NotFoundException("channel not found");
+
+		const participation = await this.participationRepo.find({
+			where: {
+				user: user.id,
+				channel: channel.id
+			}});
+
+		if (! participation.length)
+			throw new UnauthorizedException("Channel was not joined");
+
+		await this.participationRepo.delete(participation[0].id);
+
+		return true;
 	}
 
 	async getChannelUsers(id: string): Promise<UserDto[]>
@@ -147,34 +174,50 @@ export class ChannelService {
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
 
-		// console.log("//channelID : " + channelId);
-		// console.log(channelId);
-
-		// const myParticipations = await this.participationRepo.find({
-        //     relations: ['user', 'channel'],
-        //     where: [
-		// 		{ user: myUser},
-		// 		{ channel: myChannel },
-        //     ],
-        // });
-
-		// const myParticipations = await this.participationRepo.query(
-		// 	`SELECT id FROM "participation" WHERE "userId" = ${channelId};`
-		// );
-
 		const myParticipations = await this.participationRepo.find({
 			where: {
 				user: myUser.id,
 				channel: myChannel.id,
-			}});
+			}
+		});
 
-		console.log("// myParticipations : ");
-		console.log(myParticipations);
+		// console.log("// myParticipations : ");
+		// console.log(myParticipations);
 
 		if (myParticipations.length > 0)
 			return true;
 
 		return false;
+	}
+
+	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
+	{
+		const myChannel = await this.channelRepo.findOne(id);
+		if (!myChannel)
+			throw new NotFoundException(`channel ${id} not found`);
+
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+
+		if (myUser.id != myChannel.owner.id)
+			throw new UnauthorizedException("you are not owning this channel");
+
+		if (myChannel.hashedPassword === "") {
+			if (updateChannelPassword.previousPassword !== "")
+				throw new UnauthorizedException("wrong password");
+		}
+		else if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
+			throw new UnauthorizedException("wrong password");
+
+		if (updateChannelPassword.newPassword === "") {
+			myChannel.hashedPassword = "";
+		}
+		else
+			myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
+
+		await this.channelRepo.save(myChannel);
+
 	}
 
 }

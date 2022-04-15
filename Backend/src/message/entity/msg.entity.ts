@@ -16,22 +16,23 @@ export class Msg {
 	public content: string;
 
 	@Column({
-        nullable: false,
-        default: () => 'CURRENT_TIMESTAMP' ,
-        type: 'timestamp',
-    })
-    public date: Date;
+		nullable: false,
+		default: () => 'CURRENT_TIMESTAMP',
+		type: 'timestamp',
+	})
+	public date: Date;
 
 	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 
-	@Column({
-        nullable: false,
-        default: () => 'CURRENT_TIMESTAMP' ,
-        type: 'timestamp',
-      })
-
 	static toDto(msg: Msg) {
-		return plainToInstance(MsgDto, instanceToPlain(msg), { excludeExtraneousValues: true })
+		const dto: MsgDto = {
+			id: msg.id,
+			channel: Channel.toDto(msg.channel),
+			user: User.toDto(msg.user),
+			content: msg.content,
+			date: msg.date
+		}
+		return dto;
 	}
 }
