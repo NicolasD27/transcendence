@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import mainTitle from '../asset/mainTitle.svg';
 import searchIcon from '../asset/searchIcon.svg';
 import addGroupIcon from "../asset/addGroupIcon.svg"
-//import gameArea from '../asset/gameArea.svg';
+import { Match } from '../components/Match'
 
 const Chat = () => {
 	return (
@@ -23,7 +23,7 @@ const Chat = () => {
 const Login = () => {
 	const navigate = useNavigate()
 	const onPlay = () => {
-		navigate("") //launch match component here
+		navigate("") //I put it for now in gameAndChatSection, maybe going to move it
 	}
 	const onProfil = () => {
 		navigate("/profil")
@@ -38,6 +38,7 @@ const Login = () => {
 				</div >
 				<section id="gameAndChatSection">
 					<div className='gameArea'><div className='gameAreaSeparation'></div></div>
+					<Match/ >
 					<Chat/>
 				</section>
 			</div>
