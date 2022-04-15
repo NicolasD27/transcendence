@@ -14,9 +14,4 @@ export class Participation {
 	@ManyToOne(() => Channel, channel => channel.participations, { eager: true })
 	channel: Channel;
 
-	// @Column()
-	// password: string;	// needs to be hashed with salt grains
-
-	// @Column()
-	// public privacy: number;
 }

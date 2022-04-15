@@ -82,7 +82,13 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async handleConnection(socket: Socket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
 		const username = getUsernameFromSocket(socket);
-		const user = await this.userService.findByUsername(username);
+		let user;
+		// try {
+			user = await this.userService.findByUsername(username);
+		// }
+		// catch (ex) {
+			// return ;
+		// }
 		socket.join("user#" + user.id);
 		
 	}

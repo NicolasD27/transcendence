@@ -11,7 +11,7 @@ export class Channel extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@Column()
+	@Column({ unique: true })
 	public name: string;
 
 	@Column()

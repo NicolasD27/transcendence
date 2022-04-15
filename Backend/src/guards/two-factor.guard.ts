@@ -31,39 +31,25 @@ export class TwoFactorGuard implements CanActivate {
 			throw new UnauthorizedException("No accessToken");
 		try {
 			const decoded = this.jwtService.verify(accessToken) as any;
+			console.log()
 			return new Promise((resolve, reject) => {
-				return this.userService.findByUsername(decoded.username).then(user => {
+				return this.userService.findByUsername(decoded.username)
+				.then(user => {
 					if (user) {
 						resolve(user);
 					} else {
 						reject(false);
 					}
-				});
-			});
+				})
+				.catch(ex =>{
+					console.log("panic") ;
+					reject(false);
+				})
+			})
 		}
 		catch (ex) {
 			console.log(ex);
 			return false;
 		}
-
-		// } catch (ex) {
-		// 	try {
-
-
-
-		// 		return new Promise((resolve, reject) => {
-		// 			return this.userService.findByUsername(username).then(user => {
-		// 				if (user && !user.isTwoFactorEnable) {
-		// 					resolve(user);
-		// 				} else {
-		// 					resolve(false);
-		// 				}
-		// 			});
-		// 		});
-		// 	}
-		// 	catch {
-		// 		throw new UnauthorizedException("user not found");
-		// 	}
-		// }
 	}
 }

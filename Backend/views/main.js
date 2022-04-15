@@ -127,6 +127,6 @@ const app = new Vue({
 	}
 });
 
-app.connectToChannel();
+// app.connectToChannel();
 app.getPreviousMessages();
 

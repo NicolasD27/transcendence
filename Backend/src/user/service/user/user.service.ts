@@ -27,10 +27,32 @@ export class UserService {
     }
 
     async findByUsername(username: string): Promise<UserDto> {
-        const user = await this.usersRepository.findOne({ username });
-        if (!user)
-            throw new NotFoundException(`User ${username} not found`);
-        return User.toDto(user);
+        const user = this.usersRepository.findOne({ username });
+        // if (!user)
+		// 	throw new NotFoundException(`User ${username} not found`);
+			// return user;
+        // return User.toDto(user);
+
+		// return 
+		// const tmp = new Promise((resolve, reject) => {
+		// 	await this.usersRepository.findOne({ username }).then(res => {
+		// 	if (res === undefined) {
+		// 		resolve();
+		// 	} else {
+		// 		reject('some error');
+		// 	}
+		// })
+
+		return new Promise((resolve, reject) => {
+			return user.then(user => {
+				if (!user) {
+					reject(false);
+				} else {
+					resolve(User.toDto(user));
+				}
+			});
+		});
+
     }
 
     async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
