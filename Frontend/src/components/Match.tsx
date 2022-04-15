@@ -113,7 +113,9 @@ export class Match extends Component
 
 	setup = (p5) =>
 	{
-		this.socket = io('http://localhost:3000'); //need to change this
+		//with credentials true
+		this.socket = io('http://localhost:8000', {withCredentials: true}); //need to change this
+
 
 		let cvn = p5.createCanvas(800, 400);
 		cvn.position(250, 220);
