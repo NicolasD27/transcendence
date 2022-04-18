@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import Sketch from "react-p5";
 import {io, Socket} from "socket.io-client"
 
+let width = 800;
+let height = 400;
+let playerWidth = 15;
+
 function Player(x, y, w, h, score)
 {
 	this.x = x;
@@ -44,9 +48,9 @@ function negRand()
 
 function gameEngine(game)
 {
-	if(game.ball.x + game.ball.xv > 785 - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr + 15)
+	if(game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
 	{
-		if (game.ball.x + game.ball.xv > 785 - game.ball.xr)
+		if (game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 				game.ball.xv = -game.ball.xv;
@@ -57,10 +61,10 @@ function gameEngine(game)
 
 				var a2 = rand(80, 120);
 				var b2 = 200 - a2;
-				game.ball = new Ball(400, 200, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
+				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
 			}
 		}
-		else if (game.ball.x + game.ball.xv < game.ball.xr + 15)
+		else if (game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 				game.ball.xv = -game.ball.xv;
@@ -71,11 +75,11 @@ function gameEngine(game)
 
 				var a2 = rand(80, 120);
 				var b2 = 200 - a2;
-				game.ball = new Ball(400, 200, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
+				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
 			}
 		}
 	}
-	if(game.ball.y + game.ball.yv > 400 - game.ball.yr || game.ball.y + game.ball.yv < game.ball.yr)
+	if(game.ball.y + game.ball.yv > height - game.ball.yr || game.ball.y + game.ball.yv < game.ball.yr)
 	{
 		game.ball.yv = - game.ball.yv;
 	}
@@ -113,17 +117,16 @@ export class Match extends Component
 
 	setup = (p5) =>
 	{
-		//with credentials true
-		this.socket = io('http://localhost:8000', {withCredentials: true}); //need to change this
+		this.socket = io('http://localhost:8000', {withCredentials: true});
 
 
-		let cvn = p5.createCanvas(800, 400);
-		cvn.position(250, 220);
+		let cvn = p5.createCanvas(width, height);
+		cvn.position(250, 220);												//gonna need some tweaks
 
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Waiting for other player...', 120, 200);
+		p5.text('Waiting for other player...', 120, height / 2);			//add width change
 
 		this.socket.emit('askConnectionNumber');
 		this.socket.on('sendConnectionNb', (data) =>
@@ -136,15 +139,15 @@ export class Match extends Component
 				var b2 = 200 - a2;
 
 				var game = new Game(
-					new Player(15, 150, 15, 100, 0),
-					new Player(770, 150, 15, 100, 0),
-					new Ball(400, 200, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
+					new Player(15, 150, playerWidth, 100, 0),
+					new Player(770, 150, playerWidth, 100, 0),
+					new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
 					this.countdown);
 
 				p5.background(0);
 				p5.textSize(50);
 				p5.fill(p5.color(255, 255, 255));
-				p5.text('Waiting for other player...', 120, 200);
+				p5.text('Waiting for other player...', 120, height / 2);	//add width change
 
 				this.socket.on('updateGame', (data) =>
 				{
@@ -160,9 +163,8 @@ export class Match extends Component
 						if (game.playerTwo.y != 0)
 							game.playerTwo.y -= 5;
 					}
-					else if (game.playerTwo.y < 400 - 100 && this.started == 1)
+					else if (game.playerTwo.y < height - 100 && this.started == 1)		//add player height change ?
 						game.playerTwo.y += 5;
-					//socket.emit('sendUpdateGame', game);	//instant pos refresh, but can be laggy
 				});
 
 				this.socket.on('masterToMasterKeyPressed', data =>
@@ -172,9 +174,8 @@ export class Match extends Component
 						if (game.playerOne.y != 0)
 							game.playerOne.y -= 5;
 					}
-					else if (game.playerOne.y < 400 - 100 && this.started == 1)
+					else if (game.playerOne.y < height - 100 && this.started == 1)		//add player height change ?
 						game.playerOne.y += 5;
-					//socket.emit('sendUpdateGame', game);	//instant pos refresh, but can be laggy
 				});
 
 				this.socket.on('launchMatch', () =>
