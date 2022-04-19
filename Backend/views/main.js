@@ -8,8 +8,6 @@ function getAccessTokenFromCookies() {
 	}
 }
 
-const g_channelId = 10;
-
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -33,18 +31,18 @@ const app = new Vue({
 		invite_choosen: null,
 		invites: [],
 		match: [],
+		channelId: 1,
 		status: 1
 	},
 	methods: {
 		connectToChannel() {
-			this.channelId = g_channelId;
-			this.socket.emit('connect_to_channel', {channelId: this.channelId})
+			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
 		sendMessage(message) {
 			console.log(message);
 			if(this.validateInput()) {
 				const message = {
-					activeChannelId: g_channelId,
+					activeChannelId: this.channelId,
 					content: this.content,
 					author: this.author
 				}
@@ -60,7 +58,8 @@ const app = new Vue({
 			return true;
 		},
 		async getPreviousMessages() {
-			let msgs = await (await fetch(`http://localhost:8000/api/channels/${g_channelId}/messages`)).json();
+			let msgs = await (await fetch(`http://localhost:8000/api/channels/${this.channelId}/messages`)).json();
+			this.messages = [];
 			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
@@ -100,13 +99,17 @@ const app = new Vue({
 			this.match = match;
 			console.log(this.match);
 		},
+		updateApp() {
+			this.connectToChannel();
+			this.getPreviousMessages();
+		},
 		sendStatusUpdate() {
 			console.log("sending status Update")
 			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
 		}
 	},
 	created() {
-		console.log("here", document.cookie.split('=')[1])
+		// console.log("here", document.cookie.split('=')[1])
 		this.socket = io.connect('http://localhost:8000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);

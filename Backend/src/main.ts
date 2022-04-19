@@ -8,6 +8,7 @@ import { join } from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import { AuthSocketAdapter } from './auth-socket.adapter';
 
 async function bootstrap() {
 
@@ -42,6 +43,8 @@ async function bootstrap() {
 	app.useStaticAssets(join(__dirname, '..', 'views'));
 
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+	app.useWebSocketAdapter(new AuthSocketAdapter(app));
+
 
 	await app.listen(port);
 }
