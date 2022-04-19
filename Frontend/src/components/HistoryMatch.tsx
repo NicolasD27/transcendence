@@ -16,8 +16,8 @@ const HistoryMatch = () => {
 		<Fragment>
 			<div className="boxHistory">
 				<div className="labelHistory">Match History:</div>
-				{matchs.map(match => (
-					<HistoryCard avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
+				{matchs.map((match, i) => (
+					<HistoryCard key={i} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
 						scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
 				))}
 			</div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './Avatar.css';
+import { convertTypeAcquisitionFromJson, parseJsonSourceFileConfigFileContent } from 'typescript';
 
 export class Avatar extends Component {
 	state = {
@@ -19,29 +20,25 @@ export class Avatar extends Component {
 	};
 
 	componentDidMount() {
-		axios.get(`http://localhost:8000/api/users`, {withCredentials: true	})
+		axios.get(`http://localhost:8000/api/users/`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
 				console.log(persons)
 				this.setState({ persons });
+				if (persons.length) {
+					this.setState({ profileImg: this.state.persons[0]["avatar"] })
+				}
 			})
 	}
+
+	/*<ul>
+	{this.state.persons.map((person, i) =>
+		<li key="{i}" style={{ color: 'white' }}>{person['username']}</li>)}
+	</ul>*/
 
 	render() {
 		const { profileImg } = this.state
 		return (
-			/*<div>
-				<div className="img-holder">
-					<img src={profileImg} alt="" id="img" className="img" />
-				</div>
-				<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
-				<div className="label">
-					<label className="image-upload" htmlFor="input">Upload</label>
-				</div>
-				<ul>
-					{this.state.persons.map(person => <li style={{ color: 'white' }}>{person['name']}</li>)}
-				</ul>
-			</div>*/
 			<div className="img" style={{ backgroundImage: `url(${profileImg})`, height: 130, width: 130 }}>
 				<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
 				<label className="image-upload" htmlFor="input">Upload</label>
