@@ -5,11 +5,12 @@ import ProgressBar from '../components/Progress-bar';
 import mainTitle from '../asset/mainTitle.svg';
 import close from '../asset/close.svg';
 import HistoryMatch from '../components/HistoryMatch';
+import Achievement from '../components/Achievement';
 
 const Profil = () => {
 	const navigate = useNavigate()
 	const onLogout = () => {
-		navigate("/")
+		navigate("/login")
 	}
 	const onPlay = () => {
 		navigate("")
@@ -30,7 +31,7 @@ const Profil = () => {
 				<ProgressBar completed={870} />
 				<div className='boxStats'>
 					<HistoryMatch />
-					<HistoryMatch />
+					<Achievement />
 				</div>
 			</div>
 		</Fragment>

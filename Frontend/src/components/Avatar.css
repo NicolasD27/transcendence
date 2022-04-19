@@ -15,6 +15,7 @@
 
 .img-holder {
 	margin: auto;
+	position: relative;
 	width: 150px;
 	height: 150px;
 	border: 3px black solid;

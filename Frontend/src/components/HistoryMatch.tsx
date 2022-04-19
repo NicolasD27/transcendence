@@ -5,32 +5,21 @@ import './HistoryMatch.css';
 
 const HistoryMatch = () => {
 	const profileImg = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	const profileImg2 = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	const matchs = [{ avatarP: profileImg, avatarO: profileImg2, scoreP: 2, scoreO: 45 },
+	{ avatarP: profileImg, avatarO: profileImg2, scoreP: 22, scoreO: 5 },
+	{ avatarP: profileImg, avatarO: profileImg2, scoreP: 2, scoreO: 1 },
+	{ avatarP: profileImg, avatarO: profileImg2, scoreP: 0, scoreO: 0 },
+	{ avatarP: profileImg, avatarO: profileImg2, scoreP: 2, scoreO: 5 },
+	{ avatarP: profileImg, avatarO: profileImg2, scoreP: 11, scoreO: 9 }];
 	return (
 		<Fragment>
 			<div className="boxHistory">
 				<div className="labelHistory">Match History:</div>
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={4} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={400} />
-				<HistoryCard avatarPlayer={profileImg} avatarOppenent={profileImg} scorePlayer={2} scoreOppenent={54} />
+				{matchs.map(match => (
+					<HistoryCard avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
+						scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
+				))}
 			</div>
 		</Fragment>
 	);

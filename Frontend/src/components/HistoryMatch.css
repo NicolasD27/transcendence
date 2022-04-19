@@ -7,7 +7,7 @@
 }
 
 *::-webkit-scrollbar {
-    width: 0px;
+	width: 0px;
 }
 
 .boxHistory {
@@ -36,4 +36,10 @@
 	font-family: 'Open Sans';
 	font-size: 16px;
 	transform: translateY(-50px);
+}
+
+@media only screen and (max-height: 1500px) {
+	.boxHistory {
+		height: 35vh;
+	}
 }
