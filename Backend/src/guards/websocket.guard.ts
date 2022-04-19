@@ -6,7 +6,7 @@ import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedExceptio
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../user/service/user/user.service';
+import { UserService } from '../user/service/user.service';
 import { AuthService } from '../user/service/auth.service';
 
 @Injectable()

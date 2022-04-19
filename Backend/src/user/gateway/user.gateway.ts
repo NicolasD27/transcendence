@@ -11,7 +11,7 @@ import { Socket, Server } from 'socket.io';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { WsGuard } from '../../guards/websocket.guard';
 import { UserStatus } from '../entity/user.entity';
-import { UserService } from '../service/user/user.service';
+import { UserService } from '../service/user.service';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
