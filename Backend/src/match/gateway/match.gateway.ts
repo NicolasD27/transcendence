@@ -9,7 +9,7 @@ import { MessageBody,
 	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { WsGuard } from '../../guards/websocket.guard';
-import { UserService } from '../../user/service/user/user.service';
+import { UserService } from '../../user/service/user.service';
 import { CustomModes, Match, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 import Player  from '../interface/player.interface'
@@ -44,10 +44,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		this.server.to("match#" + match.id).emit('update_to_client', match)
-		setInterval(async () => {
-			match = await this.matchService.updatePositionMatch(match.id);
-			this.server.to("match#" + match.id).emit('update_to_client', match)
-		}, 30) 
+		
 		
 	}
 
@@ -109,10 +106,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		socket.join("match#" + match.id);
 		
 		this.server.to("match#" + match.id).emit('launch_match', match)	
-		setInterval(async () => {
-			match = await this.matchService.updatePositionMatch(match.id);
-			this.server.to("match#" + match.id).emit('update_to_client', match)
-		}, 100) 	
+		
 	}
 
 

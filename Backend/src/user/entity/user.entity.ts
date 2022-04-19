@@ -6,6 +6,7 @@ import { Channel } from "../../channel/entity/channel.entity";
 import { UserDto } from "../dto/user.dto";
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Participation } from "src/channel/entity/participation.entity";
+import DatabaseFile from "./database-file.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -32,8 +33,17 @@ export class User extends BaseEntity {
 	@Column({ default: false })
 	public isTwoFactorEnable: boolean
 
+	@JoinColumn({ name: 'avatarId' })
+	@OneToOne(
+		() => DatabaseFile,
+		{
+		nullable: true
+		}
+	)
+	public avatar?: DatabaseFile;
+ 
 	@Column({ nullable: true })
-	avatar: string
+	public avatarId?: number;
 
 	@Column({ default: UserStatus.ONLINE })
 	status: number
