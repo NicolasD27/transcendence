@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
-import { Participation } from '../entity/participation.entity';
+import { BannedState, Participation } from '../entity/participation.entity';
 import { CreateMsgDto } from 'src/message/dto/create-msg.dto';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../message/entity/msg.entity';
@@ -12,6 +12,9 @@ import * as bcrypt from 'bcrypt';
 import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
+import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
+import { networkInterfaces } from 'os';
+import { DeleteChannelDto } from '../dto/delete-channel.dto';
 
 
 @Injectable()
@@ -31,7 +34,7 @@ export class ChannelService {
 		private userRepo: Repository<User>,
 	) {}
 
-	saltRounds = 10;
+	saltRounds = 12;
 
 	async findAll(): Promise<ChannelDto[]>
 	{
@@ -55,14 +58,13 @@ export class ChannelService {
 
 		const	user = await this.userRepo.findOne({ username });
 		let		hash = "";
-		if (createChannelDto.password !== "")
+		if (createChannelDto.password !== "")	//* this check might be pointless
 		{
-			// todo : using salt could be cool
-			const saltRounds = 10;
 			hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 			// console.log(`${createChannelDto.password} -> ${hash}`);
 		}
 
+		//? registering the new channel in the bdd
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
 			description: createChannelDto.description,
@@ -70,7 +72,15 @@ export class ChannelService {
 			hashedPassword : hash, 
 		});
 		await this.channelRepo.save(newChannel);
-		this.join(username, newChannel.id.toString(), createChannelDto.password);
+		
+		//? the new owner will automaticaly join it's new channel
+		const newParticipation = await this.participationRepo.create({
+			user: user,
+			channel: newChannel,
+			isModo: true,
+		});
+		await this.participationRepo.save(newParticipation);
+		
 		return Channel.toDto(newChannel);
 	}
 
@@ -93,7 +103,7 @@ export class ChannelService {
 		const participation = await this.participationRepo.find({
 			where: {
 				user: user.id,
-				channel: channel.id
+				channel: channel.id,
 			}});
 
 		console.log(participation);
@@ -220,4 +230,94 @@ export class ChannelService {
 
 	}
 
+	async changeBanStatus(id: string, username: string, banUserDto: BanUserFromChannelDto, banStatus: keyof typeof BannedState)
+	{
+		const banhammer = await this.userRepo.findOne({ username });
+		if (! banhammer)
+			throw new NotFoundException(`username ${username} not found.`);
+		
+		const myChannel = await this.channelRepo.findOne(id);
+		if (! myChannel)
+			throw new NotFoundException(`Channel ${id} not found.`);
+
+		const participation = await this.participationRepo.findOne({
+			where: {
+				user: banhammer.id,
+				channel: myChannel.id,
+			}});
+
+		if (! participation)
+			throw new UnauthorizedException("Channel was not joined.");
+
+		console.log("// participation : ");
+		console.log(participation);
+
+		if (! participation.isModo)
+			throw new UnauthorizedException("You need to be moderator to mute/ban people on a channel.");
+		
+		let _now = new Date();
+
+		console.log(`new date : ${_now}`);
+
+		// if (banUserDto.date < 
+
+	}
+
+	async remove(id:string, username:string, deleteChannelDto:DeleteChannelDto)
+	{
+		const myUser = await this.userRepo.findOne({ username });
+
+		const myChannel = await this.channelRepo.findOne(id);
+		if (! myChannel)
+			throw new NotFoundException(`Channel ${id} not found.`);
+
+		const participation = await this.participationRepo.findOne({
+			where: {
+				user: myUser.id,
+				channel: myChannel.id,
+			}
+		});
+
+		if (! participation)
+			throw new UnauthorizedException("Channel was not joined.");
+			
+		if (myChannel.owner.id != myUser.id)
+			throw new UnauthorizedException("Only the owner of a channel can delete it.");
+
+		const everyParticipations = await this.participationRepo.find({
+			where: {
+				channel: myChannel.id,
+			}
+		});
+	
+		// everyParticipations.forEach(() => {
+
+			// })
+		// this.participationRepo.delete({everyParticipations});
+
+		//? delete every participations to this channel
+		await getConnection()
+			.createQueryBuilder()
+			.delete()
+			.from("participation")
+			.where("channel = :channelId", { channelId: myChannel.id})
+			.execute();
+
+		//? delete every messages of this channel
+		await getConnection()
+			.createQueryBuilder()
+			.delete()
+			.from("msg")
+			.where("channelId = :id", { id: myChannel.id})
+			.execute();
+
+		//? delete the channel
+		await getConnection()
+			.createQueryBuilder()
+			.delete()
+			.from("channel")
+			.where("id = :channelId", { channelId: myChannel.id})
+			.execute();
+
+	}
 }
