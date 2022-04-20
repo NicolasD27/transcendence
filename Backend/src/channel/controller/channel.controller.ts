@@ -94,12 +94,20 @@ export class ChannelController {
 		return ;
 	}
 
-	// todo banUser() && unbanUser()
+	// todo unbanUser() changeBanTime()
 	@Patch(':id/ban')
 	@UseGuards(TwoFactorGuard)
 	async banUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
 	{
-		await this.channelService.changeBanStatus(id, request.cookies.username, banUserFromChannelDto, "banned");
+		await this.channelService.changeBanStatus(id, request.cookies.username, banUserFromChannelDto, 2);
+		return ;
+	}
+
+	@Patch(':id/mute')
+	@UseGuards(TwoFactorGuard)
+	async muteUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
+	{
+		await this.channelService.changeBanStatus(id, request.cookies.username, banUserFromChannelDto, 1);
 		return ;
 	}
 

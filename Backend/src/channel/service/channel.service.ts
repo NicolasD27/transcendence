@@ -238,7 +238,7 @@ export class ChannelService {
 	}
 
 	// todo : finish this using another entity
-	async changeBanStatus(id: string, username: string, banUserFromChannelDto: BanUserFromChannelDto, banStatus: keyof typeof BannedState)
+	async changeBanStatus(id: string, username: string, banUserFromChannelDto: BanUserFromChannelDto, newBanStatus: number)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
 		if (! banhammer)	//! add this if there is no guard
@@ -257,21 +257,21 @@ export class ChannelService {
 		if (! participation)
 			throw new UnauthorizedException("Channel is not joined.");
 
-		console.log("// participation : ");
-		console.log(participation);
+		// console.log("// participation : ");
+		// console.log(participation);
 
 		if (! participation.isModo)
 			throw new UnauthorizedException("You need to be moderator to mute/ban people on a channel.");
 
-		console.log("// banUserFromChannelDto :");
-		console.log(banUserFromChannelDto);
+		// console.log("// banUserFromChannelDto :");
+		// console.log(banUserFromChannelDto);
 
 		const futureBanned = await this.userRepo.findOne({ where: { id: banUserFromChannelDto.userId.toString() } });
 		if (! futureBanned)
 			throw new NotFoundException(`userId #${banUserFromChannelDto.userId} not found.`);
 
-		console.log("// futureBanned : ");
-		console.log(futureBanned);
+		// console.log("// futureBanned : ");
+		// console.log(futureBanned);
 
 		// todo : make a super user to avoid moderation problems ?
 		if (myChannel.owner.id == futureBanned.id)
@@ -288,17 +288,40 @@ export class ChannelService {
 		if (futureBannedParticipation.isModo)
 			throw new UnauthorizedException("A Moderator can not be banned or muted.");
 
+		const previousBans = await this.moderationTimeOutRepo.find({
+			where: {
+				user: futureBanned,
+				channel: myChannel,
+			}
+		});
+
+		// ? ban an user already banned will set it's previous ban to stop now,
+		// ? then apply the new ban TO
+
+		let _now:Date = new Date();
+		previousBans.forEach((ban) => {
+			if (ban.date > _now)	//  && ban.bannedState == newBanStatus
+			{
+				ban.date = _now;
+				this.moderationTimeOutRepo.save(ban);
+				// if (newBanStatus == 1)
+				// 	throw new UnauthorizedException("User already muted.");
+				// else
+				// 	throw new UnauthorizedException("User already banned.");
+			}
+		});
+
 		let myTimeout = new Date();
 		myTimeout.setSeconds(myTimeout.getSeconds() + banUserFromChannelDto.timeout);
 		console.log("// should be timed out until " + myTimeout);
 
-		const mymoderationTO = await this.moderationTimeOutRepo.create({
+		const myModerationTO = await this.moderationTimeOutRepo.create({
 			channel: myChannel,
 			user: futureBanned,
-			bannedState: 1,			// BannedState doesn't work :(
+			bannedState: newBanStatus,
 			date: myTimeout,
-		})
-		await this.moderationTimeOutRepo.save(mymoderationTO);
+		});
+		await this.moderationTimeOutRepo.save(myModerationTO);
 
 	}
 
