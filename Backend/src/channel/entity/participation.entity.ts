@@ -1,7 +1,6 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entity/user.entity";
 import { Channel } from "./channel.entity";
-import { date } from "joi";
 
 export enum BannedState {
 	clean = 0,

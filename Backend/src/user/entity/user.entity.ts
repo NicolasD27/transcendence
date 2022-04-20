@@ -6,6 +6,7 @@ import { Channel } from "../../channel/entity/channel.entity";
 import { UserDto } from "../dto/user.dto";
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Participation } from "src/channel/entity/participation.entity";
+import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -49,6 +50,9 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => Participation, participation => participation.user)
 	participations: Participation[];
+
+	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.user)
+	moderationTimeOuts: ModerationTimeOut[];
 
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];

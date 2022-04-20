@@ -8,7 +8,8 @@ import {
 	UseGuards,
 	HttpException,
 	HttpStatus,
-	Delete
+	Delete,
+	Patch
 } from "@nestjs/common";
 import { CreateChannelDto } from "../dto/create-channel.dto";
 import { ChannelService } from "../service/channel.service";
@@ -21,6 +22,7 @@ import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { BanUserFromChannelDto } from "../dto/ban-user-from-channel.dto";
 import { BannedState } from "../entity/participation.entity";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
+import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -76,6 +78,7 @@ export class ChannelController {
 		return ;
 	}
 
+	// todo : maybe use a Patch here ?
 	@Get(':id/leave')
 	@UseGuards(TwoFactorGuard)
 	async leave(@Param('id') id: string, @Req() request: Request)
@@ -84,7 +87,7 @@ export class ChannelController {
 		return ;
 	}
 
-	@Post(':id/updatePassword')
+	@Patch(':id/updatePassword')
 	@UseGuards(TwoFactorGuard)
 	async updatePassword(@Param('id') id: string, @Req() request: Request, @Body() updateChannelPassword: UpdateChannelPassword)
 	{
@@ -93,7 +96,7 @@ export class ChannelController {
 	}
 
 	// todo
-	@Post(':id/ban')
+	@Patch(':id/ban')
 	@UseGuards(TwoFactorGuard)
 	async banUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
 	{
@@ -101,10 +104,13 @@ export class ChannelController {
 		return ;
 	}
 
-	// todo
-	@Post(':id/changeOwner')
+	@Patch(':id/changeOwner')
 	@UseGuards(TwoFactorGuard)
-	async changeOwner() {}
+	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
+	{
+		await this.channelService.changeOwner(id, request.cookies.username, changeChannelOwnerDto);
+		return ;
+	}
 
 	@Delete(':id/delete')
 	@UseGuards(TwoFactorGuard)

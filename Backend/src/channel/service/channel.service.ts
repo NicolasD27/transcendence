@@ -15,7 +15,7 @@ import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
 import { networkInterfaces } from 'os';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
-
+import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
 
 @Injectable()
 export class ChannelService {
@@ -57,19 +57,28 @@ export class ChannelService {
 		console.log(createChannelDto);
 
 		const	user = await this.userRepo.findOne({ username });
-		let		hash = "";
-		if (createChannelDto.password !== "")	//* this check might be pointless
-		{
-			hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
+
+		const	channelExist = await this.channelRepo.findOne({
+			where: {
+				name: createChannelDto.name,
+			}
+		})
+		if (channelExist)
+			throw new UnauthorizedException("This channel name is already taken.");	// 
+
+		// let		hash = "";
+		// if (createChannelDto.password !== "")	//* this check might be pointless
+		// {
+			const hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 			// console.log(`${createChannelDto.password} -> ${hash}`);
-		}
+		// }
 
 		//? registering the new channel in the bdd
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
 			description: createChannelDto.description,
 			owner : user,
-			hashedPassword : hash, 
+			hashedPassword : hash,
 		});
 		await this.channelRepo.save(newChannel);
 		
@@ -93,18 +102,20 @@ export class ChannelService {
 		if (! channel)
 			throw new NotFoundException("channel not found");
 		
-		if (channel.hashedPassword === "") {
-			if (notHashedPassword !== "")
-				throw new UnauthorizedException("password not empty");
-		}
-		else if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
+		// if (channel.hashedPassword === "") {
+		// 	if (notHashedPassword !== "")
+		// 		throw new UnauthorizedException("password not empty");
+		// }
+		// else 
+		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
 			where: {
 				user: user.id,
 				channel: channel.id,
-			}});
+			}
+		});
 
 		console.log(participation);
 
@@ -130,16 +141,20 @@ export class ChannelService {
 		if (! channel)
 			throw new NotFoundException("channel not found");
 
-		const participation = await this.participationRepo.find({
+		const participation = await this.participationRepo.findOne({
 			where: {
 				user: user.id,
 				channel: channel.id
 			}});
 
-		if (! participation.length)
+		if (! participation)
 			throw new UnauthorizedException("Channel was not joined");
 		
-		await this.participationRepo.delete(participation[0].id);
+		if (channel.owner.id == user.id)
+			throw new UnauthorizedException(
+				"The owner of a channel can't leave without passing the ownership to another user in the channel.");
+		
+		await this.participationRepo.delete(participation.id);
 
 		return true;
 	}
@@ -204,32 +219,34 @@ export class ChannelService {
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
-			throw new NotFoundException(`channel ${id} not found`);
+			throw new NotFoundException(`channel #${id} not found`);
 
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
-			throw new NotFoundException(`username ${username} not found`);
+			throw new NotFoundException(`username #${username} not found`);
 
 		if (myUser.id != myChannel.owner.id)
 			throw new UnauthorizedException("you are not owning this channel");
 
-		if (myChannel.hashedPassword === "") {
-			if (updateChannelPassword.previousPassword !== "")
-				throw new UnauthorizedException("wrong password");
-		}
-		else if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
+		// if (myChannel.hashedPassword === "") {
+		// 	if (updateChannelPassword.previousPassword !== "")
+		// 		throw new UnauthorizedException("wrong password");
+		// }
+		// else 
+		if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
-		if (updateChannelPassword.newPassword === "") {
-			myChannel.hashedPassword = "";
-		}
-		else
+		// if (updateChannelPassword.newPassword === "") {
+		// 	myChannel.hashedPassword = "";
+		// }
+		// else
 			myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
 
 		await this.channelRepo.save(myChannel);
 
 	}
 
+	// todo : finish this using another entity
 	async changeBanStatus(id: string, username: string, banUserDto: BanUserFromChannelDto, banStatus: keyof typeof BannedState)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
@@ -238,7 +255,7 @@ export class ChannelService {
 		
 		const myChannel = await this.channelRepo.findOne(id);
 		if (! myChannel)
-			throw new NotFoundException(`Channel ${id} not found.`);
+			throw new NotFoundException(`Channel #${id} not found.`);
 
 		const participation = await this.participationRepo.findOne({
 			where: {
@@ -263,13 +280,43 @@ export class ChannelService {
 
 	}
 
+	async changeOwner(id:string, username:string, changeChannelOwnerDto:ChangeChannelOwnerDto)
+	{
+		const myUser = await this.userRepo.findOne({ username });
+
+		const myChannel = await this.channelRepo.findOne(id);
+		if (! myChannel)
+			throw new NotFoundException(`Channel #${id} not found.`);
+
+		if (myChannel.owner.id != myUser.id)
+			throw new UnauthorizedException("Only the owner of a channel can pass it's ownership.");
+
+		const newOwner = await this.userRepo.findOne({ where: { id: changeChannelOwnerDto.userId, } });
+		if (! newOwner)
+			throw new NotFoundException(`username #${changeChannelOwnerDto.userId} not found.`);
+
+		// todo: use a promise for this. error code 206 could be returned with a message.
+		if (changeChannelOwnerDto.userId == myUser.id)
+			return ;
+			// throw new UnauthorizedException("You already are the owner of this channel.");
+
+		console.log("// changeChannelOwnerDto.password : " + changeChannelOwnerDto.password);
+		if (! await bcrypt.compare(changeChannelOwnerDto.password, myChannel.hashedPassword))
+			throw new UnauthorizedException("wrong password");
+
+		myChannel.owner = newOwner;
+		this.channelRepo.save(myChannel);
+
+		return (true);
+	}
+
 	async remove(id:string, username:string, deleteChannelDto:DeleteChannelDto)
 	{
 		const myUser = await this.userRepo.findOne({ username });
 
 		const myChannel = await this.channelRepo.findOne(id);
 		if (! myChannel)
-			throw new NotFoundException(`Channel ${id} not found.`);
+			throw new NotFoundException(`Channel #${id} not found.`);
 
 		const participation = await this.participationRepo.findOne({
 			where: {
@@ -284,16 +331,8 @@ export class ChannelService {
 		if (myChannel.owner.id != myUser.id)
 			throw new UnauthorizedException("Only the owner of a channel can delete it.");
 
-		const everyParticipations = await this.participationRepo.find({
-			where: {
-				channel: myChannel.id,
-			}
-		});
-	
-		// everyParticipations.forEach(() => {
-
-			// })
-		// this.participationRepo.delete({everyParticipations});
+		if (! await bcrypt.compare(deleteChannelDto.password, myChannel.hashedPassword))
+			throw new UnauthorizedException("wrong password");
 
 		//? delete every participations to this channel
 		await getConnection()
@@ -302,7 +341,6 @@ export class ChannelService {
 			.from("participation")
 			.where("channel = :channelId", { channelId: myChannel.id})
 			.execute();
-
 		//? delete every messages of this channel
 		await getConnection()
 			.createQueryBuilder()
@@ -310,7 +348,6 @@ export class ChannelService {
 			.from("msg")
 			.where("channelId = :id", { id: myChannel.id})
 			.execute();
-
 		//? delete the channel
 		await getConnection()
 			.createQueryBuilder()
@@ -319,5 +356,7 @@ export class ChannelService {
 			.where("id = :channelId", { channelId: myChannel.id})
 			.execute();
 
+		// todo: maybe close the room for active users
+		// todo: send users a ping ?
 	}
 }
