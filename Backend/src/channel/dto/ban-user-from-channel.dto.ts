@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsPositive, IsString } from "class-validator";
 import { User } from "src/user/entity/user.entity";
 
 @Exclude()
@@ -14,7 +14,9 @@ export class BanUserFromChannelDto
 
 	@ApiProperty()
 	@Expose()
-	date: Date;
+	@IsNumber()
+	@IsPositive()
+	timeout: number;	// in second
 
 	// @ApiProperty()
 	// @Expose()

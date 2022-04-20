@@ -2,12 +2,6 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entity/user.entity";
 import { Channel } from "./channel.entity";
 
-export enum BannedState {
-	clean = 0,
-	muted = 1,
-	banned = 2,
-}
-
 @Entity()
 export class Participation {
 
@@ -22,15 +16,6 @@ export class Participation {
 
 	@Column({ default: false })
 	isModo: boolean;			//? a modo can not be ban
-
-	@Column({ default: BannedState.clean })
-	bannedState: BannedState;
-
-	@Column({
-		nullable: false,
-		default: () => 'CURRENT_TIMESTAMP',
-		type: 'timestamp',
-	})
-	public date: Date;
+								//? a modo can ban/mute non modo/owner ppl
 
 }

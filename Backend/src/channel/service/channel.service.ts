@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
 import { getConnection, Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
-import { BannedState, Participation } from '../entity/participation.entity';
-import { CreateMsgDto } from 'src/message/dto/create-msg.dto';
+import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
 import { Msg } from '../../message/entity/msg.entity';
 import { ChannelDto } from '../dto/channel.dto';
@@ -13,9 +12,9 @@ import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
-import { networkInterfaces } from 'os';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
+import { BannedState, ModerationTimeOut } from '../entity/moderationTimeOut.entity';
 
 @Injectable()
 export class ChannelService {
@@ -32,6 +31,9 @@ export class ChannelService {
 
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
+
+		@InjectRepository(ModerationTimeOut)
+		private moderationTimeOutRepo: Repository<ModerationTimeOut>,
 	) {}
 
 	saltRounds = 12;
@@ -191,28 +193,27 @@ export class ChannelService {
 
 	async checkUserJoinedChannel(username: string, channelId: string) : Promise<boolean>
 	{
-		const myChannel = await this.channelRepo.findOne(channelId);
-		if (!myChannel)
-			throw new NotFoundException(`channel ${channelId} not found`);
+		return new Promise((resolve, rejects)=> {	//? this Promise has no sens
+			const myChannel = this.channelRepo.findOne(channelId);
+			if (!myChannel)
+				throw new NotFoundException(`channel ${channelId} not found`);
 
-		const myUser = await this.userRepo.findOne({ username });
-		if (!myUser)
-			throw new NotFoundException(`username ${username} not found`);
+			const myUser = this.userRepo.findOne({ username });
+			if (!myUser)
+				throw new NotFoundException(`username ${username} not found`);
 
-		const myParticipations = await this.participationRepo.find({
-			where: {
-				user: myUser.id,
-				channel: myChannel.id,
-			}
-		});
+			const myParticipation = this.participationRepo.findOne({
+				where: {
+					user: myUser,
+					channel: myChannel,
+				}
+			});
 
-		// console.log("// myParticipations : ");
-		// console.log(myParticipations);
-
-		if (myParticipations.length > 0)
-			return true;
-
-		return false;
+			if (myParticipation)
+				resolve(true);
+			else
+				rejects(false);
+		})
 	}
 
 	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
@@ -228,29 +229,19 @@ export class ChannelService {
 		if (myUser.id != myChannel.owner.id)
 			throw new UnauthorizedException("you are not owning this channel");
 
-		// if (myChannel.hashedPassword === "") {
-		// 	if (updateChannelPassword.previousPassword !== "")
-		// 		throw new UnauthorizedException("wrong password");
-		// }
-		// else 
 		if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
-		// if (updateChannelPassword.newPassword === "") {
-		// 	myChannel.hashedPassword = "";
-		// }
-		// else
-			myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
+		myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
 
 		await this.channelRepo.save(myChannel);
-
 	}
 
 	// todo : finish this using another entity
-	async changeBanStatus(id: string, username: string, banUserDto: BanUserFromChannelDto, banStatus: keyof typeof BannedState)
+	async changeBanStatus(id: string, username: string, banUserFromChannelDto: BanUserFromChannelDto, banStatus: keyof typeof BannedState)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
-		if (! banhammer)
+		if (! banhammer)	//! add this if there is no guard
 			throw new NotFoundException(`username ${username} not found.`);
 		
 		const myChannel = await this.channelRepo.findOne(id);
@@ -261,22 +252,53 @@ export class ChannelService {
 			where: {
 				user: banhammer.id,
 				channel: myChannel.id,
-			}});
-
+			}
+		});
 		if (! participation)
-			throw new UnauthorizedException("Channel was not joined.");
+			throw new UnauthorizedException("Channel is not joined.");
 
 		console.log("// participation : ");
 		console.log(participation);
 
 		if (! participation.isModo)
 			throw new UnauthorizedException("You need to be moderator to mute/ban people on a channel.");
-		
-		let _now = new Date();
 
-		console.log(`new date : ${_now}`);
+		console.log("// banUserFromChannelDto :");
+		console.log(banUserFromChannelDto);
 
-		// if (banUserDto.date < 
+		const futureBanned = await this.userRepo.findOne({ where: { id: banUserFromChannelDto.userId.toString() } });
+		if (! futureBanned)
+			throw new NotFoundException(`userId #${banUserFromChannelDto.userId} not found.`);
+
+		console.log("// futureBanned : ");
+		console.log(futureBanned);
+
+		// todo : make a super user to avoid moderation problems ?
+		if (myChannel.owner.id == futureBanned.id)
+			throw new UnauthorizedException("The Owner of the channel can't be banned.");
+
+		const futureBannedParticipation = await this.participationRepo.findOne({
+			where: {
+				user: banUserFromChannelDto.userId,
+				channel: myChannel.id,
+			}
+		});
+		if (! futureBannedParticipation)
+			throw new UnauthorizedException("This user is not in this channel.");
+		if (futureBannedParticipation.isModo)
+			throw new UnauthorizedException("A Moderator can not be banned or muted.");
+
+		let myTimeout = new Date();
+		myTimeout.setSeconds(myTimeout.getSeconds() + banUserFromChannelDto.timeout);
+		console.log("// should be timed out until " + myTimeout);
+
+		const mymoderationTO = await this.moderationTimeOutRepo.create({
+			channel: myChannel,
+			user: futureBanned,
+			bannedState: 1,			// BannedState doesn't work :(
+			date: myTimeout,
+		})
+		await this.moderationTimeOutRepo.save(mymoderationTO);
 
 	}
 

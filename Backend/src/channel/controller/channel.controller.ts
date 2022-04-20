@@ -20,7 +20,6 @@ import { TwoFactorGuard } from "src/guards/two-factor.guard";
 import { MsgDto } from "src/message/dto/message.dto";
 import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { BanUserFromChannelDto } from "../dto/ban-user-from-channel.dto";
-import { BannedState } from "../entity/participation.entity";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 
@@ -95,7 +94,7 @@ export class ChannelController {
 		return ;
 	}
 
-	// todo
+	// todo banUser() && unbanUser()
 	@Patch(':id/ban')
 	@UseGuards(TwoFactorGuard)
 	async banUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
@@ -119,5 +118,9 @@ export class ChannelController {
 		await this.channelService.remove(id, request.cookies.username, deleteChannelDto);
 		return ;
 	}
+
+	// todo : giveModoToUser() && removeModoToUser()
+	// todo : muteUser && unMuteUser
+	// todo : getBannedUsers && getMutedUsers
 
 }
