@@ -60,6 +60,13 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		}
 	}
+
+	@SubscribeMessage('askConnectionNumber')
+	async askConnectionNumber(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+		console.log("this is a test");
+		this.server.to("match#" + data.match_id).emit('askConnectionNumber', 1);
+	}
+
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendUpdateMatch')
 	async sendUpdateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {

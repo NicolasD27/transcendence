@@ -73,9 +73,9 @@ function gameEngine(game)
 				game.playerTwo.score++;
 				delete game.ball;
 
-				var a2 = rand(80, 120);
-				var b2 = 200 - a2;
-				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
+				var a22 = rand(80, 120);
+				var b22 = 200 - a2;
+				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a22) * negRand(), Math.sqrt(b22) * negRand(), 20, 20);
 			}
 		}
 	}
@@ -102,22 +102,22 @@ export class Match extends Component
 
 	movePlayer(p5)
 	{
-		if (p5.keyIsDown(25) && this.type == "master" && this.started == 1)
+		if (p5.keyIsDown(25) && this.type === "master" && this.started === 1)
 			this.socket.emit('masterKeyPressed', 25);
 
-		if (p5.keyIsDown(26) && this.type == "master" && this.started == 1)
+		if (p5.keyIsDown(26) && this.type === "master" && this.started === 1)
 			this.socket.emit('masterKeyPressed', 26);
 
-		if (p5.keyIsDown(25) && this.type == "slave" && this.started == 1)
+		if (p5.keyIsDown(25) && this.type === "slave" && this.started === 1)
 			this.socket.emit('slaveKeyPressed', 25);
 
-		if (p5.keyIsDown(26) && this.type == "slave" && this.started == 1)
+		if (p5.keyIsDown(26) && this.type === "slave" && this.started === 1)
 			this.socket.emit('slaveKeyPressed', 26);
 	}
 
 	setup = (p5) =>
 	{
-		this.socket = io('http://localhost:8000', {withCredentials: true});
+		this.socket = io('http://localhost:8000')//, {withCredentials: true});    ADD THIS BACK WHEN WE GOT THE BASICS WORKING
 
 
 		let cvn = p5.createCanvas(width, height);
@@ -131,7 +131,7 @@ export class Match extends Component
 		this.socket.emit('askConnectionNumber');
 		this.socket.on('sendConnectionNb', (data) =>
 		{
-			if (data == "1")		//Master
+			if (data === "1")		//Master
 			{
 				this.type = "master";
 
@@ -158,23 +158,23 @@ export class Match extends Component
 
 				this.socket.on('slaveToMasterKeyPressed', data =>
 				{
-					if (data == 26 && game.playerTwo.y >= 0 && this.started == 1)
+					if (data === 26 && game.playerTwo.y >= 0 && this.started === 1)
 					{
-						if (game.playerTwo.y != 0)
+						if (game.playerTwo.y !== 0)
 							game.playerTwo.y -= 5;
 					}
-					else if (game.playerTwo.y < height - 100 && this.started == 1)		//add player height change ?
+					else if (game.playerTwo.y < height - 100 && this.started === 1)		//add player height change ?
 						game.playerTwo.y += 5;
 				});
 
 				this.socket.on('masterToMasterKeyPressed', data =>
 				{
-					if (data == 26 && game.playerOne.y >= 0 && this.started == 1)
+					if (data === 26 && game.playerOne.y >= 0 && this.started === 1)
 					{
-						if (game.playerOne.y != 0)
+						if (game.playerOne.y !== 0)
 							game.playerOne.y -= 5;
 					}
-					else if (game.playerOne.y < height - 100 && this.started == 1)		//add player height change ?
+					else if (game.playerOne.y < height - 100 && this.started === 1)		//add player height change ?
 						game.playerOne.y += 5;
 				});
 
@@ -186,7 +186,7 @@ export class Match extends Component
 					{
 						if (counter <= this.fq * this.countdown)
 							counter++;
-						if (counter % this.fq == 0 && counter > 0)
+						if (counter % this.fq === 0 && counter > 0)
 						{
 							game.countdown--;
 							this.socket.emit('sendUpdateMatch', game);
@@ -206,7 +206,7 @@ export class Match extends Component
 				});
 
 			}
-			else if (data == "2")	//Slave
+			else if (data === "2")	//Slave
 			{
 				this.type = "slave";
 

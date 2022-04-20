@@ -14,4 +14,4 @@ RUN npm install -g @nestjs/cli
 
 # EXPOSE 8000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:dev"]
