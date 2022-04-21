@@ -345,6 +345,15 @@ export class ChannelService {
 			return ;
 			// throw new UnauthorizedException("You already are the owner of this channel.");
 
+		const newOwnerParticipation = await this.participationRepo.findOne({
+			where: {
+				user: newOwner.id,
+				channel: myChannel,
+			}
+		});
+		if (!newOwnerParticipation)
+			throw new UnauthorizedException("This user have not joined the channel");
+
 		console.log("// changeChannelOwnerDto.password : " + changeChannelOwnerDto.password);
 		if (! await bcrypt.compare(changeChannelOwnerDto.password, myChannel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
