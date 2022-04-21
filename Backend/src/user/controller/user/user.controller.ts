@@ -7,8 +7,8 @@ import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 import { GetUsername } from '../../decorator/get-username.decorator';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
 import { User } from '../../entity/user.entity';
-import { UserService } from '../../service/user.service';
 import { Express } from 'express';
+import { UserService } from 'src/user/service/user/user.service';
 
 
 @Controller('users')

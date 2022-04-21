@@ -6,14 +6,14 @@ import { MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	 } from '@nestjs/websockets';
+	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { WsGuard } from '../../guards/websocket.guard';
 import { UserStatus } from '../entity/user.entity';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
 import { getUsernameFromSocket } from '../get-user-ws.function';
-import { UserService } from '../service/user.service';
+import { UserService } from '../service/user/user.service';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -82,7 +82,13 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async handleConnection(socket: Socket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
 		const username = getUsernameFromSocket(socket);
-		const user = await this.userService.findByUsername(username);
+		let user;
+		// try {
+			user = await this.userService.findByUsername(username);
+		// }
+		// catch (ex) {
+			// return ;
+		// }
 		socket.join("user#" + user.id);
 		
 	}
