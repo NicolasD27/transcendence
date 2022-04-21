@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../user/service/auth.service';
-import { UserService } from 'src/user/service/user/user.service';
+import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
 export class WsGuard implements CanActivate {

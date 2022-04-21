@@ -1,7 +1,7 @@
 import { INestApplicationContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { UserService } from './user/service/user/user.service';
+import { UserService } from './user/service/user.service';
 
 export class AuthSocketAdapter extends IoAdapter {
 

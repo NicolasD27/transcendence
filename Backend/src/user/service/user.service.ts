@@ -1,11 +1,10 @@
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
-import { UserDto } from 'src/user/dto/user.dto';
 import { Connection, Repository } from 'typeorm';
-import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
-import { User, UserStatus } from '../../entity/user.entity';
-import DatabaseFilesService from '../database-file.service';
+import { UserDto } from '../dto/user.dto';
+import { User, UserStatus } from '../entity/user.entity';
+import DatabaseFilesService from './database-file.service';
 
 @Injectable()
 export class UserService {

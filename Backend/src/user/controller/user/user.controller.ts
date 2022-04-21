@@ -8,7 +8,7 @@ import { GetUsername } from '../../decorator/get-username.decorator';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
 import { User } from '../../entity/user.entity';
 import { Express } from 'express';
-import { UserService } from 'src/user/service/user/user.service';
+import { UserService } from 'src/user/service/user.service';
 
 
 @Controller('users')
