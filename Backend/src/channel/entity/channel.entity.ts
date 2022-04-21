@@ -1,8 +1,8 @@
-import { instanceToPlain, plainToInstance } from "class-transformer";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Msg } from "../../message/entity/msg.entity";
 import { User } from "../../user/entity/user.entity";
 import { ChannelDto } from "../dto/channel.dto";
+import { ModerationTimeOut } from "./moderationTimeOut.entity";
 import { Participation } from "./participation.entity";
 
 @Entity()
@@ -11,7 +11,7 @@ export class Channel extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@Column()
+	@Column({ unique: true })
 	public name: string;
 
 	@Column()
@@ -29,6 +29,9 @@ export class Channel extends BaseEntity {
 	@OneToMany(() => Participation, participation => participation.channel)
 	participations: Participation[];
 
+	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.channel)
+	moderationTimeOuts: ModerationTimeOut[];
+
 	static toDto(channel: Channel) {
 		const dto: ChannelDto = {
 			id: channel.id,
@@ -39,5 +42,4 @@ export class Channel extends BaseEntity {
 		return dto;
 	}
 
-	
 }
