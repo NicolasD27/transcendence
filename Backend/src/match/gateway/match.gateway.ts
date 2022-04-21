@@ -14,7 +14,7 @@ import Player  from '../interface/player.interface'
 import Ball from '../interface/ball.interface';
 import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
-import { UserService } from 'src/user/service/user/user.service';
+import { UserService } from 'src/user/service/user.service';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
