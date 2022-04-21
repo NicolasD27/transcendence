@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { UserService } from '../user/service/user/user.service';
+import { UserService } from '../user/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../user/service/auth.service';
 import { access } from 'fs';
