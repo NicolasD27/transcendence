@@ -15,12 +15,15 @@ import { ConfigService } from '@nestjs/config';
 import { FtStrategy } from './strategy/ft.strategy';
 import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
-import { UserService } from './service/user/user.service';
 import { User } from './entity/user.entity';
 import { config } from 'process';
 import { UserGateway } from './gateway/user.gateway';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { Friendship } from 'src/friendship/entity/friendship.entity';
+import DatabaseFilesService from './service/database-file.service';
+import DatabaseFile from './entity/database-file.entity';
+import DatabaseFilesController from './controller/database-file/database-file.controller';
+import { UserService } from './service/user/user.service';
 
 // const dbConfig = config.get('jwt')
 
@@ -36,9 +39,9 @@ import { Friendship } from 'src/friendship/entity/friendship.entity';
         }),
         PassportModule.register({}),
         // JwtModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship])
+        TypeOrmModule.forFeature([User, Friendship, DatabaseFile])
     ],
-    controllers: [AuthController, TwoFactorAuth, UserController],
+    controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
         ConfigService,
         AuthService,
@@ -50,7 +53,8 @@ import { Friendship } from 'src/friendship/entity/friendship.entity';
         SessionSerializer,
         UserService,
         FriendshipService,
-        UserGateway
+        UserGateway,
+        DatabaseFilesService
     ],
     exports: [
         FtStrategy,
