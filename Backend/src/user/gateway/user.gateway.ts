@@ -13,7 +13,7 @@ import { WsGuard } from '../../guards/websocket.guard';
 import { UserStatus } from '../entity/user.entity';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
 import { getUsernameFromSocket } from '../get-user-ws.function';
-import { UserService } from '../service/user/user.service';
+import { UserService } from '../service/user.service';
 
 @WebSocketGateway()
 export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {

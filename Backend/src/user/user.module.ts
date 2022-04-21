@@ -23,7 +23,7 @@ import { Friendship } from 'src/friendship/entity/friendship.entity';
 import DatabaseFilesService from './service/database-file.service';
 import DatabaseFile from './entity/database-file.entity';
 import DatabaseFilesController from './controller/database-file/database-file.controller';
-import { UserService } from './service/user/user.service';
+import { UserService } from './service/user.service';
 
 // const dbConfig = config.get('jwt')
 
