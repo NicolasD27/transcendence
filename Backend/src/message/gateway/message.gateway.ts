@@ -1,21 +1,16 @@
 import { UseGuards, Logger, Request, Req } from '@nestjs/common';
-import { MessageBody,
+import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 	OnGatewayInit,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	ConnectedSocket } from '@nestjs/websockets';
+} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { CreateMsgDto } from '../dto/create-msg.dto';
 import { ChatService } from '../service/message.service';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import { GetUsername } from '../decorator/get-username.decorator';
 import { WsGuard } from '../../guards/websocket.guard';
-import { Participation } from 'src/channel/entity/participation.entity';
-import { ParticipationService } from 'src/channel/service/participation.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 

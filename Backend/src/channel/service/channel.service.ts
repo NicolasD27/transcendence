@@ -388,28 +388,28 @@ export class ChannelService {
 		if (! await bcrypt.compare(deleteChannelDto.password, myChannel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
-		//? delete every participations to this channel
-		await getConnection()
-			.createQueryBuilder()
-			.delete()
-			.from("participation")
-			.where("channel = :channelId", { channelId: myChannel.id})
-			.execute();
-		//? delete every messages of this channel
-		await getConnection()
-			.createQueryBuilder()
-			.delete()
-			.from("msg")
-			.where("channelId = :id", { id: myChannel.id})
-			.execute();
-		//? delete every moderation feed of this channel
-		await getConnection()
-			.createQueryBuilder()
-			.delete()
-			.from("moderation_time_out")
-			.where("channelId = :id", { channelId: myChannel.id})
-			.execute();
-		//? delete the channel
+		// //? delete every participations to this channel
+		// await getConnection()
+		// 	.createQueryBuilder()
+		// 	.delete()
+		// 	.from("participation")
+		// 	.where("channel = :channelId", { channelId: myChannel.id})
+		// 	.execute();
+		// //? delete every messages of this channel
+		// await getConnection()
+		// 	.createQueryBuilder()
+		// 	.delete()
+		// 	.from("msg")
+		// 	.where("channelId = :id", { id: myChannel.id})
+		// 	.execute();
+		// //? delete every moderation feed of this channel
+		// await getConnection()
+		// 	.createQueryBuilder()
+		// 	.delete()
+		// 	.from("moderation_time_out")
+		// 	.where("channelId = :id", { channelId: myChannel.id})
+		// 	.execute();
+		//? delete the channel in CASCADE
 		await getConnection()
 			.createQueryBuilder()
 			.delete()
