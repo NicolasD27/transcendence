@@ -17,7 +17,7 @@ export class ModerationTimeOut extends BaseEntity {
 	@ManyToOne(() => User, user => user.moderationTimeOuts, { eager: true })
 	user: User;
 
-	@ManyToOne(() => Channel, channel => channel.moderationTimeOuts, { eager: true })
+	@ManyToOne(() => Channel, channel => channel.moderationTimeOuts, { eager: true, onDelete:'CASCADE' })
 	channel: Channel;
 
 	@Column({ nullable: false })

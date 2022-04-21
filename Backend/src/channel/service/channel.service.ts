@@ -402,6 +402,13 @@ export class ChannelService {
 			.from("msg")
 			.where("channelId = :id", { id: myChannel.id})
 			.execute();
+		//? delete every moderation feed of this channel
+		await getConnection()
+			.createQueryBuilder()
+			.delete()
+			.from("moderation_time_out")
+			.where("channelId = :id", { channelId: myChannel.id})
+			.execute();
 		//? delete the channel
 		await getConnection()
 			.createQueryBuilder()
