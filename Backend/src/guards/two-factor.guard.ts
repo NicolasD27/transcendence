@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../user/service/auth.service';
 import { access } from 'fs';
-import { UserService } from 'src/user/service/user/user.service';
+import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
 export class TwoFactorGuard implements CanActivate {
