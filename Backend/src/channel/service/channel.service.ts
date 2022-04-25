@@ -207,37 +207,26 @@ export class ChannelService {
 				channel: myChannel,
 			}
 		});
-
 		console.log(myParticipation);
+		if (!myParticipation)
+			throw new NotFoundException(`Channel not joined`);
 
-		if (myParticipation)
-			return true;
-		return false;
+		const tos = await this.moderationTimeOutRepo.find({
+			where: {
+				user: myUser,
+				channel: myChannel,
+				bannedState: 2,
+			}
+		});
+		// todo : it is awful, I need to do something
+		console.log(tos);
+		const _now = new Date();
+		tos.forEach(element => {
+			if (element.date > _now)
+				throw new NotFoundException(`You are banned from this channel until ${element.date}`);
+		});
 
-		// return new Promise((resolve, rejects)=> {	//? this Promise has no sens
-		// 	const myChannel = this.channelRepo.findOne(channelId);
-		// 	if (!myChannel)
-		// 		throw new NotFoundException(`channel ${channelId} not found`);
-
-		// 	const myUser = this.userRepo.findOne({ username });
-		// 	if (!myUser)
-		// 		throw new NotFoundException(`username ${username} not found`);
-
-		// 	const myParticipation = this.participationRepo.findOne({
-		// 		where: {
-		// 			user: myUser,
-		// 			channel: myChannel,
-		// 		}
-		// 	});
-
-		// 	console.log(myParticipation);
-
-		// 	if (myParticipation)
-		// 		resolve(true);
-		// 	else
-		// 		rejects(false);
-		// });
-
+		return true;
 	}
 
 	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
