@@ -30,6 +30,16 @@ export class MatchService {
         return Match.toDto(match);
     }
 
+	async findAllMatchsByUser(id: string): Promise<MatchDto[]>
+    {
+        return this.matchsRepository.find({ 
+		where: [
+			{ user1: +id },
+			{ user2: +id },
+		]})
+		.then(items => items.map(e=> Match.toDto(e)));
+    }
+
     
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
         

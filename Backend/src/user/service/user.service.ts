@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
+import { MatchDto } from 'src/match/dto/match.dto';
+import { Match } from 'src/match/entity/match.entity';
 import { Connection, Repository } from 'typeorm';
 import { UserDto } from '../dto/user.dto';
 import { User, UserStatus } from '../entity/user.entity';
@@ -73,6 +75,8 @@ export class UserService {
 			await queryRunner.release();
 		}
 	}
+
+    
 
 	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
     //     const user = await this.usersRepository.preload({
