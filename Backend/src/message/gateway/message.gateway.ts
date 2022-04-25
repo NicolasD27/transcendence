@@ -35,8 +35,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("// msg_to_server " + data.activeChannelId);
 		const username = getUsernameFromSocket(socket);
 		// * check if the user has joined that channel before
-		if (! await this.channelService.checkUserJoinedChannel(username, data.activeChannelId))
+		if (! this.channelService.checkUserJoinedChannel(username, data.activeChannelId))
 			return ;
+		// .then(() => {
+		// 	console.log("// avoided the catch");
+		// })
+		// .catch(()=>{
+		// 	return ;
+		// });
 
 		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
 		const msgDto: CreateMsgDto = {
@@ -52,9 +58,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: Socket, data: { channelId: string }) {
 
-		// // const username = "oui";
 		// console.log(socket.request.headers.cookie);
-		
 		
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connect_to_channel ${username} on ${data.channelId}`);

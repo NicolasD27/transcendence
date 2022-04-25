@@ -191,29 +191,53 @@ export class ChannelService {
 		return msgs;
 	}
 
-	async checkUserJoinedChannel(username: string, channelId: string) : Promise<boolean>
+	async checkUserJoinedChannel(username: string, channelId: string) // : Promise<boolean>
 	{
-		return new Promise((resolve, rejects)=> {	//? this Promise has no sens
-			const myChannel = this.channelRepo.findOne(channelId);
-			if (!myChannel)
-				throw new NotFoundException(`channel ${channelId} not found`);
+		const myChannel = await this.channelRepo.findOne(channelId);
+		if (!myChannel)
+			throw new NotFoundException(`channel ${channelId} not found`);
 
-			const myUser = this.userRepo.findOne({ username });
-			if (!myUser)
-				throw new NotFoundException(`username ${username} not found`);
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
 
-			const myParticipation = this.participationRepo.findOne({
-				where: {
-					user: myUser,
-					channel: myChannel,
-				}
-			});
+		const myParticipation = await this.participationRepo.findOne({
+			where: {
+				user: myUser,
+				channel: myChannel,
+			}
+		});
 
-			if (myParticipation)
-				resolve(true);
-			else
-				rejects(false);
-		})
+		console.log(myParticipation);
+
+		if (myParticipation)
+			return true;
+		return false;
+
+		// return new Promise((resolve, rejects)=> {	//? this Promise has no sens
+		// 	const myChannel = this.channelRepo.findOne(channelId);
+		// 	if (!myChannel)
+		// 		throw new NotFoundException(`channel ${channelId} not found`);
+
+		// 	const myUser = this.userRepo.findOne({ username });
+		// 	if (!myUser)
+		// 		throw new NotFoundException(`username ${username} not found`);
+
+		// 	const myParticipation = this.participationRepo.findOne({
+		// 		where: {
+		// 			user: myUser,
+		// 			channel: myChannel,
+		// 		}
+		// 	});
+
+		// 	console.log(myParticipation);
+
+		// 	if (myParticipation)
+		// 		resolve(true);
+		// 	else
+		// 		rejects(false);
+		// });
+
 	}
 
 	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
