@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository } from 'typeorm';
+import { getConnection, Repository, MoreThan } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -223,11 +223,90 @@ export class ChannelService {
 		const _now = new Date();
 		tos.forEach(element => {
 			if (element.date > _now)
-				throw new NotFoundException(`You are banned from this channel until ${element.date}`);
+				throw new UnauthorizedException(`You are banned from this channel until ${element.date}`);
 		});
 
 		return true;
 	}
+
+	async checkUserJoinedChannelWS(username: string, channelId: string) : Promise<boolean>
+	{
+		return new Promise((resolve, rejects)=> {	//? this Promise has no sens
+			const myChannel = this.channelRepo.findOne(channelId)
+			.catch(()=>{ rejects(false); })
+			.then(()=>{
+				const myUser = this.userRepo.findOne({ username })
+				.catch(()=>{ rejects(false); })
+				.then(()=>{
+					const myParticipation = this.participationRepo.findOne({
+						where: {
+							user: myUser,
+							channel: myChannel,
+						}
+					})
+					.catch(()=>{ rejects(false); })
+					.then(()=>{
+						const _now = new Date();
+						const activeTOs = this.moderationTimeOutRepo.find({
+							where: {
+								user: myUser,
+								channel: myChannel,
+								bannedState: 2,
+								date: MoreThan(_now),
+							}
+						}).catch(()=>{
+							console.log("checkUserJoinedChannelWS resolve true");
+							resolve(true);
+						})
+						.then(()=>{
+							console.log(activeTOs);
+							console.log("checkUserJoinedChannelWS rejects false");
+							rejects(false);
+						});
+					});
+				});
+			});
+		});
+	}
+
+	// async checkUserJoinedChannelWS(username: string, channelId: string) // : Promise<boolean>
+	// {
+	// 	const myChannel = await this.channelRepo.findOne(channelId);
+	// 	if (!myChannel)
+	// 		return false;
+	// 	const myUser = await this.userRepo.findOne({ username });
+	// 	if (!myUser)
+	// 		return false;
+	// 	const myParticipation = await this.participationRepo.findOne({
+	// 		where: {
+	// 			user: myUser,
+	// 			channel: myChannel,
+	// 		}
+	// 	});
+	// 	console.log(myParticipation);
+	// 	if (!myParticipation)
+	// 		return false;
+	// 	const tos = await this.moderationTimeOutRepo.find({
+	// 		where: {
+	// 			user: myUser,
+	// 			channel: myChannel,
+	// 			bannedState: 2,
+	// 		}
+	// 	});
+	// 	console.log(tos);
+	// 	const _now = new Date();
+	// 	tos.forEach(element => {
+	// 		if (element.date > _now)
+	// 		{
+	// 			console.log("####### false found");
+	// 			return false;
+	// 		}
+	// 		else
+	// 			console.log(`${element.date} < ${_now}`);
+	// 	});
+
+	// 	return true;
+	// }
 
 	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
 	{

@@ -29,29 +29,30 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		) {}
 
 	@UseGuards(WsGuard)
-	@SubscribeMessage('msg_to_server')						// this runs the function when the event msg_to_server is triggered
+	@SubscribeMessage('msg_to_server')
 	async handleMessage(socket: Socket, data: { activeChannelId: string, content: string }) {
 
 		console.log("// msg_to_server " + data.activeChannelId);
+
 		const username = getUsernameFromSocket(socket);
-		// * check if the user has joined that channel before
-		if (! this.channelService.checkUserJoinedChannel(username, data.activeChannelId))
+		await this.channelService.checkUserJoinedChannelWS(username, data.activeChannelId)
+		.then(()=>{
+			console.log("then");
+			this.chatService.saveMsg(data.content, data.activeChannelId, username)
+			.then((message)=>{
+				const msgDto: CreateMsgDto = {
+					content: message.content,
+					authorId: message.user.id,
+					date: message.date,
+				}
+				this.socket.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
+			})
+			.catch(()=>{ return ; });
+		})
+		.catch(()=>{
+			console.log("catch");
 			return ;
-		// .then(() => {
-		// 	console.log("// avoided the catch");
-		// })
-		// .catch(()=>{
-		// 	return ;
-		// });
-
-		const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
-		const msgDto: CreateMsgDto = {
-			content: message.content,
-			authorId: message.user.id,
-			date: message.date,
-		}
-
-		this.socket.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
+		})
 	}
 
 	@UseGuards(WsGuard)
@@ -63,8 +64,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connect_to_channel ${username} on ${data.channelId}`);
 		
-		if (! await this.channelService.checkUserJoinedChannel(username, data.channelId))
+		if (! await this.channelService.checkUserJoinedChannelWS(username, data.channelId))
+		{
+			console.log("channel not joined");
 			return ;
+		}
 
 		socket.join("channel#" + data.channelId);
 	}
