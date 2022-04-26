@@ -2,8 +2,11 @@ import React, { Fragment } from "react";
 import HistoryCard from "./HistoryCard";
 import './HistoryMatch.css';
 
+interface Props {
+	completed: number;
+}
 
-const HistoryMatch = () => {
+const HistoryMatch: React.FC<Props> = (props) => {
 	const profileImg = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 	const profileImg2 = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 	const matchs = [{ avatarP: profileImg, avatarO: profileImg2, scoreP: 2, scoreO: 45 },

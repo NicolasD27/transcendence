@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './Avatar.css';
 import { convertTypeAcquisitionFromJson, parseJsonSourceFileConfigFileContent } from 'typescript';
+import { profile } from 'console';
 
 export class Avatar extends Component {
 	state = {
@@ -20,14 +21,13 @@ export class Avatar extends Component {
 	};
 
 	componentDidMount() {
-		axios.get(`http://localhost:8000/api/users/`, { withCredentials: true })
+		axios.get(`http://localhost:8000/api/users/1`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
 				console.log(persons)
-				this.setState({ persons });
-				if (persons.length) {
-					this.setState({ profileImg: this.state.persons[0]["avatar"] })
-				}
+				if (persons.avatarId != null)
+					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+				console.log(this.state.profileImg)
 			})
 	}
 
