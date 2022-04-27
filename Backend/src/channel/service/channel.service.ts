@@ -231,12 +231,18 @@ export class ChannelService {
 
 	async checkUserJoinedChannelWS(username: string, channelId: string) : Promise<boolean>
 	{
-		return new Promise((resolve, rejects)=> {	//? this Promise has no sens
+		return new Promise((resolve, rejects)=> {
 			const myChannel = this.channelRepo.findOne(channelId)
-			.catch(()=>{ rejects(false); })
+			.catch(()=>{
+				console.log("catch 1")
+				rejects(false);
+			})
 			.then(()=>{
 				const myUser = this.userRepo.findOne({ username })
-				.catch(()=>{ rejects(false); })
+				.catch(()=>{
+					console.log("catch 2")
+					rejects(false);
+				})
 				.then(()=>{
 					const myParticipation = this.participationRepo.findOne({
 						where: {
@@ -244,17 +250,21 @@ export class ChannelService {
 							channel: myChannel,
 						}
 					})
-					.catch(()=>{ rejects(false); })
+					.catch(()=>{
+						console.log("catch 3")
+						rejects(false);
+					})
 					.then(()=>{
 						const _now = new Date();
-						const activeTOs = this.moderationTimeOutRepo.find({
+						const activeTOs = this.moderationTimeOutRepo.findOneOrFail({
 							where: {
 								user: myUser,
 								channel: myChannel,
 								bannedState: 2,
 								date: MoreThan(_now),
 							}
-						}).catch(()=>{
+						})
+						.catch(()=>{
 							console.log("checkUserJoinedChannelWS resolve true");
 							resolve(true);
 						})

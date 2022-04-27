@@ -13,12 +13,13 @@ import { ChatService } from '../service/message.service';
 import { WsGuard } from '../../guards/websocket.guard';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
+// import { CustomSocket } from 'src/auth-socket.adapter';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer()
-	socket: Server;
+	server: Server;
 
 	private logger: Logger = new Logger('ChatGateway');
 
@@ -28,7 +29,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		// private readonly participationService: ParticipationService,
 		) {}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')
 	async handleMessage(socket: Socket, data: { activeChannelId: string, content: string }) {
 
@@ -45,7 +46,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					authorId: message.user.id,
 					date: message.date,
 				}
-				this.socket.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
+				this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
 			})
 			.catch(()=>{ return ; });
 		})
@@ -55,7 +56,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		})
 	}
 
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: Socket, data: { channelId: string }) {
 
@@ -64,20 +65,27 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connect_to_channel ${username} on ${data.channelId}`);
 		
-		if (! await this.channelService.checkUserJoinedChannelWS(username, data.channelId))
-		{
-			console.log("channel not joined");
-			return ;
-		}
+		// if (! await this.channelService.checkUserJoinedChannelWS(username, data.channelId))
+		// {
+		// 	console.log("channel not joined");
+		// 	return ;
+		// }
 
-		socket.join("channel#" + data.channelId);
+		this.channelService.checkUserJoinedChannelWS(username, data.channelId)
+		.catch(()=>{
+			console.log("channel not joined");
+		})
+		.then(()=>{
+			socket.join("channel#" + data.channelId);
+		})
+
 	}
 
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
 	
-	@UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
 	}
