@@ -94,7 +94,6 @@ export class ChannelController {
 		return ;
 	}
 
-	// todo unbanUser() changeBanTime()
 	@Patch(':id/ban')
 	@UseGuards(TwoFactorGuard)
 	async banUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
@@ -111,7 +110,45 @@ export class ChannelController {
 		return ;
 	}
 
-	@Patch(':id/changeOwner')
+	@Patch(':channelID/rescue/:userID')		// rescue is funnier than unban :)
+	@UseGuards(TwoFactorGuard)
+	async unbanUser(
+					@Param('channelID') channelID: string,
+					@Param('userID') userID: string,
+					@Req() request: Request,
+					)
+	{
+		await this.channelService.revertBanStatus(channelID, request.cookies.username, userID);
+		return ;
+	}
+
+	@Patch(':channelID/moderator/set/:userID')
+	@UseGuards(TwoFactorGuard)
+	async giveModoToUser(
+						@Param('channelID') channelID: string,
+						@Param('userID') userID: string,
+						@Req() request: Request,
+						)
+	{
+		await this.channelService.giveModerationRights(channelID, request.cookies.username, userID, true);
+		return ;
+	}
+
+	@Patch(':channelID/moderator/remove/:userID')
+	@UseGuards(TwoFactorGuard)
+	async declineModoToUser(
+						@Param('channelID') channelID: string,
+						@Param('userID') userID: string,
+						@Req() request: Request,
+						)
+	{
+		await this.channelService.giveModerationRights(channelID, request.cookies.username, userID, false);
+		return ;
+	}
+
+	// todo : getBannedUsers && getMutedUsers
+
+	@Patch(':id/changeOwner')	
 	@UseGuards(TwoFactorGuard)
 	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
 	{
@@ -126,9 +163,5 @@ export class ChannelController {
 		await this.channelService.remove(id, request.cookies.username, deleteChannelDto);
 		return ;
 	}
-
-	// todo : giveModoToUser() && removeModoToUser()
-	// todo : muteUser && unMuteUser
-	// todo : getBannedUsers && getMutedUsers
 
 }
