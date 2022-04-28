@@ -13,7 +13,7 @@ import { ChatService } from '../service/message.service';
 import { WsGuard } from '../../guards/websocket.guard';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
-// import { CustomSocket } from 'src/auth-socket.adapter';
+import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -31,7 +31,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')
-	async handleMessage(socket: Socket, data: { activeChannelId: string, content: string }) {
+	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string }) {
 
 		console.log("// msg_to_server " + data.activeChannelId);
 
@@ -48,28 +48,22 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				}
 				this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
 			})
-			.catch(()=>{ return ; });
+			.catch(()=>{ return ; });                                           
 		})
 		.catch(()=>{
 			console.log("catch");
 			return ;
-		})
+		});
 	}
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: Socket, data: { channelId: string }) {
+	async connectToChannel(socket: CustomSocket, data: { channelId: string }) {
 
 		// console.log(socket.request.headers.cookie);
 		
 		const username = getUsernameFromSocket(socket);
-		console.log(`// connect_to_channel ${username} on ${data.channelId}`);
-		
-		// if (! await this.channelService.checkUserJoinedChannelWS(username, data.channelId))
-		// {
-		// 	console.log("channel not joined");
-		// 	return ;
-		// }
+		console.log(`// connectToChannel ${username} on ${data.channelId}`);
 
 		this.channelService.checkUserJoinedChannelWS(username, data.channelId)
 		.catch(()=>{
@@ -77,8 +71,22 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		})
 		.then(()=>{
 			socket.join("channel#" + data.channelId);
-		})
+		});
 
+	}
+
+	@SubscribeMessage('leave')
+	async pepoLeave(socket: CustomSocket, data: { channelId: string }) {
+		// activeUsers.remove(socket.user.id);
+
+		const findMyUser = await this.server
+			.in(activeUsers.getSocketId(socket.user.id).socketId)
+			.fetchSockets();
+		if (findMyUser.length)
+		{
+			console.log(`${socket.user.username} left ${data.channelId}`);
+			findMyUser[0].leave(String(data.channelId));
+		}
 	}
 
 	afterInit(server: Server) {
@@ -86,7 +94,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	}
 	
 	// @UseGuards(WsGuard)
-	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
+	async handleConnection(socket: CustomSocket, @Request() req, ...args: any[]) {
 		this.logger.log(`socket connected: ${socket.id}`);
 	}
 

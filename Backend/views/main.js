@@ -38,8 +38,7 @@ const app = new Vue({
 		connectToChannel() {
 			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
-		sendMessage(message) {
-			console.log(message);
+		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
 					activeChannelId: this.channelId,
@@ -47,6 +46,7 @@ const app = new Vue({
 					author: this.author
 				}
 				this.socket.emit('msg_to_server', message)
+				// console.log(message);
 			}
 			this.content = '';
 		},
@@ -97,7 +97,7 @@ const app = new Vue({
 		},
 		receiveUpdateMatch(match) {
 			this.match = match;
-			console.log(this.match);
+			// console.log(this.match);
 		},
 		updateApp() {
 			this.connectToChannel();
@@ -106,6 +106,9 @@ const app = new Vue({
 		sendStatusUpdate() {
 			console.log("sending status Update")
 			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
+		},
+		leaveChannel() {
+			this.socket.emit('leave', { channelId: this.channelId });
 		}
 	},
 	created() {
@@ -127,6 +130,6 @@ const app = new Vue({
 	}
 });
 
-// app.connectToChannel();
+app.connectToChannel();
 app.getPreviousMessages();
 
