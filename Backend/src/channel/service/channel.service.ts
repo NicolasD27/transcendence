@@ -44,7 +44,7 @@ export class ChannelService {
 			.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
-	saltRounds = 10;
+	//saltRounds = 10;
 
 	async findOne(channelId: string): Promise<ChannelDto>
 	{
@@ -105,14 +105,6 @@ export class ChannelService {
 		const channel = await this.channelRepo.findOne(channelId);
 		if (! channel)
 			throw new NotFoundException("channel not found");
-<<<<<<< HEAD
-
-		if (channel.hashedPassword === "") {
-			if (notHashedPassword !== "")
-				throw new UnauthorizedException("password not empty");
-		}
-		else if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
-=======
 
 		// if (channel.hashedPassword === "") {
 		// 	if (notHashedPassword !== "")
@@ -120,7 +112,6 @@ export class ChannelService {
 		// }
 		// else
 		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
->>>>>>> master
 			throw new UnauthorizedException("wrong password");
 
 		const participation = await this.participationRepo.find({
@@ -162,17 +153,12 @@ export class ChannelService {
 
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined");
-<<<<<<< HEAD
-
-		await this.participationRepo.delete(participation[0].id);
-=======
 
 		if (channel.owner.id == user.id)
 			throw new UnauthorizedException(
 				"The owner of a channel can't leave without passing the ownership to another user in the channel.");
 
 		await this.participationRepo.delete(participation.id);
->>>>>>> master
 
 		return true;
 	}
