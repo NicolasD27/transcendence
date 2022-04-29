@@ -112,7 +112,7 @@ const app = new Vue({
 		},
 		leaveChannel() {
 			this.socket.emit('leave', { channelId: this.channelId });
-		}
+		},
 		sendDirectMessage() {
 			console.log(this.directMessageContent);
 			if(this.validateInput()) {
