@@ -8,6 +8,7 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Participation } from "src/channel/entity/participation.entity";
 import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
+import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -66,6 +67,12 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];
+
+	@OneToMany(() => DirectMessage, directMessage => directMessage.sender)
+	directMessagesSent: DirectMessage[];
+
+	@OneToMany(() => DirectMessage, directMessage => directMessage.receiver)
+	directMessagesReceived: DirectMessage[];
 	
 	@OneToMany(() => Match, match => match.user1)
 	matchs1: Match[];
