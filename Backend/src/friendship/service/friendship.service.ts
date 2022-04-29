@@ -48,6 +48,25 @@ export class FriendshipService {
         }));
     }
 
+    async checkFriendship(username1: string, username2: string) : Promise<boolean>
+    {
+        const user1 = await this.usersRepository.findOne({username: username1})
+        if (!user1)
+            return false;
+        const user2 = await this.usersRepository.findOne({username: username2})
+        if (!user2)
+            return false;
+        const friendship = await this.friendshipsRepository.findOne({
+            where: [
+                {follower: user1, following: user2, status: FriendshipStatus.ACTIVE},
+                {follower: user2, following: user1, status: FriendshipStatus.ACTIVE}
+            ]
+        });
+        if (!friendship)
+            return false;
+        return true;
+    }
+
     async create(body: createFriendshipDto): Promise<FriendshipDto> {
         const follower = await this.usersRepository.findOne(body.user1_id);
         const following = await this.usersRepository.findOne(body.user2_id);
