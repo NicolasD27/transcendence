@@ -24,17 +24,10 @@ export class Avatar extends Component {
 		axios.get(`http://localhost:8000/api/users/1`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
-				console.log(persons)
 				if (persons.avatarId != null)
 					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
-				console.log(this.state.profileImg)
 			})
 	}
-
-	/*<ul>
-	{this.state.persons.map((person, i) =>
-		<li key="{i}" style={{ color: 'white' }}>{person['username']}</li>)}
-	</ul>*/
 
 	render() {
 		const { profileImg } = this.state

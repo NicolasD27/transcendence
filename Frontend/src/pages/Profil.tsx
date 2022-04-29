@@ -10,10 +10,10 @@ import Achievement from '../components/Achievement';
 
 const Profil = () => {
 	interface matchFormat {
-		idPlayer: string;
-		idOpponent: string;
-		scorePlayer: number;
-		scoreOpponent: number;
+		avatarP: string;
+		avatarO: string;
+		scoreP: number;
+		scoreO: number;
 	}
 
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
@@ -33,16 +33,14 @@ const Profil = () => {
 		axios.get(`http://localhost:8000/api/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
-				console.log(matchs)
 				matchs.forEach((list: any) => {
-					const singleMatch = { idPlayer: list.user1.username, idOpponent: list.user2.username, scorePlayer: list.score1, scoreOpponent: list.score2 };
-					matchID.push(singleMatch);
-					//setMatchID(matchID => [...matchID, singleMatch]);
+					const singleMatch = { avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					//matchID.push(singleMatch);
+					setMatchID(matchID => [...matchID, singleMatch]);
 				});
 			})
 		setGetMatch(getmatch => true)
 	}
-	console.log(matchID);
 
 	return (
 		<Fragment>
@@ -56,7 +54,7 @@ const Profil = () => {
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
 				<ProgressBar completed={870} />
 				<div className='boxStats'>
-					<HistoryMatch completed={42} />
+					<HistoryMatch historys={matchID} />
 					<Achievement />
 				</div>
 			</div>
