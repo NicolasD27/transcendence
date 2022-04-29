@@ -17,6 +17,9 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
+		directMessageContent: '',
+		receiver: "R5hXuq2f",
+		directMessages: [],
 		match: {},
 		channelId: '',
 		socket: null,
@@ -108,7 +111,22 @@ const app = new Vue({
 		sendStatusUpdate() {
 			console.log("sending status Update")
 			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
-		}
+		},
+		sendDirectMessage() {
+			console.log(this.directMessageContent);
+			if(this.validateInput()) {
+				const message = {
+					receiver: this.receiver,
+					content: this.directMessageContent,
+					author: this.author
+				}
+				this.socket.emit('direct_msg_to_server', message)
+			}
+			this.directMessageContent = '';
+		},
+		receivedDirectMessage(message) {
+			this.directMessages.push(message);
+		},
 	},
 	created() {
 		// console.log("here", document.cookie.split('=')[1])
@@ -125,10 +143,13 @@ const app = new Vue({
 		this.socket.on('launch_match', (match) => {
 			this.launchMatch(match);
 		});
+		this.socket.on('direct_msg_to_client', (message) => {
+			this.receivedDirectMessage(message);
+		});
 
 	}
 });
 
-app.connectToChannel();
+// app.connectToChannel();
 app.getPreviousMessages();
 

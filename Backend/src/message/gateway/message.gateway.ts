@@ -53,6 +53,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.socket.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
 	}
 
+	
+
 	@UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: Socket, data: { channelId: string }) {

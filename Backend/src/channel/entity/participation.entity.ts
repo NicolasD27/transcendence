@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entity/user.entity";
 import { Channel } from "./channel.entity";
 
@@ -11,12 +11,11 @@ export class Participation {
 	@ManyToOne(() => User, user => user.participations, { eager: true })
 	user: User;
 
-	@ManyToOne(() => Channel, channel => channel.participations, { eager: true })
+	@ManyToOne(() => Channel, channel => channel.participations, { eager: true, onDelete:'CASCADE' })
 	channel: Channel;
 
-	// @Column()
-	// password: string;	// needs to be hashed with salt grains
+	@Column({ default: false })
+	isModo: boolean;			//? a modo can not be ban
+								//? a modo can ban/mute non modo/owner ppl
 
-	// @Column()
-	// public privacy: number;
 }

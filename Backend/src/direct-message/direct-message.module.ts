@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ChatService } from './service/message.service';
+import { DirectMessageService } from './service/direct-message.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Msg } from './entity/msg.entity';
-import { ChatGateway } from './gateway/message.gateway'
+import { DirectMessage } from './entity/direct-message.entity';
+import { DirectMessageGateway } from './gateway/direct-message.gateway'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { User } from '../user/entity/user.entity';
 import { ChannelController } from '../channel/controller/channel.controller';
@@ -11,10 +11,11 @@ import { ChannelService } from '../channel/service/channel.service';
 import { Channel } from '../channel/entity/channel.entity';
 import { Participation } from 'src/channel/entity/participation.entity';
 import { ModerationTimeOut } from 'src/channel/entity/moderationTimeOut.entity';
+import { FriendshipService } from 'src/friendship/service/friendship.service';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Msg, User, Channel, Participation, ModerationTimeOut]),
+		TypeOrmModule.forFeature([DirectMessage, User]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {
@@ -22,8 +23,8 @@ import { ModerationTimeOut } from 'src/channel/entity/moderationTimeOut.entity';
             }
         }),
 	],
-	controllers: [ChannelController],
-	providers: [ChatService, ChatGateway, AuthService, ChannelService],
-	exports: [ChatService]
+	controllers: [],
+	providers: [DirectMessageService, DirectMessageGateway, AuthService, FriendshipService],
+	exports: [DirectMessageService]
 })
-export class ChatModule {}
+export class DirectMessageModule {}

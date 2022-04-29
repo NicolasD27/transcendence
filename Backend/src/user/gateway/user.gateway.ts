@@ -6,7 +6,7 @@ import { MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	 } from '@nestjs/websockets';
+	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { WsGuard } from '../../guards/websocket.guard';
@@ -80,10 +80,16 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket) {
-		this.logger.log(`match socket connected: ${socket.id}`);
 		const username = getUsernameFromSocket(socket);
-		const user = await this.userService.findByUsername(username);
-		socket.join("user#" + user.id);
+		let user;
+		// try {
+			user = await this.userService.findByUsername(username);
+			// }
+			// catch (ex) {
+				// return ;
+				// }
+				socket.join("user#" + user.id);
+				this.logger.log(`user #${user.id} connected to his room: `);
 
 	}
 
