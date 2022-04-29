@@ -280,45 +280,6 @@ export class ChannelService {
 		});
 	}
 
-	// async checkUserJoinedChannelWS(username: string, channelId: string) // : Promise<boolean>
-	// {
-	// 	const myChannel = await this.channelRepo.findOne(channelId);
-	// 	if (!myChannel)
-	// 		return false;
-	// 	const myUser = await this.userRepo.findOne({ username });
-	// 	if (!myUser)
-	// 		return false;
-	// 	const myParticipation = await this.participationRepo.findOne({
-	// 		where: {
-	// 			user: myUser,
-	// 			channel: myChannel,
-	// 		}
-	// 	});
-	// 	console.log(myParticipation);
-	// 	if (!myParticipation)
-	// 		return false;
-	// 	const tos = await this.moderationTimeOutRepo.find({
-	// 		where: {
-	// 			user: myUser,
-	// 			channel: myChannel,
-	// 			bannedState: 2,
-	// 		}
-	// 	});
-	// 	console.log(tos);
-	// 	const _now = new Date();
-	// 	tos.forEach(element => {
-	// 		if (element.date > _now)
-	// 		{
-	// 			console.log("####### false found");
-	// 			return false;
-	// 		}
-	// 		else
-	// 			console.log(`${element.date} < ${_now}`);
-	// 	});
-
-	// 	return true;
-	// }
-
 	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
 	{
 		const myChannel = await this.channelRepo.findOne(id);
@@ -340,7 +301,11 @@ export class ChannelService {
 		await this.channelRepo.save(myChannel);
 	}
 
-	async changeBanStatus(id: string, username: string, banUserFromChannelDto: BanUserFromChannelDto, newBanStatus: number)
+	async changeBanStatus(
+		id: string,
+		username: string,
+		banUserFromChannelDto: BanUserFromChannelDto,
+		newBanStatus: number)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
 		
@@ -409,7 +374,6 @@ export class ChannelService {
 			date: myTimeout,
 		});
 		await this.moderationTimeOutRepo.save(myModerationTO);
-
 	}
 
 	async revertBanStatus(id: string, username: string, futureBannedID: string)

@@ -20,6 +20,8 @@ const app = new Vue({
 		directMessages: [],
 		match: {},
 		channelId: '',
+		banId: '',
+		banTimeOut: 60,
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -67,6 +69,18 @@ const app = new Vue({
 				this.receivedMessage(msgs[i]);
 			}
 		},
+		leaveChannel() {
+			this.socket.emit('leave', { channelId: this.channelId });
+		},
+		banUser() {
+			this.socket.emit('ban', { userId: this.banId, tieout: banTimeOut, channelId: this.channelId });
+		},
+		muteUser() {
+			this.socket.emit('mute', { userId: this.banId, tieout: banTimeOut, channelId: this.channelId });
+		},
+		unBanUser() {
+			this.socket.emit('mute', { userId: this.banId, channelId: this.channelId });
+		},
 		connectToMatch() {
 			// this.room = 'a';
 			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id});
@@ -109,9 +123,6 @@ const app = new Vue({
 		sendStatusUpdate() {
 			console.log("sending status Update")
 			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
-		},
-		leaveChannel() {
-			this.socket.emit('leave', { channelId: this.channelId });
 		},
 		sendDirectMessage() {
 			console.log(this.directMessageContent);

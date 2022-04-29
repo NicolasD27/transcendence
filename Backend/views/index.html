@@ -19,10 +19,19 @@
 					<br>
 					<div id="status"></div>
 						<div id="chat">
-							channelId : {{ channelId }}
-							<input v-model="channelId" placeholder="edit me" type="number">
+							channelId : {{ channelId }} <br>
+
+							<input v-model="channelId" placeholder="which channel to display ?" type="number">
 							<button v-on:click="updateApp">update</button>
-							<button v-on:click="leaveChannel">leave channel</button>
+
+							<button v-on:click="leaveChannel">leave channel</button> <br>
+
+							<input v-model="banId" placeholder="user id" type="number" size="7">
+							<input v-model="banTimeOut" placeholder="seconds" type="number" size="7">
+							<button v-on:click="banUser">ban User</button>
+							<button v-on:click="muteUser">mute User</button>
+							<button v-on:click="unBanUser">unBan User</button> <br>
+
 							<div class="card">
 								<div id="messages" class="card-block">
 									<ul>
@@ -38,7 +47,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		<!-- </div> -->
 
 		<div class="row">
 			<div class="col-md-6 offset-md-3 col-sm-12">

@@ -1,4 +1,4 @@
-import { Logger, Request } from '@nestjs/common';
+import { Logger, Request, UnauthorizedException } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -13,6 +13,7 @@ import { ChatService } from '../service/message.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
+import { BanUserFromChannelDto } from 'src/channel/dto/ban-user-from-channel.dto';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -25,10 +26,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	constructor(
 		private readonly chatService: ChatService,
 		private readonly channelService: ChannelService,
-		// private readonly participationService: ParticipationService,
-		) {}
+		)
+	{}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('msg_to_server')
 	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string }) {
 
@@ -54,7 +54,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		});
 	}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: CustomSocket, data: { channelId: string }) {
 
@@ -70,7 +69,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		.then(()=>{
 			socket.join("channel#" + data.channelId);
 		});
-
 	}
 
 	@SubscribeMessage('leave')
@@ -87,11 +85,64 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 	}
 
+	// ! the use of Promises are needed for 'ban', 'mute' and 'rescue'
+
+	@SubscribeMessage('ban')
+	async banUser(
+		socket: CustomSocket,
+		banUserFromChannelDto: BanUserFromChannelDto)
+	{
+		const username = getUsernameFromSocket(socket);
+		await this.channelService.changeBanStatus(
+			banUserFromChannelDto.channelId.toString(),
+			username,
+			banUserFromChannelDto,
+			2);
+		
+		try {
+			const targetedClientSocket = await this.server
+			.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
+			.fetchSockets();
+			if (targetedClientSocket.length)
+			{
+				console.log(`${banUserFromChannelDto.userId} kicked from ${banUserFromChannelDto.channelId}`);
+				targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
+			}
+		}
+		catch {} // todo : try to break it 
+		return ;
+	}
+
+	@SubscribeMessage('mute')
+	async muteUser(
+		socket: CustomSocket,
+		banUserFromChannelDto: BanUserFromChannelDto)
+	{
+		const username = getUsernameFromSocket(socket);
+		await this.channelService.changeBanStatus(
+			banUserFromChannelDto.channelId.toString(),
+			username,
+			banUserFromChannelDto,
+			1);
+		return ;
+	}
+
+	@SubscribeMessage('rescue')
+	async unbanUser(
+		socket: CustomSocket,
+		data: { userId: string, channelId: string })
+	{
+		await this.channelService.revertBanStatus(
+			data.channelId,
+			getUsernameFromSocket(socket),
+			data.userId);
+		return ;
+	}
+
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
-	
-	// @UseGuards(WsGuard)
+
 	async handleConnection(client: CustomSocket, @Request() req, ...args: any[]) {
 		this.logger.log(`${client.user.username} connected via ${client.id}`);
 	}
