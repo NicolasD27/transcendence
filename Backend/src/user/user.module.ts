@@ -24,6 +24,8 @@ import DatabaseFilesService from './service/database-file.service';
 import DatabaseFile from './entity/database-file.entity';
 import DatabaseFilesController from './controller/database-file/database-file.controller';
 import { UserService } from './service/user.service';
+import { MatchService } from 'src/match/service/match.service';
+import { Match } from 'src/match/entity/match.entity';
 
 // const dbConfig = config.get('jwt')
 
@@ -39,7 +41,7 @@ import { UserService } from './service/user.service';
         }),
         PassportModule.register({}),
         // JwtModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship, DatabaseFile])
+        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
@@ -54,7 +56,8 @@ import { UserService } from './service/user.service';
         UserService,
         FriendshipService,
         UserGateway,
-        DatabaseFilesService
+        DatabaseFilesService,
+        MatchService
     ],
     exports: [
         FtStrategy,

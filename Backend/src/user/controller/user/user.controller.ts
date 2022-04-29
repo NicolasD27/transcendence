@@ -9,11 +9,13 @@ import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
 import { User } from '../../entity/user.entity';
 import { Express } from 'express';
 import { UserService } from 'src/user/service/user.service';
+import { MatchDto } from 'src/match/dto/match.dto';
+import { MatchService } from 'src/match/service/match.service';
 
 
 @Controller('users')
 export class UserController {
-    constructor(private readonly userService: UserService) {
+    constructor(private readonly userService: UserService, private readonly matchService: MatchService) {
 
     }
 
@@ -38,6 +40,13 @@ export class UserController {
     findOne(@Param('id') id: string): Promise<UserDto> {
         console.log('findOneUser ', id);
         return this.userService.findOne(id);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Get(':id/matchs')
+    findAllMatchsByUser(@Param('id') id: string): Promise<MatchDto[]> {
+        return this.matchService.findAllMatchsByUser(id);
     }
 
     @ApiBearerAuth()

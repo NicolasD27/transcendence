@@ -80,16 +80,16 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	
 	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket) {
-		this.logger.log(`match socket connected: ${socket.id}`);
 		const username = getUsernameFromSocket(socket);
 		let user;
 		// try {
 			user = await this.userService.findByUsername(username);
-		// }
-		// catch (ex) {
-			// return ;
-		// }
-		socket.join("user#" + user.id);
+			// }
+			// catch (ex) {
+				// return ;
+				// }
+				socket.join("user#" + user.id);
+				this.logger.log(`user #${user.id} connected to his room: `);
 		
 	}
 
