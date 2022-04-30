@@ -3,7 +3,7 @@ FROM node:lts
 WORKDIR /app
 
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH /app/node_modules/.bin
 
 COPY ./package.json  /app/
 
@@ -14,4 +14,4 @@ RUN npm install -g @nestjs/cli
 
 # EXPOSE 8000
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "start"]

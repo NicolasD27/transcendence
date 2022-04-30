@@ -117,7 +117,7 @@ export class Match extends Component
 
 	setup = (p5) =>
 	{
-		this.socket = io('http://localhost:8000', {withCredentials: true});
+		this.socket = io('http://localhost:8000', {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
 
 		let cvn = p5.createCanvas(width, height);
 		cvn.position(250, 220);												//gonna need some tweaks
@@ -130,6 +130,7 @@ export class Match extends Component
 		this.socket.emit('askConnectionNumber');
 		this.socket.on('sendConnectionNb', (data) =>
 		{
+			console.log("this is a test");
 			if (data === "1")		//Master
 			{
 				this.type = "master";

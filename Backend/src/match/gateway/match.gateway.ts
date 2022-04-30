@@ -58,9 +58,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 	}
 
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('askConnectionNumber')
 	async askConnectionNumber(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
-		console.log("this is a test");
+		console.log("connection number has been ASKED");
 		this.server.to("match#" + data.match_id).emit('askConnectionNumber', 1);
 	}
 
@@ -144,7 +145,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	handleDisconnect(client: Socket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
 		console.log(args)
-		// this.server.to("match#" + data.match_id).emit('playerDisconnect');
+		// this.server.to("match#" + data.match_id).emit('playerDisconnect'); ---> send info to others clients for disconnect
 	}
 }
 

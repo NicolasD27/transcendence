@@ -1,17 +1,18 @@
+# Image source
 FROM node:lts
 
+# Docker working directory
 WORKDIR /app
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
+# Copying file into APP directory of docker
 COPY ./package.json  /app/
 
+# Then install the NPM module
 RUN npm install
 RUN npm install -g @nestjs/cli
 
+# Copy current directory to APP folder
 # COPY . /app/
 
-# EXPOSE 8000
-
-CMD ["npm", "start"]
+EXPOSE 8000
+CMD ["npm", "run", "start:dev"]
