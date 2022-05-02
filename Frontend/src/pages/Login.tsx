@@ -48,6 +48,20 @@ const UserButtons = (props:any) => {
 
 //{user, status, button}:any
 const PrintUser = (props:any) => {
+
+	var value;
+
+	props.button.map((button:any) => {
+		button.id === 'InvitationSent' ? (value = <p id='InvitationSent'>Friend Request Sent</p>) : (value = <UserButtons buttons={props.button} key={props.user.id}/>)
+	})
+
+	/*{
+		value = <UserButtons buttons={props.button} key={props.user.id}/>
+		console.log(props.id, "exist")
+	}
+	else(value = 'Invitation Sent')*/
+
+	console.log('value: ',value)
 	return (
 		<div>
 			<div className='friend'>
@@ -55,7 +69,7 @@ const PrintUser = (props:any) => {
 				<img src={props.status} className="friendStatutIcon" alt=" StatutIcon"/>
 				<div id="username">{props.user.username}</div>
 				<div id='friend_buttons'>
-					{<UserButtons buttons={props.button} key={props.user.id}/>}
+					{value}
 				</div>
 			</div>
 		</div>
@@ -74,15 +88,27 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const isAlreadyFriend = (id: any) => {
-		for (let user in friends) {
-			if (user[id] === id)
+		
+		for(var i = 0; i < friends.length; i++ )
+		{
+			console.log('user[id]:', friends[i].id)
+			if (friends[i].id === id)
 				return true
+
 		}
-		return false
+		return false;
 	}
 
 	const isThereAFriendshipRequest = (id: any) => {
 		for (const user of friendRequestReceived) {
+			if (user.id === id)
+				return true
+		}
+		return false;
+	}
+
+	const isThereAFriendshipRequestSent = (id: any) => {
+		for (const user of friendRequestsSent) {
 			if (user.id === id)
 				return true
 		}
@@ -95,18 +121,26 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 			.post(dataUrlFriends, user)
 			.then((res) => {
 				setFriends(res.data)
-				/*var index = friendRequestReceived.indexOf(res.data)
-				setFriendRequestReceived(friendRequestReceived.splice(index, 1))
-				console.log('friendsRequestReceived After:', friendRequestReceived)
-				axios.delete('http://localhost:3001/friendRequestsReceived')
-				.catch(err =>{
-					console.log("Deletion error in friendRequestsReceived")
-				})*/ 
+				//axios.delete(`/http://localhost:3001/friendRequestsReceived/${res.data.id}`)
 				/* Supprimer la friend request quand la demande est accepté ou rejete (ajouter le boutton rejeté !!)*/
 			})
 			.catch((err) => 
 				console.log(err)
-			)
+			)	
+	}
+
+	const declineFriendshipRequest = (user:any) => {
+		console.log('Button clicked Accept Friend')
+		axios
+			.post(dataUrlFriends, user)
+			.then((res) => {
+				setFriends(res.data)
+				//axios.delete(`/http://localhost:3001/friendRequestsReceived/${res.data.id}`)
+				/* Supprimer la friend request quand la demande est accepté ou rejete (ajouter le boutton rejeté !!)*/
+			})
+			.catch((err) => 
+				console.log(err)
+			)	
 	}
 
 	return (
@@ -122,15 +156,20 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 							
 						if (Boolean(isAlreadyFriend(user.id)) === true)
 						{	
-							console.log('user id: ', user.id)
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "chatButton", script: 'null' }, { id: "playButton", script: 'null' }]} key={user.id} />
-							) 
+								<PrintUser user={user} status={status} button={[{ id : "chatButton", script: () => 'null' }, { id: "playButton", script: () => 'null' }]} key={user.id} />
+							)
 						}
 						else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
 						{
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "AcceptFriendButton", script: () => acceptFriendshipRequest(user) }]} key={user.id} />
+								<PrintUser user={user} status={status} button={[{ id : "DeclinetFriendButton", script: () => declineFriendshipRequest(user) }, { id : "AcceptFriendButton", script: () => acceptFriendshipRequest(user) }]} key={user.id} />
+							);
+						}
+						else if (Boolean(isThereAFriendshipRequestSent(user.id)))
+						{	
+							return (
+								<PrintUser user={user} status={status} button={[{ id : "InvitationSent", script: () => 'null' }]} key={user.id} />
 							);
 						}
 						else
@@ -143,7 +182,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 					.map((user:any) => {
 						let status = (user.status === "online" ? statutIconGreen : statutIconRed);
 						return (
-							<PrintUser user={user} status={status} button={[{ id : "chatButton", script: 'null' }, { id: "playButton", script: 'null' }]} key={user.id} />
+							<PrintUser user={user} status={status} button={[{ id : "chatButton", script: () => 'null' }, { id: "playButton", script: () => 'null' }]} key={user.id} />
 						);
 				}))
 			}
@@ -188,7 +227,6 @@ const Chat = () => {
 		.then (res => {
 			const request = res.data;
 			setFriendRequestReceived(request)
-			console.log('friendsRequestReceived:', friendRequestReceived)
 		})
 		.catch (err => { 
 			console.log(err)

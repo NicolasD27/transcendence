@@ -1,9 +1,6 @@
 # compiled output
-Backend/dist
-Backend/node_modules
-Frontend/node_modules
-Backend/package-lock.json
-Frontend/package-lock.json
+*/dist
+*/node_modules
 
 # postgres storage
 /pgadmin-data

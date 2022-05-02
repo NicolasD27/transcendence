@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "multer": "^1.4.4"
-  }
-}

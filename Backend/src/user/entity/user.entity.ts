@@ -1,16 +1,12 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import * as bcrypt from "bcrypt"
+import { Exclude } from "class-transformer";
 import { Friendship } from "../../friendship/entity/friendship.entity";
-import { Msg } from "../../message/entity/msg.entity";
+import { Msg } from "../../chat/entity/msg.entity";
 import { Match } from "../../match/entity/match.entity";
 import { Channel } from "../../channel/entity/channel.entity";
-import { UserDto } from "../dto/user.dto";
-import { instanceToPlain, plainToInstance } from "class-transformer";
-import { Participation } from "src/channel/entity/participation.entity";
-import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
-import DatabaseFile from "./database-file.entity";
-import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 
-export enum UserStatus {
+export enum Status {
 	OFFLINE,
 	ONLINE,
 	SEARCHING,
@@ -28,73 +24,47 @@ export class User extends BaseEntity {
 	@Column({ type: "varchar" })
 	username: string
 
-	
+	// @Column({ type: "varchar" })
+	// password: string
+
+	// @Column()
+	// salt: string
+
+	// @Column({ nullable: true })
+	// @Exclude()
+	// public hashedRefreshToken?: string
+
 	@Column({ nullable: true })
 	twoFactorAuthSecret?: string
-	
+
 	@Column({ default: false })
 	public isTwoFactorEnable: boolean
 
-	@JoinColumn({ name: 'avatarId' })
-	@OneToOne(
-		() => DatabaseFile,
-		{
-		nullable: true
-		}
-	)
-	public avatar?: DatabaseFile;
-
 	@Column({ nullable: true })
-	public avatarId?: number;
+	avatar: string
 
-	@Column({ default: UserStatus.ONLINE })
+	@Column({ default: Status.ONLINE })
 	status: number
-	
+
 	@OneToMany(() => Friendship, friendship => friendship.follower)
 	followers: Friendship[];
-	
+
 	@OneToMany(() => Friendship, friendship => friendship.following)
 	followings: Friendship[];
-	
+
 	@OneToMany(() => Channel, channel => channel.owner)
 	channels: Channel[];
-
-	@OneToMany(() => Participation, participation => participation.user)
-	participations: Participation[];
-
-	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.user)
-	moderationTimeOuts: ModerationTimeOut[];
 
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];
 
-	@OneToMany(() => DirectMessage, directMessage => directMessage.sender)
-	directMessagesSent: DirectMessage[];
-
-	@OneToMany(() => DirectMessage, directMessage => directMessage.receiver)
-	directMessagesReceived: DirectMessage[];
-	
 	@OneToMany(() => Match, match => match.user1)
 	matchs1: Match[];
 
 	@OneToMany(() => Match, match => match.user2)
 	matchs2: Match[];
 
-	static toDto(user: User) {
-		return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
-	}
-	// @Column({ type: "varchar" })
-	// password: string
-	
-	// @Column()
-	// salt: string
-	
-	// @Column({ nullable: true })
-	// @Exclude()
-	// public hashedRefreshToken?: string
-
 	// async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
 	//	 return await bcrypt.compare(password, hashedPassword).then(result => result)
 	// }
-
 }

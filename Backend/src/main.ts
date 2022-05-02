@@ -7,8 +7,7 @@ import * as passport from 'passport';
 import { join } from 'path';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
-import { AuthSocketAdapter } from './auth-socket.adapter';
+// somewhere in your initialization file
 
 async function bootstrap() {
 
@@ -29,22 +28,12 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api', app, document)
 	const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
-	app.enableCors({
-		"origin": ["http://localhost:3000", "http://localhost:8000"],
-		"methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-		"preflightContinue": false,
-		credentials: true,
-		"optionsSuccessStatus": 204
-	  })
+	app.enableCors()
 
 	app.use(sessionMiddleware);
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.useStaticAssets(join(__dirname, '..', 'views'));
-
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-	app.useWebSocketAdapter(new AuthSocketAdapter(app));
-
 
 	await app.listen(port);
 }

@@ -18,15 +18,12 @@
                     <br>
                     <div id="status"></div>
                     <div id="chat">
-
-						channelId : {{ channelId }}
-						<input v-model="channelId" placeholder="edit me" type="number">
-						<button v-on:click="updateApp">update</button>
-
+                        <input type="text" v-model="author" id="author" class="form-control" placeholder="Enter id...">
+                        <br>
                         <div class="card">
                             <div id="messages" class="card-block">
                                 <ul>
-                                    <li v-for="message of messages">{{ message.authorId }}: {{ message.content }}</li>
+                                    <li v-for="message of messages">{{ message.user.username }}: {{ message.content }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -38,39 +35,12 @@
                     
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 offset-md-3 col-sm-12">
-                    <h1 class="text-center">{{ title }}</h1>
-                    <br>
-                    
-                    <div id="dm">
-
-						
-						<input v-model="receiver" placeholder="edit me" type="string">
-
-                        <div class="card">
-                            <div id="messages" class="card-block">
-                                <ul>
-                                    <li v-for="message of directMessages">{{ message.sender.username }}: {{ message.content }}</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <br>
-                        <textarea id="textarea" class="form-control" v-model="directMessageContent" placeholder="Enter message..."></textarea>
-                        <br>
-                        <button id="sendDM" class="btn" @click.prevent="sendDirectMessage">Send</button>
-                    </div>
-                    
-                </div>
-            </div>
             <div id="invites" class="card-block">
                 <ul>
                     <li v-for="(invite, index) in invites">invite #{{ index }} : {{ invite.user1.username }} challenged you !</li>
                 </ul>
                 <input type="text" v-model="invite_choosen" placeholder="invite # ?">
                 <button @click.prevent="acceptChallenge">Accept</button>
-                <input type="text" v-model="status" placeholder="new status ?">
-                <button @click.prevent="sendStatusUpdate">Send new status</button>
             </div>
         <div id="match">
             <h1>Match</h1>
@@ -95,8 +65,7 @@
             
         </div>
     </div>
-    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
-    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/addons/p5.sound.js"></script>
+
 <script src="main.js"></script>
 <script>
 	let cookies = document.cookie;

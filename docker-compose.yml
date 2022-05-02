@@ -15,7 +15,6 @@ services:
       context: ./Backend
       dockerfile: ./Dockerfile
     image: backend:latest
-    restart: always
     environment: 
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${DB_HOST}
@@ -35,20 +34,18 @@ services:
     depends_on: 
       - db
     volumes: 
-      - './Backend:/app'
-      - /app/node_modules/
+      - ./Backend:/app
+      - /app/node_modules
   frontend:
     build:
       context: ./Frontend
       dockerfile: ./Dockerfile
     image: frontend:latest
-    restart: always
     ports:
       - "3000:3000"
     container_name: frontend-transcendence
     volumes:
-      - './Frontend:/app'
-      - /app/node_modules/
+      - ./Frontend:/app
   pgadmin:
     image: dpage/pgadmin4
     restart: always

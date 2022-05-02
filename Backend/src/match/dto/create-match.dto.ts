@@ -4,12 +4,12 @@ import { CustomModes, MatchStatus } from "../entity/match.entity";
 
 export class CreateMatchDto {
     @ApiProperty()
-    @IsNumber()
-    user1_id: number;
+    @IsString()
+    user1_id: string;
 
     @ApiProperty()
-    @IsNumber()
-    user2_id: number;
+    @IsString()
+    user2_id: string;
 
     @ApiProperty()
     @IsEnum(CustomModes)
