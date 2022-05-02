@@ -1,0 +1,232 @@
+{
+  "friends": [
+    {
+      "id": "01",
+      "status": "offline",
+      "username": "friend1",
+      "avatar": "src/asset/friend1.svg"
+    },
+    {
+      "id": "28",
+      "status": "online",
+      "username": "friend28",
+      "avatar": "src/asset/friend2.svg"
+    }
+  ],
+  "users": [
+    {
+      "id": "01",
+      "status": "offline",
+      "username": "friend1",
+      "avatar": "src/asset/friend1.svg"
+    },
+    {
+      "id": "02",
+      "status": "online",
+      "username": "friend2",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "03",
+      "status": "offline",
+      "username": "friend3",
+      "avatar": "src/asset/friend3.svg  "
+    },
+    {
+      "id": "04",
+      "status": "online",
+      "username": "friend4",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "05",
+      "status": "online",
+      "username": "friend5",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "06",
+      "status": "online",
+      "username": "friend6",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "07",
+      "status": "online",
+      "username": "friend7",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "08",
+      "status": "online",
+      "username": "friend8",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "09",
+      "status": "online",
+      "username": "friend9",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "10",
+      "status": "online",
+      "username": "friend10",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "11",
+      "status": "online",
+      "username": "friend11",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "12",
+      "status": "online",
+      "username": "friend12",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "13",
+      "status": "online",
+      "username": "friend13",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "14",
+      "status": "online",
+      "username": "friend14",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "15",
+      "status": "online",
+      "username": "friend15",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "16",
+      "status": "online",
+      "username": "friend16",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "17",
+      "status": "online",
+      "username": "friend17",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "18",
+      "status": "online",
+      "username": "friend18",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "19",
+      "status": "online",
+      "username": "friend19",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "20",
+      "status": "online",
+      "username": "friend20",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "21",
+      "status": "online",
+      "username": "friend21",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "22",
+      "status": "online",
+      "username": "friend22",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "23",
+      "status": "online",
+      "username": "friend23",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "24",
+      "status": "online",
+      "username": "friend24",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "25",
+      "status": "online",
+      "username": "friend25",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "26",
+      "status": "online",
+      "username": "friend26",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "27",
+      "status": "online",
+      "username": "friend27",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "28",
+      "status": "online",
+      "username": "friend28",
+      "avatar": "src/asset/friend2.svg"
+    }
+  ],
+  "friendRequestsSent": [
+    {
+      "id": "04",
+      "status": "online",
+      "username": "friend4",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "02",
+      "status": "online",
+      "username": "friend2",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "03",
+      "status": "offline",
+      "username": "friend3",
+      "avatar": "src/asset/friend3.svg  "
+    },
+    {
+      "id": "10",
+      "status": "online",
+      "username": "friend10",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "01",
+      "status": "offline",
+      "username": "friend1",
+      "avatar": "src/asset/friend1.svg"
+    },
+    {
+      "id": "27",
+      "status": "online",
+      "username": "friend27",
+      "avatar": "src/asset/friend2.svg"
+    }
+  ],
+  "friendRequestsReceived": [
+    {
+      "id": "28",
+      "status": "online",
+      "username": "friend28",
+      "avatar": "src/asset/friend2.svg"
+    }
+  ]
+}
