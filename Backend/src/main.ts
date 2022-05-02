@@ -45,7 +45,6 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 	app.useWebSocketAdapter(new AuthSocketAdapter(app));
 
-
 	await app.listen(port);
 }
 bootstrap();
