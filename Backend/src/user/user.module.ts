@@ -15,9 +15,17 @@ import { ConfigService } from '@nestjs/config';
 import { FtStrategy } from './strategy/ft.strategy';
 import { SessionSerializer } from './session.serializer';
 import { UserController } from './controller/user/user.controller';
-import { UserService } from './service/user/user.service';
 import { User } from './entity/user.entity';
 import { config } from 'process';
+import { UserGateway } from './gateway/user.gateway';
+import { FriendshipService } from 'src/friendship/service/friendship.service';
+import { Friendship } from 'src/friendship/entity/friendship.entity';
+import DatabaseFilesService from './service/database-file.service';
+import DatabaseFile from './entity/database-file.entity';
+import DatabaseFilesController from './controller/database-file/database-file.controller';
+import { UserService } from './service/user.service';
+import { MatchService } from 'src/match/service/match.service';
+import { Match } from 'src/match/entity/match.entity';
 
 // const dbConfig = config.get('jwt')
 
@@ -33,9 +41,9 @@ import { config } from 'process';
         }),
         PassportModule.register({}),
         // JwtModule.register({}),
-        TypeOrmModule.forFeature([User])
+        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match])
     ],
-    controllers: [AuthController, TwoFactorAuth, UserController],
+    controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
         ConfigService,
         AuthService,
@@ -45,7 +53,11 @@ import { config } from 'process';
         JwtRefreshStrategy,
         JwtTwoFaStrategy,
         SessionSerializer,
-        UserService
+        UserService,
+        FriendshipService,
+        UserGateway,
+        DatabaseFilesService,
+        MatchService
     ],
     exports: [
         FtStrategy,

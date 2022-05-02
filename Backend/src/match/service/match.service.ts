@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
+import { MatchDto } from '../dto/match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match, MatchStatus } from '../entity/match.entity';
 import { ACCELERATION, BALL_VY, RACKET_HEIGHT, RACKET_THICKNESS, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP, BALL_VX, BALL_RADIUS, RACKET_MOV } from '../match.constants';
@@ -17,41 +18,54 @@ export class MatchService {
 		private usersRepository: Repository<User>,
 	) {}
 
-	async findAll(): Promise<Match[]> {
-        return this.matchsRepository.find();
+	async findAll(): Promise<MatchDto[]> {
+        return this.matchsRepository.find()
+			.then(items => items.map(e=> Match.toDto(e)));
     }
 
-    async findOne(id: string): Promise<Match> {
+    async findOne(id: string): Promise<MatchDto> {
         const match = await this.matchsRepository.findOne(id);
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
-        return match;
+        return Match.toDto(match);
+    }
+
+	async findAllMatchsByUser(id: string): Promise<MatchDto[]>
+    {
+        return this.matchsRepository.find({ 
+		where: [
+			{ user1: +id },
+			{ user2: +id },
+		]})
+		.then(items => items.map(e=> Match.toDto(e)));
     }
 
     
-    async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<Match> {
+    async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
         
         const match = await this.matchsRepository.preload({
 			id: +id,
 			...updateMatchDto
 		});
+		console.log(current_username, match)
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
-        return this.matchsRepository.save(match);
+        this.matchsRepository.save(match);
+		return Match.toDto(match)
     }
 
-    async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
-		// if (createMatchDto.user1_id == createMatchDto.user2_id)
-		// 	throw new BadRequestException("Cannot self match")
+    async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
+		if (createMatchDto.user1_id == createMatchDto.user2_id)
+			throw new BadRequestException("Cannot self match")
 		const user1 = await this.usersRepository.findOne(createMatchDto.user1_id)
 		if (!user1)
             throw new NotFoundException(`User #${createMatchDto.user1_id} not found`);
 		const user2 = await this.usersRepository.findOne(createMatchDto.user2_id)
 		if (!user2)
 			throw new NotFoundException(`User #${createMatchDto.user2_id} not found`);
-		const match = await this.matchsRepository.findOne(
+		let match = await this.matchsRepository.findOne(
 			{
 				user1: user1,
 				user2: user2,
@@ -60,17 +74,18 @@ export class MatchService {
 			}
 		)
 		console.log("match : ", match)
-		if (match) 
-			return this.matchsRepository.save(match);
+		if (match)
+			this.matchsRepository.save(match);
 		else
 		{
 			console.log("creating match...")
-			return this.matchsRepository.save({
+			match = await this.matchsRepository.save({
 				user1: user1,
 				user2: user2,
 				mode: createMatchDto.mode
 			});
 		}
+		return Match.toDto(match)
     }
 
 	async matchmaking(username: string, mode: number): Promise<Match> {
@@ -164,7 +179,7 @@ export class MatchService {
 		return match
 	}
 
-	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<Match> {
+	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<MatchDto> {
 	// 	if (assignCurrentMatch.user1_id == assignCurrentMatch.user2_id)
 	// 		throw new BadRequestException("Cannot self match")
 	// 	const user1 = await this.usersRepository.findOne(assignCurrentMatch.user1_id)

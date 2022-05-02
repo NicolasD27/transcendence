@@ -1,6 +1,9 @@
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Msg } from "../../chat/entity/msg.entity";
+import { Msg } from "../../message/entity/msg.entity";
 import { User } from "../../user/entity/user.entity";
+import { ChannelDto } from "../dto/channel.dto";
+import { ModerationTimeOut } from "./moderationTimeOut.entity";
+import { Participation } from "./participation.entity";
 
 @Entity()
 export class Channel extends BaseEntity {
@@ -8,11 +11,14 @@ export class Channel extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@Column()
+	@Column({ unique: true })
 	public name: string;
 
 	@Column()
 	public description: string;
+
+	@Column()
+	hashedPassword: string;
 
 	@ManyToOne(() => User, user => user.channels, { eager: true })
 	owner: User;
@@ -20,9 +26,20 @@ export class Channel extends BaseEntity {
 	@OneToMany(() => Msg, msg => msg.channel)
 	messages: Msg[];
 
-	// @Column()
-	// password: string;	// needs to be hashed with salt grains
+	@OneToMany(() => Participation, participation => participation.channel)
+	participations: Participation[];
 
-	// @Column()
-	// public privacy: number;
+	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.channel)
+	moderationTimeOuts: ModerationTimeOut[];
+
+	static toDto(channel: Channel) {
+		const dto: ChannelDto = {
+			id: channel.id,
+            name: channel.name,
+            owner: User.toDto(channel.owner),
+            description: channel.description
+		}
+		return dto;
+	}
+
 }

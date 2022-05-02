@@ -15,8 +15,11 @@ const app = new Vue({
 		author: '',
 		content: '',
 		messages: [],
+		directMessageContent: '',
+		receiver: "R5hXuq2f",
+		directMessages: [],
 		match: {},
-		room: '',
+		channelId: '',
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -30,17 +33,19 @@ const app = new Vue({
 		opponent_id: null,
 		invite_choosen: null,
 		invites: [],
-		match: []
+		match: [],
+		channelId: 1,
+		status: 1
 	},
 	methods: {
 		connectToChannel() {
-			this.room = 'a';
-			this.socket.emit('connect_to_channel', {room: this.room})
+			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
 		sendMessage(message) {
 			console.log(message);
 			if(this.validateInput()) {
 				const message = {
+					activeChannelId: this.channelId,
 					content: this.content,
 					author: this.author
 				}
@@ -55,16 +60,13 @@ const app = new Vue({
 			// return this.author.length > 0 && this.content.length > 0;	// need to be done server side too
 			return true;
 		},
-
 		async getPreviousMessages() {
-			let msgs = await (await fetch('http:// localhost:3000/api/channels/1')).json();	// chat/id of the channel
-			for (let i = 0; i < msgs.length; ++i) {
+			let msgs = await (await fetch(`http://localhost:8000/api/channels/${this.channelId}/messages`)).json();
+			this.messages = [];
+			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
 		},
-		// async findMatch() {
-		// 	const match = await (await fetch('http://e2r10p7:3000/api/matchs/matchmaking')).json();
-		// },
 		connectToMatch() {
 			// this.room = 'a';
 			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id});
@@ -99,16 +101,37 @@ const app = new Vue({
 		receiveUpdateMatch(match) {
 			this.match = match;
 			console.log(this.match);
-		}
+		},
+		updateApp() {
+			this.connectToChannel();
+			this.getPreviousMessages();
+		},
+		sendStatusUpdate() {
+			console.log("sending status Update")
+			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
+		},
+		sendDirectMessage() {
+			console.log(this.directMessageContent);
+			if(this.validateInput()) {
+				const message = {
+					receiver: this.receiver,
+					content: this.directMessageContent,
+					author: this.author
+				}
+				this.socket.emit('direct_msg_to_server', message)
+			}
+			this.directMessageContent = '';
+		},
+		receivedDirectMessage(message) {
+			this.directMessages.push(message);
+		},
 	},
 	created() {
-		console.log("here", document.cookie.split('=')[1])
-		this.socket = io.connect('http://localhost:3000', this.socketOptions);
-		this.socket.emit('connect_to_match', {room: 'a'})
+		// console.log("here", document.cookie.split('=')[1])
+		this.socket = io.connect('http://localhost:8000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);
 		});
-		
 		this.socket.on('update_to_client', (match) => {
 			this.receiveUpdateMatch(match);
 		});
@@ -118,8 +141,13 @@ const app = new Vue({
 		this.socket.on('launch_match', (match) => {
 			this.launchMatch(match);
 		});
+		this.socket.on('direct_msg_to_client', (message) => {
+			this.receivedDirectMessage(message);
+		});
 		
 	}
 });
 
+// app.connectToChannel();
 app.getPreviousMessages();
+
