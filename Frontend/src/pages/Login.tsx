@@ -52,7 +52,7 @@ const PrintUser = (props:any) => {
 	var value;
 
 	props.button.map((button:any) => {
-		button.id === 'InvitationSent' ? (value = <p id='InvitationSent'>Friend Request Sent</p>) : (value = <UserButtons buttons={props.button} key={props.user.id}/>)
+		button.id === 'InvitationSent' ? (value = <p id='InvitationSent'>Request Sent</p>) : (value = <UserButtons buttons={props.button} key={props.user.id}/>)
 	})
 
 	/*{
@@ -61,7 +61,6 @@ const PrintUser = (props:any) => {
 	}
 	else(value = 'Invitation Sent')*/
 
-	console.log('value: ',value)
 	return (
 		<div>
 			<div className='friend'>
@@ -91,7 +90,6 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 		
 		for(var i = 0; i < friends.length; i++ )
 		{
-			console.log('user[id]:', friends[i].id)
 			if (friends[i].id === id)
 				return true
 
@@ -108,21 +106,27 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const isThereAFriendshipRequestSent = (id: any) => {
-		for (const user of friendRequestsSent) {
-			if (user.id === id)
+
+		for (var i = 0; i < friendRequestsSent.length; i++)
+		{
+			if (friendRequestsSent[i].id === id)
 				return true
 		}
+		/*for (const user in friendRequestsSent) {
+			console.log('user[id]: ', user[id])
+			if (user[id] === id)
+				return true
+		}*/
 		return false;
 	}
 
 	const acceptFriendshipRequest = (user:any) => {
-		console.log('Button clicked Accept Friend')
+		console.log('Button clicked Accept Friend Request')
 		axios
 			.post(dataUrlFriends, user)
 			.then((res) => {
 				setFriends(res.data)
-				//axios.delete(`/http://localhost:3001/friendRequestsReceived/${res.data.id}`)
-				/* Supprimer la friend request quand la demande est accepté ou rejete (ajouter le boutton rejeté !!)*/
+				axios.delete(`${dataUrlFriendRequestsReceived}/${res.data.id}`)
 			})
 			.catch((err) => 
 				console.log(err)
@@ -130,14 +134,9 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const declineFriendshipRequest = (user:any) => {
-		console.log('Button clicked Accept Friend')
+		console.log('Button clicked Declined Friend Request')
 		axios
-			.post(dataUrlFriends, user)
-			.then((res) => {
-				setFriends(res.data)
-				//axios.delete(`/http://localhost:3001/friendRequestsReceived/${res.data.id}`)
-				/* Supprimer la friend request quand la demande est accepté ou rejete (ajouter le boutton rejeté !!)*/
-			})
+			.delete(`${dataUrlFriendRequestsReceived}/${user.id}`)
 			.catch((err) => 
 				console.log(err)
 			)	
@@ -157,16 +156,16 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 						if (Boolean(isAlreadyFriend(user.id)) === true)
 						{	
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "chatButton", script: () => 'null' }, { id: "playButton", script: () => 'null' }]} key={user.id} />
+								<PrintUser user={user} status={status} button={[, { id: "playButton", script: () => 'null' }, { id : "chatButton", script: () => 'null' }]} key={user.id} />
 							)
 						}
 						else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
 						{
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "DeclinetFriendButton", script: () => declineFriendshipRequest(user) }, { id : "AcceptFriendButton", script: () => acceptFriendshipRequest(user) }]} key={user.id} />
+								<PrintUser user={user} status={status} button={[{ id : "AcceptFriendButton", script: () => acceptFriendshipRequest(user) }, { id : "DeclinetFriendButton", script: () => declineFriendshipRequest(user) }]} key={user.id} />
 							);
 						}
-						else if (Boolean(isThereAFriendshipRequestSent(user.id)))
+						else if (Boolean(isThereAFriendshipRequestSent(user.id)) === true)
 						{	
 							return (
 								<PrintUser user={user} status={status} button={[{ id : "InvitationSent", script: () => 'null' }]} key={user.id} />
@@ -243,7 +242,7 @@ const Chat = () => {
 		.catch (err => { 
 			console.log(err)
 		})
-	}, [])
+	}, [friendRequestsSent])
 
 	return ( 
 		<div className='chatArea'>

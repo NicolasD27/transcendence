@@ -211,9 +211,9 @@ button {
 
 #friend_buttons {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 	margin-right: 10px;
 	margin-left: 4px;
 	width: 80px;
@@ -283,6 +283,7 @@ button {
 	margin-bottom: 0px;
 	margin-right: 10px;
 	font-size: 14px;
+	text-align: center;
 }
 
 #AcceptFriendButton{

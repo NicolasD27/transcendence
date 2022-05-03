@@ -183,25 +183,13 @@
       "status": "online",
       "username": "friend4",
       "avatar": "src/asset/friend4.png"
-    },
-    {
-      "id": "05",
-      "status": "online",
-      "username": "friend5",
-      "avatar": "src/asset/friend4.png"
     }
   ],
   "friendRequestsReceived": [
     {
-      "id": "28",
+      "id": "09",
       "status": "online",
-      "username": "friend28",
-      "avatar": "src/asset/friend2.svg"
-    },
-    {
-      "id": "10",
-      "status": "online",
-      "username": "friend10",
+      "username": "friend9",
       "avatar": "src/asset/friend4.png"
     }
   ]
