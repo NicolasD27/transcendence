@@ -37,8 +37,8 @@ const Login = () => {
 					<div><button onClick={() => onProfil()} className='ButtonStyle navButton'>Profil</button></div>
 				</div >
 				<section id="gameAndChatSection">
-					<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-					<Match/ >
+					<div className='gameArea' id='gameArea'></div>
+						<Match/ >
 					<Chat/>
 				</section>
 			</div>

@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { UseGuards, Logger, Request, Req } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -15,6 +15,7 @@ import Ball from '../interface/ball.interface';
 import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { UserService } from 'src/user/service/user.service';
+import { WsGuard } from '../../guards/websocket.guard';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -30,7 +31,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	) {}
 
-	/*// @UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_match')						// this runs the function when the event msg_to_server is triggered
 	async connectToMatch(socket: Socket, data: { opponent_id: string }) {
 		console.log(data)
@@ -41,9 +42,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.to("match#" + match.id).emit('update_to_client', match)
 
 
-	}*/
+	}
 
-	/*// @UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('find_match')						// this runs the function when the event msg_to_server is triggered
 	async findMatch(socket: Socket) {
 		const username = getUsernameFromSocket(socket)
@@ -53,9 +54,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			this.server.to("match#" + match.id).emit('launch_match', match)
 
 		}
-	}*/
+	}
 
-	/*// @UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('challenge_user')						// this runs the function when the event msg_to_server is triggered
 	async challengeUser(socket: Socket, data: { opponent_id: string, author: string}) {
 		const user = await this.userService.findByUsername(data.author);
@@ -63,9 +64,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		socket.join("match#" + match.id);
 		console.log("match : ", match)
 		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
-	}*/
+	}
 
-	/*// @UseGuards(WsGuard)
+	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')						// this runs the function when the event msg_to_server is triggered
 	async acceptMatchInvite(socket: Socket, data: { match_id: string }) {
 		const username = getUsernameFromSocket(socket)
@@ -75,40 +76,41 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		this.server.to("match#" + match.id).emit('launch_match', match)
 
-	}*/
+	}
 
-	// @UseGuards(WsGuard)
+	//@UseGuards(WsGuard)
 	@SubscribeMessage('askConnectionNumber')
 	async askConnectionNumber(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
 		this.server.to("match#" + data.match_id).emit('sendConnectionNb', 1);					//change this with the room size
 	}
 
-	// @UseGuards(WsGuard)
+	//@UseGuards(WsGuard)
 	@SubscribeMessage('sendUpdateMatch')
 	async sendUpdateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
 		this.server.to("match#" + data.match_id).emit('updateMatch', data);
 	}
 
-	// @UseGuards(WsGuard)
+	//@UseGuards(WsGuard)
 	@SubscribeMessage('askForUpdate')
 	async askForUpdate(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
 		this.server.to("match#" + data.match_id).emit('askUpdateMatch');
 	}
 
-	// @UseGuards(WsGuard)
+	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveKeyPressed')
 	async slaveKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
 		this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
 	}
 
-	// @UseGuards(WsGuard)
+	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterKeyPressed')
 	async masterKeyPressed(socket: Socket, data: {match_id: number,  command: number}) {
 		this.server.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data);
 	}
 
-	// @UseGuards(TwoFactorGuard)
-	async handleConnection(socket: Socket) {
+	//@UseGuards(WsGuard)
+	async handleConnection(socket: Socket)
+	{
 		this.logger.log(`match socket connected: ${socket.id}`);
 		if (!socket.handshake.headers.cookie)
 			return ;
@@ -124,7 +126,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	afterInit(server: Server)
 	{
 		var gameloop = require('node-gameloop');
-		var id = gameloop.setGameLoop(function(delta)
+		var id = gameloop.setGameLoop(function(delta)								//to stop the clock (if needed), use this *id*
 		{
 			server.emit('serverTick');
 		}, 1000 / 30);																//choose refresh rate here

@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import Sketch from "react-p5";
 import {io, Socket} from "socket.io-client"
 
-let width = 800;
-let height = 400;
+let width = 954;
+let height = 532;
 let playerWidth = 15;
 
 function Player(x, y, w, h, score)
@@ -120,7 +120,7 @@ export class Match extends Component
 		this.socket = io('http://localhost:8000', {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
 
 		let cvn = p5.createCanvas(width, height);
-		cvn.position(250, 220);												//gonna need some tweaks
+		cvn.parent("gameArea");												//gonna need some tweaks
 
 		p5.background(0);
 		p5.textSize(50);

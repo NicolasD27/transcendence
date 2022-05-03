@@ -1,2 +1,6 @@
 _ fix pb de match_id pour les rooms
-_ voir pour la master clock
+_ dans gateway, voir pour pouvoir utiliser UseGuards
+
+_ recuperer les infos de base du match depuis le backend ?
+
+_ voir pour les angles du canvas
