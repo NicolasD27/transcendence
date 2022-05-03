@@ -11,7 +11,7 @@ export class Participation {
 	@ManyToOne(() => User, user => user.participations, { eager: true })
 	user: User;
 
-	@ManyToOne(() => Channel, channel => channel.participations, { eager: true, onDelete:'CASCADE' })
+	@ManyToOne(() => Channel, channel => channel.participations, { eager: true, cascade: true, onDelete:'CASCADE' })
 	channel: Channel;
 
 	@Column({ default: false })

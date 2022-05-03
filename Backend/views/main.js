@@ -20,6 +20,8 @@ const app = new Vue({
 		directMessages: [],
 		match: {},
 		channelId: '',
+		banId: '',
+		banTimeOut: 60,
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -41,8 +43,7 @@ const app = new Vue({
 		connectToChannel() {
 			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
-		sendMessage(message) {
-			console.log(message);
+		sendMessage() {
 			if(this.validateInput()) {
 				const message = {
 					activeChannelId: this.channelId,
@@ -50,10 +51,12 @@ const app = new Vue({
 					author: this.author
 				}
 				this.socket.emit('msg_to_server', message)
+				// console.log(message);
 			}
 			this.content = '';
 		},
 		receivedMessage(message) {
+			console.log(message);
 			this.messages.push(message);
 		},
 		validateInput() {
@@ -66,6 +69,42 @@ const app = new Vue({
 			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
+		},
+		// closeChannel() {
+		// 	this.socket.emit('leave', { channelId: this.channelId });
+		// },
+		banUser() {
+			this.socket.emit('ban', { userId: this.banId, timeout: this.banTimeOut, channelId: this.channelId });
+		},
+		muteUser() {
+			this.socket.emit('mute', { userId: this.banId, timeout: this.banTimeOut, channelId: this.channelId });
+		},
+		unBanUser() {
+			this.socket.emit('rescue', { userId: this.banId, channelId: this.channelId });
+		},
+		moderationMessage(data, i) {
+			// ? it could be cool to pass every messages from this user to spoilers.
+			// ? I will have to add a timer in the backend to tell every connected clients when the ban is finished
+
+			console.log(data);
+			let message_content;
+			if (i === 1)
+				message_content = `${data.user_id} has been banned`;
+			else if (i === 2)
+				message_content = `${data.user_id} has been muted`;
+			else if (i === 3)
+				message_content = `${data.user_id} has been rescued`;
+			else
+			{
+				console.log("error: moderationMessage() needs a number between 1 and 3 in second argument.");
+				return ;
+			}
+			const m = {
+				activeChannelId: data.channel_id,
+				content: message_content,
+				user: {	username: "Moderation" }
+			}
+			this.receivedMessage(m);
 		},
 		connectToMatch() {
 			// this.room = 'a';
@@ -100,7 +139,7 @@ const app = new Vue({
 		},
 		receiveUpdateMatch(match) {
 			this.match = match;
-			console.log(this.match);
+			// console.log(this.match);
 		},
 		updateApp() {
 			this.connectToChannel();
@@ -144,10 +183,19 @@ const app = new Vue({
 		this.socket.on('direct_msg_to_client', (message) => {
 			this.receivedDirectMessage(message);
 		});
-		
+
+		this.socket.on('ban', (data) => {
+			this.moderationMessage(data, 1);
+		});
+		this.socket.on('mute', (data) => {
+			this.moderationMessage(data, 2);
+		});
+		this.socket.on('rescue', (data) => {
+			this.moderationMessage(data, 3);
+		});
 	}
 });
 
-// app.connectToChannel();
+app.connectToChannel();
 app.getPreviousMessages();
 

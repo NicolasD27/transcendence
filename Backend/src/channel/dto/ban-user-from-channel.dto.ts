@@ -6,7 +6,6 @@ import { User } from "src/user/entity/user.entity";
 @Exclude()
 export class BanUserFromChannelDto
 {
-
 	@ApiProperty()
 	@Expose()
     @IsNumber()
@@ -17,6 +16,12 @@ export class BanUserFromChannelDto
 	@IsNumber()
 	@IsPositive()
 	timeout: number;	// in second
+
+	@ApiProperty()
+	@Expose()
+	@IsNumber()
+	@IsPositive()
+	channelId: number;
 
 	// @ApiProperty()
 	// @Expose()
