@@ -19,11 +19,8 @@ import { JoinChannelDto } from "../dto/join-channel.dto";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
 import { MsgDto } from "src/message/dto/message.dto";
 import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
-import { BanUserFromChannelDto } from "../dto/ban-user-from-channel.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
-import { ChatGateway } from "src/message/gateway/message.gateway";
-import { activeUsers } from "src/auth-socket.adapter";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -169,6 +166,7 @@ export class ChannelController {
 	}
 
 	// todo : getBannedUsers && getMutedUsers
+	// todo : getModerators
 
 	@Patch(':id/changeOwner')
 	@UseGuards(TwoFactorGuard)

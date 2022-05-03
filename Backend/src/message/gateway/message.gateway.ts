@@ -111,11 +111,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 		catch {} // todo : try to break it 
 
-		const channel_id	= banUserFromChannelDto.channelId;
-		const user_id		= banUserFromChannelDto.userId;
-
 		this.server.to("channel#" + banUserFromChannelDto.channelId)
-			.emit('ban', { channel_id, user_id});
+			.emit('ban', {
+				channelId: banUserFromChannelDto.channelId,
+				userId: banUserFromChannelDto.userId
+			}
+		);
 		return ;
 	}
 
@@ -135,7 +136,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const user_id		= banUserFromChannelDto.userId;
 
 		this.server.to("channel#" + banUserFromChannelDto.channelId)
-			.emit('mute', { channel_id, user_id});
+			.emit('mute', {
+				channelId: banUserFromChannelDto.channelId,
+				userId: banUserFromChannelDto.userId
+			}
+		);
 		return ;
 	}
 
@@ -149,11 +154,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			getUsernameFromSocket(socket),
 			data.userId);
 
-		const channel_id = data.channelId;
-		const user_id = data.userId;
-
 		this.server.to("channel#" + data.channelId)
-			.emit('rescue', { channel_id, user_id});
+			.emit('rescue', {
+				channelId: data.channelId,
+				userId: data.userId,
+			}
+		);
 		return ;
 	}
 

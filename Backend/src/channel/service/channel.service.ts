@@ -14,8 +14,7 @@ import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
-import { BannedState, ModerationTimeOut } from '../entity/moderationTimeOut.entity';
-import { activeUsers } from 'src/auth-socket.adapter';
+import { ModerationTimeOut } from '../entity/moderationTimeOut.entity';
 
 @Injectable()
 export class ChannelService {
@@ -41,7 +40,7 @@ export class ChannelService {
 
 	async findAll(): Promise<ChannelDto[]>
 	{
-		return await this.channelRepo.find()
+		return await this.channelRepo.find({ where: { isPrivate: false, } })
 			.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
@@ -67,18 +66,14 @@ export class ChannelService {
 			}
 		})
 		if (channelExist)
-			throw new UnauthorizedException("This channel name is already taken.");	// 
+			throw new UnauthorizedException("This channel name is already taken.");
 
-		// let		hash = "";
-		// if (createChannelDto.password !== "")	//* this check might be pointless
-		// {
-			const hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
-			// console.log(`${createChannelDto.password} -> ${hash}`);
-		// }
+		const hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 
 		//? registering the new channel in the bdd
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
+			isPrivate: createChannelDto.isPrivate,
 			description: createChannelDto.description,
 			owner : user,
 			hashedPassword : hash,
@@ -104,12 +99,6 @@ export class ChannelService {
 		const channel = await this.channelRepo.findOne(channelId);
 		if (! channel)
 			throw new NotFoundException("channel not found");
-		
-		// if (channel.hashedPassword === "") {
-		// 	if (notHashedPassword !== "")
-		// 		throw new UnauthorizedException("password not empty");
-		// }
-		// else 
 		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
@@ -152,11 +141,11 @@ export class ChannelService {
 
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined");
-		
-		if (channel.owner.id == user.id)
-			throw new UnauthorizedException(
-				"The owner of a channel can't leave without passing the ownership to another user in the channel.");
-		
+
+		// if (channel.owner.id == user.id)
+		// 	throw new UnauthorizedException(
+		// 		"The owner of a channel can't leave without passing the ownership to another user in the channel.");
+
 		await this.participationRepo.delete(participation.id);
 
 		return true;
