@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
@@ -10,12 +10,20 @@ import Achievement from '../components/Achievement';
 
 const Profil = () => {
 	interface matchFormat {
+		id: number;
 		avatarP: string;
 		avatarO: string;
 		scoreP: number;
 		scoreO: number;
 	}
 
+	interface StateType {
+		id: number;
+		idMe: number;
+	}
+	const location = useLocation();
+	const state = location.state as StateType
+	//console.log("ID: " + props.props.id)
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
 	const navigate = useNavigate()
@@ -30,17 +38,26 @@ const Profil = () => {
 	}
 
 	if (getmatch === false) {
-		axios.get(`http://localhost:8000/api/matchs/`, { withCredentials: true })
+		axios.get(`http://localhost:8000/api/users/${state.id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
-					const singleMatch = { avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					let singleMatch: matchFormat;
+					if (list.user1.id == state.idMe)
+						singleMatch = { id: list.id, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					else
+						singleMatch = { id: list.id, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
 					//matchID.push(singleMatch);
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
+				//matchID.sort((a, b) => a.scoreP - b.scoreP)
 			})
 		setGetMatch(getmatch => true)
 	}
+
+	const matchTri = [...matchID].sort((a, b) => {
+		return b.id - a.id;
+	});
 
 	return (
 		<Fragment>
@@ -50,11 +67,11 @@ const Profil = () => {
 				<div><button onClick={() => onProfil()} className='ButtonStyle navButton'>Profil</button></div>
 			</div >
 			<div className='boxProfil'>
-				<Avatar />
+				<Avatar id={state.id} idMe={state.idMe} />
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
 				<ProgressBar completed={870} />
 				<div className='boxStats'>
-					<HistoryMatch historys={matchID} />
+					<HistoryMatch historys={matchTri} />
 					<Achievement />
 				</div>
 			</div>

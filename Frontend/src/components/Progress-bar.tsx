@@ -5,6 +5,10 @@ interface Props {
 	completed: number;
 }
 
+function calcExp(matchs: any) {
+	let exp = matchs;
+}
+
 const ProgressBar: React.FC<Props> = (props) => {
 	const { completed } = props;
 	const level = ~~(completed / 100);
