@@ -419,15 +419,19 @@ export class ChannelService {
 				channel: myChannel,
 			}
 		});
+
+		let activeBanFound = 0;
 		let _now:Date = new Date();
 		previousBans.forEach((ban) => {
 			if (ban.date > _now)
 			{
 				ban.date = _now;
 				this.moderationTimeOutRepo.save(ban);
+				activeBanFound -= -1;
 			}
 		});
-
+		if (!activeBanFound)
+			throw new NotFoundException("This user is not banned/muted");
 	}
 
 	async giveModerationRights(channelID: string, username: string, futureModoID: string, isGiven: boolean)

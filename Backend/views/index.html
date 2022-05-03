@@ -24,18 +24,18 @@
 							<input v-model="channelId" placeholder="which channel to display ?" type="number">
 							<button v-on:click="updateApp">update</button>
 
-							<button v-on:click="leaveChannel">leave channel</button> <br>
-
+							<!-- <button v-on:click="closeChannel">leave channel</button> -->
+							<br>
 							<input v-model="banId" placeholder="user id" type="number" size="7">
 							<input v-model="banTimeOut" placeholder="seconds" type="number" size="7">
-							<button v-on:click="banUser">ban User</button>
-							<button v-on:click="muteUser">mute User</button>
-							<button v-on:click="unBanUser">unBan User</button> <br>
+							<button v-on:click="banUser">ban</button>
+							<button v-on:click="muteUser">mute</button>
+							<button v-on:click="unBanUser">unBan/unmute</button> <br>
 
 							<div class="card">
 								<div id="messages" class="card-block">
 									<ul>
-										<li v-for="message of messages">{{ message.authorId }}: {{ message.content }}</li>
+										<li v-for="message of messages">{{ message.user.username }}: {{ message.content }}</li>
 									</ul>
 								</div>
 							</div>

@@ -56,6 +56,7 @@ const app = new Vue({
 			this.content = '';
 		},
 		receivedMessage(message) {
+			console.log(message);
 			this.messages.push(message);
 		},
 		validateInput() {
@@ -69,17 +70,41 @@ const app = new Vue({
 				this.receivedMessage(msgs[i]);
 			}
 		},
-		leaveChannel() {
-			this.socket.emit('leave', { channelId: this.channelId });
-		},
+		// closeChannel() {
+		// 	this.socket.emit('leave', { channelId: this.channelId });
+		// },
 		banUser() {
-			this.socket.emit('ban', { userId: this.banId, tieout: banTimeOut, channelId: this.channelId });
+			this.socket.emit('ban', { userId: this.banId, timeout: this.banTimeOut, channelId: this.channelId });
 		},
 		muteUser() {
-			this.socket.emit('mute', { userId: this.banId, tieout: banTimeOut, channelId: this.channelId });
+			this.socket.emit('mute', { userId: this.banId, timeout: this.banTimeOut, channelId: this.channelId });
 		},
 		unBanUser() {
-			this.socket.emit('mute', { userId: this.banId, channelId: this.channelId });
+			this.socket.emit('rescue', { userId: this.banId, channelId: this.channelId });
+		},
+		moderationMessage(data, i) {
+			// ? it could be cool to pass every messages from this user to spoilers.
+			// ? I will have to add a timer in the backend to tell every connected clients when the ban is finished
+
+			console.log(data);
+			let message_content;
+			if (i === 1)
+				message_content = `${data.user_id} has been banned`;
+			else if (i === 2)
+				message_content = `${data.user_id} has been muted`;
+			else if (i === 3)
+				message_content = `${data.user_id} has been rescued`;
+			else
+			{
+				console.log("error: moderationMessage() needs a number between 1 and 3 in second argument.");
+				return ;
+			}
+			const m = {
+				activeChannelId: data.channel_id,
+				content: message_content,
+				user: {	username: "Moderation" }
+			}
+			this.receivedMessage(m);
 		},
 		connectToMatch() {
 			// this.room = 'a';
@@ -158,7 +183,16 @@ const app = new Vue({
 		this.socket.on('direct_msg_to_client', (message) => {
 			this.receivedDirectMessage(message);
 		});
-		
+
+		this.socket.on('ban', (data) => {
+			this.moderationMessage(data, 1);
+		});
+		this.socket.on('mute', (data) => {
+			this.moderationMessage(data, 2);
+		});
+		this.socket.on('rescue', (data) => {
+			this.moderationMessage(data, 3);
+		});
 	}
 });
 

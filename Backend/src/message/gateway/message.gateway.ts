@@ -39,12 +39,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		.then(()=>{
 			this.chatService.saveMsg(data.content, data.activeChannelId, username)
 			.then((message)=>{
-				const msgDto: CreateMsgDto = {
-					content: message.content,
-					authorId: message.user.id,
-					date: message.date,
-				}
-				this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', msgDto);
+				this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
 			})
 			.catch(()=>{ return ; });                                           
 		})
@@ -52,6 +47,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			console.log("checkUserJoinedChannelWS failed");
 			return ;
 		});
+		return ;
 	}
 
 	@SubscribeMessage('connect_to_channel')
@@ -69,6 +65,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		.then(()=>{
 			socket.join("channel#" + data.channelId);
 		});
+		return ;
 	}
 
 	@SubscribeMessage('leave')
@@ -83,9 +80,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			console.log(`${socket.user.username} left ${data.channelId}`);
 			myClientSocket[0].leave("channel#" + data.channelId);
 		}
+		return ;
 	}
 
 	// ! the use of Promises are needed for 'ban', 'mute' and 'rescue'
+	// !
+	// !
 
 	@SubscribeMessage('ban')
 	async banUser(
@@ -110,6 +110,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			}
 		}
 		catch {} // todo : try to break it 
+
+		const channel_id	= banUserFromChannelDto.channelId;
+		const user_id		= banUserFromChannelDto.userId;
+
+		this.server.to("channel#" + banUserFromChannelDto.channelId)
+			.emit('ban', { channel_id, user_id});
 		return ;
 	}
 
@@ -124,6 +130,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			username,
 			banUserFromChannelDto,
 			1);
+
+		const channel_id	= banUserFromChannelDto.channelId;
+		const user_id		= banUserFromChannelDto.userId;
+
+		this.server.to("channel#" + banUserFromChannelDto.channelId)
+			.emit('mute', { channel_id, user_id});
 		return ;
 	}
 
@@ -136,6 +148,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			data.channelId,
 			getUsernameFromSocket(socket),
 			data.userId);
+
+		const channel_id = data.channelId;
+		const user_id = data.userId;
+
+		this.server.to("channel#" + data.channelId)
+			.emit('rescue', { channel_id, user_id});
 		return ;
 	}
 
