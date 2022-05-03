@@ -15,6 +15,7 @@ import Ball from '../interface/ball.interface';
 import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { UserService } from 'src/user/service/user.service';
+import { CustomSocket } from 'src/auth-socket.adapter';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -30,25 +31,21 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		
 	) {}
 
-	
-
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('connect_to_match')						// this runs the function when the event msg_to_server is triggered
-	async connectToMatch(socket: Socket, data: { opponent_id: string }) {
+	async connectToMatch(socket: CustomSocket, data: { opponent_id: string }) {
 		console.log(data)
 		const username = getUsernameFromSocket(socket)
 		const user = await this.userService.findByUsername(username);
 		let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		this.server.to("match#" + match.id).emit('update_to_client', match)
-		
-		
 	}
 
 	
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('find_match')						// this runs the function when the event msg_to_server is triggered
-	async findMatch(socket: Socket) {
+	async findMatch(socket: CustomSocket) {
 		const username = getUsernameFromSocket(socket)
 		let match = await this.matchService.matchmaking(username, CustomModes.NORMAL );
 		socket.join("match#" + match.id);
@@ -59,13 +56,13 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendUpdateMatch')
-	updateMatch(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+	updateMatch(socket: CustomSocket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
 		this.server.to("match#" + data.match_id).emit('updateMatch', data);
 	}
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('askForUpdate')
-	askForUpdate(socket: Socket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
+	askForUpdate(socket: CustomSocket, data: {match_id: number, player1: Player, player2: Player, ball: Ball}) {
 		this.server.to("match#" + data.match_id).emit('askUpdateMatch');
 	}
 

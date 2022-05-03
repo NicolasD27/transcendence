@@ -9,6 +9,7 @@ import { User } from "src/user/entity/user.entity";
 import { Msg } from "src/message/entity/msg.entity";
 import { ChannelController } from "./controller/channel.controller";
 import { ModerationTimeOut } from "./entity/moderationTimeOut.entity";
+import { ChatGateway } from "src/message/gateway/message.gateway";
 
 @Module({
 	imports: [
