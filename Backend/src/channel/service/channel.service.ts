@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan } from 'typeorm';
+import { getConnection, Repository, MoreThan, Connection } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -15,6 +15,11 @@ import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
 import { ModerationTimeOut } from '../entity/moderationTimeOut.entity';
+import { ChannelInvite } from '../entity/channelInvite.entity';
+import { CreateChannelInviteDto } from '../dto/create-channel-invite.dto';
+import { ChatGateway } from 'src/message/gateway/message.gateway';
+import { Server } from 'socket.io';
+import { ChannelInviteDto } from '../dto/channel-invite.dto';
 
 @Injectable()
 export class ChannelService {
@@ -34,7 +39,11 @@ export class ChannelService {
 
 		@InjectRepository(ModerationTimeOut)
 		private moderationTimeOutRepo: Repository<ModerationTimeOut>,
-	) {}
+
+		@InjectRepository(ChannelInvite)
+		private channelInviteRepo: Repository<ChannelInvite>,
+	)
+	{}
 
 	saltRounds = 12;
 
@@ -44,12 +53,17 @@ export class ChannelService {
 			.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
-	async findOne(channelId: string): Promise<ChannelDto>
+	async findOne(channelId: number): Promise<ChannelDto>
 	{
 		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException();
 		return Channel.toDto(myChannel);
+	}
+
+	async findOneWS(channelId:number)
+	{
+		return await this.channelRepo.findOne(channelId);
 	}
 
 	async create(username: string, createChannelDto: CreateChannelDto): Promise<ChannelDto>
@@ -179,6 +193,44 @@ export class ChannelService {
 			.then(items => items.map(e=> Msg.toDto(e)));
 
 		return msgs;
+	}
+
+	async getChannelInvites(username: string)
+	{
+		const myUser = await this.userRepo.find({username});
+		if (!myUser)	// ? useless because of the guard
+			throw new NotFoundException(`username ${username} not found`);
+		const invites = await this.channelInviteRepo.find({
+			where: {
+				receiver: myUser,
+			}
+		})
+		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
+		return (invites);
+	}
+
+	// async saveInvite(myInvite:ChannelInviteDto)
+	// {
+	// 	return await this.channelInviteRepo.save(myInvite);
+	// }
+
+	async saveInvite(username: string, createChannelInviteDto: CreateChannelInviteDto): Promise<ChannelInviteDto>
+	{
+		const myChannel = await this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
+		if (!myChannel)
+			throw new NotFoundException();
+		const mySender = await this.userRepo.findOne({username});
+		const myReceiver = await this.userRepo.findOne({where:{ id: createChannelInviteDto.userId }});
+		if (!myReceiver)
+			throw new NotFoundException();
+
+		const newInvite = this.channelInviteRepo.create({
+			channel: myChannel,
+			sender: mySender,
+			receiver: myReceiver,
+		});
+		const myinvite = await this.channelInviteRepo.save(newInvite);
+		return ChannelInvite.toDto(myinvite);
 	}
 
 	async checkUserJoinedChannel(username: string, channelId: string) // : Promise<boolean>

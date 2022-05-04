@@ -22,6 +22,7 @@ const app = new Vue({
 		channelId: '',
 		banId: '',
 		banTimeOut: 60,
+		idToInvite: 2,
 		socket: null,
 		socketOptions: {
 			transportOptions: {
@@ -56,7 +57,7 @@ const app = new Vue({
 			this.content = '';
 		},
 		receivedMessage(message) {
-			console.log(message);
+			// console.log(message);
 			this.messages.push(message);
 		},
 		validateInput() {
@@ -69,6 +70,9 @@ const app = new Vue({
 			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
+		},
+		async sendInvite() {
+			this.socket.emit('sendInvite', { channelId: this.channelId, userId: this.idToInvite});
 		},
 		// closeChannel() {
 		// 	this.socket.emit('leave', { channelId: this.channelId });
@@ -105,6 +109,10 @@ const app = new Vue({
 				user: {	username: "Moderation" }
 			}
 			this.receivedMessage(m);
+		},
+		newChannelInviteReceived(data) {
+			console.log("newChannelInviteReceived");
+			console.log(data);
 		},
 		connectToMatch() {
 			// this.room = 'a';
@@ -192,6 +200,9 @@ const app = new Vue({
 		});
 		this.socket.on('rescue', (data) => {
 			this.moderationMessage(data, 3);
+		});
+		this.socket.on('new_channel_invite_received',(data)=>{
+			this.newChannelInviteReceived(data);
 		});
 	}
 });

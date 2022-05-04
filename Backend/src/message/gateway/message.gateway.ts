@@ -1,4 +1,4 @@
-import { Logger, Request, UnauthorizedException } from '@nestjs/common';
+import { HttpCode, Logger, Request, UnauthorizedException } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -14,6 +14,11 @@ import { ChannelService } from 'src/channel/service/channel.service';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
 import { BanUserFromChannelDto } from 'src/channel/dto/ban-user-from-channel.dto';
+import { CreateChannelInviteDto } from 'src/channel/dto/create-channel-invite.dto';
+import { UserService } from 'src/user/service/user.service';
+import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
+import { ChannelInviteDto } from 'src/channel/dto/channel-invite.dto';
+import { User } from 'src/user/entity/user.entity';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -26,6 +31,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	constructor(
 		private readonly chatService: ChatService,
 		private readonly channelService: ChannelService,
+		private readonly userService: UserService,
 		)
 	{}
 
@@ -68,22 +74,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		return ;
 	}
 
-	@SubscribeMessage('leave')
-	async pepoLeave(socket: CustomSocket, data: { channelId: string }) {
-		// activeUsers.remove(socket.user.id);
-
-		const myClientSocket = await this.server
-			.in(activeUsers.getSocketId(socket.user.id).socketId)
-			.fetchSockets();
-		if (myClientSocket.length)
-		{
-			console.log(`${socket.user.username} left ${data.channelId}`);
-			myClientSocket[0].leave("channel#" + data.channelId);
-		}
-		return ;
-	}
-
-	// ! the use of Promises are needed for 'ban', 'mute' and 'rescue'
+	// ! the use of Promises are needed for 'ban', 'mute', 'rescue' and 'invite'
+	// !
 	// !
 	// !
 
@@ -163,12 +155,37 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		return ;
 	}
 
+	@SubscribeMessage('sendInvite')
+	async createChannelInvite(socket: CustomSocket, createChannelInviteDto: CreateChannelInviteDto)
+	{
+		//! check the black list of the receiver to avoid spam
+
+		try
+		{
+			const newInviteDto = await this.channelService.saveInvite(getUsernameFromSocket(socket), createChannelInviteDto);
+			console.log("// newInvite inserted");
+
+			if (activeUsers.isActiveUser(newInviteDto.receiver.id))
+			{
+				this.server.to(activeUsers.getSocketId(newInviteDto.receiver.id).socketId)
+					.emit('new_channel_invite_received', newInviteDto);
+			}
+			else
+				console.log(`${newInviteDto.receiver.id} in not active`);
+		}
+		catch (e)
+		{
+			console.log("error: " + e);
+			return { error: e.message };
+		}
+	}
+
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
 
 	async handleConnection(client: CustomSocket, @Request() req, ...args: any[]) {
-		this.logger.log(`${client.user.username} connected via ${client.id}`);
+		this.logger.log(`/// ${client.user.username} connected via ${client.id}`);
 	}
 
 	handleDisconnect(client: CustomSocket) {
