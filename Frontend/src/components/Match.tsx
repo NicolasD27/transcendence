@@ -100,21 +100,6 @@ export class Match extends Component
 	countdown = 3;
 	fq = 30;
 
-	movePlayer(p5)
-	{
-		if (p5.keyIsDown(25) && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', 25);
-
-		if (p5.keyIsDown(26) && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', 26);
-
-		if (p5.keyIsDown(25) && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', 25);
-
-		if (p5.keyIsDown(26) && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', 26);
-	}
-
 	setup = (p5) =>
 	{
 		this.socket = io('http://localhost:8000', {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
@@ -125,7 +110,7 @@ export class Match extends Component
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Waiting for other player...', 120, height / 2);			//add width change
+		p5.text('Waiting for other player...', 220, height / 2);			//add width change
 
 		this.socket.emit('askConnectionNumber');
 		this.socket.on('sendConnectionNb', (data) =>
@@ -241,11 +226,23 @@ export class Match extends Component
 		});
 	}
 
-	draw = (p5) => {
-		this.movePlayer(p5);
+	draw = (p5) =>
+	{
+		if (p5.keyIsDown(25) && this.type === "master" && this.started === 1)
+			this.socket.emit('masterKeyPressed', 25);
+
+		if (p5.keyIsDown(26) && this.type === "master" && this.started === 1)
+			this.socket.emit('masterKeyPressed', 26);
+
+		if (p5.keyIsDown(25) && this.type === "slave" && this.started === 1)
+			this.socket.emit('slaveKeyPressed', 25);
+
+		if (p5.keyIsDown(26) && this.type === "slave" && this.started === 1)
+			this.socket.emit('slaveKeyPressed', 26);
 	}
 
-	render() {
+	render()
+	{
 		return <Sketch setup={this.setup} draw={this.draw} />
 	}
 }

@@ -1,6 +1,9 @@
 _ fix pb de match_id pour les rooms
-_ dans gateway, voir pour pouvoir utiliser UseGuards
-
-_ recuperer les infos de base du match depuis le backend ?
 
 _ voir pour les angles du canvas
+
+_ match id stocke par le client, il l'envoie a chaque fois qu'il fait un emit
+
+_ rendre le pong plus beau quand tout fonctionne, possibilite d'utiliser css et des fonts differents
+
+_ recuperer les infos de base du match depuis le backend ?
