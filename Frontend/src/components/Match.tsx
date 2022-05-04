@@ -227,23 +227,29 @@ export class Match extends Component
 	}
 
 	draw = (p5) =>
+	{}
+
+	keyTyped = (p5) =>
 	{
-		if (p5.keyIsDown(25) && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', 25);
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started == 1)
+			this.socket.emit('masterKeyPressed', p5.key);
 
-		if (p5.keyIsDown(26) && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', 26);
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started == 1)
+			this.socket.emit('slaveKeyPressed', p5.key);
+	}
 
-		if (p5.keyIsDown(25) && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', 25);
+	keyReleased = (p5) =>
+	{
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master")
+			this.socket.emit('masterKeyReleased', p5.key);
 
-		if (p5.keyIsDown(26) && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', 26);
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave")
+			this.socket.emit('slaveKeyReleased', p5.key);
 	}
 
 	render()
 	{
-		return <Sketch setup={this.setup} draw={this.draw} />
+		return <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}/>
 	}
 }
 

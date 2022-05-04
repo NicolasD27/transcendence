@@ -93,13 +93,15 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         //@UseGuards(WsGuard)
         @SubscribeMessage('readyToStart')					//DOES NOT SEND ANY DATA
         async readyToStart(socket: Socket, data: {match_id: string}) {
+			//while () serverTick && masterKeyReleased
                 this.server.to("match#" + data.match_id).emit('askUpdateMatch');
         }
 
 		//@UseGuards(WsGuard)
 		@SubscribeMessage('slaveKeyPressed')				//ONLY SEND THE KEY PRESSED
 		async slaveKeyPressed(socket: CustomSocket, data: {match_id: string,  command: number}) {
-				this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
+			//while () serverTick && slaveKeyReleased
+			this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
 		}
 
 		//@UseGuards(WsGuard)
