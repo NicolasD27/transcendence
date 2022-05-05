@@ -89,14 +89,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			2);
 		
 		try {
-			const targetedClientSocket = await this.server
-			.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
-			.fetchSockets();
-			if (targetedClientSocket.length)
+			if (activeUsers.isActiveUser(banUserFromChannelDto.userId))
 			{
-				console.log(`${banUserFromChannelDto.userId} kicked from ${banUserFromChannelDto.channelId}`);
-				targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
+				this.server.to(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
+					.emit('new_channel_invite_received', banUserFromChannelDto);
 			}
+			else
+				console.log(`${banUserFromChannelDto.userId} in not active`);
 		}
 		catch (e) {
 			console.log(e.message);
