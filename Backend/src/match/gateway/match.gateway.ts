@@ -12,6 +12,7 @@ import { CustomModes, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 import Player  from '../interface/player.interface'
 import Ball from '../interface/ball.interface';
+import Game from '../interface/game.interface'
 import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { UserService } from 'src/user/service/user.service';
@@ -32,32 +33,29 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		) {}
 
 		// @UseGuards(WsGuard)
-		@SubscribeMessage('connect_to_match')                                           // this runs the function when the event msg_to_server is triggered
+		@SubscribeMessage('connect_to_match')
 		async connectToMatch(socket: CustomSocket, data: { opponent_id: string }) {
 				console.log(data)
 				const username = getUsernameFromSocket(socket)
 				const user = await this.userService.findByUsername(username);
 				let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 				socket.join("match#" + match.id);
-				this.server.to("match#" + match.id).emit('update_to_client', match)
-
-
+				this.server.to("match#" + match.id).emit('update_to_client', match.id)
 		}
 
 		// @UseGuards(WsGuard)
-		@SubscribeMessage('find_match')                                         // this runs the function when the event msg_to_server is triggered
+		@SubscribeMessage('find_match')
 		async findMatch(socket: CustomSocket) {
 				const username = getUsernameFromSocket(socket)
 				let match = await this.matchService.matchmaking(username, CustomModes.NORMAL );
 				socket.join("match#" + match.id);
 				if (match.status == MatchStatus.ACTIVE) {
 						this.server.to("match#" + match.id).emit('launch_match', match)
-
 				}
 		}
 
 		// @UseGuards(WsGuard)
-		@SubscribeMessage('challenge_user')                                             // this runs the function when the event msg_to_server is triggered
+		@SubscribeMessage('challenge_user')
 		async challengeUser(socket: CustomSocket, data: { opponent_id: string, author: string}) {
 				const user = await this.userService.findByUsername(data.author);
 				const match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
@@ -67,7 +65,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 
 		// @UseGuards(WsGuard)
-		@SubscribeMessage('accept_challenge')                                           // this runs the function when the event msg_to_server is triggered
+		@SubscribeMessage('accept_challenge')
 		async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
 				const username = getUsernameFromSocket(socket)
 				const user = await this.userService.findByUsername(username);
@@ -79,35 +77,45 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 
 		//@UseGuards(WsGuard)
-		@SubscribeMessage('askConnectionNumber')			//DOES NOT SEND ANY DATA
+		@SubscribeMessage('askConnectionNumber')
 		async askConnectionNumber(socket: CustomSocket, data: {match_id: string}) {
-				this.server.to("match#" + data.match_id).emit('sendConnectionNb', 1);                                   //change this with the room size
+				this.server.to("match#" + data.match_id).emit('sendConnectionNb', this.server.sockets.adapter.rooms["match#" + data.match_id].size);
 		}
 
 		//@UseGuards(WsGuard)
-		@SubscribeMessage('sendUpdateMatch')				//SEND MATCH VAR
-		async sendUpdateMatch(socket: CustomSocket, data: {match_id: string, player1: Player, player2: Player, ball: Ball}) {
-				this.server.to("match#" + data.match_id).emit('updateMatch', data);
+		@SubscribeMessage('sendUpdateMatch')
+		async sendUpdateMatch(socket: CustomSocket, data: {match_id: string, game: Game}) {
+				this.server.to("match#" + data.match_id).emit('updateMatch', data.game);
 		}
 
         //@UseGuards(WsGuard)
-        @SubscribeMessage('readyToStart')					//DOES NOT SEND ANY DATA
+        @SubscribeMessage('readyToStart')
         async readyToStart(socket: Socket, data: {match_id: string}) {
-			//while () serverTick && masterKeyReleased
                 this.server.to("match#" + data.match_id).emit('askUpdateMatch');
         }
 
 		//@UseGuards(WsGuard)
-		@SubscribeMessage('slaveKeyPressed')				//ONLY SEND THE KEY PRESSED
+		@SubscribeMessage('slaveKeyPressed')
 		async slaveKeyPressed(socket: CustomSocket, data: {match_id: string,  command: number}) {
-			//while () serverTick && slaveKeyReleased
 			this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data);
 		}
 
 		//@UseGuards(WsGuard)
-		@SubscribeMessage('masterKeyPressed')				//ONLY SEND THE KEY PRESS
+		@SubscribeMessage('masterKeyPressed')
 		async masterKeyPressed(socket: CustomSocket, data: {match_id: string,  command: number}) {
 				this.server.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data);
+		}
+
+		//@UseGuards(WsGuard)
+		@SubscribeMessage('slaveKeyReleased')
+		async slaveKeyReleased(socket: CustomSocket, data: {match_id: string,  command: number}) {
+			this.server.to("match#" + data.match_id).emit('slaveToMasterKeyReleased', data);
+		}
+
+		//@UseGuards(WsGuard)
+		@SubscribeMessage('masterKeyReleased')
+		async masterKeyReleased(socket: CustomSocket, data: {match_id: string,  command: number}) {
+				this.server.to("match#" + data.match_id).emit('masterToMasterKeyReleased', data);
 		}
 
 		//@UseGuards(WsGuard)
@@ -137,6 +145,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		handleDisconnect(client: CustomSocket, ...args) {
 				this.logger.log(`Client disconnected: ${client.id}`);
 				console.log(args)
-				// this.server.to("match#" + data.match_id).emit('playerDisconnect');				---> send info to others clients for disconnect
+				//recover the match_id from the disconnected user, and send event to this room if user isnt spect
 		}
 }

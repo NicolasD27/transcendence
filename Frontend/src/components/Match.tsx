@@ -6,7 +6,15 @@ let width = 954;
 let height = 532;
 let playerWidth = 15;
 
-function Player(x, y, w, h, score)
+function PlayerInput()
+{
+	this.masterA = false;
+	this.masterZ = false;
+	this.slaveA = false;
+	this.slaveZ = false;
+}
+
+function Player( x, y, w, h, score)
 {
 	this.x = x;
 	this.y = y;
@@ -33,7 +41,7 @@ function Game(playerOne, playerTwo, ball, cd)
 	this.countdown = cd;
 }
 
-function rand(min, max)
+function rand(min: number, max: number)
 {
 	return Math.random() * (max - min) + min;
 }
@@ -46,7 +54,7 @@ function negRand()
 		return (1);
 }
 
-function gameEngine(game)
+function gameEngine(game: any)
 {
 	if(game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
 	{
@@ -88,9 +96,24 @@ function gameEngine(game)
 	game.ball.y += game.ball.yv;
 }
 
-//UP_ARROW = 26
-//DOWN_ARROW = 25
+function playerMove(game, playerInput)
+{
+	if (playerInput.masterA === true && game.playerOne.y >= 0 && this.started === 1)
+	{
+		if (game.playerOne.y !== 0)
+			game.playerOne.y -= 5;
+	}
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && this.started === 1)
+		game.playerOne.y += 5;
 
+	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && this.started === 1)
+	{
+		if (game.playerTwo.y !== 0)
+			game.playerTwo.y -= 5;
+	}
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && this.started === 1)
+		game.playerTwo.y += 5;
+}
 
 export class Match extends Component
 {
@@ -99,23 +122,25 @@ export class Match extends Component
 	started = 0;
 	countdown = 3;
 	fq = 30;
+	match_id = "";
 
-	setup = (p5) =>
+	setup = (p5: any) =>
 	{
 		this.socket = io('http://localhost:8000', {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
 
 		let cvn = p5.createCanvas(width, height);
-		cvn.parent("gameArea");												//gonna need some tweaks
+		cvn.parent("gameArea");
 
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Waiting for other player...', 220, height / 2);			//add width change
+		p5.text('Waiting for other player...', 220, height / 2);
 
-		this.socket.emit('askConnectionNumber');
+		this.socket.on('update_to_client', (data) => { this.match_id = data; });
+
+		this.socket.emit('askConnectionNumber', this.match_id);
 		this.socket.on('sendConnectionNb', (data) =>
 		{
-			console.log("this is a test");
 			if (data === "1")		//Master
 			{
 				this.type = "master";
@@ -129,10 +154,12 @@ export class Match extends Component
 					new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
 					this.countdown);
 
+				var playerInput = new PlayerInput();
+
 				p5.background(0);
 				p5.textSize(50);
 				p5.fill(p5.color(255, 255, 255));
-				p5.text('Waiting for other player...', 120, height / 2);	//add width change
+				p5.text('Waiting for other player...', 120, height / 2);
 
 				this.socket.on('updateGame', (data) =>
 				{
@@ -141,32 +168,42 @@ export class Match extends Component
 					p5.printer(data);
 				});
 
-				this.socket.on('slaveToMasterKeyPressed', data =>
-				{
-					if (data === 26 && game.playerTwo.y >= 0 && this.started === 1)
-					{
-						if (game.playerTwo.y !== 0)
-							game.playerTwo.y -= 5;
-					}
-					else if (game.playerTwo.y < height - 100 && this.started === 1)		//add player height change ?
-						game.playerTwo.y += 5;
-				});
-
 				this.socket.on('masterToMasterKeyPressed', data =>
 				{
-					if (data === 26 && game.playerOne.y >= 0 && this.started === 1)
-					{
-						if (game.playerOne.y !== 0)
-							game.playerOne.y -= 5;
-					}
-					else if (game.playerOne.y < height - 100 && this.started === 1)		//add player height change ?
-						game.playerOne.y += 5;
+					if (data === 'a')
+						playerInput.masterA = true;
+					else if (data === 'z')
+						playerInput.masterZ = true;
+				});
+
+				this.socket.on('slaveToMasterKeyPressed', data =>
+				{
+					if (data === 'a')
+						playerInput.slaveA = true;
+					else if (data === 'z')
+						playerInput.slaveZ = true;
+				});
+
+				this.socket.on('masterToMasterKeyReleased', data =>
+				{
+					if (data === 'a')
+						playerInput.masterA = false;
+					else if (data === 'z')
+						playerInput.masterZ = false;
+				});
+
+				this.socket.on('slaveToMasterKeyReleased', data =>
+				{
+					if (data === 'a')
+						playerInput.slaveA = false;
+					else if (data === 'z')
+						playerInput.slaveZ = false;
 				});
 
 				this.socket.on('launchMatch', () =>
 				{
 					var counter = 0;
-					this.socket.emit('sendUpdateMatch', game);
+					this.socket.emit('sendUpdateMatch', this.match_id, game);
 					this.socket.on('serverTick', () =>
 					{
 						if (counter <= this.fq * this.countdown)
@@ -174,20 +211,21 @@ export class Match extends Component
 						if (counter % this.fq === 0 && counter > 0)
 						{
 							game.countdown--;
-							this.socket.emit('sendUpdateMatch', game);
+							this.socket.emit('sendUpdateMatch', this.match_id, game);
 						}
 						if (counter > this.fq * this.countdown)
 						{
 							this.started = 1;
+							playerMove(game, playerInput);
 							gameEngine(game);
-							this.socket.emit('sendUpdateMatch', game);
+							this.socket.emit('sendUpdateMatch', this.match_id, game);
 						}
 					});
 				});
 
 				this.socket.on('playerDisconnect', () =>
 				{
-					window.location.reload(); //change this
+					window.location.reload();				//change this
 				});
 
 			}
@@ -195,7 +233,7 @@ export class Match extends Component
 			{
 				this.type = "slave";
 
-				this.socket.emit('readyToStart');
+				this.socket.emit('readyToStart', this.match_id,);
 				this.started = 1;
 
 				this.socket.on('updateMatch', (data) =>
@@ -207,7 +245,7 @@ export class Match extends Component
 
 				this.socket.on('playerDisconnect', () =>
 				{
-					window.location.reload(); //change this
+					window.location.reload(); 				//change this
 				});
 
 			}
@@ -226,25 +264,25 @@ export class Match extends Component
 		});
 	}
 
-	draw = (p5) =>
+	draw = (p5: any) =>
 	{}
 
-	keyTyped = (p5) =>
+	keyTyped = (p5: any) =>
 	{
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started == 1)
-			this.socket.emit('masterKeyPressed', p5.key);
+			this.socket.emit('masterKeyPressed', this.match_id, p5.key);
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started == 1)
-			this.socket.emit('slaveKeyPressed', p5.key);
+			this.socket.emit('slaveKeyPressed', this.match_id, p5.key);
 	}
 
-	keyReleased = (p5) =>
+	keyReleased = (p5: any) =>
 	{
-		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master")
-			this.socket.emit('masterKeyReleased', p5.key);
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started == 1)
+			this.socket.emit('masterKeyReleased', this.match_id, p5.key);
 
-		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave")
-			this.socket.emit('slaveKeyReleased', p5.key);
+		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started == 1)
+			this.socket.emit('slaveKeyReleased', this.match_id, p5.key);
 	}
 
 	render()
