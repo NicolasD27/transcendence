@@ -41,18 +41,15 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("// msg_to_server " + data.activeChannelId);
 
 		const username = getUsernameFromSocket(socket);
-		await this.channelService.checkUserJoinedChannelWS(username, data.activeChannelId)
-		.then(()=>{
-			this.chatService.saveMsg(data.content, data.activeChannelId, username)
-			.then((message)=>{
-				this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
-			})
-			.catch(()=>{ return ; });                                           
-		})
-		.catch(()=>{
-			console.log("checkUserJoinedChannelWS failed");
-			return ;
-		});
+		try{
+			await this.channelService.checkUserJoinedChannel(username, data.activeChannelId);
+			const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
+			console.log(message);
+			this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
+		}
+		catch(e){
+			console.log(e.message); // could be nice to emit an error
+		}
 		return ;
 	}
 
@@ -101,7 +98,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
 			}
 		}
-		catch {} // todo : try to break it 
+		catch (e) {
+			console.log(e.message);
+			return ; // an emit could be done to the client room of this socket
+		} // todo : try to break it 
 
 		this.server.to("channel#" + banUserFromChannelDto.channelId)
 			.emit('ban', {
@@ -118,15 +118,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		banUserFromChannelDto: BanUserFromChannelDto)
 	{
 		const username = getUsernameFromSocket(socket);
+		try {
 		await this.channelService.changeBanStatus(
 			banUserFromChannelDto.channelId.toString(),
 			username,
 			banUserFromChannelDto,
 			1);
-
-		const channel_id	= banUserFromChannelDto.channelId;
-		const user_id		= banUserFromChannelDto.userId;
-
+		}
+		catch(e)
+		{
+			console.log(e.message);
+			return ; // an emit could be done to the client room of this socket
+		}
 		this.server.to("channel#" + banUserFromChannelDto.channelId)
 			.emit('mute', {
 				channelId: banUserFromChannelDto.channelId,
@@ -141,10 +144,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		socket: CustomSocket,
 		data: { userId: string, channelId: string })
 	{
-		await this.channelService.revertBanStatus(
-			data.channelId,
-			getUsernameFromSocket(socket),
-			data.userId);
+		try {
+			await this.channelService.revertBanStatus(
+				data.channelId,
+				getUsernameFromSocket(socket),
+				data.userId);
+		}
+		catch(e)
+		{
+			console.log(e.message);
+			return ; // an emit could be done to the client room of this socket
+		}
 
 		this.server.to("channel#" + data.channelId)
 			.emit('rescue', {
@@ -175,8 +185,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 		catch (e)
 		{
-			console.log("error: " + e);
-			return { error: e.message };
+			console.log("error: " + e.message);
+			return { error: e.message };	// an emit could be done to the client room of this socket
 		}
 	}
 
