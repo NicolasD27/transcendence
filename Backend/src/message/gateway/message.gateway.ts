@@ -43,6 +43,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(socket);
 		try{
 			await this.channelService.checkUserJoinedChannel(username, data.activeChannelId);
+			console.log("user joined the channel");
+			await this.channelService.checkUserRestricted(username, data.activeChannelId);
+			console.log("registering message");
 			const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
 			console.log(message);
 			this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
@@ -70,11 +73,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		});
 		return ;
 	}
-
-	// ! the use of Promises are needed for 'ban', 'mute', 'rescue' and 'invite'
-	// !
-	// !
-	// !
 
 	@SubscribeMessage('ban')
 	async banUser(

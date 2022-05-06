@@ -233,6 +233,32 @@ export class ChannelService {
 		return ChannelInvite.toDto(myinvite);
 	}
 
+	async checkUserRestricted(username: string, channelId: string)
+	{
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+
+		const myChannel = await this.channelRepo.findOne({where: { id: channelId } });
+		if (!myChannel)
+			throw new NotFoundException(`channel ${channelId} not found`);
+
+		console.log("user and channel found");
+		const _now = new Date();
+		const tos = await this.moderationTimeOutRepo.find({
+			where: {
+				channel: myChannel,
+				user: myUser,
+				date: MoreThan(_now),
+			}
+		});
+		console.log(_now);
+		console.log(tos);
+		if (tos.length > 0)
+			throw new UnauthorizedException("User is Restricted on this channel");
+		return false;
+	}
+
 	async checkUserJoinedChannel(username: string, channelId: string) // : Promise<boolean>
 	{
 		const myChannel = await this.channelRepo.findOne(channelId);
@@ -403,8 +429,13 @@ export class ChannelService {
 				this.moderationTimeOutRepo.save(ban);
 			}
 		});
-
+		
 		let myTimeout = new Date();
+		
+		console.log(myTimeout);
+		console.log(banUserFromChannelDto.timeout);
+
+		// ! above 60 sec it is wrong
 		myTimeout.setSeconds(myTimeout.getSeconds() + banUserFromChannelDto.timeout);
 		console.log("// should be timed out until " + myTimeout);
 
