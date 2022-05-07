@@ -1,10 +1,22 @@
 {
   "friends": [
     {
-      "id": "01",
-      "status": "offline",
-      "username": "friend1",
-      "avatar": "src/asset/friend1.svg"
+      "id": "25",
+      "status": "online",
+      "username": "friend25",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "26",
+      "status": "online",
+      "username": "friend26",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "15",
+      "status": "online",
+      "username": "friend15",
+      "avatar": "src/asset/friend4.png"
     }
   ],
   "users": [
@@ -179,18 +191,48 @@
   ],
   "friendRequestsSent": [
     {
-      "id": "04",
+      "id": "22",
       "status": "online",
-      "username": "friend4",
+      "username": "friend22",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "24",
+      "status": "online",
+      "username": "friend24",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "23",
+      "status": "online",
+      "username": "friend23",
+      "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "06",
+      "status": "online",
+      "username": "friend6",
+      "avatar": "src/asset/friend4.png"
+    },
+    {
+      "id": "03",
+      "status": "offline",
+      "username": "friend3",
+      "avatar": "src/asset/friend3.svg  "
+    },
+    {
+      "id": "14",
+      "status": "online",
+      "username": "friend14",
       "avatar": "src/asset/friend4.png"
     }
   ],
   "friendRequestsReceived": [
     {
-      "id": "09",
+      "id": "27",
       "status": "online",
-      "username": "friend9",
-      "avatar": "src/asset/friend4.png"
+      "username": "friend27",
+      "avatar": "src/asset/friend2.svg"
     }
   ]
 }

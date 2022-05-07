@@ -7,7 +7,8 @@ import mainTitle from "../asset/mainTitle.svg";
 import searchIcon from "../asset/searchIcon.svg";
 import statutIconGreen from "../asset/statutIconGreen.svg"
 import statutIconRed from "../asset/statutIconRed.svg"
-import friend1 from "../asset/friend1.svg"
+import user1 from "../asset/friend1.svg"
+import playIcon from "../asset/PlayIcon_blue.svg"
 import Avatar from '../components/Avatar';
 
 const dataUrlFriends = "http://localhost:3001/friends"
@@ -36,47 +37,110 @@ const SearchBarAddGroup = ({setSearchValue}:any) => {
 	)
 }
 
-const UserButtons = (props:any) => {
+const PrintNormalProfile = (props:any) => {
+
 	return (
-		<Fragment>
-			{props.buttons.map((button:any) =>
-				<button id={button.id} onClick={() => button.script()} key={button.id}/>
-			)}
-		</Fragment>
+		<>
+			<div id="username">{props.username}</div>
+			<div id='friend_buttons'>
+				<button id="friendPlayButton" onClick={() => ""}/>
+				<button id="friendChatButton" onClick={() => ""}/>
+				<button id="friendColumnButton" onClick={() => props.setFriendDeleteColumnState(true)}/>
+			</div>
+		</>
 	)
 }
 
-//{user, status, button}:any
-const PrintUser = (props:any) => {
+const PrintDeleteProfile = (props:any) => {
+	return (
+		<>
+			<button id='unfriend_button' onClick={() => props.deleteFriend(props.user)}>
+					<p>Unfriend</p>
+			</button>
+			<button id="unfriendColumnButton" onClick={() => props.setFriendDeleteColumnState(false)}/> 	
+		</>
+	)
+}
 
-	var value;
+const PrintFriendProfile = (props:any) => {
+	const [friendDeleteColumnState, setFriendDeleteColumnState] = useState(false)
 
-	props.button.map((button:any) => {
-		button.id === 'InvitationSent' ? (value = <p id='InvitationSent'>Request Sent</p>) : (value = <UserButtons buttons={props.button} key={props.user.id}/>)
-	})
-
-	/*{
-		value = <UserButtons buttons={props.button} key={props.user.id}/>
-		console.log(props.id, "exist")
+	const deleteFriend = (user:any) => {
+		console.log('delete Friend')
+		axios
+			.delete(`${dataUrlFriends}/${user.id}`)
+			.catch((err) => 
+				console.log(err))
 	}
-	else(value = 'Invitation Sent')*/
 
 	return (
-		<div>
-			<div className='friend'>
-				<img src={friend1} className="friendAvatar" alt="FriendAvatar"/>
-				<img src={props.status} className="friendStatutIcon" alt=" StatutIcon"/>
-				<div id="username">{props.user.username}</div>
-				<div id='friend_buttons'>
-					{value}
+		<>
+			<div className='user'>
+					<div id='userAvatarIcon'>
+						<img src={user1} className="userAvatar" alt="userAvatar"/>
+						<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+					</div>
+				{!friendDeleteColumnState && <PrintNormalProfile username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} />}
+				{friendDeleteColumnState && <PrintDeleteProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend}/>}
+			</div>
+		</>
+	)
+}
+
+const PrintUserFriendRequestReceived = (props:any) => {
+	return (
+		<>
+			<div className='user'>
+				<div id='userAvatarIcon'>
+					<img src={user1} className="userAvatar" alt="userAvatar"/>
+					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+				</div>
+				<div id="username">{props.username}</div>
+				<div id='friendRequest_buttons'>
+					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} /> 
+					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} /> 
 				</div>
 			</div>
-		</div>
+		</>
+	)
+}
+
+const PrintInvitationSentProfile = (props:any) => {
+	return (
+		<>
+			<div className='user'>
+				<div id='userAvatarIcon'>
+					<img src={user1} className="userAvatar" alt="userAvatar"/>
+					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+				</div>
+				<div id="username">{props.username}</div>
+				<div id='invitation_sent'>
+					Invitation Sent
+				</div>
+			</div>
+		</>
+	)
+}
+
+const PrintSendFriendRequestProfile = (props:any) => {
+	return (
+		<>
+			<div className='user'>
+				<div id='userAvatarIcon'>
+					<img src={user1} className="userAvatar" alt="userAvatar"/>
+					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+				</div>
+				<div id="username">{props.username}</div>
+				<div id='SendFriendRequest_buttons'>
+					<button id="AddFriendButton" onClick={() => props.sendFriendshipRequest(props.user)}/>  
+				</div>
+			</div>
+		</>
 	)
 }
 
 const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue}:any) => {
-	
+	 
 	const sendFriendshipRequest= (user: any) => {
 		console.log('Button clicked sendFriendshipRequest')
 		axios
@@ -87,12 +151,10 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const isAlreadyFriend = (id: any) => {
-		
 		for(var i = 0; i < friends.length; i++ )
 		{
 			if (friends[i].id === id)
 				return true
-
 		}
 		return false;
 	}
@@ -106,17 +168,11 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const isThereAFriendshipRequestSent = (id: any) => {
-
 		for (var i = 0; i < friendRequestsSent.length; i++)
 		{
 			if (friendRequestsSent[i].id === id)
 				return true
 		}
-		/*for (const user in friendRequestsSent) {
-			console.log('user[id]: ', user[id])
-			if (user[id] === id)
-				return true
-		}*/
 		return false;
 	}
 
@@ -130,7 +186,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 			})
 			.catch((err) => 
 				console.log(err)
-			)	
+			)
 	}
 
 	const declineFriendshipRequest = (user:any) => {
@@ -139,7 +195,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 			.delete(`${dataUrlFriendRequestsReceived}/${user.id}`)
 			.catch((err) => 
 				console.log(err)
-			)	
+			)
 	}
 
 	return (
@@ -150,40 +206,40 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 						return user.username.toLowerCase().includes(searchValue.toLowerCase())
 					})
 					.map((user:any) => {
-						
 						let status = (user.status === "online" ? statutIconGreen : statutIconRed);
 							
 						if (Boolean(isAlreadyFriend(user.id)) === true)
-						{	
+						{
 							return (
-								<PrintUser user={user} status={status} button={[, { id: "playButton", script: () => 'null' }, { id : "chatButton", script: () => 'null' }]} key={user.id} />
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} />
 							)
 						}
 						else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
 						{
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "AcceptFriendButton", script: () => acceptFriendshipRequest(user) }, { id : "DeclinetFriendButton", script: () => declineFriendshipRequest(user) }]} key={user.id} />
+								<PrintUserFriendRequestReceived user={user} status={status} username={user.username} acceptFriendshipRequest={acceptFriendshipRequest} declineFriendshipRequest={declineFriendshipRequest} key={user.id}/>
 							);
 						}
 						else if (Boolean(isThereAFriendshipRequestSent(user.id)) === true)
-						{	
+						{
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "InvitationSent", script: () => 'null' }]} key={user.id} />
+								<PrintInvitationSentProfile user={user} status={status} username={user.username} key={user.id}/>
 							);
 						}
 						else
 							return (
-								<PrintUser user={user} status={status} button={[{ id : "AddFriendButton", script: () => sendFriendshipRequest(user) }]} key={user.id} />
+								<PrintSendFriendRequestProfile user={user} status={status} username={user.username} sendFriendshipRequest={sendFriendshipRequest} key={user.id}/>
 							);
 					})
 				) ||
 				(!searchValue && friends
 					.map((user:any) => {
 						let status = (user.status === "online" ? statutIconGreen : statutIconRed);
-						return (
-							<PrintUser user={user} status={status} button={[{ id : "chatButton", script: () => 'null' }, { id: "playButton", script: () => 'null' }]} key={user.id} />
-						);
-				}))
+							return (
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} />
+							);
+					})
+				)
 			}
 		</div>
 	)
@@ -197,7 +253,7 @@ const Chat = () => {
 	const [ searchValue, setSearchValue ] = useState("");
 
 	useEffect(() => {
-		axios
+		axios 
 		.get(dataUrlFriends)
 		.then (res => {
 			let friend = res.data;

@@ -55,9 +55,9 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	margin-top: 60px;
+	margin-top: 0px;
 	width: 100%;
-	height: 540px;
+	height: 656px;
 }
 
 .gameArea {
@@ -68,7 +68,7 @@
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;
 	border-radius: 25px;
 	border: 4px solid transparent;
-
+	margin-right: 26px;
 }
 
 .gameAreaSeparation {
@@ -83,17 +83,20 @@
 	flex-direction: column;
 	width: 341px;
 	height: 100%;
+	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;
+	padding: 0;
 }
 
 .searchAndAdd {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
-	margin: 20px 22px 0px 22px;
+	margin-top: 16px;
+	margin-left: 18px;
 	height: 54px;
 	width: 297px;
+	border: none;
 }
 
 #searchBar {
@@ -133,6 +136,7 @@ input {
 }
 
 button {
+	border: none;
 	background-color: transparent;
 	cursor: pointer;
 }
@@ -157,153 +161,235 @@ button {
 .usersList {
 	width: 297px;
 	margin-top: 16px;
-	margin-right: 22px;
-	margin-left: 22px;
+	margin-right: 18px;
+	margin-left: 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	border: none;
 }
 
 .usersList::-webkit-scrollbar {
 	width: 0px;
 }
-  
-#firstFriend{
-	margin-top: 0;
-}
 
-.friend {
+.user {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 	border: 2px solid #C0F4FE;
 	color: #C0F4FE;
 	border-radius: 22px;
 	height: 54px;
 	width: 297px;
 	margin: 14px 0;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
 }
 
-.friendAvatar {
-	margin-left: 15px;
-	height: 40px;
-	width: 40px;
+.user:hover{
+	border: 2px solid #E11515;
 }
 
-.friendStatutIcon {
+#userAvatarIcon{
 	position: relative;
+	width: 40px;
+	height: 40px;
+	margin-left: 18px;
+}
+
+.userAvatar {
+	position: relative;
+	width: 40px;
+	height: 40px;
+}
+
+.userStatutIcon {
+	position: absolute;
+	top: 28px;
+	left: 28px;
 	width: 12px;
 	height: 12px;
 	z-index: 1;
-	right: 12px;
-	top: 14px;
 }
 
 #username {
 	font-size: 14px;
 	font-weight: normal;
-	width: 120px;
- 	text-overflow: ellipsis;
-	display: block;
+	min-width: 123px;
 	white-space: nowrap;
 	overflow-x: hidden;
+	margin-right: 9px;
+	margin-left: 10px;
 }
 
 #friend_buttons {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	margin-right: 10px;
-	margin-left: 4px;
-	width: 80px;
+	width: 83px;
+	height: 40px;
+	margin-right: 11px;
+	margin-bottom: 3px;
+	margin-top: 5px;
+	margin-bottom: 9px;
+	border: none;
 }
 
 #friend_buttons > button {
 	padding: 0;
-	height: 40px;
-	width: 40px;
 	border: none;
 }
 
-#user_buttons {
-	display: flex;
-	flex-direction: row-reverse;
-	align-items: center;
-	margin-right: 10px;
-	margin-left: 4px;
-	width: 80px;
-}
-
-#user_buttons > button {
-	padding: 0;
-	height: 40px;
-	width: 40px;
-	border: none;
-}
-
-#playButton{
+#friendPlayButton {
 	background-image: url('../asset/PlayIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	margin-bottom: 3px;
+	height: 40px;
+	width: 40px;
+	border: none;
+	/*border: 0.1px solid red;*/
 }
 
-#chatButton{
-	background-image: url('../asset/ChatIcon_blue.svg');
-	background-repeat: no-repeat;
-	background-position: 50%;
-}
-
-.friend:hover{
-	border: 2px solid #E11515;
-}
-
-#playButton:hover {
+#friendPlayButton:hover {
 	background-image: url('../asset/PlayIcon_red.svg');
 }
 
-#chatButton:hover {
+#friendChatButton {
+	background-image: url('../asset/ChatIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 36px;
+	width: 36px;
+	margin-top: 4px;
+	/*border: 0.1px solid red;*/
+}
+
+#friendChatButton:hover {
 	background-image: url('../asset/ChatIcon_red.svg');
 }
 
-#AddFriendButton{
-	background-image: url('../asset/AddFriendIcon_blue.svg');
+#friendColumnButton {
+	background-image: url('../asset/ColumnIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	margin-bottom: 0px;
+	height: 20px;
+	width: 5px;
+	margin-right: 0px;
+	margin-left: 2px;
+	margin-top: 12px;
+	margin-bottom: 8px;
+	/*border: 0.1px solid red;*/
 }
 
-#AddFriendButton:hover{
-	background-image: url('../asset/AddFriendIcon_red.svg');
+#friendColumnButton:hover {
+	background-image: url('../asset/ColumnIcon_red.svg');
 }
 
-#InvitationSent {
-	width: 400px;
-	margin-bottom: 0px;
+#unfriend_button {
+	position: relative;
+	width: 208px;
+	height: 40px;
+	border: 1px solid #E11515;
+	border-radius: 20px;
+	margin-left: 10px;
+	margin-right: 2px;
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+
+#unfriend_button p {
+	position: absolute;
+	color: #C0F4FE;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  	margin: 0;
+	border: none;
+}
+
+#unfriend_button:hover {
+	background-color: #E11515;
+}
+
+#unfriendColumnButton {
+	background-image: url('../asset/ColumnIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 20px;
+	width: 5px;
+	margin-top: 17px;
+	margin-bottom: 17px;
 	margin-right: 10px;
-	font-size: 14px;
-	text-align: center;
+	padding: 0px;
+	border: none;
+}
+
+#unfriendColumnButton:hover {
+	background-image: url('../asset/ColumnIcon_red.svg');
+}
+
+#friendRequest_buttons {
+	display: flex;
+	flex-direction: row;
+	width: 75px;
+	height: 36px;
+	margin-right: 18px;
+	margin-top: 9px;
+	margin-bottom: 9px;
 }
 
 #AcceptFriendButton{
 	background-image: url('../asset/AcceptyFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	margin-bottom: 0px;
+	height: 36px;
+	width: 36px;
+	margin-right: 3px;
+	border: none;
 }
 
 #AcceptFriendButton:hover{
 	background-image: url('../asset/AcceptFriendIcon_red.svg');
 }
 
-#DeclinetFriendButton{
+#DeclineFriendButton{
 	background-image: url('../asset/DeclineFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	margin-bottom: 0px;
+	height: 36px;
+	width: 36px;
+	border: none;
 }
 
-#DeclinetFriendButton:hover{
+#DeclineFriendButton:hover{
 	background-image: url('../asset/DeclineFriendIcon_red.svg');
+}
+
+#SendFriendRequest_buttons {
+	width: 36px;
+	height: 36px;
+	margin-top: 9px;
+	margin-left: 39px;
+	margin-right: 20px;
+	margin-bottom: 9px;
+	border: none;
+}
+
+#AddFriendButton{
+	background-image: url('../asset/AddFriendIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 36px;
+	width: 36px;
+}
+
+#AddFriendButton:hover{
+	background-image: url('../asset/AddFriendIcon_red.svg');
+}
+
+#invitation_sent {
+	width: 83px;
+	height: 16px;
+	margin-top: 18px;
+	margin-bottom: 16px;
+	font-size: 12px;
+	font-weight: normal;
+	text-align: center;
 }
