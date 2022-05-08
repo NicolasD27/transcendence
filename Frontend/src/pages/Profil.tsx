@@ -10,7 +10,9 @@ import Achievement from '../components/Achievement';
 
 const Profil = () => {
 	interface matchFormat {
-		id: number;
+		idMatch: number;
+		nameP: string;
+		nameO: string;
 		avatarP: string;
 		avatarO: string;
 		scoreP: number;
@@ -43,10 +45,10 @@ const Profil = () => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
 					let singleMatch: matchFormat;
-					if (list.user1.id == state.idMe)
-						singleMatch = { id: list.id, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					if (list.user1.id == state.id)
+						singleMatch = { idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
-						singleMatch = { id: list.id, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+						singleMatch = { idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
 					//matchID.push(singleMatch);
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
@@ -56,7 +58,7 @@ const Profil = () => {
 	}
 
 	const matchTri = [...matchID].sort((a, b) => {
-		return b.id - a.id;
+		return b.idMatch - a.idMatch;
 	});
 
 	return (
@@ -69,7 +71,7 @@ const Profil = () => {
 			<div className='boxProfil'>
 				<Avatar id={state.id} idMe={state.idMe} />
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
-				<ProgressBar completed={870} />
+				<ProgressBar matchs={matchTri} />
 				<div className='boxStats'>
 					<HistoryMatch historys={matchTri} />
 					<Achievement />

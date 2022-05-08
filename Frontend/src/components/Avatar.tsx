@@ -3,6 +3,8 @@ import axios from 'axios';
 import './Avatar.css';
 import { convertTypeAcquisitionFromJson, parseJsonSourceFileConfigFileContent } from 'typescript';
 import { profile } from 'console';
+//import FormData from 'form-data';//
+//import { request } from 'http';//
 
 export interface Props {
 	id: number;
@@ -12,8 +14,9 @@ export interface Props {
 export class Avatar extends React.Component<Props> {
 	state = {
 		profileImg: 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg',
+		selectfile: null
 	}
-	imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+	/*imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const reader = new FileReader();
 		reader.onload = () => {
 			if (reader.readyState === 2) {
@@ -22,14 +25,37 @@ export class Avatar extends React.Component<Props> {
 		}
 		if (e.target.files)
 			reader.readAsDataURL(e.target.files[0])
+	};*/
+
+	imageHandler = (event: any) => {
+		this.setState({
+			selectfile: event.target.files[0]
+		})
+		const bodyFormData = new FormData();
+		bodyFormData.append('file', event.target.files[0])
+		//const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+		axios.post(`http://localhost:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
+			.then(res => {
+				console.log("WESH: " + event.target.files[0])
+			})
+		console.log(event.target.files[0])
+		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+			.then(res => {
+				const persons = res.data;
+				console.log("LoadID: " + persons.avatarId)
+				if (persons.avatarId != null)
+					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+			})
 	};
 
 	componentDidMount() {
 		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
+				console.log("MontID: " + persons.avatarId)
 				if (persons.avatarId != null)
 					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+				console.log("Profile: " + this.state.profileImg)
 			})
 	}
 

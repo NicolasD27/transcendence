@@ -7,7 +7,7 @@
 	justify-content: center;
 	margin-top: 10px;
 	width: 352px;
-	height: 54px;
+	height: 108px;
 	background:
 		linear-gradient(black, black) padding-box,
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;
@@ -29,4 +29,12 @@
 	font-weight: bold;
 	font-family: 'Open Sans';
 	font-size: 16px;
+}
+
+.nameStyle {
+	color: white;
+	font-weight: bold;
+	font-family: 'Open Sans';
+	font-size: 12px;
+	text-align: center;
 }

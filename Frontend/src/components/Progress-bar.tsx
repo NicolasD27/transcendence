@@ -2,17 +2,30 @@ import React, { Fragment } from "react";
 import './Progress-bar.css';
 
 interface Props {
-	completed: number;
+	matchs: Score[];
 }
 
-function calcExp(matchs: any) {
-	let exp = matchs;
+interface Score {
+	scoreP: number;
+	scoreO: number;
+}
+
+function calcExp(matchs: Score[]) {
+	let exp = 0;
+	matchs.forEach((list: any) => {
+		if (list.scoreP > list.scoreO)
+			exp += 35
+		else
+			exp += 10
+	});
+	return (exp)
 }
 
 const ProgressBar: React.FC<Props> = (props) => {
-	const { completed } = props;
-	const level = ~~(completed / 100);
-	const exp = completed % 100;
+	const { matchs } = props;
+	const ratio = calcExp(matchs)
+	const level = ~~(ratio / 100);
+	const exp = ratio % 100;
 	return (
 		<Fragment>
 			<div className="containerStyle">
