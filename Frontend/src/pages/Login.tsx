@@ -38,13 +38,12 @@ const SearchBarAddGroup = ({setSearchValue}:any) => {
 }
 
 const PrintNormalProfile = (props:any) => {
-
 	return (
 		<>
 			<div id="username">{props.username}</div>
 			<div id='friend_buttons'>
 				<button id="friendPlayButton" onClick={() => ""}/>
-				<button id="friendChatButton" onClick={() => ""}/>
+				<button id="friendChatButton" onClick={() => props.setChatState(true)}/>
 				<button id="friendColumnButton" onClick={() => props.setFriendDeleteColumnState(true)}/>
 			</div>
 		</>
@@ -63,10 +62,10 @@ const PrintDeleteProfile = (props:any) => {
 }
 
 const PrintFriendProfile = (props:any) => {
+
 	const [friendDeleteColumnState, setFriendDeleteColumnState] = useState(false)
 
 	const deleteFriend = (user:any) => {
-		console.log('delete Friend')
 		axios
 			.delete(`${dataUrlFriends}/${user.id}`)
 			.catch((err) => 
@@ -80,7 +79,7 @@ const PrintFriendProfile = (props:any) => {
 						<img src={user1} className="userAvatar" alt="userAvatar"/>
 						<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
 					</div>
-				{!friendDeleteColumnState && <PrintNormalProfile username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} />}
+				{!friendDeleteColumnState && <PrintNormalProfile username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatState={props.setChatState}/>}
 				{friendDeleteColumnState && <PrintDeleteProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend}/>}
 			</div>
 		</>
@@ -115,7 +114,7 @@ const PrintInvitationSentProfile = (props:any) => {
 				</div>
 				<div id="username">{props.username}</div>
 				<div id='invitation_sent'>
-					Invitation Sent
+					<p>Invitation Sent</p>
 				</div>
 			</div>
 		</>
@@ -139,10 +138,9 @@ const PrintSendFriendRequestProfile = (props:any) => {
 	)
 }
 
-const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue}:any) => {
-	 
+const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue, setChatState}:any) => {
+
 	const sendFriendshipRequest= (user: any) => {
-		console.log('Button clicked sendFriendshipRequest')
 		axios
 			.post(dataUrlFriendRequestsSent, user)
 			.then((response) => {
@@ -177,7 +175,6 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const acceptFriendshipRequest = (user:any) => {
-		console.log('Button clicked Accept Friend Request')
 		axios
 			.post(dataUrlFriends, user)
 			.then((res) => {
@@ -190,7 +187,6 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	}
 
 	const declineFriendshipRequest = (user:any) => {
-		console.log('Button clicked Declined Friend Request')
 		axios
 			.delete(`${dataUrlFriendRequestsReceived}/${user.id}`)
 			.catch((err) => 
@@ -211,7 +207,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 						if (Boolean(isAlreadyFriend(user.id)) === true)
 						{
 							return (
-								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} />
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatState={setChatState}/>
 							)
 						}
 						else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
@@ -236,7 +232,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 					.map((user:any) => {
 						let status = (user.status === "online" ? statutIconGreen : statutIconRed);
 							return (
-								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} />
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatState={setChatState}/>
 							);
 					})
 				)
@@ -245,7 +241,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	)
 }
 
-const Chat = () => {
+const Users = ({setChatState}:any) => {
 	const [ users, setUsers ] = useState([]);
 	const [ friends, setFriends ] = useState([]);
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState([]);
@@ -300,7 +296,7 @@ const Chat = () => {
 		})
 	}, [friendRequestsSent])
 
-	return ( 
+	return (
 		<div className='chatArea'>
 			<SearchBarAddGroup setSearchValue={setSearchValue}/>
 			<UserList 
@@ -314,9 +310,14 @@ const Chat = () => {
 				setFriendRequestReceived={setFriendRequestReceived}
 				searchValue={searchValue}
 				setSearchValue={setSearchValue}
+				setChatState={setChatState}
 			/>
 		</div>
 	)
+}
+
+const Chat = () => {
+	return null;
 }
 
 const Header = () => {
@@ -339,10 +340,13 @@ const Header = () => {
 }
 
 const Body = () => {
+	const [chatState, setChatState] = useState(false) 
+
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-			<Chat/>
+			{!chatState && <Users setChatState={setChatState}/>}
+			{chatState && <Chat/>}
 		</section>
 	)
 }
