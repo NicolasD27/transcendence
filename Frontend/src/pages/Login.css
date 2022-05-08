@@ -54,14 +54,13 @@
 #gameAndChatSection {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
 	margin-top: 0px;
 	width: 100%;
 	height: 656px;
 }
 
 .gameArea {
-	width: 72%;
+	width: 933px;
 	height: 100%;
 	background:
 		linear-gradient(black, black) padding-box,
@@ -289,7 +288,7 @@ button {
 	border: 1px solid #E11515;
 	border-radius: 20px;
 	margin-left: 10px;
-	margin-right: 2px;
+	margin-right: 10px;
 	margin-top: 7px;
 	margin-bottom: 7px;
 }
@@ -396,4 +395,105 @@ button {
 	margin-top: 3px;
 	font-size: 12px;
 	font-weight: normal;
+}
+
+#chatTop{
+	position: relative;
+	width: 297px;
+	height: 54px;
+	margin-top: 16px;
+	margin-left: 18px;
+}
+
+#friendChatAvatarIcon {
+	width: 54px;
+	height: 54px;
+	margin: 0;
+}
+
+.friendchatAvatar {
+	width: 54px;
+	height: 54px;
+}
+
+#chatUsername {
+	position: absolute;
+	color: #C0F4FE;
+	width: 201px;
+	height: 54px;
+	top: 0px;
+	left: 64px;
+	right: 32px;
+	font-size: 22px;
+	white-space: pre-line;
+	font-weight: normal;
+	text-align: left;
+	line-height: 30px;
+}
+
+#closeChatButton {
+	position: absolute;
+	background-image: url('../asset/CloseChatWindow.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 22px;
+	width: 22px;
+	top: 0px;
+	right: 0px;
+}
+
+#closeChatButton:hover {
+	background-image: url('../asset/CloseChatWindowHover.svg');
+}
+
+.messageArea {
+	width: 297px;
+	height: 478px;
+	margin-top: 16px;
+	margin-left: 18px;
+	border-radius: 20px;
+	box-sizing: border-box;
+	border: 2px solid #C0F4FE;
+}
+
+#sendTextArea {
+	position: relative;
+	margin-top: 14px;
+	margin-left: 18px;
+	width: 297px;
+	height: 54px;
+}
+
+#writingTextArea {
+	position: relative;
+	width: 227px;
+	height: 54px;
+	border-radius: 20px;
+	box-sizing: border-box;
+	border: 2px solid #C0F4FE;
+}
+
+#writingTextArea input {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 187px;
+	color: #C0F4FE;
+	margin: 12px 20px;
+}
+
+#sendTextIcon {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background-image: url('../asset/SendTextIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	width: 54px;
+	height: 54px;
+}
+
+#sendTextIcon:hover {
+	background-image: url('../asset/SendTextIcon_red.svg');
+
 }

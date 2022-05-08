@@ -10,6 +10,7 @@ import statutIconRed from "../asset/statutIconRed.svg"
 import user1 from "../asset/friend1.svg"
 import playIcon from "../asset/PlayIcon_blue.svg"
 import Avatar from '../components/Avatar';
+import CloseChatWindow from '../asset/CloseChatWindow.svg'
 
 const dataUrlFriends = "http://localhost:3001/friends"
 const dataUrlFriendRequestsSent = "http://localhost:3001/friendRequestsSent"
@@ -77,7 +78,7 @@ const PrintFriendProfile = (props:any) => {
 			<div className='user'>
 					<div id='userAvatarIcon'>
 						<img src={user1} className="userAvatar" alt="userAvatar"/>
-						<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+						<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
 					</div>
 				{!friendDeleteColumnState && <PrintNormalProfile username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatState={props.setChatState}/>}
 				{friendDeleteColumnState && <PrintDeleteProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend}/>}
@@ -92,7 +93,7 @@ const PrintUserFriendRequestReceived = (props:any) => {
 			<div className='user'>
 				<div id='userAvatarIcon'>
 					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
 				</div>
 				<div id="username">{props.username}</div>
 				<div id='friendRequest_buttons'>
@@ -110,7 +111,7 @@ const PrintInvitationSentProfile = (props:any) => {
 			<div className='user'>
 				<div id='userAvatarIcon'>
 					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
 				</div>
 				<div id="username">{props.username}</div>
 				<div id='invitation_sent'>
@@ -241,8 +242,7 @@ const UserList = ({users, setUsers, friends, setFriends, friendRequestsSent, set
 	)
 }
 
-const Users = ({setChatState}:any) => {
-	const [ users, setUsers ] = useState([]);
+const Users = ({users, setUsers, setChatState}:any) => {
 	const [ friends, setFriends ] = useState([]);
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState([]);
 	const [ friendRequestReceived, setFriendRequestReceived ] = useState([]);
@@ -316,8 +316,29 @@ const Users = ({setChatState}:any) => {
 	)
 }
 
-const Chat = () => {
-	return null;
+const Chat = (props:any) => {
+	const username = "Leslie Alexander"
+	const friendName = username.replace(/ /g, "\n");
+
+	console.log("friendName: \n", friendName)
+	return (
+		<div className='chatArea'>
+			<div id='chatTop'>
+				<div id='friendChatAvatarIcon'>
+					<img src={user1} className="friendchatAvatar" alt="friendAvatar"/>
+				</div>
+				<div id="chatUsername">{friendName}</div>
+				<button id='closeChatButton' onClick={() => props.setChatState(false)}/>
+			</div>
+			<div className='messageArea'></div>
+			<div id="sendTextArea">
+				<div id='writingTextArea'>
+					<input type='text' placeholder='Aa' name='searchFriend'  /*onChange={handleSearchRequest}*/ />
+				</div>
+				<button id="sendTextIcon"/>
+			</div>
+		</div>
+	)
 }
 
 const Header = () => {
@@ -340,13 +361,15 @@ const Header = () => {
 }
 
 const Body = () => {
+	const [ users, setUsers ] = useState([]);
 	const [chatState, setChatState] = useState(false) 
+
+	console.log("chatState: ", chatState)
 
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-			{!chatState && <Users setChatState={setChatState}/>}
-			{chatState && <Chat/>}
+			{(!chatState && <Users users={users} setUsers={setUsers} setChatState={setChatState}/>) || (<Chat setChatState={setChatState}/>)}
 		</section>
 	)
 }
