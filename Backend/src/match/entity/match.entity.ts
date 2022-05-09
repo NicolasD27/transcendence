@@ -67,6 +67,9 @@ export class Match {
     @Column({ type: "float", default: BALL_VY })
     public bvy: number;
 
+    @Column({ type: "float", default: 0 })
+    public room_size: number;
+
     
     static toDto(match: Match): MatchDto {
 		const dto: MatchDto = {
@@ -85,6 +88,7 @@ export class Match {
             by: match.by,
             bvx: match.bvx,
             bvy: match.bvy,
+            room_size: match.room_size
         }
         return dto
 	}

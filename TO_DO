@@ -1,7 +1,10 @@
-_ passer en strict
+_ comprendre les events de base pour le matchmaking, et les inclure dans le frontend
+pour pouvoir lancer le match et tester tout ca
+
+    -> connect_to_match, find_match, challenge_user, accept_challenge
+
 
 _ faire un bon handle pour les disconnects
 
-_ rendre le pong plus beau quand tout fonctionne, possibilite d'utiliser css et des fonts differents
 
-_ recuperer les infos de base du match depuis le backend ?
+_ faire en sorte que quand le match fini (a decider encore) de renvoyer les infos cote server

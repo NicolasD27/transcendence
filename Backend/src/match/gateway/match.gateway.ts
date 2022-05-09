@@ -40,7 +40,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 				const user = await this.userService.findByUsername(username);
 				let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 				socket.join("match#" + match.id);
-				this.server.to("match#" + match.id).emit('update_to_client', match.id)
+				match.room_size++;
+				this.server.to("match#" + match.id).emit('update_to_client', match)		//changed it from match, the client now only receives the id
+																							// which he sends back at every event
 		}
 
 		// @UseGuards(WsGuard)
@@ -49,8 +51,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 				const username = getUsernameFromSocket(socket)
 				let match = await this.matchService.matchmaking(username, CustomModes.NORMAL );
 				socket.join("match#" + match.id);
+				match.room_size++;
 				if (match.status == MatchStatus.ACTIVE) {
-						this.server.to("match#" + match.id).emit('launch_match', match)
+						this.server.to("match#" + match.id).emit('launch_match', match);
 				}
 		}
 
@@ -60,7 +63,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 				const user = await this.userService.findByUsername(data.author);
 				const match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 				socket.join("match#" + match.id);
-				console.log("match : ", match)
+				match.room_size++;
 				this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
 		}
 
@@ -71,16 +74,16 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 				const user = await this.userService.findByUsername(username);
 				let match = await this.matchService.updateMatch(username, data.match_id, {status: MatchStatus.ACTIVE});
 				socket.join("match#" + match.id);
-
+				match.room_size++;
 				this.server.to("match#" + match.id).emit('launch_match', match)
-
 		}
 
-		//@UseGuards(WsGuard)
+		/*//@UseGuards(WsGuard)
 		@SubscribeMessage('askConnectionNumber')
 		async askConnectionNumber(socket: CustomSocket, data: {match_id: string}) {
-				this.server.to("match#" + data.match_id).emit('sendConnectionNb', this.server.sockets.adapter.rooms["match#" + data.match_id].size);
-		}
+			console.log("Connection number asked");
+			this.server.to("match#" + data.match_id).emit('sendConnectionNb', this.server.sockets.adapter.rooms["match#" + data.match_id].size);
+		}*/
 
 		//@UseGuards(WsGuard)
 		@SubscribeMessage('sendUpdateMatch')
@@ -90,7 +93,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
         //@UseGuards(WsGuard)
         @SubscribeMessage('readyToStart')
-        async readyToStart(socket: Socket, data: {match_id: string}) {
+        async readyToStart(socket: CustomSocket, data: {match_id: string}) {
                 this.server.to("match#" + data.match_id).emit('askUpdateMatch');
         }
 
@@ -136,7 +139,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		afterInit(server: Server)
 		{
 				var gameloop = require('node-gameloop');
-				var id = gameloop.setGameLoop(function(delta)										//to stop the clock (if needed), use this *id*
+				var id = gameloop.setGameLoop(function()										//to stop the clock (if needed), use this *id*
 				{
 					server.emit('serverTick');
 				}, 1000 / 30);																		//choose refresh rate here

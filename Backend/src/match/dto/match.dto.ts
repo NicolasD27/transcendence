@@ -79,4 +79,9 @@ export class MatchDto {
     @IsNumber()
     bvy: number;
 
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    room_size: number;
+
 }

@@ -23,7 +23,7 @@ const Chat = () => {
 const Login = () => {
 	const navigate = useNavigate()
 	const onPlay = () => {
-		navigate("") //I put it for now in gameAndChatSection, maybe going to move it
+		navigate("")
 	}
 	const onProfil = () => {
 		navigate("/profil")
