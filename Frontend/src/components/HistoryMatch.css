@@ -10,6 +10,13 @@
 	width: 0px;
 }
 
+.boxH {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
 .boxHistory {
 	position: relative;
 	display: flex;
@@ -26,20 +33,19 @@
 	border: 4px solid transparent;
 	padding-top: 10px;
 	overflow-y: auto;
+	row-gap: 20px;
 }
 
 .labelHistory {
-	position: fixed;
 	padding: 5;
 	color: white;
 	font-weight: bold;
 	font-family: 'Open Sans';
 	font-size: 16px;
-	transform: translateY(-50px);
 }
 
-@media only screen and (max-height: 1500px) {
+@media only screen and (max-width: 1155px) {
 	.boxHistory {
-		height: 35vh;
+		width: 75vw;
 	}
 }

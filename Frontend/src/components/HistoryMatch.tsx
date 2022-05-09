@@ -23,12 +23,14 @@ const HistoryMatch: React.FC<Props> = (props) => {
 
 	return (
 		<Fragment>
-			<div className="boxHistory">
+			<div className="boxH">
 				<div className="labelHistory">Match History:</div>
-				{historys.map((match, i) => (
-					<HistoryCard key={i} namePlayer={match.nameP} nameOppenent={match.nameO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
-						scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
-				))}
+				<div className="boxHistory">
+					{historys.map((match, i) => (
+						<HistoryCard key={i} namePlayer={match.nameP} nameOppenent={match.nameO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
+							scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
+					))}
+				</div>
 			</div>
 		</Fragment>
 	);

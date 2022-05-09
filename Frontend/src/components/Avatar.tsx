@@ -36,15 +36,12 @@ export class Avatar extends React.Component<Props> {
 		//const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 		axios.post(`http://localhost:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
 			.then(res => {
-				console.log("WESH: " + event.target.files[0])
-			})
-		console.log(event.target.files[0])
-		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
-			.then(res => {
-				const persons = res.data;
-				console.log("LoadID: " + persons.avatarId)
-				if (persons.avatarId != null)
-					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+				axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+					.then(res => {
+						const persons = res.data;
+						if (persons.avatarId != null)
+							this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+					})
 			})
 	};
 
@@ -52,10 +49,8 @@ export class Avatar extends React.Component<Props> {
 		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
-				console.log("MontID: " + persons.avatarId)
 				if (persons.avatarId != null)
 					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
-				console.log("Profile: " + this.state.profileImg)
 			})
 	}
 
@@ -63,7 +58,7 @@ export class Avatar extends React.Component<Props> {
 		const { profileImg } = this.state
 		let buttonUpload = <div></div>
 
-		if (this.props.id == this.props.idMe)
+		if (this.props.id === this.props.idMe)
 			buttonUpload = <div>
 				<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
 				<label className="image-upload" htmlFor="input">Upload</label>

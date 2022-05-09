@@ -45,14 +45,12 @@ const Profil = () => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
 					let singleMatch: matchFormat;
-					if (list.user1.id == state.id)
+					if (list.user1.id === state.id)
 						singleMatch = { idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
 						singleMatch = { idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-					//matchID.push(singleMatch);
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
-				//matchID.sort((a, b) => a.scoreP - b.scoreP)
 			})
 		setGetMatch(getmatch => true)
 	}

@@ -1,3 +1,10 @@
+.boxA {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
 .boxAchievement {
 	position: relative;
 	display: flex;
@@ -12,21 +19,11 @@
 }
 
 .labelAchievement {
-	position: fixed;
-	padding: 5;
 	color: white;
 	font-weight: bold;
 	font-family: 'Open Sans';
 	font-size: 16px;
-	transform: translateY(-21vh) translateX(9vw);
 }
-
-@media only screen and (max-height: 1500px) {
-	.boxAchievement {
-		height: 35vh;
-	}
-}
-
 
 .iconAchievement {
 	position: relative;

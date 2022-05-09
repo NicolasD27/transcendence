@@ -26,6 +26,7 @@ const HistoryCard: React.FC<Props> = (props) => {
 		avatarOppenent = `http://localhost:8000/api/database-files/${idO}`
 	else
 		avatarOppenent = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
+
 	return (
 		<div className="boxCard">
 			<div>
