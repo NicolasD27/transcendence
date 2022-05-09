@@ -27,7 +27,7 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    // @Redirect('http://localhost:3000/')
+    @Redirect('')
     async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile42() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
         let payload;
@@ -35,14 +35,16 @@ export class AuthController {
             payload = (await this.authService.signIn(profile.username));
         else
             payload = (await this.authService.signUp(profile));
-        res.cookie('accessToken', payload.accessToken)
-        res.cookie('username', payload.user.username)
+
+        const maxAge = 7200000
+        res.cookie('accessToken', payload.accessToken, { maxAge })
+        res.cookie('username', payload.user.username, { maxAge })
         // console.log(payload.refreshToken)
         if (payload.user.isTwoFactorEnable)
-            return res.redirect("http://localhost:3000/2FA")
+            return {url: "http://localhost:3000/login-2FA"}
         else
-            return res.redirect("http://localhost:3000")
-        return ;
+            return {url: "http://localhost:3000"}
+        // return ;
     }
 
     // @ApiBearerAuth()

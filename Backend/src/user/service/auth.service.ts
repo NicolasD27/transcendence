@@ -41,7 +41,7 @@ export class AuthService {
 
         if (resp.isTwoFactorEnable) {
             return {
-                accessToken: '',
+                accessToken: 'wef',
                 user: user
             }
         }
