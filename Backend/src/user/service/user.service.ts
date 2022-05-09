@@ -1,20 +1,21 @@
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
-import { UserDto } from 'src/user/dto/user.dto';
+import { MatchDto } from 'src/match/dto/match.dto';
+import { Match } from 'src/match/entity/match.entity';
 import { Connection, Repository } from 'typeorm';
-import { UpdateAvatarDto } from '../dto/update-avatar.dto';
+import { UserDto } from '../dto/user.dto';
 import { User, UserStatus } from '../entity/user.entity';
 import DatabaseFilesService from './database-file.service';
 
 @Injectable()
 export class UserService {
-    constructor(
+	constructor(
 		@InjectRepository(User)
-        private usersRepository: Repository<User>,
-        private readonly databaseFilesService: DatabaseFilesService,
-        private connection: Connection
-    ) {}
+		private usersRepository: Repository<User>,
+		private readonly databaseFilesService: DatabaseFilesService,
+		private connection: Connection
+	) {}
 
 
     async findAll(): Promise<UserDto[]> {
@@ -30,46 +31,54 @@ export class UserService {
         return User.toDto(user);
     }
 
-    async findByUsername(username: string): Promise<UserDto> {
-        const user = await this.usersRepository.findOne({ username });
-        if (!user)
-            throw new NotFoundException(`User ${username} not found`);
-        return User.toDto(user);
+    async findByUsername(username: string): Promise<UserDto>
+	{
+        const user = this.usersRepository.findOne({ username });
+		return new Promise((resolve, reject) => {
+			return user.then(user => {
+				if (!user) {
+					reject(false);
+				} else {
+					resolve(User.toDto(user));
+				}
+			});
+		});
     }
 
-    async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
-        const user = await this.findByUsername(username);
-        const queryRunner = this.connection.createQueryRunner();
-     
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-     
-        try {
-          const user = await this.findByUsername(username);
-          const currentAvatarId = user.avatarId;
-          const avatar = await this.databaseFilesService.uploadDatabaseFileWithQueryRunner(imageBuffer, filename, queryRunner);
-     
-          await queryRunner.manager.update(User, user.id, {
-            avatarId: avatar.id
-          });
-     
-          if (currentAvatarId) {
-            await this.databaseFilesService.deleteFileWithQueryRunner(currentAvatarId, queryRunner);
-          }
-     
-          await queryRunner.commitTransaction();
-     
-          return avatar;
-        } catch {
-          await queryRunner.rollbackTransaction();
-          throw new InternalServerErrorException();
-        } finally {
-          await queryRunner.release();
-        }
-      }
+	async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
+		const user = await this.findByUsername(username);
+		const queryRunner = this.connection.createQueryRunner();
+	
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+	
+		try {
+			const user = await this.findByUsername(username);
+			const currentAvatarId = user.avatarId;
+			const avatar = await this.databaseFilesService.uploadDatabaseFileWithQueryRunner(imageBuffer, filename, queryRunner);
+		
+			await queryRunner.manager.update(User, user.id, {
+				avatarId: avatar.id
+			});
+		
+			if (currentAvatarId) {
+				await this.databaseFilesService.deleteFileWithQueryRunner(currentAvatarId, queryRunner);
+			}
+		
+			await queryRunner.commitTransaction();
+		
+			return avatar;
+		}catch {
+			await queryRunner.rollbackTransaction();
+			throw new InternalServerErrorException();
+		} finally {
+			await queryRunner.release();
+		}
+	}
 
-    // async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
-        
+    
+
+	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
     //     const user = await this.usersRepository.preload({
     //         id: +id,
     //         ...updateAvatarDto
@@ -92,8 +101,8 @@ export class UserService {
     }
 
     //just for dev
-    async create(): Promise<User> {
-        
+    async create() //: Promise<UserDto> {
+    { 
         const user = {
             username: this.make_username(8)
         }
@@ -106,9 +115,9 @@ export class UserService {
         var charactersLength = characters.length;
         for ( var i = 0; i < length; i++ ) {
             result += characters.charAt(Math.floor(Math.random() * 
-        charactersLength));
+			charactersLength));
         }
         return result;
-        }
+	}
 
 }

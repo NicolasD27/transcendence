@@ -1,5 +1,5 @@
-import { UseGuards, Logger, Request, UnauthorizedException } from '@nestjs/common';
-import { MessageBody,
+import { Logger } from '@nestjs/common';
+import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 	OnGatewayInit,
@@ -8,16 +8,13 @@ import { MessageBody,
 	WebSocketServer,
 	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { WsGuard } from '../../guards/websocket.guard';
-import { UserService } from '../../user/service/user.service';
-import { CustomModes, Match, MatchStatus } from '../entity/match.entity';
+import { CustomModes, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 import Player  from '../interface/player.interface'
 import Ball from '../interface/ball.interface';
 import { MatchDto } from '../dto/match.dto';
-import { TwoFactorGuard } from '../../guards/two-factor.guard';
-import { GetUsernameWS } from 'src/user/decorator/get-username-ws.decorator';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
+import { UserService } from 'src/user/service/user.service';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {

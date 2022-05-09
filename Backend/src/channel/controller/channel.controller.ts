@@ -1,6 +1,3 @@
-import { Channel } from "../entity/channel.entity";
-import { Msg } from "../../message/entity/msg.entity";
-import { ChannelDto } from "../dto/channel.dto";
 import {
 	Body,
 	Controller,
@@ -10,17 +7,21 @@ import {
 	Req,
 	UseGuards,
 	HttpException,
-	HttpStatus
+	HttpStatus,
+	Delete,
+	Patch
 } from "@nestjs/common";
 import { CreateChannelDto } from "../dto/create-channel.dto";
 import { ChannelService } from "../service/channel.service";
 import { Request } from "express";	// ? without this we can't access cookies
 import { ApiTags } from "@nestjs/swagger";
 import { JoinChannelDto } from "../dto/join-channel.dto";
-import { GetUsername } from "src/user/decorator/get-username.decorator";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
-import { CreateMsgDto } from "src/message/dto/create-msg.dto";
 import { MsgDto } from "src/message/dto/message.dto";
+import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
+import { BanUserFromChannelDto } from "../dto/ban-user-from-channel.dto";
+import { DeleteChannelDto } from "../dto/delete-channel.dto";
+import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -29,14 +30,15 @@ export class ChannelController {
 
 	@Get()
 	@UseGuards(TwoFactorGuard)
-	async findAll() {
-		// const user = await this.channel
+	async findAll()
+	{
 		return this.channelService.findAll();
 	}
 
 	@Get(':id')
 	@UseGuards(TwoFactorGuard)
-	async findOne(@Param('id') id: string) {
+	async findOne(@Param('id') id: string)
+	{
 		return this.channelService.findOne(id);
 	}
 
@@ -50,8 +52,7 @@ export class ChannelController {
 	@Get(':id/messages')
 	@UseGuards(TwoFactorGuard)
 	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<MsgDto[]> { // @GetUsername() username: string
-		
-		// todo: use something esle than cookies
+
 		const username = request.cookies.username;
 		console.log(`// getChannelMessages() ${username} ${id}`);
 
@@ -64,23 +65,70 @@ export class ChannelController {
 	@Post()
 	@UseGuards(TwoFactorGuard)
 	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto) {
-		return this.channelService.create(request.cookies.username, createChannelDto);
+		const newChannel = await this.channelService.create(request.cookies.username, createChannelDto);
+		return newChannel;
 	}
 
 	@Post(':id/join')
 	@UseGuards(TwoFactorGuard)
-	async join(@Req() request: Request, @Param('id') id: string, @Body() body: JoinChannelDto) //@GetUser() user
+	async join(@Param('id') id: string, @Req() request: Request, @Body() body: JoinChannelDto) //@GetUser() user
 	{
-		// return this.channelService.join(user.username, id);
-		return this.channelService.join(request.cookies.username, id, body.password);
+		this.channelService.join(request.cookies.username, id, body.password);
+		return ;
 	}
 
+	// todo : maybe use a Patch here ?
 	@Get(':id/leave')
 	@UseGuards(TwoFactorGuard)
-	async leave(@Req() request: Request, @Param('id') id: string)
+	async leave(@Param('id') id: string, @Req() request: Request)
 	{
 		await this.channelService.leave(request.cookies.username, id);
 		return ;
 	}
+
+	@Patch(':id/updatePassword')
+	@UseGuards(TwoFactorGuard)
+	async updatePassword(@Param('id') id: string, @Req() request: Request, @Body() updateChannelPassword: UpdateChannelPassword)
+	{
+		await this.channelService.updatePassword(id, request.cookies.username, updateChannelPassword);
+		return ;
+	}
+
+	// todo unbanUser() changeBanTime()
+	@Patch(':id/ban')
+	@UseGuards(TwoFactorGuard)
+	async banUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
+	{
+		await this.channelService.changeBanStatus(id, request.cookies.username, banUserFromChannelDto, 2);
+		return ;
+	}
+
+	@Patch(':id/mute')
+	@UseGuards(TwoFactorGuard)
+	async muteUser(@Param('id') id: string, @Req() request: Request, @Body() banUserFromChannelDto: BanUserFromChannelDto)
+	{
+		await this.channelService.changeBanStatus(id, request.cookies.username, banUserFromChannelDto, 1);
+		return ;
+	}
+
+	@Patch(':id/changeOwner')
+	@UseGuards(TwoFactorGuard)
+	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
+	{
+		await this.channelService.changeOwner(id, request.cookies.username, changeChannelOwnerDto);
+		return ;
+	}
+
+	@Delete(':id/delete')
+	@UseGuards(TwoFactorGuard)
+	async remove(@Param('id') id: string, @Req() request: Request, @Body() deleteChannelDto: DeleteChannelDto)
+	{
+		await this.channelService.remove(id, request.cookies.username, deleteChannelDto);
+		return ;
+	}
+
+	// todo : giveModoToUser() && removeModoToUser()
+	// todo : muteUser && unMuteUser
+	// todo : getBannedUsers && getMutedUsers
 
 }
