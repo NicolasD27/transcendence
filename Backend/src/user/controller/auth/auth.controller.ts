@@ -27,7 +27,7 @@ export class AuthController {
 
     @Get('42/return')
     @UseGuards(FtOauthGuard)
-    @Redirect('/api')
+    // @Redirect('http://localhost:3000/')
     async ftAuthCallback(@Res({ passthrough: true}) res: Response, @GetProfile42() profile: Profile): Promise<any> {
         const userExist = await this.authService.userExists(profile.username);
         let payload;
@@ -38,6 +38,10 @@ export class AuthController {
         res.cookie('accessToken', payload.accessToken)
         res.cookie('username', payload.user.username)
         // console.log(payload.refreshToken)
+        if (payload.user.isTwoFactorEnable)
+            return res.redirect("http://localhost:3000/2FA")
+        else
+            return res.redirect("http://localhost:3000")
         return ;
     }
 
