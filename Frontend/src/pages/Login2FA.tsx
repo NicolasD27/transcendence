@@ -1,46 +1,44 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './Login2FA.css';
+import { useNavigate } from 'react-router-dom';
 
-export class Login2FA extends Component {
-	state = {
-		code: "",
-		qrcode: null
-	}
-	imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			if (reader.readyState === 2) {
-				this.setState({ profileImg: reader.result })
-			}
-		}
-		if (e.target.files)
-			reader.readAsDataURL(e.target.files[0]) 
-	};
+import mainTitle from '../asset/mainTitle.svg'
 
-    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({code: e.target.value})
+	
+
+
+const Login2FA = () => {
+	const [code, setCode] = React.useState("");
+	const [QRcode, setQRcode] = React.useState<Blob>();
+	const [isMounted, setIsMouted] = React.useState(false);
+	const navigate = useNavigate()
+	
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCode(code => e.target.value)
     }
 
-    handleSubmit = () => {
-        axios.post(`http://localhost:8000/api/2fa/authenticate`, {code: this.state.code}, {withCredentials: true	})
+    const handleSubmit = () => {
+        axios.post(`http://localhost:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
 			.then(res => {
-				console.log(res)
+				navigate("/login")
+
 			})
     }
 
-	componentDidMount() {
-        console.log(document.cookie)
+	if (!isMounted) {
 		axios.get(`http://localhost:8000/api/2fa/generate-qr`, {withCredentials: true, responseType: 'blob'	})
-			.then(res => {
-				console.log(res)
-				this.setState({qrcode: res.data})
-			})
+		.then(res => {
+			console.log(res)
+			setQRcode(QRcode => res.data)
+			setIsMouted(isMounted => true)
+		})
 	}
+	
 
-	render() {
-		const { code, qrcode } = this.state
-		
+	
 		return (
 			/*<div>
 				<div className="img-holder">
@@ -57,16 +55,17 @@ export class Login2FA extends Component {
             <div className="login-wrapper">
 
                 <div >
-					{qrcode && <img src={URL.createObjectURL(qrcode)} />}
+					{QRcode && <img src={URL.createObjectURL(QRcode)} />}
+					<h5 className='login-title'>Scan with Google Authenticator</h5>
                     <div id="login-container">
                         
-                        <input type="text" id="input" onChange={this.handleChange} value={code}/>
-                        <button onClick={this.handleSubmit} className="ButtonStyle navButton">Valider</button>
+                        <input type="text" id="input" onChange={handleChange} value={code} placeholder="______"/>
+                        <button onClick={handleSubmit} className="ButtonStyle navButton">Valider</button>
                     </div>
                 </div>
             </div>
 		);
-	}
+	
 }
 
-export default Login2FA;
+export default (Login2FA);

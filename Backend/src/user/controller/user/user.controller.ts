@@ -11,6 +11,7 @@ import { Express } from 'express';
 import { UserService } from 'src/user/service/user.service';
 import { MatchDto } from 'src/match/dto/match.dto';
 import { MatchService } from 'src/match/service/match.service';
+import { UpdatePseudoDto } from 'src/user/dto/update-pseudo.dto';
 
 
 @Controller('users')
@@ -31,7 +32,7 @@ export class UserController {
     @UseGuards(TwoFactorGuard)
     @Get('me')
     findMe(@GetUsername() username): Promise<UserDto> {
-        return this.userService.findByUsername(username);
+        return this.userService.findMe(username);
     }
 
     @ApiBearerAuth()
@@ -55,6 +56,14 @@ export class UserController {
     @UseInterceptors(FileInterceptor('file'))
     async addAvatar(@GetUsername() username, @UploadedFile() file: Express.Multer.File) {
         return this.userService.addAvatar(username, file.buffer, file.originalname);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Post('pseudo')
+    @UseInterceptors(FileInterceptor('file'))
+    async changePseudo(@GetUsername() username, @Body() updatePseudoDto: UpdatePseudoDto) {
+        return this.userService.changePseudo(username, updatePseudoDto);
     }
 
     // @ApiBearerAuth()

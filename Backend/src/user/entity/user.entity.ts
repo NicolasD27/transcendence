@@ -28,6 +28,9 @@ export class User extends BaseEntity {
 	@Column({ type: "varchar" })
 	username: string
 
+	@Column({ type: "varchar" })
+	pseudo: string 
+
 	
 	@Column({ nullable: true })
 	twoFactorAuthSecret?: string

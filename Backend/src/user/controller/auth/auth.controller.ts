@@ -43,7 +43,7 @@ export class AuthController {
         if (payload.user.isTwoFactorEnable)
             return {url: "http://localhost:3000/login-2FA"}
         else
-            return {url: "http://localhost:3000"}
+            return {url: "http://localhost:3000/login"}
         // return ;
     }
 

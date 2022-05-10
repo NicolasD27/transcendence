@@ -22,6 +22,7 @@ export class AuthService {
     async signUp(profile: Profile): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
         const user = this.usersRepository.create({
             username: profile.username,
+            pseudo: profile.username,
             avatar: profile._json.image_url
         })
         await this.usersRepository.save(user);

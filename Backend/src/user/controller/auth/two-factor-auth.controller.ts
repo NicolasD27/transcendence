@@ -32,13 +32,13 @@ export class TwoFactorAuth {
     @Post('turn-on-2FA')
     async activationOfTwoFa(
         @GetUsername() username: string,
-        @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
+        // @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
         @Res({ passthrough: true}) res: Response
     ) {
-        const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
-        if (!isCodeValid) {
-            throw new UnauthorizedException('Invalid authentication code');
-        }
+        // const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
+        // if (!isCodeValid) {
+        //     throw new UnauthorizedException('Invalid authentication code');
+        // }
         await this.twoFactorAuthService.activationOfTwoFa(username, true);
         const payload = await this.twoFactorAuthService.signIn(username, true);
         res.cookie('accessToken', payload.accessToken)
