@@ -23,7 +23,7 @@ async function bootstrap() {
     .addBearerAuth()
     .setTitle('Trancendence')
     .setDescription('Trancendence documentation')
-    .setVersion('1.0')
+    .setVersion('0.2')
     .build()
     
 	const document = SwaggerModule.createDocument(app, options)
@@ -35,16 +35,14 @@ async function bootstrap() {
 		"preflightContinue": false,
 		credentials: true,
 		"optionsSuccessStatus": 204
-	  })
+	});
 
 	app.use(sessionMiddleware);
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.useStaticAssets(join(__dirname, '..', 'views'));
-
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 	app.useWebSocketAdapter(new AuthSocketAdapter(app));
-
 
 	await app.listen(port);
 }
