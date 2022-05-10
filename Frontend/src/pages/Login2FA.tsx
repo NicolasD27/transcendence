@@ -4,7 +4,8 @@ import './Login2FA.css';
 
 export class Login2FA extends Component {
 	state = {
-		code: ""
+		code: "",
+		qrcode: null
 	}
 	imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const reader = new FileReader();
@@ -14,7 +15,7 @@ export class Login2FA extends Component {
 			}
 		}
 		if (e.target.files)
-			reader.readAsDataURL(e.target.files[0])
+			reader.readAsDataURL(e.target.files[0]) 
 	};
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,14 +31,16 @@ export class Login2FA extends Component {
 
 	componentDidMount() {
         console.log(document.cookie)
-		axios.get(`http://localhost:8000/api/2fa/generate-qr`, {withCredentials: true	})
+		axios.get(`http://localhost:8000/api/2fa/generate-qr`, {withCredentials: true, responseType: 'blob'	})
 			.then(res => {
 				console.log(res)
+				this.setState({qrcode: res.data})
 			})
 	}
 
 	render() {
-		const { code } = this.state
+		const { code, qrcode } = this.state
+		
 		return (
 			/*<div>
 				<div className="img-holder">
@@ -54,7 +57,7 @@ export class Login2FA extends Component {
             <div className="login-wrapper">
 
                 <div >
-                    
+					{qrcode && <img src={URL.createObjectURL(qrcode)} />}
                     <div id="login-container">
                         
                         <input type="text" id="input" onChange={this.handleChange} value={code}/>
