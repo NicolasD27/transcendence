@@ -36,35 +36,41 @@ const Login2FA = () => {
 			setIsMouted(isMounted => true)
 		})
 	}
+
+	const handleKeyPress = (event: any) => {
+		if(event.key === 'Enter'){
+			handleSubmit()
+		}
+	  }
 	
 
 	
-		return (
-			/*<div>
-				<div className="img-holder">
-					<img src={profileImg} alt="" id="img" className="img" />
-				</div>
-				<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
-				<div className="label">
-					<label className="image-upload" htmlFor="input">Upload</label>
-				</div>
-				<ul>
-					{this.state.persons.map(person => <li style={{ color: 'white' }}>{person['name']}</li>)}
-				</ul>
-			</div>*/
-            <div className="login-wrapper">
+	return (
+		/*<div>
+			<div className="img-holder">
+				<img src={profileImg} alt="" id="img" className="img" />
+			</div>
+			<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
+			<div className="label">
+				<label className="image-upload" htmlFor="input">Upload</label>
+			</div>
+			<ul>
+				{this.state.persons.map(person => <li style={{ color: 'white' }}>{person['name']}</li>)}
+			</ul>
+		</div>*/
+		<div className="login-wrapper">
 
-                <div >
-					{QRcode && <img src={URL.createObjectURL(QRcode)} />}
-					<h5 className='login-title'>Scan with Google Authenticator</h5>
-                    <div id="login-container">
-                        
-                        <input type="text" id="input" onChange={handleChange} value={code} placeholder="______"/>
-                        <button onClick={handleSubmit} className="ButtonStyle navButton">Valider</button>
-                    </div>
-                </div>
-            </div>
-		);
+			<div >
+				{QRcode && <img src={URL.createObjectURL(QRcode)} />}
+				<h5 className='login-title'>Scan with Google Authenticator</h5>
+				<div id="login-container">
+					
+					<input autoComplete='off' type="text" id="input" onChange={handleChange} value={code} placeholder="______" onKeyDown={handleKeyPress}/>
+					<button onClick={handleSubmit} className="ButtonStyle navButton">Valider</button>
+				</div>
+			</div>
+		</div>
+	);
 	
 }
 

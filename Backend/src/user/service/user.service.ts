@@ -84,13 +84,16 @@ export class UserService {
 		}
 	}
 
-    async changePseudo(username: string, updatePseudoDto: UpdatePseudoDto): Promise<UserDto> {
+    async changePseudo(username: string, updatePseudoDto: UpdatePseudoDto): Promise<Boolean> {
         const user = await this.findByUsername(username);
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
+        const user2 = await this.usersRepository.findOne({pseudo: updatePseudoDto.pseudo})
+        if (user2 && user != user2)
+            return false
         user.pseudo = updatePseudoDto.pseudo
         this.usersRepository.save(user)
-        return User.toDto(user)
+        return true
     }
 
     

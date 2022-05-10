@@ -30,7 +30,7 @@ export class AuthService {
         
     }
 
-    async signIn(username: string): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
+    async signIn(username: string): Promise<{ accessToken?: string, user?: JwtPayload }> {
         const user = await this.usersRepository.findOne( { username });
         const resp = {
             username: user.username,

@@ -19,7 +19,7 @@ export enum UserStatus {
 }
 
 @Entity()
-@Unique(['username'])
+@Unique(['username', 'pseudo'])
 
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()

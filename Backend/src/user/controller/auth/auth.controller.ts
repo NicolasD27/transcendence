@@ -1,8 +1,6 @@
 import { Post, Body, Controller, Get, UseGuards, Redirect, Res, Req, NotFoundException } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
-import { JwtRefreshTokenGuard } from "../../../guards/jwt-refresh-token.guard"
 import { GetUsername } from "../../decorator/get-username.decorator"
-import { RefreshTokenDto } from "../../dto/refresh-token.dto"
 import { User } from "../../entity/user.entity"
 import { JwtPayload } from "../../interface/jwt-payload.interface"
 import { AuthService } from "../../service/auth.service"
@@ -39,15 +37,13 @@ export class AuthController {
         const maxAge = 7200000
         res.cookie('accessToken', payload.accessToken, { maxAge })
         res.cookie('username', payload.user.username, { maxAge })
-        // console.log(payload.refreshToken)
         if (payload.user.isTwoFactorEnable)
             return {url: "http://localhost:3000/login-2FA"}
         else
             return {url: "http://localhost:3000/login"}
-        // return ;
     }
 
-    // @ApiBearerAuth()
+    @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post('/logout')
     async logout(
@@ -64,31 +60,5 @@ export class AuthController {
         res.clearCookie('accessToken', payload.accessToken)
         res.clearCookie('username', payload.user.username)
         req.logout();
-        // this.authService.signOut(profile.username)
     }
-
-    // @ApiBearerAuth()
-    // @UseGuards(JwtRefreshTokenGuard)
-    // @Post('/refresh-token')
-    // async refreshToken(
-    //     @GetUsername() user: User,
-    //     @Body() token: RefreshTokenDto
-    // ){
-    //     const user_info = await this.authService.GetUsernameIfRefreshTokenMatches(token.refresh_token, user.username)
-    //     if (user_info) {
-    //         const userInfo = {
-    //             username: user_info.username,
-    //         }
-
-    //         if (user.isTwoFactorEnable) {
-    //             userInfo['isTwoFaAuthenticated'] = true;
-    //             userInfo['isTwoFactorEnable'] = user.isTwoFactorEnable;
-                
-    //         }
-
-    //         return this.authService.getNewAccessAndRefreshToken(userInfo)
-    //     } else{
-    //         return null
-    //     }
-    // }
 }

@@ -3,9 +3,8 @@ import { User } from "../entity/user.entity";
 
 export const GetUsername = createParamDecorator((data, ctx: ExecutionContext): string => {
     const cookie_string = ctx.switchToHttp().getRequest().headers.cookie
-    console.log(ctx.switchToHttp().getRequest().headers)
-		if (!cookie_string)
-			throw new UnauthorizedException("No cookie");
+    if (!cookie_string)
+        throw new UnauthorizedException("No cookie");
     const cookies = cookie_string.split('; ');
     let username = "";
     if (cookies.find((cookie: string) => cookie.startsWith('username')))
