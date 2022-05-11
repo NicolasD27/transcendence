@@ -33,6 +33,8 @@ export class TwoFactorGuard implements CanActivate {
 			const decoded = this.jwtService.verify(accessToken) as any;
 			console.log()
 			return new Promise((resolve, reject) => {
+				if (decoded.username != username)
+					return resolve(false)
 				return this.userService.findByUsername(decoded.username)
 				.then(user => {
 					if (user) {

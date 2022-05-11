@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, HttpException, Post, Req, Res, UnauthorizedException, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, HttpException, Post, Req, Res, UnauthorizedException, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { GetUsername } from "../../decorator/get-username.decorator";
 import { User } from "../../entity/user.entity";
@@ -16,8 +16,8 @@ export class TwoFactorAuth {
         private readonly twoFactorAuthService: TwoFactorAuthService
     ) {}
     
-    @UseGuards(AuthenticatedGuard)
-    @Post('generate-qr')
+    // @UseGuards(AuthenticatedGuard)
+    @Get('generate-qr')
     async generateQrCode(
         @Res() response: Response, @GetUsername() username: string
     ) {
@@ -32,13 +32,13 @@ export class TwoFactorAuth {
     @Post('turn-on-2FA')
     async activationOfTwoFa(
         @GetUsername() username: string,
-        @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
+        // @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
         @Res({ passthrough: true}) res: Response
     ) {
-        const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
-        if (!isCodeValid) {
-            throw new UnauthorizedException('Invalid authentication code');
-        }
+        // const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
+        // if (!isCodeValid) {
+        //     throw new UnauthorizedException('Invalid authentication code');
+        // }
         await this.twoFactorAuthService.activationOfTwoFa(username, true);
         const payload = await this.twoFactorAuthService.signIn(username, true);
         res.cookie('accessToken', payload.accessToken)
@@ -64,6 +64,7 @@ export class TwoFactorAuth {
         @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
         @Res({ passthrough: true}) res: Response
     ) {
+        console.log(twoFaAuthDto.code)
         const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
         if (!isCodeValid) {
             throw new UnauthorizedException('Invalid authentication code');

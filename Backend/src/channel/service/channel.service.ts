@@ -92,7 +92,7 @@ export class ChannelService {
 			isModo: true,
 		});
 		await this.participationRepo.save(newParticipation);
-		
+		 
 		return Channel.toDto(newChannel);
 	}
 

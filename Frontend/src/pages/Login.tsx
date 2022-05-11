@@ -15,7 +15,6 @@ const Chat = () => {
 				</div>
 				<button id='addGroup'></button>
 			</div>
-
 		</div>
 	)
 }

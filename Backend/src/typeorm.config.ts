@@ -18,7 +18,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
     migrationsTableName: "migration",
     migrations: [join(__dirname, '**', '*.entity.{ts,js}')],
     synchronize: true,
-    autoLoadEntities: false,
+    autoLoadEntities: true,
     cli: {
         migrationsDir: '../migration'
     }

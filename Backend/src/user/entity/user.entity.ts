@@ -19,14 +19,15 @@ export enum UserStatus {
 }
 
 @Entity()
-@Unique(['username'])
-
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
-	@Column({ type: "varchar" })
+	@Column({ type: "varchar", nullable: false, unique: true })
 	username: string
+
+	@Column({ type: "varchar", nullable: false, unique: true})
+	pseudo: string 
 
 	
 	@Column({ nullable: true })

@@ -17,8 +17,13 @@ export class UserDto {
 
 	@ApiProperty()
 	@Expose()
+    @IsString()
+	pseudo: string
+
+	@ApiProperty()
+	@Expose()
     @IsNumber()
-	avatarId: number
+	avatarId?: number
 
 	@ApiProperty()
 	@Expose()
