@@ -446,6 +446,8 @@ export class ChannelService {
 			date: myTimeout,
 		});
 		await this.moderationTimeOutRepo.save(myModerationTO);
+
+		return futureBanned;
 	}
 
 	async revertBanStatus(id: string, username: string, futureBannedID: string)

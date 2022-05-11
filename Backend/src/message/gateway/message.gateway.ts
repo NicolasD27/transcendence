@@ -66,7 +66,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 		this.channelService.checkUserJoinedChannelWS(username, data.channelId)
 		.catch(()=>{
-			console.log("channel not joined");
+			console.log("can not join the channel");
 		})
 		.then(()=>{
 			socket.join("channel#" + data.channelId);
@@ -79,34 +79,47 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		socket: CustomSocket,
 		banUserFromChannelDto: BanUserFromChannelDto)
 	{
-		const username = getUsernameFromSocket(socket);
-		await this.channelService.changeBanStatus(
-			banUserFromChannelDto.channelId.toString(),
-			username,
-			banUserFromChannelDto,
-			2);
-		
 		try {
-			if (activeUsers.isActiveUser(banUserFromChannelDto.userId))
+			const username = getUsernameFromSocket(socket);
+
+			const bannedUser = await this.channelService.changeBanStatus(
+				banUserFromChannelDto.channelId.toString(),
+				username,
+				banUserFromChannelDto,
+				2
+			);
+
+			// activeUsers.display(banUserFromChannelDto.userId);
+
+			if (activeUsers.isActiveUser(banUserFromChannelDto.userId) == true)
 			{
-				this.server.to(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
-					.emit('new_channel_invite_received', banUserFromChannelDto);
+				const targetUser = await this.userService.findOne(banUserFromChannelDto.userId.toString());
+				this.server.to("channel#" + banUserFromChannelDto.channelId)
+					.emit('ban', {
+						channelId: banUserFromChannelDto.channelId,
+						// userId: banUserFromChannelDto.userId
+						user: bannedUser,
+					}
+				);
+
+				const targetedClientSocket = await this.server
+					.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
+					.fetchSockets();
+
+				if (targetedClientSocket.length)
+				{
+					console.log(`${banUserFromChannelDto.userId} kicked from channel#${banUserFromChannelDto.channelId}`);
+					targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
+				}
 			}
 			else
-				console.log(`${banUserFromChannelDto.userId} in not active`);
+				console.log(`${banUserFromChannelDto.userId} is not active`);
 		}
 		catch (e) {
 			console.log(e.message);
 			return ; // an emit could be done to the client room of this socket
 		} // todo : try to break it 
 
-		this.server.to("channel#" + banUserFromChannelDto.channelId)
-			.emit('ban', {
-				channelId: banUserFromChannelDto.channelId,
-				userId: banUserFromChannelDto.userId
-			}
-		);
-		return ;
 	}
 
 	@SubscribeMessage('mute')
@@ -116,23 +129,25 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	{
 		const username = getUsernameFromSocket(socket);
 		try {
-		await this.channelService.changeBanStatus(
-			banUserFromChannelDto.channelId.toString(),
-			username,
-			banUserFromChannelDto,
-			1);
+			const bannedUser = await this.channelService.changeBanStatus(
+				banUserFromChannelDto.channelId.toString(),
+				username,
+				banUserFromChannelDto,
+				1
+			);
+			this.server.to("channel#" + banUserFromChannelDto.channelId)
+				.emit('mute', {
+					channelId: banUserFromChannelDto.channelId,
+					user: bannedUser,
+					// userId: banUserFromChannelDto.userId
+				}
+			);
 		}
 		catch(e)
 		{
 			console.log(e.message);
 			return ; // an emit could be done to the client room of this socket
 		}
-		this.server.to("channel#" + banUserFromChannelDto.channelId)
-			.emit('mute', {
-				channelId: banUserFromChannelDto.channelId,
-				userId: banUserFromChannelDto.userId
-			}
-		);
 		return ;
 	}
 
@@ -146,19 +161,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				data.channelId,
 				getUsernameFromSocket(socket),
 				data.userId);
+			this.server.to("channel#" + data.channelId)		// !
+				.emit('rescue', {
+					channelId: data.channelId,
+					userId: data.userId,
+				}
+			);
 		}
 		catch(e)
 		{
 			console.log(e.message);
 			return ; // an emit could be done to the client room of this socket
 		}
-
-		this.server.to("channel#" + data.channelId)
-			.emit('rescue', {
-				channelId: data.channelId,
-				userId: data.userId,
-			}
-		);
 		return ;
 	}
 
