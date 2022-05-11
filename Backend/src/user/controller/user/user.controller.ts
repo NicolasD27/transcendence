@@ -7,13 +7,16 @@ import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 import { GetUsername } from '../../decorator/get-username.decorator';
 import { UpdateAvatarDto } from '../../dto/update-avatar.dto';
 import { User } from '../../entity/user.entity';
-import { UserService } from '../../service/user.service';
 import { Express } from 'express';
+import { UserService } from 'src/user/service/user.service';
+import { MatchDto } from 'src/match/dto/match.dto';
+import { MatchService } from 'src/match/service/match.service';
+import { UpdatePseudoDto } from 'src/user/dto/update-pseudo.dto';
 
 
 @Controller('users')
 export class UserController {
-    constructor(private readonly userService: UserService) {
+    constructor(private readonly userService: UserService, private readonly matchService: MatchService) {
 
     }
 
@@ -29,7 +32,7 @@ export class UserController {
     @UseGuards(TwoFactorGuard)
     @Get('me')
     findMe(@GetUsername() username): Promise<UserDto> {
-        return this.userService.findByUsername(username);
+        return this.userService.findMe(username);
     }
 
     @ApiBearerAuth()
@@ -42,10 +45,25 @@ export class UserController {
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
+    @Get(':id/matchs')
+    findAllMatchsByUser(@Param('id') id: string): Promise<MatchDto[]> {
+        return this.matchService.findAllMatchsByUser(id);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
     @Post('avatar')
     @UseInterceptors(FileInterceptor('file'))
     async addAvatar(@GetUsername() username, @UploadedFile() file: Express.Multer.File) {
         return this.userService.addAvatar(username, file.buffer, file.originalname);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Post('pseudo')
+    @UseInterceptors(FileInterceptor('file'))
+    async changePseudo(@GetUsername() username, @Body() updatePseudoDto: UpdatePseudoDto) {
+        return this.userService.changePseudo(username, updatePseudoDto);
     }
 
     // @ApiBearerAuth()

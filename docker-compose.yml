@@ -35,7 +35,8 @@ services:
     depends_on: 
       - db
     volumes: 
-      - ./Backend:/app
+      - './Backend:/app'
+      - /app/node_modules/
   frontend:
     build:
       context: ./Frontend
@@ -46,7 +47,8 @@ services:
       - "3000:3000"
     container_name: frontend-transcendence
     volumes:
-      - ./Frontend:/app
+      - './Frontend:/app'
+      - /app/node_modules/
   pgadmin:
     image: dpage/pgadmin4
     restart: always

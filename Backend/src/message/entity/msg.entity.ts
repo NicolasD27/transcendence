@@ -9,7 +9,7 @@ export class Msg {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@ManyToOne(() => Channel, channel => channel.messages, { eager: true })
+	@ManyToOne(() => Channel, channel => channel.messages, { eager: true, cascade: true, onDelete:'CASCADE' })
 	channel: Channel;
 
 	@Column()

@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { FriendshipModule } from './friendship/friendship.module';
 import { MatchModule } from './match/match.module';
 import { ChannelModule } from './channel/channel.module';
+import { DirectMessageModule } from './direct-message/direct-message.module';
 
 @Module({
 	imports: [
@@ -21,7 +22,8 @@ import { ChannelModule } from './channel/channel.module';
 		UserModule,
 		FriendshipModule,
 		ChatModule,
-		MatchModule
+		MatchModule,
+		DirectMessageModule
 	],
 	controllers: [AppController]
 })

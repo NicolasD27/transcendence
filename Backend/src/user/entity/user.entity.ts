@@ -6,7 +6,9 @@ import { Channel } from "../../channel/entity/channel.entity";
 import { UserDto } from "../dto/user.dto";
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Participation } from "src/channel/entity/participation.entity";
+import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
+import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -17,7 +19,7 @@ export enum UserStatus {
 }
 
 @Entity()
-@Unique(['username'])
+@Unique(['username', 'pseudo'])
 
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
@@ -25,6 +27,9 @@ export class User extends BaseEntity {
 
 	@Column({ type: "varchar" })
 	username: string
+
+	@Column({ type: "varchar" })
+	pseudo: string 
 
 	
 	@Column({ nullable: true })
@@ -41,7 +46,7 @@ export class User extends BaseEntity {
 		}
 	)
 	public avatar?: DatabaseFile;
- 
+
 	@Column({ nullable: true })
 	public avatarId?: number;
 
@@ -60,8 +65,17 @@ export class User extends BaseEntity {
 	@OneToMany(() => Participation, participation => participation.user)
 	participations: Participation[];
 
+	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.user)
+	moderationTimeOuts: ModerationTimeOut[];
+
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];
+
+	@OneToMany(() => DirectMessage, directMessage => directMessage.sender)
+	directMessagesSent: DirectMessage[];
+
+	@OneToMany(() => DirectMessage, directMessage => directMessage.receiver)
+	directMessagesReceived: DirectMessage[];
 	
 	@OneToMany(() => Match, match => match.user1)
 	matchs1: Match[];
