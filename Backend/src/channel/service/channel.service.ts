@@ -431,13 +431,13 @@ export class ChannelService {
 		});
 		
 		let myTimeout = new Date();
-		
-		console.log(myTimeout);
-		console.log(banUserFromChannelDto.timeout);
 
-		// ! above 60 sec it is wrong
-		myTimeout.setSeconds(myTimeout.getSeconds() + banUserFromChannelDto.timeout);
-		console.log("// should be timed out until " + myTimeout);
+		// console.log("// now : " + myTimeout);
+		// console.log("// timeout : " + banUserFromChannelDto.timeout);
+		// console.log("typeof timeout : " + typeof(banUserFromChannelDto.timeout));
+
+		myTimeout.setSeconds(myTimeout.getSeconds() + Number(banUserFromChannelDto.timeout));
+		console.log("// should be restricted until " + myTimeout);
 
 		const myModerationTO = await this.moderationTimeOutRepo.create({
 			channel: myChannel,
