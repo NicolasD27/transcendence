@@ -97,7 +97,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				this.server.to("channel#" + banUserFromChannelDto.channelId)
 					.emit('ban', {
 						channelId: banUserFromChannelDto.channelId,
-						// userId: banUserFromChannelDto.userId
+
 						user: bannedUser,
 					}
 				);
@@ -139,7 +139,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				.emit('mute', {
 					channelId: banUserFromChannelDto.channelId,
 					user: bannedUser,
-					// userId: banUserFromChannelDto.userId
 				}
 			);
 		}
@@ -154,19 +153,42 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('rescue')
 	async unbanUser(
 		socket: CustomSocket,
-		data: { userId: string, channelId: string })
+		data: { userId: number, channelId: number })
 	{
 		try {
-			await this.channelService.revertBanStatus(
-				data.channelId,
+			const recuedUser = await this.channelService.revertBanStatus(
+				data.channelId.toString(),
 				getUsernameFromSocket(socket),
-				data.userId);
-			this.server.to("channel#" + data.channelId)		// !
+				data.userId.toString()
+			);
+			this.server.to("channel#" + data.channelId)
 				.emit('rescue', {
 					channelId: data.channelId,
-					userId: data.userId,
+					user: recuedUser,
 				}
 			);
+			// ? emit something on the unbanned room
+			if (activeUsers.isActiveUser(+data.userId) == true)
+			{
+				this.server.to("user#" + recuedUser.id)
+					.emit('ban', {
+						channelId: data.channelId,
+						user: recuedUser,
+					}
+				);
+
+				const targetedClientSocket = await this.server
+					.in(activeUsers.getSocketId(data.userId).socketId)
+					.fetchSockets();
+
+				if (targetedClientSocket.length)
+				{
+					console.log(`${data.userId} kicked from channel#${data.channelId}`);
+					targetedClientSocket[0].leave("channel#" + data.channelId.toString());
+				}
+			}
+			else
+				console.log(`${data.userId} is not active`);
 		}
 		catch(e)
 		{

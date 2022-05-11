@@ -450,7 +450,7 @@ export class ChannelService {
 		return futureBanned;
 	}
 
-	async revertBanStatus(id: string, username: string, futureBannedID: string)
+	async revertBanStatus(id: string, username: string, futureUnBannedID: string)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
 		
@@ -468,28 +468,28 @@ export class ChannelService {
 			throw new UnauthorizedException("Channel is not joined.");
 		if (! participation.isModo)
 			throw new UnauthorizedException("You need to be moderator to mute/ban people on a channel.");
-		const futureBanned = await this.userRepo.findOne({ where: { id: futureBannedID } });
-		if (! futureBanned)
-			throw new NotFoundException(`userId #${futureBannedID} not found.`);
+		const futureUnBanned = await this.userRepo.findOne({ where: { id: futureUnBannedID } });
+		if (! futureUnBanned)
+			throw new NotFoundException(`userId #${futureUnBannedID} not found.`);
 
 		// todo : make a super user to avoid moderation problems ?
-		if (myChannel.owner.id == futureBanned.id)
+		if (myChannel.owner.id == futureUnBanned.id)
 			throw new UnauthorizedException("The Owner of the channel can't be banned, muted or unbanned.");
 
-		const futureBannedParticipation = await this.participationRepo.findOne({
+		const futureUnBannedParticipation = await this.participationRepo.findOne({
 			where: {
-				user: futureBannedID,
+				user: futureUnBannedID,
 				channel: myChannel.id,
 			}
 		});
-		if (! futureBannedParticipation)
+		if (! futureUnBannedParticipation)
 			throw new UnauthorizedException("This user is not in this channel.");
-		if (futureBannedParticipation.isModo)
+		if (futureUnBannedParticipation.isModo)
 			throw new UnauthorizedException("A Moderator can not be banned or muted or unbanned.");
 
 		const previousBans = await this.moderationTimeOutRepo.find({
 			where: {
-				user: futureBanned,
+				user: futureUnBanned,
 				channel: myChannel,
 			}
 		});
@@ -506,6 +506,8 @@ export class ChannelService {
 		});
 		if (!activeBanFound)
 			throw new NotFoundException("This user is not banned/muted");
+
+		return (futureUnBanned);
 	}
 
 	async giveModerationRights(channelID: string, username: string, futureModoID: string, isGiven: boolean)
