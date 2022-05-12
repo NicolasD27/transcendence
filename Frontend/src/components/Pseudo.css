@@ -22,20 +22,25 @@
 	border-radius: 130px;
 }
 
-#input {
+.writePseudo {
 	border: 3px solid #DBF9FF;
 	border-radius: 100vh;
 	width: 100px;
-	height: 24px;
+	height: 30px;
 	font-size: 14px;
 	color: #DBF9FF;
+	letter-spacing: 5px;
+	box-shadow: 0px 0px 10px #dbf9ff, 0px 0px 10px #dbf9ff inset;
+}
+
+.writePseudo.error {
+	border: 3px solid #e41b1b;
 }
 
 .error {
 	position: relative;
 	animation: shake .1s linear;
 	animation-iteration-count: 3;
-	background-color: #e41b1b;
 }
 
 @keyframes shake {

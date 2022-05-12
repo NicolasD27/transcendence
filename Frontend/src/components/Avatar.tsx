@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Avatar.css';
 //import FormData from 'form-data';//
@@ -7,6 +7,7 @@ import './Avatar.css';
 export interface Props {
 	id: number;
 	idMe: number;
+	setGetMatch: Dispatch<SetStateAction<boolean>>;
 }
 
 export class Avatar extends React.Component<Props> {
@@ -22,7 +23,6 @@ export class Avatar extends React.Component<Props> {
 		})
 		const bodyFormData = new FormData();
 		bodyFormData.append('file', event.target.files[0])
-		//const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 		axios.post(`http://localhost:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
 			.then(res => {
 				axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
@@ -30,9 +30,9 @@ export class Avatar extends React.Component<Props> {
 						const persons = res.data;
 						if (persons.avatarId != null)
 							this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+						this.props.setGetMatch(false)
 					})
 			})
-		window.location.reload()
 	};
 
 	componentDidMount() {

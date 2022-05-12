@@ -43,15 +43,16 @@ const Profil = () => {
 	}
 
 	if (getmatch === false) {
+		setMatchID([])
 		axios.get(`http://localhost:8000/api/users/${state.id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
 					let singleMatch: matchFormat;
 					if (list.user1.id === state.id)
-						singleMatch = { idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+						singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
-						singleMatch = { idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+						singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
 			})
@@ -72,8 +73,8 @@ const Profil = () => {
 			<div className='boxProfil'>
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
 				<input className="switch" type="checkbox" />
-				<Avatar id={state.id} idMe={state.idMe} />
-				<Pseudo id={state.id} idMe={state.idMe} />
+				<Avatar id={state.id} idMe={state.idMe} setGetMatch={setGetMatch} />
+				<Pseudo id={state.id} idMe={state.idMe} setGetMatch={setGetMatch} />
 				<ProgressBar matchs={matchTri} />
 				<div className='boxStats'>
 					<HistoryMatch historys={matchTri} />
