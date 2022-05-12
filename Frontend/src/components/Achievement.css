@@ -16,6 +16,7 @@
 	height: 50vh;
 	border: 4px solid transparent;
 	padding-top: 10px;
+	gap: 0px 45px;
 }
 
 .labelAchievement {
@@ -27,13 +28,19 @@
 
 .iconAchievement {
 	position: relative;
-	height: 100px;
-	width: 102px;
+	align-self: end;
+	height: 48px;
+	width: 48px;
+	background-size: 192px;
+	background-position: center;
+	border: transparent;
+	border-radius: 130px;
+	transform: translateY(-45vh);
+	opacity: 0.4;
 }
 
-.iconAchievement img {
-	position: absolute;
-	right: 200;
-	transform: translateY(-15vh) translateX(-2.5vw);
-	opacity: 0.4;
+@media only screen and (max-width: 1155px) {
+	.iconAchievement {
+		transform: translateY(-45vh) translateX(-27vw);
+	}
 }

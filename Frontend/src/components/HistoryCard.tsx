@@ -12,7 +12,7 @@ interface Props {
 
 const HistoryCard: React.FC<Props> = (props) => {
 	const idP = props.avatarPlayer;
-	const idO = props.avatarOppenent
+	const idO = props.avatarOppenent;
 	const scorePlayer = props.scorePlayer;
 	const scoreOppenent = props.scoreOppenent;
 	let avatarPlayer: string;

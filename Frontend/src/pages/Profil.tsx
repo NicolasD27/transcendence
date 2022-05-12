@@ -7,6 +7,7 @@ import mainTitle from '../asset/mainTitle.svg';
 import close from '../asset/close.svg';
 import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
+import Pseudo from '../components/Pseudo';
 
 const Profil = () => {
 	interface matchFormat {
@@ -23,6 +24,7 @@ const Profil = () => {
 		id: number;
 		idMe: number;
 	}
+
 	const location = useLocation();
 	const state = location.state as StateType
 	//console.log("ID: " + props.props.id)
@@ -35,8 +37,9 @@ const Profil = () => {
 	const onPlay = () => {
 		navigate("")
 	}
-	const onProfil = () => {
-		navigate("/profil")
+	const onProfil = (id: number, idMe: number) => {
+		navigate("/profil", { state: { id, idMe } })
+		window.location.reload()
 	}
 
 	if (getmatch === false) {
@@ -64,11 +67,13 @@ const Profil = () => {
 			<div className='boxNav'>
 				<img src={mainTitle} className='titleNav' />
 				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-				<div><button onClick={() => onProfil()} className='ButtonStyle navButton'>Profil</button></div>
+				<div><button onClick={() => onProfil(state.idMe, state.idMe)} className='ButtonStyle navButton'>Profil</button></div>
 			</div >
 			<div className='boxProfil'>
-				<Avatar id={state.id} idMe={state.idMe} />
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onLogout()} className="offProfil" />
+				<input className="switch" type="checkbox" />
+				<Avatar id={state.id} idMe={state.idMe} />
+				<Pseudo id={state.id} idMe={state.idMe} />
 				<ProgressBar matchs={matchTri} />
 				<div className='boxStats'>
 					<HistoryMatch historys={matchTri} />

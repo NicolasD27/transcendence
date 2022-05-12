@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './Avatar.css';
-import { convertTypeAcquisitionFromJson, parseJsonSourceFileConfigFileContent } from 'typescript';
-import { profile } from 'console';
 //import FormData from 'form-data';//
 //import { request } from 'http';//
 
@@ -13,19 +11,10 @@ export interface Props {
 
 export class Avatar extends React.Component<Props> {
 	state = {
-		profileImg: 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg',
+		imgDefault: 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg',
+		profileImg: '',
 		selectfile: null
 	}
-	/*imageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			if (reader.readyState === 2) {
-				this.setState({ profileImg: reader.result })
-			}
-		}
-		if (e.target.files)
-			reader.readAsDataURL(e.target.files[0])
-	};*/
 
 	imageHandler = (event: any) => {
 		this.setState({
@@ -43,6 +32,7 @@ export class Avatar extends React.Component<Props> {
 							this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
 					})
 			})
+		window.location.reload()
 	};
 
 	componentDidMount() {
@@ -51,6 +41,8 @@ export class Avatar extends React.Component<Props> {
 				const persons = res.data;
 				if (persons.avatarId != null)
 					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+				else
+					this.setState({ profileImg: this.state.imgDefault })
 			})
 	}
 

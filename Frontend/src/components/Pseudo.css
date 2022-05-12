@@ -1,0 +1,49 @@
+.boxPseudo {
+	display: flex;
+	flex-direction: row;
+	margin-top: 5px;
+	gap: 1vw;
+}
+
+.labelPseudo {
+	padding: 5;
+	color: white;
+	font-weight: bold;
+	font-family: 'Open Sans';
+	font-size: 16px;
+}
+
+.editPseudo {
+	height: 24px;
+	width: 24px;
+	background-size: 24px;
+	background-position: center;
+	border: transparent;
+	border-radius: 130px;
+}
+
+#input {
+	border: 3px solid #DBF9FF;
+	border-radius: 100vh;
+	width: 100px;
+	height: 24px;
+	font-size: 14px;
+	color: #DBF9FF;
+}
+
+.error {
+	position: relative;
+	animation: shake .1s linear;
+	animation-iteration-count: 3;
+	background-color: #e41b1b;
+}
+
+@keyframes shake {
+	0% {
+		left: -5px;
+	}
+
+	100% {
+		right: -5px;
+	}
+}
