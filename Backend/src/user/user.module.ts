@@ -4,11 +4,8 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controller/auth/auth.controller';
 import { AuthService } from './service/auth.service';
-import { JwtStrategy } from './strategy/jwt-strategy';
-import { JwtRefreshStrategy } from './strategy/jwt-refresh-strategy';
 import { TwoFactorAuthService } from './service/two-factor-auth.service';
 import { TwoFactorAuth } from './controller/auth/two-factor-auth.controller';
-import { JwtTwoFaStrategy } from './strategy/jwt-2fa-strategy';
 
 // import * as config from 'config'
 import { ConfigService } from '@nestjs/config';
@@ -27,12 +24,10 @@ import { UserService } from './service/user.service';
 import { MatchService } from 'src/match/service/match.service';
 import { Match } from 'src/match/entity/match.entity';
 
-// const dbConfig = config.get('jwt')
 
 @Global()
 @Module({
     imports: [
-        // PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {
@@ -40,7 +35,6 @@ import { Match } from 'src/match/entity/match.entity';
             }
         }),
         PassportModule.register({}),
-        // JwtModule.register({}),
         TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
@@ -49,9 +43,6 @@ import { Match } from 'src/match/entity/match.entity';
         AuthService,
         TwoFactorAuthService,
         FtStrategy,
-        JwtStrategy,
-        JwtRefreshStrategy,
-        JwtTwoFaStrategy,
         SessionSerializer,
         UserService,
         FriendshipService,
@@ -61,10 +52,7 @@ import { Match } from 'src/match/entity/match.entity';
     ],
     exports: [
         FtStrategy,
-        JwtStrategy,
-        JwtRefreshStrategy,
         PassportModule,
-        JwtTwoFaStrategy,
 		UserService,
 		TypeOrmModule
     ]

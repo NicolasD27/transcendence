@@ -4,6 +4,7 @@ import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance }
 import { MatchDto } from 'src/match/dto/match.dto';
 import { Match } from 'src/match/entity/match.entity';
 import { Connection, Repository } from 'typeorm';
+import { UpdatePseudoDto } from '../dto/update-pseudo.dto';
 import { UserDto } from '../dto/user.dto';
 import { User, UserStatus } from '../entity/user.entity';
 import DatabaseFilesService from './database-file.service';
@@ -19,7 +20,6 @@ export class UserService {
 
 
     async findAll(): Promise<UserDto[]> {
-        
         return this.usersRepository.find()
             .then(items => items.map(e=> User.toDto(e)));
     }
@@ -31,7 +31,14 @@ export class UserService {
         return User.toDto(user);
     }
 
-    async findByUsername(username: string): Promise<UserDto>
+    async findMe(username: string): Promise<UserDto> {
+        const user = await this.usersRepository.findOne({username});
+        if (!user)
+            throw new NotFoundException(`User ${username} not found`);
+        return User.toDto(user);
+    }
+
+    async findByUsername(username: string): Promise<User>
 	{
         const user = this.usersRepository.findOne({ username });
 		return new Promise((resolve, reject) => {
@@ -39,7 +46,7 @@ export class UserService {
 				if (!user) {
 					reject(false);
 				} else {
-					resolve(User.toDto(user));
+					resolve(user);
 				}
 			});
 		});
@@ -76,6 +83,15 @@ export class UserService {
 		}
 	}
 
+    async changePseudo(username: string, updatePseudoDto: UpdatePseudoDto): Promise<Boolean> {
+        const user = await this.findByUsername(username);
+        if (!user)
+            throw new NotFoundException(`User ${username} not found`);
+        user.pseudo = updatePseudoDto.pseudo
+        return this.usersRepository.save(user).then(user => {return true}).catch(err => {return false});
+    
+    }
+
     
 
 	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
@@ -103,8 +119,10 @@ export class UserService {
     //just for dev
     async create() //: Promise<UserDto> {
     { 
+        const username = this.make_username(8)
         const user = {
-            username: this.make_username(8)
+            username: username,
+            pseudo: username
         }
         return this.usersRepository.save(user);
     }

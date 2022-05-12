@@ -26,7 +26,7 @@
 	margin: 0%;
 	background-color: #11ffee00;
 	font-family: 'Open Sans';
-	font-size: 28px;
+	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
 	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, rgba(44, 72, 222, 0) 21.35%, rgba(214, 16, 94, 0) 75.52%, #FF0777);
@@ -51,7 +51,7 @@
 	top: -3px;
 	background-color: #11ffee00;
 	font-family: 'Open Sans';
-	font-size: 28px;
+	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
 	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #FF0777);

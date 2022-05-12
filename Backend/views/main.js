@@ -24,6 +24,7 @@ const app = new Vue({
 		banTimeOut: 60,
 		socket: null,
 		socketOptions: {
+			reconnection: false,
 			transportOptions: {
 				polling: {
 					extraHeaders: {
