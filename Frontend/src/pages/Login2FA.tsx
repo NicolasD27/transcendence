@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Login2FA.css';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import mainTitle from '../asset/mainTitle.svg'
 	
 
 
-const Login2FA = () => {
+const Login2FA = ({setIsAuth} : {setIsAuth: Dispatch<SetStateAction<boolean>>}) => {
 	const [code, setCode] = React.useState("");
 	const [QRcode, setQRcode] = React.useState<Blob>();
 	const [isMounted, setIsMouted] = React.useState(false);
@@ -23,6 +23,7 @@ const Login2FA = () => {
     const handleSubmit = () => {
         axios.post(`http://localhost:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
 			.then(res => {
+				setIsAuth(true)
 				navigate("/login")
 
 			})

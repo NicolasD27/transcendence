@@ -9,7 +9,7 @@ import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 
-const Profil = () => {
+const Profil = ({isAuth}: {isAuth: boolean}) => {
 	interface matchFormat {
 		idMatch: number;
 		nameP: string;

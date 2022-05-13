@@ -1,0 +1,56 @@
+.loader-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.loader-container {
+    width: 50px;
+    position: relative;
+    height: 30px;
+}
+
+.loader-racket {
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    border-radius: 1px;
+}
+
+.left-racket {
+    left: 0;
+    background-color: #C0F4FE;
+
+}
+
+.right-racket {
+    right: 1px;
+    background-color: #E11515;
+}
+
+.loader-ball {
+    background-color: white;
+    position: absolute;
+    left: 20px;
+    top: 12px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    animation: ball-movement 1s linear 0s infinite;
+}
+
+@keyframes ball-movement {
+    from {
+        left: 2px;
+    }
+    
+    50% {
+        left: calc(50px - 2px - 5px);
+    }
+
+    to {
+        left: 2px;
+    }
+}

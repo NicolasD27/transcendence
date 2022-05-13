@@ -21,7 +21,7 @@ const Chat = () => {
 	)
 }
 
-const Login = () => {
+const Login = ({isAuth}: {isAuth: boolean}) => {
 	const navigate = useNavigate()
 	const onPlay = () => {
 		navigate("")
