@@ -16,10 +16,9 @@ const Pseudo: React.FC<Props> = (props) => {
 	const [getpseudo, setGetPseudo] = React.useState(false);
 	const id = props.id;
 	const idMe = props.idMe;
-	//let getmatch = props.getmatch;
 
 	if (getpseudo === false) {
-		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+		axios.get(`http://localhost:8000/api/users/${id}`, { withCredentials: true })
 			.then(res => {
 				const profil = res.data;
 				setPseudo(pseudo => profil.pseudo)
@@ -58,29 +57,13 @@ const Pseudo: React.FC<Props> = (props) => {
 		}
 	}
 
-	const editPseudo = () => {
-		if (onChange === false)
-			return <div className="labelPseudo">{pseudo}</div>
-		else {
-			return <input type="text" className="writePseudo" onChange={handleChange} onKeyUp={validChange} value={tmpPseudo} />
-		}
-	}
-
-	if (id === idMe) {
-		return (
-			<div className="boxPseudo">
-				{editPseudo()}
-				<button type='submit' style={{ backgroundImage: `url(${edit})` }} onClick={() => setOnChange(true)} className="editPseudo" />
-			</div>
-		);
-	}
-	else {
-		return (
-			<div className="boxPseudo">
-				{editPseudo()}
-			</div>
-		);
-	}
+	return (
+		<div className="boxPseudo">
+			{onChange === false && <div className="labelPseudo">{pseudo}</div>}
+			{onChange === true && <input type="text" className="writePseudo" onChange={handleChange} onKeyUp={validChange} value={tmpPseudo} />}
+			{id === idMe && <button type='submit' style={{ backgroundImage: `url(${edit})` }} onClick={() => setOnChange(true)} className="editPseudo" />}
+		</div>
+	);
 };
 
 export default Pseudo;
