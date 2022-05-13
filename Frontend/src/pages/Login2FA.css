@@ -10,15 +10,20 @@
 .login-wrapper > div {
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+.qrcode {
+    width: 300px;
+    margin-top: 50px;
 }
 
 .login-title {
-    color: #DBF9FF;
+    color: #C0F4FE;
 }
 
 #login-container {
-    /* width: 300px; */
-    margin-top: 30px;
+    width: 300px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -29,13 +34,12 @@
 #input {
     width: 160px;
     height: 48px;
-    /* margin: 10px 15px; */
     padding: 5px 25px;
-    border: 3px solid #DBF9FF;
+    border: 3px solid #C0F4FE;
     border-radius: 100vh;
     font-size: 20px;
     letter-spacing: 5px;
-    color: #DBF9FF;
-    box-shadow: 0px 0px 10px #dbf9ff, 0px 0px 10px #dbf9ff inset;
+    color: #C0F4FE;
+    box-shadow: 0px 0px 10px #C0F4FE, 0px 0px 10px #C0F4FE inset;
 
 } 

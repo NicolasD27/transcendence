@@ -26,6 +26,17 @@ const Login2FA = () => {
 				navigate("/login")
 
 			})
+			.catch(err => {
+				const input = document.getElementById("input");
+				if (input) {
+					input.classList.add('error');
+					setTimeout(function () {
+						input.classList.remove('error');
+						setCode("")
+					}, 300);
+				}
+				
+			})
     }
 
 	if (!isMounted) {
@@ -59,10 +70,10 @@ const Login2FA = () => {
 			</ul>
 		</div>*/
 		<div className="login-wrapper">
-
 			<div >
-				{QRcode && <img src={URL.createObjectURL(QRcode)} />}
-				<h5 className='login-title'>Scan with Google Authenticator</h5>
+				<img src={mainTitle} className='mainTitle' alt="mainTitle"/>
+				{QRcode && <img src={URL.createObjectURL(QRcode)} className="qrcode"/>}
+				<p className='login-title'>Scan with Google Authenticator</p>
 				<div id="login-container">
 					
 					<input autoComplete='off' type="text" id="input" onChange={handleChange} value={code} placeholder="______" onKeyDown={handleKeyPress}/>
