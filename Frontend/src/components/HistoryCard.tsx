@@ -2,6 +2,8 @@ import React, { Fragment } from "react";
 import './HistoryCard.css';
 
 interface Props {
+	namePlayer: string;
+	nameOppenent: string;
 	avatarPlayer: string;
 	avatarOppenent: string;
 	scorePlayer: number;
@@ -9,17 +11,34 @@ interface Props {
 }
 
 const HistoryCard: React.FC<Props> = (props) => {
-	const avatarPlayer = props.avatarPlayer;
-	const avatarOppenent = props.avatarOppenent;
+	const idP = props.avatarPlayer;
+	const idO = props.avatarOppenent;
 	const scorePlayer = props.scorePlayer;
 	const scoreOppenent = props.scoreOppenent;
+	let avatarPlayer: string;
+	let avatarOppenent: string;
+
+	if (idP != null)
+		avatarPlayer = `http://localhost:8000/api/database-files/${idP}`
+	else
+		avatarPlayer = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
+	if (idO != null)
+		avatarOppenent = `http://localhost:8000/api/database-files/${idO}`
+	else
+		avatarOppenent = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
+
 	return (
 		<div className="boxCard">
-			<img src={avatarPlayer} alt="" id="img" className="imgCard" />
-			<div className="scoreStyle">{scorePlayer}</div>
-			<div className="scoreStyle">{scoreOppenent}</div>
-			<img src={avatarOppenent} alt="" id="img" className="imgCard" />
-		</div>
+			<div>
+				<img src={avatarPlayer} alt="" id="img" className="imgCard" />
+				<div className="nameStyle">{props.namePlayer}</div>
+			</div>
+			<div className="scoreStyle">{scorePlayer}  -  {scoreOppenent}</div>
+			<div>
+				<img src={avatarOppenent} alt="" id="img" className="imgCard" />
+				<div className="nameStyle">{props.nameOppenent}</div>
+			</div>
+		</div >
 	);
 };
 
