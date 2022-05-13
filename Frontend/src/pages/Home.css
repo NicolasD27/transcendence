@@ -15,7 +15,7 @@ a {
 	align-items: center;
 	justify-content: center;
 	gap: 20px;
-	height: 500px;
+	transform: translateY(40vh)
 }
 
 .mainTitle {
@@ -23,13 +23,7 @@ a {
 	height: 81.93px;
 }
 
-.mainTitle2 {
-	width: 905.32px;
-	height: 801.93px;
-}
-
 .subtitleStyle {
-	position: relative;
 	font-family: 'Open Sans';
 	text-align: center;
 	font-size: 36px;

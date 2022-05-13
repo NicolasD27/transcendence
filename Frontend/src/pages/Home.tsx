@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import mainTitle from '../asset/mainTitle.svg'
+import mainTitle from '../asset/Pong-Legacy.svg'
 
 const Home = () => {
 	const navigate = useNavigate()
