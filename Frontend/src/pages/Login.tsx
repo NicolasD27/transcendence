@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import mainTitle from '../asset/mainTitle.svg';
+import mainTitle from '../asset/Pong-Legacy.svg';
 import searchIcon from '../asset/searchIcon.svg';
 import addGroupIcon from "../asset/addGroupIcon.svg"
 import { cp } from 'fs/promises';

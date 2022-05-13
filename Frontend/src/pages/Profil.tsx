@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
-import mainTitle from '../asset/mainTitle.svg';
+import mainTitle from '../asset/Pong-Legacy.svg';
 import close from '../asset/close.svg';
 import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
