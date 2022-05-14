@@ -119,7 +119,7 @@ input {
 	border: none;
 	background-color: transparent;
 	outline: none;
-	cursor:text;
+	cursor: text;
 }
 
 #searchFriend {
@@ -159,12 +159,12 @@ button {
 
 .usersList {
 	width: 297px;
+	min-height: 484px;
 	margin-top: 16px;
 	margin-right: 18px;
 	margin-left: 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	border: none;
 }
 
 .usersList::-webkit-scrollbar {
@@ -177,7 +177,7 @@ button {
 	align-items: center;
 	border: 2px solid #C0F4FE;
 	color: #C0F4FE;
-	border-radius: 22px;
+	border-radius: 20px;
 	height: 54px;
 	width: 297px;
 	margin: 14px 0;
@@ -210,25 +210,19 @@ button {
 }
 
 #username {
-	font-size: 14px;
+	font-size: 15px;
 	font-weight: normal;
-	min-width: 123px;
+	min-width: 120px;
 	white-space: nowrap;
 	overflow-x: hidden;
-	margin-left: 12px;
-	margin-right: 6px;
+	margin-left: 15px;
 }
 
 #friend_buttons {
-	display: flex;
-	flex-direction: row;
-	width: 83px;
+	position: relative;
+	width: 84px;
 	height: 40px;
-	margin-right: 12px;
-	margin-bottom: 3px;
-	margin-top: 5px;
-	margin-bottom: 9px;
-	border: none;
+	margin: 7px 10px 7px 6px;
 }
 
 #friend_buttons > button {
@@ -236,61 +230,83 @@ button {
 	border: none;
 }
 
-#friendPlayButton {
+#friendPlay_button {
+	position: absolute;
 	background-image: url('../asset/PlayIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
 	height: 40px;
 	width: 40px;
-	border: none;
-	/*border: 0.1px solid red;*/
+	left: 0px;
+	bottom: 2px;
 }
 
-#friendPlayButton:hover {
+#friendPlay_button:hover {
 	background-image: url('../asset/PlayIcon_red.svg');
 }
 
-#friendChatButton {
+#friendChat_button {
+	position: absolute;
 	background-image: url('../asset/ChatIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
 	height: 36px;
 	width: 36px;
-	margin-top: 4px;
+	left: 40px;
+	right: 2px;
+	bottom: 2px;
 	/*border: 0.1px solid red;*/
 }
 
-#friendChatButton:hover {
+#friendChat_button:hover {
 	background-image: url('../asset/ChatIcon_red.svg');
 }
 
-#friendColumnButton {
+#friendColumn_button {
+	position: absolute;
 	background-image: url('../asset/ColumnIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
 	height: 20px;
 	width: 5px;
-	margin-right: 0px;
-	margin-left: 2px;
-	margin-top: 12px;
-	margin-bottom: 8px;
-	/*border: 0.1px solid red;*/
+	top: 10px;
+	right: 0px;
 }
 
-#friendColumnButton:hover {
+#friendColumn_button:hover {
 	background-image: url('../asset/ColumnIcon_red.svg');
 }
 
-#unfriend_button {
+#profileBlocked {
+	position: absolute;
+	width: 46px;
+	top: 11px;
+	right: 18px;
+	font-size: 12px;
+	text-align: center;
+	font-weight: normal;
+}
+
+.optionButtons {
 	position: relative;
-	width: 208px;
+	width: 190px;
 	height: 40px;
-	border: 1px solid #E11515;
 	border-radius: 20px;
-	margin-left: 10px;
-	margin-right: 10px;
+	margin-left: 15px;
+	margin-right: 15px;
 	margin-top: 7px;
 	margin-bottom: 7px;
+}
+
+#unfriend_button {
+	position: absolute;
+	left: 0px;
+	margin-right: 10px;
+	width: 90px;
+	height: 100%;
+	border: 1px solid #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
 }
 
 #unfriend_button p {
@@ -307,6 +323,22 @@ button {
 	background-color: #E11515;
 }
 
+#block_buttons {
+	position: absolute;
+	right: 0px;
+	margin-left: 10px;
+	width: 90px;
+	height: 100%;
+	border: 1px solid #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
+	color: #C0F4FE;
+}
+
+#block_buttons:hover {
+	background-color: #E11515;
+}
+
 #unfriendColumnButton {
 	background-image: url('../asset/ColumnIcon_blue.svg');
 	background-repeat: no-repeat;
@@ -315,7 +347,7 @@ button {
 	width: 5px;
 	margin-top: 17px;
 	margin-bottom: 17px;
-	margin-right: 11px;
+	margin-right: 10px;
 	padding: 0px;
 	border: none;
 }
@@ -330,6 +362,7 @@ button {
 	width: 75px;
 	height: 36px;
 	margin-right: 18px;
+	margin-left: 7px;
 	margin-top: 9px;
 	margin-bottom: 9px;
 }
@@ -365,13 +398,9 @@ button {
 	width: 36px;
 	height: 36px;
 	margin-top: 9px;
-	margin-left: 39px;
-	margin-right: 20px;
+	margin-left: 46px;
+	margin-right: 18px;
 	margin-bottom: 9px;
-	border: none;
-}
-
-#AddFriendButton{
 	background-image: url('../asset/AddFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
@@ -384,17 +413,11 @@ button {
 }
 
 #invitation_sent {
-	width: 83px;
-	height: 21px;
 	margin-top: 17px;
 	margin-bottom: 17px;
-	text-align: center;
-}
-
-#invitation_sent p {
-	margin-top: 3px;
 	font-size: 12px;
 	font-weight: normal;
+	text-align: center;
 }
 
 #chatTop{
@@ -419,30 +442,34 @@ button {
 #chatUsername {
 	position: absolute;
 	color: #C0F4FE;
-	width: 201px;
-	height: 54px;
-	top: 0px;
-	left: 64px;
-	right: 32px;
+	width: 189px;
+	height: 30px;
+	top: 12px;
+	left: 68px;
+	right: 40px;
 	font-size: 22px;
-	white-space: pre-line;
+	white-space: nowrap; 
 	font-weight: normal;
 	text-align: left;
 	line-height: 30px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-#closeChatButton {
-	position: absolute;
+#chatColumnButton {
 	background-image: url('../asset/CloseChatWindow.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 22px;
-	width: 22px;
-	top: 0px;
-	right: 0px;
+	height: 20px;
+	width: 5px;
+	margin-top: 17px;
+	margin-bottom: 17px;
+	margin-right: 10px;
+	padding: 0px;
+	border: none;
 }
 
-#closeChatButton:hover {
+#chatColumnButton:hover {
 	background-image: url('../asset/CloseChatWindowHover.svg');
 }
 
@@ -495,5 +522,147 @@ button {
 
 #sendTextIcon:hover {
 	background-image: url('../asset/SendTextIcon_red.svg');
+}
 
+.channel {
+	position: relative;
+	align-items: center;
+	border: 2px solid #C0F4FE;
+	color: #C0F4FE;
+	border-radius: 20px;
+	height: 54px;
+	width: 297px;
+	margin: 14px 0;
+}
+
+.channel:hover{
+	border: 2px solid #E11515;
+}
+
+#channelAvatarIcon {
+	position: absolute;
+	left: 18px;
+	bottom: 5px;
+	background-image: url('../asset/ChannelIcon.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	width: 40px;
+	height: 40px;
+}
+
+#channelName {
+	position: absolute;
+	width: 120px;
+	color: #C0F4FE;
+	font-size: 15px;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow-x: hidden;
+	top: 14px;
+	left: 68px;
+}
+
+#muteChannel {
+	position: absolute;
+	background-image: url('../asset/muteIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 36px;
+	width: 36px;
+	padding: 0;
+	top: 7px;
+	right: 18px;
+	border: none;
+}
+
+#muteChannel:hover {
+	background-image: url('../asset/muteIcon_red.svg');
+}
+
+#unmuteChannel {
+	position: absolute;
+	background-image: url('../asset/unmuteIcon_red.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 36px;
+	width: 36px;
+	padding: 0;
+	top: 7px;
+	right: 18px;
+	border: none;
+}
+
+#unmuteChannel:hover {
+	background-image: url('../asset/unmuteIcon_red.svg');
+}
+
+#channelColumnButton {
+	position: absolute;
+	background-image: url('../asset/ColumnIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 20px;
+	width: 5px;
+	padding: 0;
+	top: 15px;
+	right: 10px;
+	border: none;
+}
+
+#channelColumnButton:hover {
+	background-image: url('../asset/ColumnIcon_red.svg');
+}
+
+.checkbox_addToChannel {
+	position: relative;
+	margin-top: 9px;
+	margin-right: 18px;
+	margin-left: 62px;
+	margin-bottom: 9px;
+	height: 20px;
+	width: 20px;
+}
+
+.checkbox_addToChannel label  {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	border: 1px solid #C0F4FE;
+	cursor: pointer;
+}
+
+.checkbox_addToChannel label:hover {
+	border: 1px solid #E11515;
+}
+
+.checkbox_addToChannel input[type="checkbox"] {
+	visibility: hidden;
+}
+
+.checkbox_addToChannel input[type="checkbox"]:checked + label {
+	background-color: #E11515;
+	border-color: #E11515;
+}
+
+#checkbox_createChannelButton {
+	width: 297px;
+	min-height: 48px;
+	margin: 14px 18px 20px 18px;
+	border: 2px solid #C0F4FE;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #C0F4FE;
+}
+
+#checkbox_createChannelButton:hover {
+	border: 2px solid #E11515;
+	cursor: pointer;
+}
+
+#checkbox_createChannelButton:active {
+	background-color: #E11515;
 }
