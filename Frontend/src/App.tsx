@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login-2FA" element={<Login2FA />} />
-        <Route path="/profil" element={<Profil />} />
+        <Route path="/profil/:id" element={<Profil />} />
       </Routes>
     </div>
   );
