@@ -38,7 +38,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const friends = await this.friendshipService.findAllActiveFriendsByUser(user.id)
 		console.log(friends, user)
 		friends.forEach((friend) => {
-			this.server.to("users#" + friend.id).emit('notifyStatusUpdate', user);
+			this.server.to("user#" + friend.id).emit('notifyStatusUpdate', user);
 		})
 	}
 
@@ -49,7 +49,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(socket);
 		const user = await this.userService.findByUsername(username);
 		const friendship = await this.friendshipService.create({user1_id: user.id, user2_id: data.user_id})
-		this.server.to("users#" + data.user_id).emit('notifyFriendRequest', friendship);
+		this.server.to("user#" + data.user_id).emit('notifyFriendRequest', friendship);
 	}
 
 	// @UseGuards(WsGuard)
@@ -58,7 +58,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("accepting friend request")
 		const username = getUsernameFromSocket(socket);
 		const friendship = await this.friendshipService.update(username, data.friendship_id, 1)
-		this.server.to("users#" + friendship.following.id).emit('notifyFriendRequestAccepted', friendship);
+		this.server.to("user#" + friendship.following.id).emit('notifyFriendRequestAccepted', friendship);
 	}
 
 

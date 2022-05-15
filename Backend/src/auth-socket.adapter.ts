@@ -36,9 +36,15 @@ export class AuthSocketAdapter extends IoAdapter {
 				.split('; ')
 				.find((cookie: string) => cookie.startsWith('accessToken'))
 				.split('=')[1];
+				const username = socket.handshake.headers.cookie
+				.split('; ')
+				.find((cookie: string) => cookie.startsWith('username'))
+				.split('=')[1];
 				decoded = this.jwtService.verify(accessToken) as any;
 				if (decoded)
 				{
+					if (decoded.username != username)
+						next (new Error("Unauthorized !"));
 					this.userService.findByUsername(decoded.username)
 					.then((myUser)=>{
 						socket.user = myUser;

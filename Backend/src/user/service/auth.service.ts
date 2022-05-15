@@ -22,6 +22,7 @@ export class AuthService {
     async signUp(profile: Profile): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
         const user = this.usersRepository.create({
             username: profile.username,
+            pseudo: profile.username,
             avatar: profile._json.image_url
         })
         await this.usersRepository.save(user);
@@ -29,7 +30,7 @@ export class AuthService {
         
     }
 
-    async signIn(username: string): Promise<{ accessToken?: string, refreshToken?: string, user?: JwtPayload }> {
+    async signIn(username: string): Promise<{ accessToken?: string, user?: JwtPayload }> {
         const user = await this.usersRepository.findOne( { username });
         const resp = {
             username: user.username,
@@ -41,7 +42,7 @@ export class AuthService {
 
         if (resp.isTwoFactorEnable) {
             return {
-                accessToken: '',
+                accessToken: 'wef',
                 user: user
             }
         }
