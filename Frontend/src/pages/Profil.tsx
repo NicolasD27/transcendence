@@ -44,7 +44,7 @@ const Profil = ({isAuth}: {isAuth: boolean}) => {
 
 	if (getmatch === false) {
 		setMatchID([])
-		axios.get(`http://localhost:8000/api/users/${state.id}/matchs/`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${state.id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {

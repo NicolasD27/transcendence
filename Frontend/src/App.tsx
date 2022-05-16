@@ -22,8 +22,9 @@ const App = () => {
   const [isAuth, setIsAuth] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  console.log(process.env.REACT_APP_HOST)
   if (!isAuth) {
-    axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+    axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
         console.log(res.data)
 				setIsAuth(true)

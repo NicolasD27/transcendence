@@ -21,7 +21,7 @@ const Login2FA = ({setIsAuth} : {setIsAuth: Dispatch<SetStateAction<boolean>>}) 
     }
 
     const handleSubmit = () => {
-        axios.post(`http://localhost:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
+        axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
 			.then(res => {
 				setIsAuth(true)
 				navigate("/login")
@@ -41,7 +41,7 @@ const Login2FA = ({setIsAuth} : {setIsAuth: Dispatch<SetStateAction<boolean>>}) 
     }
 
 	if (!isMounted) {
-		axios.get(`http://localhost:8000/api/2fa/generate-qr`, {withCredentials: true, responseType: 'blob'	})
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/generate-qr`, {withCredentials: true, responseType: 'blob'	})
 		.then(res => {
 			console.log(res)
 			setQRcode(QRcode => res.data)

@@ -23,24 +23,24 @@ export class Avatar extends React.Component<Props> {
 		})
 		const bodyFormData = new FormData();
 		bodyFormData.append('file', event.target.files[0])
-		axios.post(`http://localhost:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
 			.then(res => {
-				axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 					.then(res => {
 						const persons = res.data;
 						if (persons.avatarId != null)
-							this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+							this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${persons.avatarId}` })
 						this.props.setGetMatch(false)
 					})
 			})
 	};
 
 	componentDidMount() {
-		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
 				const persons = res.data;
 				if (persons.avatarId != null)
-					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+					this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${persons.avatarId}` })
 				else
 					this.setState({ profileImg: this.state.imgDefault })
 			})

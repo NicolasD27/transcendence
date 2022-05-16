@@ -33,7 +33,7 @@ const Login = ({isAuth}: {isAuth: boolean}) => {
 	const [getID, setGetID] = useState(false);
 
 	if (getID === false) {
-		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				const id_tmp = res.data;
 				setIdPerso(id_tmp.id)
