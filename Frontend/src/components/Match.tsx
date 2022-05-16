@@ -5,9 +5,10 @@ import { io, Socket } from "socket.io-client"
 let width = 954;
 let height = 532;
 let playerWidth = 15;
+let finalScore = 5;
 
 function PlayerInput(this: any)
-{ 
+{
 	this.masterA = false;
 	this.masterZ = false;
 	this.slaveA = false;
@@ -54,7 +55,7 @@ function negRand()
 		return (1);
 }
 
-function gameEngine(game: any)
+function gameEngine(game: any, socket: Socket, match_id: number)
 {
 	if(game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
 	{
@@ -65,7 +66,7 @@ function gameEngine(game: any)
 			else
 			{
 				game.playerOne.score++;
-				//SEND TO SERVER SCORE++
+				socket.emit('masterScored', match_id);
 				delete game.ball;
 
 				var a2 = rand(80, 120);
@@ -80,7 +81,7 @@ function gameEngine(game: any)
 			else
 			{
 				game.playerTwo.score++;
-				//SEND TO SERVER SCORE++
+				socket.emit('slaveScored', match_id);
 				delete game.ball;
 
 				var a22 = rand(80, 120);
@@ -124,6 +125,8 @@ export class Match extends Component
 	fq = 30;
 	match_id: number;
 	match_size: number;
+	slaveId: string;
+	masterId: string;
 
 	setup = (p5: any) =>
 	{
@@ -136,17 +139,17 @@ export class Match extends Component
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
 		p5.text('Waiting for other player...', 220, height / 2);
-		
+
 		//ICI IMPLEMENTER L'ATTENTE POUR LE MATCHMAKING, BOUTONS ETC...
 
 		this.socket.emit('find_match');
 		this.socket.on('launch_match', (data) => {
 			this.match_id = data.id;
 			this.match_size = data.room_size;
+			this.slaveId = data.user2.username;
+			this.masterId = data.user1.username;
 			//on peut recup ici bcp d'autres data, genre la taille du match ou autres
 		});
-
-		//REMOVED THE askConnectionNumber ALL TOGETHER, WE'LL SEE
 
 		if (this.match_size === 1)		//Master
 		{
@@ -223,17 +226,21 @@ export class Match extends Component
 					{
 						this.started = 1;
 						playerMove(game, playerInput);
-						gameEngine(game);
+						gameEngine(game, this.socket, this.match_id);
 						this.socket.emit('sendUpdateMatch', this.match_id, game);
 					}
+					if (game.playerOne.score >= finalScore || game.playerTwo.score >= finalScore)
+						this.socket.emit("gameFinished");		//envoyer au server qui a gagne aussi ca serait pas mal lol
 				});
 			});
 
-			this.socket.on('playerDisconnect', () =>
+			this.socket.on('clientDisconnect', (data) =>
 			{
 				this.socket.off('serverTick');
-				window.location.reload();				//change this
-				//send a find_match when the other is disconnected ?
+				if (data === this.slaveId)
+				{
+					//le slave vient de se deco, master gagne par defaut et renvoie l'info au server
+				}
 			});
 
 	}
@@ -251,10 +258,12 @@ export class Match extends Component
 				p5.printer(data);
 			});
 
-			this.socket.on('playerDisconnect', () =>
+			this.socket.on('clientDisconnect', (data) =>
 			{
-				window.location.reload(); 				//change this
-				//send a find_match when the other is disconnected ?
+				if (data === this.masterId)
+				{
+					//le master vient de se deco, slave gagne par defaut et renvoie l'info au server
+				}
 			});
 
 		}

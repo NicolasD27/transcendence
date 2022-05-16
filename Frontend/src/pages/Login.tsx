@@ -58,6 +58,6 @@ const Login = () => {
 	);
 };
 
-//ajouterdans la gamearea des boutons pour le match making
+//ajouter en dessous du match pour l'instant des boutons permettant de faire le matchmaking (find, search, accept, ...)
 
 export default Login;
