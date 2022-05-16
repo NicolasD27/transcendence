@@ -18,36 +18,38 @@
 					<h1 class="text-center">{{ title }}</h1>
 					<br>
 					<div id="status"></div>
-						<div id="chat">
-							channelId : {{ channelId }} <br>
+					<div id="chat">
+						channelId : {{ channelId }} <br>
 
-							<input v-model="channelId" placeholder="which channel to display ?" type="number">
-							<button v-on:click="updateApp">update</button>
+						<input v-model="channelId" placeholder="which channel to display ?" type="number">
+						<button v-on:click="updateApp">update</button>
 
-							<!-- <button v-on:click="closeChannel">leave channel</button> -->
-							<br>
-							<input v-model="banId" placeholder="user id" type="number" size="7">
-							<input v-model="banTimeOut" placeholder="seconds" type="number" size="7">
-							<button v-on:click="banUser">ban</button>
-							<button v-on:click="muteUser">mute</button>
-							<button v-on:click="unBanUser">unBan/unmute</button> <br>
+						<!-- <button v-on:click="closeChannel">leave channel</button> -->
+						<br>
+						<input v-model="banId" placeholder="user id" type="number" size="7">
+						<input v-model="banTimeOut" placeholder="seconds" type="number" size="7">
+						<button v-on:click="banUser">ban</button>
+						<button v-on:click="muteUser">mute</button>
+						<button v-on:click="unBanUser">unBan/unmute</button> <br>
 
-							<div class="card">
-								<div id="messages" class="card-block">
-									<ul>
-										<li v-for="message of messages">{{ message.user.username }}: {{ message.content }}</li>
-									</ul>
-								</div>
+						<input v-model="idToInvite" placeholder="user id" type="number" size="7">
+						<button v-on:click="sendInvite">send Invite</button> <br>
+
+						<div class="card">
+							<div id="messages" class="card-block">
+								<ul>
+									<li v-for="message of messages">{{ message.user.username }}: {{ message.content }}</li>
+								</ul>
 							</div>
-							<br>
-							<textarea id="textarea" class="form-control" v-model="content" placeholder="Enter message..."></textarea>
-							<br>
-							<button id="send" class="btn" @click.prevent="sendMessage">Send</button>
 						</div>
+						<br>
+						<textarea id="textarea" class="form-control" v-model="content" placeholder="Enter message..."></textarea>
+						<br>
+						<button id="send" class="btn" @click.prevent="sendMessage">Send</button>
 					</div>
 				</div>
 			</div>
-		<!-- </div> -->
+		</div>
 
 		<div class="row">
 			<div class="col-md-6 offset-md-3 col-sm-12">

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan } from 'typeorm';
+import { getConnection, Repository, MoreThan, Connection } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -14,8 +14,12 @@ import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
-import { BannedState, ModerationTimeOut } from '../entity/moderationTimeOut.entity';
-import { activeUsers } from 'src/auth-socket.adapter';
+import { ModerationTimeOut } from '../entity/moderationTimeOut.entity';
+import { ChannelInvite } from '../entity/channelInvite.entity';
+import { CreateChannelInviteDto } from '../dto/create-channel-invite.dto';
+import { ChatGateway } from 'src/message/gateway/message.gateway';
+import { Server } from 'socket.io';
+import { ChannelInviteDto } from '../dto/channel-invite.dto';
 
 @Injectable()
 export class ChannelService {
@@ -35,22 +39,31 @@ export class ChannelService {
 
 		@InjectRepository(ModerationTimeOut)
 		private moderationTimeOutRepo: Repository<ModerationTimeOut>,
-	) {}
+
+		@InjectRepository(ChannelInvite)
+		private channelInviteRepo: Repository<ChannelInvite>,
+	)
+	{}
 
 	saltRounds = 12;
 
 	async findAll(): Promise<ChannelDto[]>
 	{
-		return await this.channelRepo.find()
+		return await this.channelRepo.find({ where: { isPrivate: false, } })
 			.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
-	async findOne(channelId: string): Promise<ChannelDto>
+	async findOne(channelId: number): Promise<ChannelDto>
 	{
 		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException();
 		return Channel.toDto(myChannel);
+	}
+
+	async findOneWS(channelId:number)
+	{
+		return await this.channelRepo.findOne(channelId);
 	}
 
 	async create(username: string, createChannelDto: CreateChannelDto): Promise<ChannelDto>
@@ -67,18 +80,14 @@ export class ChannelService {
 			}
 		})
 		if (channelExist)
-			throw new UnauthorizedException("This channel name is already taken.");	// 
+			throw new UnauthorizedException("This channel name is already taken.");
 
-		// let		hash = "";
-		// if (createChannelDto.password !== "")	//* this check might be pointless
-		// {
-			const hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
-			// console.log(`${createChannelDto.password} -> ${hash}`);
-		// }
+		const hash = await bcrypt.hash(createChannelDto.password, this.saltRounds);
 
 		//? registering the new channel in the bdd
 		const newChannel = await this.channelRepo.create({
 			name : createChannelDto.name,
+			isPrivate: createChannelDto.isPrivate,
 			description: createChannelDto.description,
 			owner : user,
 			hashedPassword : hash,
@@ -104,12 +113,6 @@ export class ChannelService {
 		const channel = await this.channelRepo.findOne(channelId);
 		if (! channel)
 			throw new NotFoundException("channel not found");
-		
-		// if (channel.hashedPassword === "") {
-		// 	if (notHashedPassword !== "")
-		// 		throw new UnauthorizedException("password not empty");
-		// }
-		// else 
 		if (! await bcrypt.compare(notHashedPassword, channel.hashedPassword))
 			throw new UnauthorizedException("wrong password");
 
@@ -152,11 +155,11 @@ export class ChannelService {
 
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined");
-		
-		if (channel.owner.id == user.id)
-			throw new UnauthorizedException(
-				"The owner of a channel can't leave without passing the ownership to another user in the channel.");
-		
+
+		// if (channel.owner.id == user.id)
+		// 	throw new UnauthorizedException(
+		// 		"The owner of a channel can't leave without passing the ownership to another user in the channel.");
+
 		await this.participationRepo.delete(participation.id);
 
 		return true;
@@ -190,6 +193,70 @@ export class ChannelService {
 			.then(items => items.map(e=> Msg.toDto(e)));
 
 		return msgs;
+	}
+
+	async getChannelInvites(username: string)
+	{
+		const myUser = await this.userRepo.find({username});
+		if (!myUser)	// ? useless because of the guard
+			throw new NotFoundException(`username ${username} not found`);
+		const invites = await this.channelInviteRepo.find({
+			where: {
+				receiver: myUser,
+			}
+		})
+		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
+		return (invites);
+	}
+
+	// async saveInvite(myInvite:ChannelInviteDto)
+	// {
+	// 	return await this.channelInviteRepo.save(myInvite);
+	// }
+
+	async saveInvite(username: string, createChannelInviteDto: CreateChannelInviteDto): Promise<ChannelInviteDto>
+	{
+		const myChannel = await this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
+		if (!myChannel)
+			throw new NotFoundException();
+		const mySender = await this.userRepo.findOne({username});
+		const myReceiver = await this.userRepo.findOne({where:{ id: createChannelInviteDto.userId }});
+		if (!myReceiver)
+			throw new NotFoundException();
+
+		const newInvite = this.channelInviteRepo.create({
+			channel: myChannel,
+			sender: mySender,
+			receiver: myReceiver,
+		});
+		const myinvite = await this.channelInviteRepo.save(newInvite);
+		return ChannelInvite.toDto(myinvite);
+	}
+
+	async checkUserRestricted(username: string, channelId: string)
+	{
+		const myUser = await this.userRepo.findOne({ username });
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+
+		const myChannel = await this.channelRepo.findOne({where: { id: channelId } });
+		if (!myChannel)
+			throw new NotFoundException(`channel ${channelId} not found`);
+
+		console.log("user and channel found");
+		const _now = new Date();
+		const tos = await this.moderationTimeOutRepo.find({
+			where: {
+				channel: myChannel,
+				user: myUser,
+				date: MoreThan(_now),
+			}
+		});
+		console.log(_now);
+		console.log(tos);
+		if (tos.length > 0)
+			throw new UnauthorizedException("User is Restricted on this channel");
+		return false;
 	}
 
 	async checkUserJoinedChannel(username: string, channelId: string) // : Promise<boolean>
@@ -362,10 +429,15 @@ export class ChannelService {
 				this.moderationTimeOutRepo.save(ban);
 			}
 		});
-
+		
 		let myTimeout = new Date();
-		myTimeout.setSeconds(myTimeout.getSeconds() + banUserFromChannelDto.timeout);
-		console.log("// should be timed out until " + myTimeout);
+
+		// console.log("// now : " + myTimeout);
+		// console.log("// timeout : " + banUserFromChannelDto.timeout);
+		// console.log("typeof timeout : " + typeof(banUserFromChannelDto.timeout));
+
+		myTimeout.setSeconds(myTimeout.getSeconds() + Number(banUserFromChannelDto.timeout));
+		console.log("// should be restricted until " + myTimeout);
 
 		const myModerationTO = await this.moderationTimeOutRepo.create({
 			channel: myChannel,
@@ -374,9 +446,11 @@ export class ChannelService {
 			date: myTimeout,
 		});
 		await this.moderationTimeOutRepo.save(myModerationTO);
+
+		return futureBanned;
 	}
 
-	async revertBanStatus(id: string, username: string, futureBannedID: string)
+	async revertBanStatus(id: string, username: string, futureUnBannedID: string)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
 		
@@ -394,28 +468,28 @@ export class ChannelService {
 			throw new UnauthorizedException("Channel is not joined.");
 		if (! participation.isModo)
 			throw new UnauthorizedException("You need to be moderator to mute/ban people on a channel.");
-		const futureBanned = await this.userRepo.findOne({ where: { id: futureBannedID } });
-		if (! futureBanned)
-			throw new NotFoundException(`userId #${futureBannedID} not found.`);
+		const futureUnBanned = await this.userRepo.findOne({ where: { id: futureUnBannedID } });
+		if (! futureUnBanned)
+			throw new NotFoundException(`userId #${futureUnBannedID} not found.`);
 
 		// todo : make a super user to avoid moderation problems ?
-		if (myChannel.owner.id == futureBanned.id)
+		if (myChannel.owner.id == futureUnBanned.id)
 			throw new UnauthorizedException("The Owner of the channel can't be banned, muted or unbanned.");
 
-		const futureBannedParticipation = await this.participationRepo.findOne({
+		const futureUnBannedParticipation = await this.participationRepo.findOne({
 			where: {
-				user: futureBannedID,
+				user: futureUnBannedID,
 				channel: myChannel.id,
 			}
 		});
-		if (! futureBannedParticipation)
+		if (! futureUnBannedParticipation)
 			throw new UnauthorizedException("This user is not in this channel.");
-		if (futureBannedParticipation.isModo)
+		if (futureUnBannedParticipation.isModo)
 			throw new UnauthorizedException("A Moderator can not be banned or muted or unbanned.");
 
 		const previousBans = await this.moderationTimeOutRepo.find({
 			where: {
-				user: futureBanned,
+				user: futureUnBanned,
 				channel: myChannel,
 			}
 		});
@@ -432,6 +506,8 @@ export class ChannelService {
 		});
 		if (!activeBanFound)
 			throw new NotFoundException("This user is not banned/muted");
+
+		return (futureUnBanned);
 	}
 
 	async giveModerationRights(channelID: string, username: string, futureModoID: string, isGiven: boolean)

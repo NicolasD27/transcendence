@@ -9,7 +9,9 @@ import {
 	HttpException,
 	HttpStatus,
 	Delete,
-	Patch
+	Patch,
+	HttpCode,
+	BadRequestException
 } from "@nestjs/common";
 import { CreateChannelDto } from "../dto/create-channel.dto";
 import { ChannelService } from "../service/channel.service";
@@ -19,11 +21,11 @@ import { JoinChannelDto } from "../dto/join-channel.dto";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
 import { MsgDto } from "src/message/dto/message.dto";
 import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
-import { BanUserFromChannelDto } from "../dto/ban-user-from-channel.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
-import { ChatGateway } from "src/message/gateway/message.gateway";
-import { activeUsers } from "src/auth-socket.adapter";
+import { CreateChannelInviteDto } from "../dto/create-channel-invite.dto";
+import { Channel } from "../entity/channel.entity";
+import { isNumber } from "@nestjs/class-validator";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -42,11 +44,12 @@ export class ChannelController {
 
 	@Get(':id')
 	@UseGuards(TwoFactorGuard)
-	async findOne(@Param('id') id: string)
+	async findOne(@Param('id') id: number)
 	{
 		return this.channelService.findOne(id);
 	}
 
+	// ! sending a letter breaks it (error 500)
 	@Get(':id/users')
 	@UseGuards(TwoFactorGuard)
 	async getChannelUsers(@Param('id') id: string)
@@ -56,8 +59,8 @@ export class ChannelController {
 
 	@Get(':id/messages')
 	@UseGuards(TwoFactorGuard)
-	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<MsgDto[]> { // @GetUsername() username: string
-
+	async getChannelMessages(@Param('id') id: string, @Req() request: Request) : Promise<MsgDto[]>
+	{
 		const username = request.cookies.username;
 		console.log(`// getChannelMessages() ${username} ${id}`);
 
@@ -67,9 +70,29 @@ export class ChannelController {
 		return this.channelService.getChannelMessages(id);
 	}
 
+	@Get('invites')
+	@UseGuards(TwoFactorGuard)
+	async getInvites(@Req() request: Request)
+	{
+		return this.channelService.getChannelInvites(request.cookies.username);
+	}
+
+	// @Post('invite')
+	// async createChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
+	// {
+	// 	return this.channelService.createChannelInvite(request.cookies.username, createChannelInviteDto);
+	// }
+
+	@Delete('invite/:id')
+	async createChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
+	{
+		// ! remove the invitation if in the 'id' row the receiver is the current user
+	}
+
 	@Post()
 	@UseGuards(TwoFactorGuard)
-	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto) {
+	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto)
+	{
 		const newChannel = await this.channelService.create(request.cookies.username, createChannelDto);
 		return newChannel;
 	}
@@ -169,6 +192,7 @@ export class ChannelController {
 	}
 
 	// todo : getBannedUsers && getMutedUsers
+	// todo : getModerators
 
 	@Patch(':id/changeOwner')
 	@UseGuards(TwoFactorGuard)

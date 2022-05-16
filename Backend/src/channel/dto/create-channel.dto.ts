@@ -1,6 +1,6 @@
-
-import { IsString, IsNumber, IsNotEmpty, MaxLength, Matches, MinLength } from "class-validator";
+import { IsString, IsNotEmpty, MaxLength } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean } from "@nestjs/class-validator";
 
 export class CreateChannelDto {
 
@@ -23,4 +23,7 @@ export class CreateChannelDto {
 	// @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
 	readonly password: string;
 
+	@ApiProperty()
+	@IsBoolean()
+	readonly isPrivate: boolean;
 }
