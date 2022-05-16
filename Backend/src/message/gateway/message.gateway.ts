@@ -89,19 +89,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				2
 			);
 
+			this.server.to("channel#" + banUserFromChannelDto.channelId)
+				.emit('ban', {
+					channelId: banUserFromChannelDto.channelId,
+
+					user: bannedUser,
+				}
+			);
+
 			// activeUsers.display(banUserFromChannelDto.userId);
 
 			if (activeUsers.isActiveUser(banUserFromChannelDto.userId) == true)
 			{
-				const targetUser = await this.userService.findOne(banUserFromChannelDto.userId.toString());
-				this.server.to("channel#" + banUserFromChannelDto.channelId)
-					.emit('ban', {
-						channelId: banUserFromChannelDto.channelId,
-
-						user: bannedUser,
-					}
-				);
-
 				const targetedClientSocket = await this.server
 					.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
 					.fetchSockets();
@@ -110,6 +109,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				{
 					console.log(`${banUserFromChannelDto.userId} kicked from channel#${banUserFromChannelDto.channelId}`);
 					targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
+
+					this.server.to("user#" + bannedUser.id)
+						.emit('mute', {
+							channelId: banUserFromChannelDto.channelId,
+							user: bannedUser,
+						}
+					);
 				}
 			}
 			else
@@ -117,8 +123,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 		catch (e) {
 			console.log(e.message);
-			return ; // an emit could be done to the client room of this socket
-		} // todo : try to break it 
+			return ;
+		}
 
 	}
 
@@ -141,6 +147,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					user: bannedUser,
 				}
 			);
+			if (activeUsers.isActiveUser(+banUserFromChannelDto.userId) == true)
+			{
+				this.server.to("user#" + bannedUser.id)
+					.emit('mute', {
+						channelId: banUserFromChannelDto.channelId,
+						user: bannedUser,
+					}
+				);
+			}
+			else
+				console.log(`${banUserFromChannelDto.userId} is not active`);
 		}
 		catch(e)
 		{
@@ -171,21 +188,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			if (activeUsers.isActiveUser(+data.userId) == true)
 			{
 				this.server.to("user#" + recuedUser.id)
-					.emit('ban', {
+					.emit('rescue', {
 						channelId: data.channelId,
 						user: recuedUser,
 					}
 				);
-
-				const targetedClientSocket = await this.server
-					.in(activeUsers.getSocketId(data.userId).socketId)
-					.fetchSockets();
-
-				if (targetedClientSocket.length)
-				{
-					console.log(`${data.userId} kicked from channel#${data.channelId}`);
-					targetedClientSocket[0].leave("channel#" + data.channelId.toString());
-				}
 			}
 			else
 				console.log(`${data.userId} is not active`);
