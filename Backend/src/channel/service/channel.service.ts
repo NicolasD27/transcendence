@@ -198,11 +198,13 @@ export class ChannelService {
 		return msgs;
 	}
 
-	async checUserIsNotBlockedBy(username: string, receiverId: number)
-	{
-		// const sender = await this.userRepo.findByUsername(username);
-		// const receiver = await this.user
-	}
+	// async checUserIsNotBlockedBy(username: string, receiverId: number)
+	// {
+	// 	// const sender = await this.userRepo.findByUsername(username);
+	// 	// const receiver = await this.user
+	// }
+
+	// ? Invites
 
 	async getChannelInvites(username: string)
 	{
@@ -217,11 +219,6 @@ export class ChannelService {
 		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
 		return (invites);
 	}
-
-	// async saveInvite(myInvite:ChannelInviteDto)
-	// {
-	// 	return await this.channelInviteRepo.save(myInvite);
-	// }
 
 	async saveInvite(username: string, createChannelInviteDto: CreateChannelInviteDto): Promise<ChannelInviteDto>
 	{

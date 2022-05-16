@@ -66,7 +66,7 @@ const app = new Vue({
 			return true;
 		},
 		async getPreviousMessages() {
-			let msgs = await (await fetch(`http://localhost:8000/api/channels/${this.channelId}/messages`)).json();
+			let msgs = await (await fetch(`http://localhost:8000/api/channels/${this.channelId}/`)).json();
 			this.messages = [];
 			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);

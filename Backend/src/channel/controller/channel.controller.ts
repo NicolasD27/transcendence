@@ -28,10 +28,19 @@ import { CreateChannelInviteDto } from "../dto/create-channel-invite.dto";
 @ApiTags('Channels')
 @Controller('channels/')
 export class ChannelController {
+
 	constructor(
 		private readonly channelService: ChannelService,
 		// private readonly chatGateway: ChatGateway,
-		) {}
+	) {}
+
+	@Post()
+	@UseGuards(TwoFactorGuard)
+	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto)
+	{
+		const newChannel = await this.channelService.create(request.cookies.username, createChannelDto);
+		return newChannel;
+	}
 
 	@Get()
 	@UseGuards(TwoFactorGuard)
@@ -68,6 +77,8 @@ export class ChannelController {
 		return this.channelService.getChannelMessages(id);
 	}
 
+	// ? Invites
+
 	@Get('invites')
 	@UseGuards(TwoFactorGuard)
 	async getInvites(@Req() request: Request)
@@ -75,95 +86,44 @@ export class ChannelController {
 		return this.channelService.getChannelInvites(request.cookies.username);
 	}
 
-	// @Post('invite')
-	// async createChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
-	// {
-	// 	return this.channelService.createChannelInvite(request.cookies.username, createChannelInviteDto);
-	// }
-
-	@Delete('invite/:id')
+	@Post(':id/invite')
 	async createChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
 	{
-		// ! remove the invitation if in the 'id' row the receiver is the current user
+		return this.channelService.saveInvite(request.cookies.username, createChannelInviteDto);
 	}
 
-	@Post()
-	@UseGuards(TwoFactorGuard)
-	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto)
+	@Delete(':id/invite')
+	async deleteChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
 	{
-		const newChannel = await this.channelService.create(request.cookies.username, createChannelDto);
-		return newChannel;
+		// ! remove the invitation if in the 'id' row the receiver is the current user
 	}
 
 	@Post(':id/join')
 	@UseGuards(TwoFactorGuard)
 	async join(@Param('id') id: string, @Req() request: Request, @Body() body: JoinChannelDto)
 	{
-		return this.channelService.join(request.cookies.username, id, body.password);
+		await this.channelService.join(request.cookies.username, id, body.password);
+		return true;
 	}
 
 	// todo : maybe use a Patch here ?
-	@Get(':id/leave')
+	@Patch(':id/leave')
 	@UseGuards(TwoFactorGuard)
 	async leave(@Param('id') id: string, @Req() request: Request)
 	{
-		return await this.channelService.leave(request.cookies.username, id);
+		await this.channelService.leave(request.cookies.username, id);
+		return true;
 	}
 
-	@Patch(':id/updatePassword')
+	@Patch(':id/')
 	@UseGuards(TwoFactorGuard)
 	async updatePassword(@Param('id') id: string, @Req() request: Request, @Body() updateChannelPassword: UpdateChannelPassword)
 	{
 		await this.channelService.updatePassword(id, request.cookies.username, updateChannelPassword);
-		return ;
+		return true;
 	}
 
-	// @Patch(':id/ban')
-	// @UseGuards(TwoFactorGuard)
-	// async banUser(
-	// 	@Param('id') id: string,
-	// 	@Req() request: Request,
-	// 	@Body() banUserFromChannelDto: BanUserFromChannelDto)
-	// {
-	// 	await this.channelService.changeBanStatus(id, request.cookies.username,
-	// 		banUserFromChannelDto, 2);
-		
-	// 	const myClientSocket = await this.chatGateway.server
-	// 		.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
-	// 		.fetchSockets();
-	// 	if (myClientSocket.length)
-	// 	{
-	// 		console.log(`${banUserFromChannelDto.userId} kicked from ${id}`);
-	// 		myClientSocket[0].leave("channel#" + id);
-	// 	}
-	// 	return ;
-	// }
-
-	// @Patch(':id/mute')
-	// @UseGuards(TwoFactorGuard)
-	// async muteUser(
-	// 	@Param('id') id: string,
-	// 	@Req() request: Request,
-	// 	@Body() banUserFromChannelDto: BanUserFromChannelDto)
-	// {
-	// 	await this.channelService.changeBanStatus(
-	// 		id, request.cookies.username, banUserFromChannelDto, 1);
-	// 	return ;
-	// }
-
-	// @Patch(':channelID/rescue/:userID')		// rescue is funnier than unban :)
-	// @UseGuards(TwoFactorGuard)
-	// async unbanUser(
-	// 				@Param('channelID') channelID: string,
-	// 				@Param('userID') userID: string,
-	// 				@Req() request: Request,
-	// 				)
-	// {
-	// 	await this.channelService.revertBanStatus(channelID, request.cookies.username, userID);
-	// 	return ;
-	// }
-
-	@Patch(':channelID/moderator/set/:userID')
+	@Post(':channelID/moderators/:userID')
 	@UseGuards(TwoFactorGuard)
 	async giveModoToUser(
 						@Param('channelID') channelID: string,
@@ -175,7 +135,7 @@ export class ChannelController {
 		return ;
 	}
 
-	@Patch(':channelID/moderator/remove/:userID')
+	@Delete(':channelID/moderators/:userID')
 	@UseGuards(TwoFactorGuard)
 	async declineModoToUser(
 		@Param('channelID') channelID: string,
@@ -190,7 +150,7 @@ export class ChannelController {
 	// todo : getBannedUsers && getMutedUsers
 	// todo : getModerators
 
-	@Patch(':id/changeOwner')
+	@Patch(':id/')
 	@UseGuards(TwoFactorGuard)
 	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
 	{
@@ -198,7 +158,7 @@ export class ChannelController {
 		return ;
 	}
 
-	@Delete(':id/delete')
+	@Delete(':id/')
 	@UseGuards(TwoFactorGuard)
 	async remove(@Param('id') id: string, @Req() request: Request, @Body() deleteChannelDto: DeleteChannelDto)
 	{
