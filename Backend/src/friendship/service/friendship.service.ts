@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from 'src/notifications/entity/notification.entity';
+import { NotificationService } from 'src/notifications/service/notification.service';
 import { UserDto } from 'src/user/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
@@ -14,7 +16,8 @@ export class FriendshipService {
         @InjectRepository(Friendship)
         private  friendshipsRepository: Repository<Friendship>,
         @InjectRepository(User)
-        private  usersRepository: Repository<User>
+        private  usersRepository: Repository<User>,
+        private readonly notificationService: NotificationService
         ) {}
 
     async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
@@ -27,7 +30,7 @@ export class FriendshipService {
                 { following: user },
             ],
         })
-        .then(items => items.map(e=> Friendship.toDto(e)));;
+        .then(items => items.map(e=> Friendship.toDto(e)));
     }
 
     async findAllActiveFriendsByUser(user_id: number): Promise<UserDto[]> {
@@ -81,10 +84,13 @@ export class FriendshipService {
         })
         if (friendship)
             throw new BadRequestException("Frienship already exist");
-        return Friendship.toDto(await this.friendshipsRepository.save({
+        
+        friendship = await this.friendshipsRepository.save({
             follower: follower,
             following: following,
-        }));
+        });
+        this.notificationService.create(friendship, following);
+        return Friendship.toDto(friendship)
     }
 
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {

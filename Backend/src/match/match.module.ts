@@ -7,10 +7,13 @@ import { Match } from './entity/match.entity';
 import { MatchController } from './controller/match.controller';
 import { User } from '../user/entity/user.entity';
 import { AuthService } from '../user/service/auth.service';
+import { NotificationService } from 'src/notifications/service/notification.service';
+import { NotificationRepository } from 'src/notifications/repository/notification.repository';
+import { Notification } from 'src/notifications/entity/notification.entity';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([User, Match]),
+		TypeOrmModule.forFeature([User, Match, Notification, NotificationRepository]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {
@@ -19,7 +22,7 @@ import { AuthService } from '../user/service/auth.service';
         }),
 	],
 	controllers: [MatchController],
-	providers: [MatchService, MatchGateway, AuthService],
+	providers: [MatchService, MatchGateway, AuthService, NotificationService],
 	exports: [MatchService]
 })
 export class MatchModule {}

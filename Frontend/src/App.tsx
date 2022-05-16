@@ -43,8 +43,8 @@ const App = () => {
       
       <Routes>
         <Route path="/" element={<Home />} />
-          <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
-          <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
+        <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
+        <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/login" element={<Login isAuth={isAuth}/>} />
           <Route path="/profil" element={<Profil isAuth={isAuth}/>} />
         </Route>

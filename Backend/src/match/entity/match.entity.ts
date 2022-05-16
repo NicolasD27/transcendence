@@ -2,6 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "ty
 import { User } from "../../user/entity/user.entity";
 import { MatchDto } from "../dto/match.dto";
 import { BALL_VX, BALL_VY, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP } from '../match.constants';
+import { PolymorphicChildren } from "typeorm-polymorphic"
+import { Notification } from "src/notifications/entity/notification.entity";
 
 export enum MatchStatus {
     INVITE_SEND,
@@ -25,6 +27,9 @@ export class Match {
 
     @ManyToOne(() => User, user => user.matchs2, { eager: true })	// when real users will be used
 	public user2: User;
+
+    @PolymorphicChildren(() => Notification)
+        notification: Notification;
 
     @Column({ default: GAME_SLEEP})
     public sleep: number;

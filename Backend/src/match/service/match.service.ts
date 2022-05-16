@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotificationService } from 'src/notifications/service/notification.service';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
@@ -16,6 +17,8 @@ export class MatchService {
 		private matchsRepository: Repository<Match>,
 		@InjectRepository(User)
 		private usersRepository: Repository<User>,
+		private readonly notificationService: NotificationService
+		
 	) {}
 
 	async findAll(): Promise<MatchDto[]> {
@@ -84,6 +87,8 @@ export class MatchService {
 				user2: user2,
 				mode: createMatchDto.mode
 			});
+			if (match)
+				this.notificationService.create(match, match.user2)
 		}
 		return Match.toDto(match)
     }

@@ -12,6 +12,7 @@ import { Channel } from '../channel/entity/channel.entity';
 import { Participation } from 'src/channel/entity/participation.entity';
 import { ModerationTimeOut } from 'src/channel/entity/moderationTimeOut.entity';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
+import { NotificationService } from 'src/notifications/service/notification.service';
 
 @Module({
 	imports: [
@@ -24,7 +25,7 @@ import { FriendshipService } from 'src/friendship/service/friendship.service';
         }),
 	],
 	controllers: [],
-	providers: [DirectMessageService, DirectMessageGateway, AuthService, FriendshipService],
+	providers: [DirectMessageService, DirectMessageGateway, AuthService, FriendshipService, NotificationService],
 	exports: [DirectMessageService]
 })
 export class DirectMessageModule {}

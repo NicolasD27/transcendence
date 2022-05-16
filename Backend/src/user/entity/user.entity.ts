@@ -9,6 +9,7 @@ import { Participation } from "src/channel/entity/participation.entity";
 import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
 import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
+import { Notification } from "src/notifications/entity/notification.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -80,6 +81,9 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => Match, match => match.user2)
 	matchs2: Match[];
+
+	@OneToMany(() => Notification, notification => notification.receiver)
+	notifications: Notification[];
 
 	static toDto(user: User) {
 		return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
