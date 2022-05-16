@@ -17,9 +17,9 @@ import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
 import { ModerationTimeOut } from '../entity/moderationTimeOut.entity';
 import { ChannelInvite } from '../entity/channelInvite.entity';
 import { CreateChannelInviteDto } from '../dto/create-channel-invite.dto';
-import { ChatGateway } from 'src/message/gateway/message.gateway';
-import { Server } from 'socket.io';
 import { ChannelInviteDto } from '../dto/channel-invite.dto';
+import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
+
 
 @Injectable()
 export class ChannelService {
@@ -42,6 +42,9 @@ export class ChannelService {
 
 		@InjectRepository(ChannelInvite)
 		private channelInviteRepo: Repository<ChannelInvite>,
+
+		@InjectRepository(Friendship)
+		private friendshipRepo: Repository<Friendship>
 	)
 	{}
 
@@ -195,6 +198,12 @@ export class ChannelService {
 		return msgs;
 	}
 
+	async checUserIsNotBlockedBy(username: string, receiverId: number)
+	{
+		// const sender = await this.userRepo.findByUsername(username);
+		// const receiver = await this.user
+	}
+
 	async getChannelInvites(username: string)
 	{
 		const myUser = await this.userRepo.find({username});
@@ -224,6 +233,15 @@ export class ChannelService {
 		if (!myReceiver)
 			throw new NotFoundException();
 
+		//? check the black list of the receiver to avoid spam
+		const blacklisted = this.friendshipRepo.findOne({
+			where: {
+				follower: FriendshipStatus.BLOCKED_BY_2,
+			}}
+		);
+		if (blacklisted)
+			throw new UnauthorizedException("You are blacklisted by this user.");
+		
 		const newInvite = this.channelInviteRepo.create({
 			channel: myChannel,
 			sender: mySender,

@@ -208,10 +208,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('sendInvite')
 	async createChannelInvite(socket: CustomSocket, createChannelInviteDto: CreateChannelInviteDto)
 	{
-		//! check the black list of the receiver to avoid spam
-
 		try
 		{
+			
+			// this.channelService.checUserIsNotBlockedBy(getUsernameFromSocket(socket), createChannelInviteDto.userId);
+
 			const newInviteDto = await this.channelService.saveInvite(getUsernameFromSocket(socket), createChannelInviteDto);
 			console.log("// newInvite inserted");
 
@@ -226,7 +227,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		catch (e)
 		{
 			console.log("error: " + e.message);
-			return { error: e.message };	// an emit could be done to the client room of this socket
+			return { error: e.message };	// todo : an emit could be done to the client room of this socket
 		}
 	}
 
