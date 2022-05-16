@@ -22,23 +22,30 @@ const Chat = () => {
 }
 
 const Login = () => {
+	const [idMe, setIdMe] = useState(0);
+	const [getIDMe, setGetIDMe] = useState(false);
+
 	const navigate = useNavigate()
 	const onPlay = () => {
 		navigate("")
 	}
-	const onProfil = (id: number, idMe: number) => {
-		navigate("/profil", { state: { id, idMe } })
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
 	}
-	const [idPerso, setIdPerso] = useState(0);
-	const [getID, setGetID] = useState(false);
+	const onLogout = () => {
+		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
+			.then(res => {
+			})
+		navigate("/")
+	}
 
-	if (getID === false) {
+	if (getIDMe === false) {
 		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				const id_tmp = res.data;
-				setIdPerso(id_tmp.id)
+				setIdMe(id_tmp.id)
 			})
-		setGetID(getID => true)
+		setGetIDMe(getIDMe => true)
 	}
 	return (
 		<Fragment>
@@ -46,7 +53,8 @@ const Login = () => {
 				<div className='boxNav'>
 					<img src={mainTitle} className='titleNav' alt="mainTitle" />
 					<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-					<div><button onClick={() => onProfil(idPerso, idPerso)} className='ButtonStyle navButton'>Profil</button></div>
+					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
+					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 				</div >
 				<section id="gameAndChatSection">
 					<div className='gameArea'><div className='gameAreaSeparation'></div></div>
