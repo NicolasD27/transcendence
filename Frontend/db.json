@@ -1,12 +1,6 @@
 {
   "friends": [
     {
-      "id": "01",
-      "status": "offline",
-      "username": "friend1",
-      "avatar": "src/asset/friend1.svg"
-    },
-    {
       "id": "08",
       "status": "online",
       "username": "friend8",
@@ -243,6 +237,12 @@
       "status": "online",
       "username": "friend22",
       "avatar": "src/asset/friend2.svg"
+    },
+    {
+      "id": "01",
+      "status": "offline",
+      "username": "friend1",
+      "avatar": "src/asset/friend1.svg"
     }
   ],
   "friendRequestsReceived": [
@@ -253,24 +253,85 @@
       "avatar": "src/asset/friend4.png"
     }
   ],
-  "Channels": [
+  "channelsJoined": [
     {
       "id": "00",
-      "name": "fr",
+      "name": "channel00",
       "description": "",
+      "password": "",
       "owner": "00"
     },
     {
       "id": "01",
-      "name": "ftest",
+      "name": "channel01",
       "description": "",
+      "password": "",
       "owner": "00"
     },
     {
       "id": "02",
-      "name": "frthekillers",
+      "name": "channel02",
       "description": "",
+      "password": "",
       "owner": "00"
+    },
+    {
+      "id": "04",
+      "name": "channel04",
+      "description": "",
+      "password": "",
+      "owner": "10"
+    }
+  ],
+  "existingChannels": [
+    {
+      "id": "00",
+      "name": "channel00",
+      "description": "",
+      "password": "",
+      "owner": "00"
+    },
+    {
+      "id": "01",
+      "name": "channel01",
+      "description": "",
+      "password": "",
+      "owner": "00"
+    },
+    {
+      "id": "02",
+      "name": "channel02",
+      "description": "",
+      "password": "",
+      "owner": "00"
+    },
+    {
+      "id": "03",
+      "name": "channel03",
+      "description": "",
+      "password": "private",
+      "owner": "02"
+    },
+    {
+      "id": "04",
+      "name": "channel04",
+      "description": "",
+      "password": "",
+      "owner": "10"
+    },
+    {
+      "id": "05",
+      "name": "channel05",
+      "description": "",
+      "password": "",
+      "owner": "10"
+    },
+    {
+      "id": "06",
+      "name": "channel06",
+      "description": "",
+      "password": "",
+      "owner": "09"
     }
   ]
 }

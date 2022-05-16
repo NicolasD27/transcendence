@@ -404,8 +404,6 @@ button {
 	background-image: url('../asset/AddFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 36px;
-	width: 36px;
 }
 
 #AddFriendButton:hover{
@@ -525,7 +523,8 @@ button {
 }
 
 .channel {
-	position: relative;
+	display: flex;
+	flex-direction: row;
 	align-items: center;
 	border: 2px solid #C0F4FE;
 	color: #C0F4FE;
@@ -540,39 +539,51 @@ button {
 }
 
 #channelAvatarIcon {
-	position: absolute;
-	left: 18px;
-	bottom: 5px;
+	position: relative;
+	width: 40px;
+	height: 40px;
+	margin: 7px 15px 7px 18px;
 	background-image: url('../asset/ChannelIcon.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	width: 40px;
-	height: 40px;
+	border: none;
 }
 
 #channelName {
-	position: absolute;
-	width: 120px;
 	color: #C0F4FE;
+	min-width: 120px;
 	font-size: 15px;
 	font-weight: normal;
 	white-space: nowrap;
 	overflow-x: hidden;
-	top: 14px;
-	left: 68px;
+}
+
+#channel_buttons {
+	display: flex;
+	width: 75px;
+	height: 36px;
+	margin: 7px 18px 7px 7px;
+}
+
+#channelChat_button {
+	width: 36px;
+	height: 36px;
+	background-image: url('../asset/ChatIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#channelChat_button:hover {
+	background-image: url('../asset/ChatIcon_red.svg');
 }
 
 #muteChannel {
-	position: absolute;
+	width: 36px;
+	height: 36px;
+	margin-right: 3px;
 	background-image: url('../asset/muteIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 36px;
-	width: 36px;
-	padding: 0;
-	top: 7px;
-	right: 18px;
-	border: none;
 }
 
 #muteChannel:hover {
@@ -580,20 +591,68 @@ button {
 }
 
 #unmuteChannel {
-	position: absolute;
+	width: 36px;
+	height: 36px;
+	margin-right: 3px;
 	background-image: url('../asset/unmuteIcon_red.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 36px;
-	width: 36px;
-	padding: 0;
-	top: 7px;
-	right: 18px;
-	border: none;
 }
 
 #unmuteChannel:hover {
 	background-image: url('../asset/unmuteIcon_red.svg');
+}
+
+#channelSendRequest_buttons {
+	width: 36px;
+	height: 36px;
+	margin-top: 9px;
+	margin-left: 46px;
+	margin-right: 18px;
+	margin-bottom: 9px;
+	background-image: url('../asset/AddFriendIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#channelPassword {
+	width: 202px;
+	height: 36px;
+	border-radius: 20px;
+	border: 2px solid #C0F4FE;
+	margin: 9px 18px 9px 0px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+#channelPassword:hover {
+	border: 2px solid #E11515;
+}
+
+#channelPassword:focus {
+	border: 2px solid #E11515;
+}
+
+#channelPassword input {
+	width:138px;
+	color: #C0F4FE;
+	font-size: 14px;
+	font-weight: normal;
+	margin-left: 18px;
+	margin-right: 10px;
+}
+
+#confirmPassword{
+	width: 32px;
+	height: 32px;
+	background-image: url('../asset/ConfirmPasswordIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#confirmPassword:hover {
+	background-image: url('../asset/ConfirmPasswordIcon_red.svg');
 }
 
 #channelColumnButton {

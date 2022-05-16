@@ -11,10 +11,12 @@ import user1 from "../asset/friend1.svg"
 import playIcon from "../asset/PlayIcon_blue.svg"
 import Avatar from '../components/Avatar';
 import CloseChatWindow from '../asset/CloseChatWindow.svg'
-import { channel } from 'diagnostics_channel';
+import { Channel, channel } from 'diagnostics_channel';
 import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { join } from 'path';
 
-const dataUrlChannel = "http://localhost:3001/channels"
+const dataUrlchannelsJoined = "http://localhost:3001/channelsJoined"
+const dataUrlExistingChannel = "http://localhost:3001/existingChannels"
 const dataUrlFriends = "http://localhost:3001/friends"
 const dataUrlFriendRequestsSent = "http://localhost:3001/friendRequestsSent"
 const dataUrlFriendRequestsReceived = "http://localhost:3001/friendRequestsReceived"
@@ -60,6 +62,7 @@ const PrintFriendToAddChannel = (props:any) => {
 const SearchBarAddGroup = (props:any) => {
 
 	const [ selectedFriend, setSelectedFriend ] = useState([])
+
 	const handleSearchRequest = (e:any) => {
 		props.setSearchValue("")
 		let value = e.target.value
@@ -109,7 +112,7 @@ const PrintNormalProfile = (props:any) => {
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatState(true)}/> 
+								<button id="friendChat_button" onClick={() => props.setChatFriendState(true)}/> 
 							</>
 						) ||
 							<div id='profileBlocked'>
@@ -166,7 +169,7 @@ const PrintFriendProfile = (props:any) => {
 					<img src={user1} className="userAvatar" alt="userAvatar"/>
 					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
 				</div>
-			{!friendDeleteColumnState && <PrintNormalProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatState={props.setChatState} setSelectedUser={props.setSelectedUser} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
+			{!friendDeleteColumnState && <PrintNormalProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatFriendState={props.setChatFriendState} setSelectedUser={props.setSelectedUser} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} username={props.username} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 		</div>
 	)
@@ -222,24 +225,85 @@ const PrintSendFriendRequestProfile = (props:any) => {
 	)
 }
 
-const PrintChannel = (props:any) => {
+const PrintChannelsJoined = ({channel, chatChannelState, setChatChannelState}:any) => {
 	const [ isMute, setIsMute ]= useState(false)
 
 	return (
 		<div className='channel'>
 			<div id='channelAvatarIcon'></div>
-			<div id="channelName">{props.channelName}</div>
+			<div id="channelName">{channel.name}</div>
+			<div id="channel_buttons">
+				{
+					!isMute && <button id="muteChannel" onClick={() => setIsMute(true)}/> ||
+					<button id="unmuteChannel" onClick={() => setIsMute(false)}/>
+				}
+				<button id="channelChat_button" onClick={() => setChatChannelState(!chatChannelState)}/> 
+			</div>
+		</div>
+	)
+}
+
+const PrintChannelsToJoin = ({channel, setJoinedChannels}:any) => {
+	const [ isButtonClicked, setIsButtonClicked ] = useState(false)
+	const [ enteredPassword, setEnteredPassword ] = useState("")
+
+	const handleEnteredPassword = (e:any) => {
+		setEnteredPassword(e.target.value);
+	}
+
+	const checkPassword = () => {
+		if (channel.password === enteredPassword)
+			return true
+		else
+			return false
+	}
+
+	return (
+		<div className='channel'>
+			<div id='channelAvatarIcon'></div>
 			{
-				(!isMute && <button id="muteChannel" onClick={() => setIsMute(true)}/>) ||
-				<button id="unmuteChannel" onClick={() => setIsMute(false)}/>
+				(!isButtonClicked &&
+					( 
+						<>
+							<div id="channelName">{channel.name}</div>
+							<button id="channelSendRequest_buttons" onClick={() => setIsButtonClicked(true)}/>
+						</>
+					)
+				) ||
+				(
+					(channel.password === "private" && 
+					<div id="channelPassword">
+						<input type="password" placeholder="Password" onChange={handleEnteredPassword} required/>
+						<button id="confirmPassword" onClick={() => checkPassword()}/>
+					</div>) || (
+							axios
+								.post(dataUrlchannelsJoined, channel)
+								.then((res) => {
+									setJoinedChannels(res.data)
+								})
+								.catch((err) => 
+									console.log(err)
+								)
+					)
+				) 
+			
 			}
 		</div>
 	)
 }
 
-const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue, setChatState, setSelectedUser}:any) => {
+const UserList = ({existingChannels, joinedChannels, users, setUsers, friends, setFriends, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue, setJoinedChannels, setChatFriendState, chatChannelState, setChatChannelState, setSelectedUser}:any) => {
 
-	const sendFriendshipRequest= (user: any) => {
+	const isAlreadyMember = (channelId: any) => {
+		for (var i = 0; i < joinedChannels.length; i++)
+		{
+			if (joinedChannels[i].id === channelId)
+				return true
+		}
+		return false
+	}
+
+	const sendFriendshipRequest= (user:any) => {
 		axios
 			.post(dataUrlFriendRequestsSent, user)
 			.then((response) => {
@@ -253,7 +317,7 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 			if (friends[i].id === id)
 				return true
 		}
-		return false;
+		return false
 	}
 
 	const isThereAFriendshipRequest = (id: any) => {
@@ -261,7 +325,7 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 			if (user.id === id)
 				return true
 		}
-		return false;
+		return false
 	}
 
 	const isThereAFriendshipRequestSent = (id: any) => {
@@ -270,7 +334,7 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 			if (friendRequestsSent[i].id === id)
 				return true
 		}
-		return false;
+		return false
 	}
 
 	const acceptFriendshipRequest = (user:any) => {
@@ -297,16 +361,19 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 			<div className='usersList'>
 			{
 				searchValue !== ""
-				&& channel
+				&& existingChannels
 					.filter((channel:any) => {
 						return channel.name.toLowerCase().includes(searchValue.toLowerCase())
 					})
 					.map((channel:any) => {
-						console.log('channel.name: ', channel.name)
-						return (
-							<PrintChannel channelName={channel.name} key={channel.id}/>
-						)}
-					)
+						if (Boolean(isAlreadyMember(channel.id)) === true)
+						{
+							return <PrintChannelsJoined channel={channel} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState} key={channel.id}/>
+						}
+						else {
+							return <PrintChannelsToJoin channel={channel} setJoinedChannels={setJoinedChannels} key={channel.id}/>
+						}
+					})
 			}
 			{
 				searchValue !== ""
@@ -319,7 +386,7 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 						if (Boolean(isAlreadyFriend(user.id)) === true)
 						{
 							return (
-								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatState={setChatState} setSelectedUser={setSelectedUser}/>
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}/>
 							)
 						}
 						else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
@@ -339,22 +406,33 @@ const UserList = ({channel, setChannel, users, setUsers, friends, setFriends, fr
 								<PrintSendFriendRequestProfile user={user} status={status} username={user.username} sendFriendshipRequest={sendFriendshipRequest} key={user.id}/>
 							)
 					})
-				||
-				(!searchValue && friends
-					.map((user:any) => {
-						let status = (user.status === "online" ? statutIconGreen : statutIconRed);
-						return (
-							<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatState={setChatState} setSelectedUser={setSelectedUser}/>
-						);
-					})
-				)
+			}
+			{
+					!searchValue && 
+					(joinedChannels
+						.map((channel:any) => {
+								return (
+									<PrintChannelsJoined channel={channel} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState} key={channel.id}/>
+								)
+						}))
+			}
+			{
+					!searchValue && 
+					friends
+						.map((user:any) => {
+							let status = (user.status === "online" ? statutIconGreen : statutIconRed);
+							return (
+								<PrintFriendProfile user={user} status={status} username={user.username} key={user.id} setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}/>
+							)
+						})
 			}
 		</div>
 	)
 }
 
-const Users = ({users, setUsers, setChatState, setSelectedUser}:any) => {
-	const [ channel, setChannels ] = useState([])
+const Users = ({users, setUsers, setChatFriendState, chatChannelState, setChatChannelState, setSelectedUser}:any) => {
+	const [ joinedChannels, setJoinedChannels ] = useState([])
+	const [ existingChannels, setExistingChannels ] = useState([])
 	const [ friends, setFriends ] = useState([])
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState([])
 	const [ friendRequestReceived, setFriendRequestReceived ] = useState([])
@@ -363,15 +441,27 @@ const Users = ({users, setUsers, setChatState, setSelectedUser}:any) => {
 
 	useEffect(() => {
 		axios
-		.get(dataUrlChannel)
+		.get(dataUrlchannelsJoined)
 		.then (res => {
 			let channel = res.data;
-			setChannels(channel)
+			setJoinedChannels(channel)
 		})
 		.catch (err =>
 			console.log(err)
 		)
-	}, [channel])
+	}, [joinedChannels])
+
+	useEffect(() => {
+		axios
+		.get(dataUrlExistingChannel)
+		.then (res => {
+			let channel = res.data;
+			setExistingChannels(channel)
+		})
+		.catch (err =>
+			console.log(err)
+		)
+	}, [existingChannels])
 
 	useEffect(() => {
 		axios 
@@ -416,8 +506,8 @@ const Users = ({users, setUsers, setChatState, setSelectedUser}:any) => {
 			{
 				!createChannelButtonState && 
 				<UserList 
-					channel={channel}
-					setChannels={setChannels}
+					existingChannels={existingChannels}
+					joinedChannels={joinedChannels}
 					users={users}
 					setUsers={setUsers}
 					friends={friends}
@@ -428,7 +518,10 @@ const Users = ({users, setUsers, setChatState, setSelectedUser}:any) => {
 					setFriendRequestReceived={setFriendRequestReceived}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
-					setChatState={setChatState}
+					setJoinedChannels={setJoinedChannels}
+					setChatFriendState={setChatFriendState}
+					chatChannelState={chatChannelState}
+					setChatChannelState={setChatChannelState}
 					setSelectedUser={setSelectedUser}
 				/>
 			}
@@ -447,7 +540,7 @@ const Chat = (props:any) => {
 					<img src={user1} className="friendchatAvatar" alt="friendAvatar"/>
 				</div>
 				<div id="chatUsername">{username}</div>
-				<button id='chatColumnButton' onClick={() => props.setChatState(false)}/>
+				<button id='chatColumnButton' onClick={() => props.setChatFriendState(false)}/>
 			</div>
 			<div className='messageArea'></div>
 			<div id="sendTextArea"> 
@@ -483,7 +576,8 @@ const Body = () => {
 
 	const [ users, setUsers ] = useState([])
 	const [ selectedUser, setSelectedUser ] = useState(users)
-	const [ chatState, setChatState ] = useState(false) 
+	const [ chatFriendState, setChatFriendState ] = useState(false) 
+	const [ chatChannelState, setChatChannelState ] = useState(false) 
 
 	useEffect(() => {
 		axios
@@ -500,8 +594,8 @@ const Body = () => {
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-			{(!chatState && <Users users={users} setUsers={setUsers} setChatState={setChatState} setSelectedUser={setSelectedUser}/>) 
-			|| (<Chat setChatState={setChatState}/>)}
+			{(!chatFriendState && <Users users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState} setSelectedUser={setSelectedUser}/>) 
+			|| (<Chat setChatFriendState={setChatFriendState}/>)}
 		</section>
 	)
 }
