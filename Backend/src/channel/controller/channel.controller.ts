@@ -24,8 +24,6 @@ import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 import { CreateChannelInviteDto } from "../dto/create-channel-invite.dto";
-import { Channel } from "../entity/channel.entity";
-import { isNumber } from "@nestjs/class-validator";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -99,10 +97,9 @@ export class ChannelController {
 
 	@Post(':id/join')
 	@UseGuards(TwoFactorGuard)
-	async join(@Param('id') id: string, @Req() request: Request, @Body() body: JoinChannelDto) //@GetUser() user
+	async join(@Param('id') id: string, @Req() request: Request, @Body() body: JoinChannelDto)
 	{
-		this.channelService.join(request.cookies.username, id, body.password);
-		return ;
+		return this.channelService.join(request.cookies.username, id, body.password);
 	}
 
 	// todo : maybe use a Patch here ?
@@ -110,8 +107,7 @@ export class ChannelController {
 	@UseGuards(TwoFactorGuard)
 	async leave(@Param('id') id: string, @Req() request: Request)
 	{
-		await this.channelService.leave(request.cookies.username, id);
-		return ;
+		return await this.channelService.leave(request.cookies.username, id);
 	}
 
 	@Patch(':id/updatePassword')

@@ -167,7 +167,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		return ;
 	}
 
-	@SubscribeMessage('rescue')
+	@SubscribeMessage('rescue')	// unrestrict ?
 	async unbanUser(
 		socket: CustomSocket,
 		data: { userId: number, channelId: number })
@@ -210,9 +210,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	{
 		try
 		{
-			
-			// this.channelService.checUserIsNotBlockedBy(getUsernameFromSocket(socket), createChannelInviteDto.userId);
-
 			const newInviteDto = await this.channelService.saveInvite(getUsernameFromSocket(socket), createChannelInviteDto);
 			console.log("// newInvite inserted");
 
