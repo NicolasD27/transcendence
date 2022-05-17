@@ -106,12 +106,8 @@ export class ChannelService {
 		if (channelExist)
 			throw new UnauthorizedException("This channel name is already taken.");
 
-		// if (createChannelDto.isPrivate) // ! faire un truc
-		
-		// if (createChannelDto.password && createChannelDto.password.length > 0)
-
-		// if (createChannelDto.isPrivate === false)
-		// 	myPassword = createChannelDto.password;
+		if (createChannelDto.isPrivate === false)
+			myPassword = createChannelDto.password;
 
 		hash = await bcrypt.hash(myPassword, this.saltRounds);
 
@@ -249,8 +245,6 @@ export class ChannelService {
 
 	async saveInvite(username: string, createChannelInviteDto: CreateChannelInviteDto): Promise<ChannelInviteDto>
 	{
-		// * It could be cool to avoid spamming somehow
-		// -> limit to one sender for a receiver
 		const myChannel = await this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
 		if (!myChannel)
 			throw new NotFoundException();
@@ -275,6 +269,15 @@ export class ChannelService {
 		if (blacklisted.length)
 			throw new UnauthorizedException("You or this user is blacklisted.");
 		
+		const previousInvite = await this.channelInviteRepo.findOne({
+			where: {
+				sender: mySender.id,
+				receiver: myReceiver.id,
+			}
+		});
+		if (previousInvite) // -> limit to one sender for a receiver
+			throw new UnauthorizedException("An Invitation is aleady waiting to be accepted.");
+
 		const newInvite = await this.channelInviteRepo.create({
 			channel: myChannel,
 			sender: mySender,
