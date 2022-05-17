@@ -10,8 +10,7 @@ import {
 	HttpStatus,
 	Delete,
 	Patch,
-	HttpCode,
-	BadRequestException
+	Put
 } from "@nestjs/common";
 import { CreateChannelDto } from "../dto/create-channel.dto";
 import { ChannelService } from "../service/channel.service";
@@ -49,12 +48,39 @@ export class ChannelController {
 		return this.channelService.findAll();
 	}
 
-	@Get(':id')
+	@Get(':id/')
 	@UseGuards(TwoFactorGuard)
 	async findOne(@Param('id') id: number)
 	{
 		return this.channelService.findOne(id);
 	}
+
+	@Put(':id/')
+	@UseGuards(TwoFactorGuard)
+	async updatePassword(@Param('id') id: string, @Req() request: Request,
+		@Body() updateChannelPassword: UpdateChannelPassword)
+	{
+		await this.channelService.updatePassword(id, request.cookies.username, updateChannelPassword);
+		return ;
+	}
+
+	@Patch(':id/')
+	@UseGuards(TwoFactorGuard)
+	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
+	{
+		await this.channelService.changeOwner(id, request.cookies.username, changeChannelOwnerDto);
+		return ;
+	}
+
+	@Delete(':id/')
+	@UseGuards(TwoFactorGuard)
+	async remove(@Param('id') id: string, @Req() request: Request, @Body() deleteChannelDto: DeleteChannelDto)
+	{
+		await this.channelService.remove(id, request.cookies.username, deleteChannelDto);
+		return ;
+	}
+
+	// ? Not channel directly
 
 	// ! sending a letter breaks it (error 500)
 	@Get(':id/users')
@@ -98,30 +124,25 @@ export class ChannelController {
 		// ! remove the invitation if in the 'id' row the receiver is the current user
 	}
 
+	// ? Join / Leave
+
 	@Post(':id/join')
 	@UseGuards(TwoFactorGuard)
 	async join(@Param('id') id: string, @Req() request: Request, @Body() body: JoinChannelDto)
 	{
 		await this.channelService.join(request.cookies.username, id, body.password);
-		return true;
+		// return true;
 	}
 
-	// todo : maybe use a Patch here ?
-	@Patch(':id/leave')
+	@Delete(':id/leave')
 	@UseGuards(TwoFactorGuard)
 	async leave(@Param('id') id: string, @Req() request: Request)
 	{
 		await this.channelService.leave(request.cookies.username, id);
-		return true;
+		return ;
 	}
 
-	@Patch(':id/')
-	@UseGuards(TwoFactorGuard)
-	async updatePassword(@Param('id') id: string, @Req() request: Request, @Body() updateChannelPassword: UpdateChannelPassword)
-	{
-		await this.channelService.updatePassword(id, request.cookies.username, updateChannelPassword);
-		return true;
-	}
+	// ? moderators
 
 	@Post(':channelID/moderators/:userID')
 	@UseGuards(TwoFactorGuard)
@@ -149,21 +170,5 @@ export class ChannelController {
 
 	// todo : getBannedUsers && getMutedUsers
 	// todo : getModerators
-
-	@Patch(':id/')
-	@UseGuards(TwoFactorGuard)
-	async changeOwner(@Param('id') id: string, @Req() request: Request, @Body() changeChannelOwnerDto:ChangeChannelOwnerDto)
-	{
-		await this.channelService.changeOwner(id, request.cookies.username, changeChannelOwnerDto);
-		return ;
-	}
-
-	@Delete(':id/')
-	@UseGuards(TwoFactorGuard)
-	async remove(@Param('id') id: string, @Req() request: Request, @Body() deleteChannelDto: DeleteChannelDto)
-	{
-		await this.channelService.remove(id, request.cookies.username, deleteChannelDto);
-		return ;
-	}
 
 }

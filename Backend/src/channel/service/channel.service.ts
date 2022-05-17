@@ -96,7 +96,7 @@ export class ChannelService {
 			hashedPassword : hash,
 		});
 		await this.channelRepo.save(newChannel);
-		
+
 		//? the new owner will automaticaly join it's new channel
 		const newParticipation = await this.participationRepo.create({
 			user: user,
@@ -104,7 +104,7 @@ export class ChannelService {
 			isModo: true,
 		});
 		await this.participationRepo.save(newParticipation);
-		 
+
 		return Channel.toDto(newChannel);
 	}
 
