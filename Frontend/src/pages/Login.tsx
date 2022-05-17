@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Fragment, useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Fragment } from 'react';
-import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import mainTitle from "../asset/mainTitle.svg";
-import searchIcon from "../asset/searchIcon.svg";
+import mainTitle from '../asset/Pong-Legacy.svg';
+import searchIcon from '../asset/searchIcon.svg';
+import addGroupIcon from "../asset/addGroupIcon.svg"
+import { cp } from 'fs/promises';
 import statutIconGreen from "../asset/statutIconGreen.svg"
 import statutIconRed from "../asset/statutIconRed.svg"
 import user1 from "../asset/friend1.svg"
@@ -21,7 +21,6 @@ const dataUrlFriends = "http://localhost:3001/friends"
 const dataUrlFriendRequestsSent = "http://localhost:3001/friendRequestsSent"
 const dataUrlFriendRequestsReceived = "http://localhost:3001/friendRequestsReceived"
 const dataUrlUsers = "http://localhost:3001/users"
-
 //import gameArea from '../asset/gameArea.svg';
 
 const PrintFriendToAddChannel = (props:any) => {
@@ -553,25 +552,6 @@ const Chat = (props:any) => {
 	)
 }
 
-const Header = () => {
-	const navigate = useNavigate()
-
-	const onPlay = () => {
-		navigate("")
-	}
-
-	const onProfil = () => {
-		navigate("/profil")
-	}
-
-	return (
-		<div className='boxNav'>
-			<img src={mainTitle} className='titleNav' alt="mainTitle"/>
-			<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-			<div><button onClick={() => onProfil()} className='ButtonStyle navButton'>Profil</button></div>
-		</div >)
-}
-
 const Body = () => {
 
 	const [ users, setUsers ] = useState([])
@@ -600,14 +580,59 @@ const Body = () => {
 	)
 }
 
+const Header = () => {
+	
+	const [idMe, setIdMe] = useState(0);
+	const [getIDMe, setGetIDMe] = useState(false);
+
+	const navigate = useNavigate()
+	const onPlay = () => {
+		navigate("")
+	}
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
+	}
+	const onLogout = () => {
+		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
+			.then(res => {
+			})
+		navigate("/")
+	}
+
+	if (getIDMe === false) {
+		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+			.then(res => {
+				const id_tmp = res.data;
+				setIdMe(id_tmp.id)
+			})
+		setGetIDMe(getIDMe => true)
+	}
+
+	if (getIDMe === false) {
+		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+			.then(res => {
+				const id_tmp = res.data;
+				setIdMe(id_tmp.id)
+			})
+		setGetIDMe(getIDMe => true)
+	}
+
+	return (
+				<div className='boxNav'>
+					<img src={mainTitle} className='titleNav' alt="mainTitle" />
+					<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
+					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
+					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
+				</div >
+			)
+}
+
 const Login = () => {
 	return (
-		<Fragment>
-			<div id='bloc'>
-				<Header/>
-				<Body/>
-			</div>
-		</Fragment>
+		<div id='bloc'>
+			<Header/>
+			<Body/>
+		</div>
 	);
 };
 

@@ -20,17 +20,18 @@ export class TwoFactorAuthService {
     ) {}
 
     public async generateTwoFactorAuthSecret(username: string) {
-        const auth = await this.usersRepository.findOne({ username });
-        // if (auth) {
-        //     if (auth.isTwoFactorEnable) {
-        //         return {
-        //             msg: 'Already QR generated'
-        //         }
-        //     }
-        // }
+        const user = await this.usersRepository.findOne({ username });
+        const app_name = process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME || dbConfig.twoFactorAppName;
+        if (user) {
+            if (user.twoFactorAuthSecret) {
+                const otpAuthUrl = authenticator.keyuri(username, app_name, user.twoFactorAuthSecret);
+                return {
+                    otpAuthUrl
+                }
+            }
+        }
 
         const secret = authenticator.generateSecret();
-        const app_name = process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME || dbConfig.twoFactorAppName;
         const otpAuthUrl = authenticator.keyuri(username, app_name, secret);
 
         await this.usersRepository.update({ username: username }, { twoFactorAuthSecret: secret });

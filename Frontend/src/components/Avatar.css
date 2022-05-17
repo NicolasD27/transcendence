@@ -13,15 +13,6 @@
 	width: 100%;
 }
 
-.img-holder {
-	margin: auto;
-	width: 150px;
-	height: 150px;
-	border: 3px black solid;
-	border-radius: 5px;
-	margin-top: 1rem;
-}
-
 .img {
 	background-size: cover;
 	width: 130px;
@@ -30,6 +21,7 @@
 	border-radius: 130px;
 	opacity: 1;
 	transition: opacity 0.5s;
+	flex-shrink: 0;
 }
 
 .img:hover {
@@ -38,9 +30,8 @@
 
 .image-upload {
 	position: absolute;
-	bottom: 82%;
+	top: 65px;
 	left: 48%;
-	width: 120px;
 	outline: none;
 	color: transparent;
 	box-sizing: border-box;

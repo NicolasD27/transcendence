@@ -7,7 +7,11 @@ export class Msg {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
+<<<<<<< HEAD:Backend/src/chat/entity/msg.entity.ts
 	@ManyToOne(() => Channel, channel => channel.messages, { eager: true })
+=======
+	@ManyToOne(() => Channel, channel => channel.messages, { eager: true, cascade: true, onDelete:'CASCADE' })
+>>>>>>> master:Backend/src/message/entity/msg.entity.ts
 	channel: Channel;
 
 	@Column()

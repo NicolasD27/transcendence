@@ -12,6 +12,7 @@
 </head>
 <body>
     <div id="app" >
+<<<<<<< HEAD
             <div class="row">
                 <div class="col-md-6 offset-md-3 col-sm-12">
                     <h1 class="text-center">{{ title }}</h1>
@@ -71,6 +72,109 @@
 	let cookies = document.cookie;
 	console.log(cookies);
 </script>
+=======
+		<div id="chatBox">
+			<div class="row">
+				<div class="col-md-6 offset-md-3 col-sm-12">
+					<h1 class="text-center">{{ title }}</h1>
+					<br>
+					<div id="status"></div>
+					<div id="chat">
+						channelId : {{ channelId }} <br>
+
+						<input v-model="channelId" placeholder="which channel to display ?" type="number">
+						<button v-on:click="updateApp">update</button>
+
+						<!-- <button v-on:click="closeChannel">leave channel</button> -->
+						<br>
+						<input v-model="banId" placeholder="user id" type="number" size="7">
+						<input v-model="banTimeOut" placeholder="seconds" type="number" size="7">
+						<button v-on:click="banUser">ban</button>
+						<button v-on:click="muteUser">mute</button>
+						<button v-on:click="unBanUser">unBan/unmute</button> <br>
+
+						<input v-model="idToInvite" placeholder="user id" type="number" size="7">
+						<button v-on:click="sendInvite">send Invite</button> <br>
+
+						<div class="card">
+							<div id="messages" class="card-block">
+								<ul>
+									<li v-for="message of messages">{{ message.user.username }}: {{ message.content }}</li>
+								</ul>
+							</div>
+						</div>
+						<br>
+						<textarea id="textarea" class="form-control" v-model="content" placeholder="Enter message..."></textarea>
+						<br>
+						<button id="send" class="btn" @click.prevent="sendMessage">Send</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6 offset-md-3 col-sm-12">
+				<h1 class="text-center">{{ title }}</h1>
+				<br>
+				
+				<div id="dm">
+					
+					<input v-model="receiver" placeholder="edit me" type="string">
+
+					<div class="card">
+						<div id="messages" class="card-block">
+							<ul>
+								<li v-for="message of directMessages">{{ message.sender.username }}: {{ message.content }}</li>
+							</ul>
+						</div>
+					</div>
+					<br>
+					<textarea id="textarea" class="form-control" v-model="directMessageContent" placeholder="Enter message..."></textarea>
+					<br>
+					<button id="sendDM" class="btn" @click.prevent="sendDirectMessage">Send</button>
+				</div>
+				
+			</div>
+		</div>
+
+		<div id="invites" class="card-block">
+			<ul>
+				<li v-for="(invite, index) in invites">invite #{{ index }} : {{ invite.user1.username }} challenged you !</li>
+			</ul>
+			<input type="text" v-model="invite_choosen" placeholder="invite # ?">
+			<button @click.prevent="acceptChallenge">Accept</button>
+			<input type="text" v-model="status" placeholder="new status ?">
+			<button @click.prevent="sendStatusUpdate">Send new status</button>
+		</div>
+
+		<div id="match">
+			<h1>Match</h1>
+			<button @click.prevent="findMatch">Find Match</button>
+			<input type="text" v-model="opponent_id">
+			<button @click.prevent="challengeUser">Challenge</button>
+			
+			<ul>
+				<li >{{ match.id }} : {{ match.y1 }}, {{ match.y2 }}, {{ match.bx }}, {{ match.by }}, {{ match.bvx }}, {{ match.bvy }}</li>
+			</ul>
+					<button id="send" class="btn" @click.prevent="connectToMatch">Connect</button>
+				<button id="send" class="btn" @click.prevent="sendUp">Up</button>
+				<button id="send" class="btn" @click.prevent="sendDown">Down</button>
+					<div id="game_container">
+						<div class="racket" id="racket1" :style="{'--y1': match.y1 * 2 + '%'}"></div>
+						<div class="racket" id="racket2" :style="{'--y2': match.y2 * 2 + '%'}"></div>
+						<div id="ball" :style="{'--bx': match.bx + '%', '--by': match.by * 2 + '%'}"></div>
+					</div>
+		</div>
+    </div>
+
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/addons/p5.sound.js"></script>
+	<script src="main.js"></script>
+	<script>
+		let cookies = document.cookie;
+		console.log(cookies);
+	</script>
+>>>>>>> master
 
 </body>
 </html>

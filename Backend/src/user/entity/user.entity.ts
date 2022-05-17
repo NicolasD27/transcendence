@@ -5,8 +5,20 @@ import { Friendship } from "../../friendship/entity/friendship.entity";
 import { Msg } from "../../chat/entity/msg.entity";
 import { Match } from "../../match/entity/match.entity";
 import { Channel } from "../../channel/entity/channel.entity";
+<<<<<<< HEAD
 
 export enum Status {
+=======
+import { UserDto } from "../dto/user.dto";
+import { instanceToPlain, plainToInstance } from "class-transformer";
+import { Participation } from "src/channel/entity/participation.entity";
+import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
+import DatabaseFile from "./database-file.entity";
+import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
+import { ChannelInvite } from "src/channel/entity/channelInvite.entity";
+
+export enum UserStatus {
+>>>>>>> master
 	OFFLINE,
 	ONLINE,
 	SEARCHING,
@@ -15,15 +27,14 @@ export enum Status {
 }
 
 @Entity()
-@Unique(['username'])
-
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
-	@Column({ type: "varchar" })
+	@Column({ type: "varchar", nullable: false, unique: true })
 	username: string
 
+<<<<<<< HEAD
 	// @Column({ type: "varchar" })
 	// password: string
 
@@ -34,6 +45,12 @@ export class User extends BaseEntity {
 	// @Exclude()
 	// public hashedRefreshToken?: string
 
+=======
+	@Column({ type: "varchar", nullable: false, unique: true})
+	pseudo: string 
+
+	
+>>>>>>> master
 	@Column({ nullable: true })
 	twoFactorAuthSecret?: string
 
@@ -55,6 +72,20 @@ export class User extends BaseEntity {
 	@OneToMany(() => Channel, channel => channel.owner)
 	channels: Channel[];
 
+<<<<<<< HEAD
+=======
+	@OneToMany(() => Participation, participation => participation.user)
+	participations: Participation[];
+
+	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.user)
+	moderationTimeOuts: ModerationTimeOut[];
+
+	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.sender)
+	channelInviteSenders: ChannelInvite[];
+	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.receiver)
+	channelInviteReceivers: ChannelInvite[];
+
+>>>>>>> master
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];
 

@@ -9,7 +9,6 @@ COPY ./package.json  /app/
 
 # Then install the NPM module
 RUN npm install
-RUN npm install -g @nestjs/cli
 
 # Copy current directory to APP folder
 # COPY . /app/
