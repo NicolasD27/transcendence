@@ -527,7 +527,6 @@ export class ChannelService {
 				channel: myChannel.id,
 			}
 		});
-
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined.");
 			

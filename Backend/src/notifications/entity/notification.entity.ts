@@ -12,6 +12,7 @@ export interface PolymorphicChildInterface {
 
 @Entity('notification') 
 export class Notification implements PolymorphicChildInterface {
+    con
     @PrimaryGeneratedColumn()
     id: number
 
@@ -27,13 +28,31 @@ export class Notification implements PolymorphicChildInterface {
     @ManyToOne(() => User, user => user.notifications, { eager: true })
     receiver: User;
 
-    static toDto(notification: Notification): NotificationDto {
+    @Column({default: true})
+    awaitingAction: boolean
+
+    static toFriendshipDto(notification: Notification, parent: Friendship): NotificationDto {
         
         const dto: NotificationDto = {
             id: notification.id,
             receiver: User.toDto(notification.receiver),
-            entityId: notification.entityId,
-            entityType: notification.entityType
+            name: parent.follower.pseudo,
+            entityId: parent.id,
+            entityType: "Friendship",
+            awaitingAction: notification.awaitingAction
+        }
+        return dto
+    }
+
+    static toMatchDto(notification: Notification, parent: Match): NotificationDto {
+        
+        const dto: NotificationDto = {
+            id: notification.id,
+            receiver: User.toDto(notification.receiver),
+            name: parent.user1.pseudo,
+            entityId: parent.id,
+            entityType: "Match",
+            awaitingAction: notification.awaitingAction
         }
         return dto
     }

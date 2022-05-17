@@ -15,7 +15,7 @@ export class NotificationController {
     @Get(':user_id')
     findAllByUser(@Param('user_id') user_id: string): Promise<NotificationDto[]> {
         console.log('findAllNotificationsByUser', user_id);
-        return this.notificationService.findAllByUser(user_id);
+        return  this.notificationService.findAllByUser(user_id);
     }
 
     @UseGuards(TwoFactorGuard)

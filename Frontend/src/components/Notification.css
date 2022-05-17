@@ -1,0 +1,14 @@
+.notification-container {
+    color: white;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.notification-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+}

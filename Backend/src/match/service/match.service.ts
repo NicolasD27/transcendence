@@ -55,9 +55,22 @@ export class MatchService {
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
+		this.notificationService.actionPerformed(match)
         this.matchsRepository.save(match);
 		return Match.toDto(match)
     }
+
+	async destroyMatch(current_username: string, id: string): Promise<MatchDto> {
+        
+        const match = await this.matchsRepository.findOne(id);
+        if (!match)
+            throw new NotFoundException(`Match #${id} not found`);
+        if ((match.user1.username != current_username && match.user2.username != current_username))
+            throw new UnauthorizedException();
+		this.notificationService.actionPerformed(match)
+        this.matchsRepository.remove(match);
+		return Match.toDto(match)
+    } 
 
     async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
 		if (createMatchDto.user1_id == createMatchDto.user2_id)
@@ -82,11 +95,12 @@ export class MatchService {
 		else
 		{
 			console.log("creating match...")
-			match = await this.matchsRepository.save({
+			match = await this.matchsRepository.create({
 				user1: user1,
 				user2: user2,
 				mode: createMatchDto.mode
 			});
+			await this.matchsRepository.save(match)
 			if (match)
 				this.notificationService.create(match, match.user2)
 		}

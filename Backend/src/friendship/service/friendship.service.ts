@@ -85,10 +85,11 @@ export class FriendshipService {
         if (friendship)
             throw new BadRequestException("Frienship already exist");
         
-        friendship = await this.friendshipsRepository.save({
+        friendship = await this.friendshipsRepository.create({
             follower: follower,
             following: following,
         });
+        await this.friendshipsRepository.save(friendship)
         this.notificationService.create(friendship, following);
         return Friendship.toDto(friendship)
     }
@@ -101,6 +102,7 @@ export class FriendshipService {
         if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_2 || friendship.status == FriendshipStatus.BLOCKED_BY_2)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_1 || friendship.status == FriendshipStatus.BLOCKED_BY_1)))
             throw new UnauthorizedException("you can't do that !");
         friendship.status = newStatus;
+        this.notificationService.actionPerformed(friendship)
         return Friendship.toDto(await  this.friendshipsRepository.save(friendship));
 
     }
@@ -112,6 +114,7 @@ export class FriendshipService {
             throw new NotFoundException(`Friendship #${id} not found`);
         if ((username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
+        this.notificationService.actionPerformed(friendship)
         return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
 
     }
