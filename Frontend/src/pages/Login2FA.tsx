@@ -23,7 +23,7 @@ const Login2FA = () => {
     const handleSubmit = () => {
         axios.post(`http://localhost:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
 			.then(res => {
-				navigate("/login")
+				navigate("/mainpage")
 
 			})
     }
