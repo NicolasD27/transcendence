@@ -228,22 +228,11 @@ export class ChannelService {
 
 	// ? Invites
 
-	async getChannelInvites(username: string)
-	{
-		console.log("getChannelInvites");
-		const myUser = await this.userRepo.findOne({username});
-		if (!myUser)	// ? useless because of the guard
-			throw new NotFoundException(`username ${username} not found`);
-		const invites = await this.channelInviteRepo.find({
-			where: {
-				receiver: myUser.id,
-			}
-		})
-		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
-		return (invites);
-	}
-
-	async saveInvite(username: string, createChannelInviteDto: CreateChannelInviteDto): Promise<ChannelInviteDto>
+	async saveInvite(
+		username: string,
+		// channelId: number,
+		createChannelInviteDto: CreateChannelInviteDto
+	): Promise<ChannelInviteDto>
 	{
 		const myChannel = await this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
 		if (!myChannel)
@@ -287,16 +276,38 @@ export class ChannelService {
 		return ChannelInvite.toDto(myinvite);
 	}
 
-	async acceptChannelInvite(username: string, acceptChannelInviteDto: AcceptChannelInviteDto)
+	async getChannelInvites(username: string, userId: number)
+	{
+		console.log("getChannelInvites");
+		const myUser = await this.userRepo.findOne({username});
+		if (!myUser)
+			throw new NotFoundException(`username ${username} not found`);
+		if (myUser.id != userId)
+			throw new UnauthorizedException("You can't look at someone else's Invitations");
+		const invites = await this.channelInviteRepo.find({
+			where: {
+				receiver: myUser.id,
+			}
+		})
+		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
+		return (invites);
+	}
+
+	async acceptChannelInvite(
+		username: string,
+		userId: number,
+		acceptChannelInviteDto: AcceptChannelInviteDto
+	)
 	{
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
+		if (myUser.id != userId)
+			throw new UnauthorizedException();
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {
 				id: acceptChannelInviteDto.inviteId,
-				// receiver: myUser.id,
 			}
 		});
 		if (!myInvite)
@@ -330,11 +341,17 @@ export class ChannelService {
 		await this.channelInviteRepo.delete(myInvite.id);
 	}
 
-	async removeInvitation(username: string, deleteChannelInviteDto: DeleteChannelInviteDto)
+	async removeInvitation(
+		username: string,
+		userId: number,
+		deleteChannelInviteDto: DeleteChannelInviteDto
+	)
 	{
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
+		if (myUser.id != userId)
+			throw new UnauthorizedException();
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {

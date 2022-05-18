@@ -23,10 +23,7 @@ import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 import { CreateChannelInviteDto } from "../dto/create-channel-invite.dto";
-
 import { ParseIntPipe } from "@nestjs/common";
-import { DeleteChannelInviteDto } from "../dto/delete-invite.dto";
-import { AcceptChannelInviteDto } from "../dto/accept-channel-invite.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -36,29 +33,6 @@ export class ChannelController {
 		private readonly channelService: ChannelService,
 		// private readonly chatGateway: ChatGateway,
 	) {}
-
-	@Get('user_invites')			// todo : put this in UserController
-	@UseGuards(TwoFactorGuard)
-	async getInvites(@Req() request: Request)
-	{
-		return await this.channelService.getChannelInvites(request.cookies.username);
-	}
-
-	@Patch('user_invites')			// todo : put this in UserController
-	@UseGuards(TwoFactorGuard)
-	async acceptChannelInvite(@Req() request: Request, @Body() acceptChannelInviteDto: AcceptChannelInviteDto)
-	{
-		await this.channelService.acceptChannelInvite(request.cookies.username, acceptChannelInviteDto);
-		return ;
-	}
-
-	@Delete('user_invites')			// todo : put this in UserController
-	@UseGuards(TwoFactorGuard)
-	async deleteChannelInvite(@Req() request: Request, @Body() deleteChannelInviteDto: DeleteChannelInviteDto)
-	{
-		await this.channelService.removeInvitation(request.cookies.username, deleteChannelInviteDto);
-		return ;
-	}
 
 	@Get()
 	@UseGuards(TwoFactorGuard)
@@ -134,13 +108,17 @@ export class ChannelController {
 
 	// ? Invites
 
-	@Post(':id/invite')
-	@UseGuards(TwoFactorGuard)
-	async createChannelInvite(@Req() request: Request, @Body() createChannelInviteDto: CreateChannelInviteDto)
-	{
-		await this.channelService.saveInvite(request.cookies.username, createChannelInviteDto);
-		return ;
-	}
+	// @Post(':id/invite')
+	// @UseGuards(TwoFactorGuard)
+	// async createChannelInvite(
+	// 	@Param('id', ParseIntPipe) id: number,
+	// 	@Req() request: Request,
+	// 	@Body() createChannelInviteDto: CreateChannelInviteDto
+	// )
+	// {
+	// 	await this.channelService.saveInvite(request.cookies.username, id, createChannelInviteDto);
+	// 	return ;
+	// }
 
 	// ? Join / Leave
 
