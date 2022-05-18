@@ -23,6 +23,8 @@ import DatabaseFilesController from './controller/database-file/database-file.co
 import { UserService } from './service/user.service';
 import { MatchService } from 'src/match/service/match.service';
 import { Match } from 'src/match/entity/match.entity';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelModule } from 'src/channel/channel.module';
 
 
 @Global()
@@ -35,7 +37,8 @@ import { Match } from 'src/match/entity/match.entity';
             }
         }),
         PassportModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match])
+        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match]),
+        ChannelModule
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
@@ -48,7 +51,7 @@ import { Match } from 'src/match/entity/match.entity';
         FriendshipService,
         UserGateway,
         DatabaseFilesService,
-        MatchService
+        MatchService,
     ],
     exports: [
         FtStrategy,
