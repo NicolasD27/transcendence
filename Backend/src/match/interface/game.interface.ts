@@ -1,5 +1,8 @@
+import Ball from "./ball.interface";
+import Player from "./player.interface";
+
 export default class Game
 {
-    constructor(private playerOne, private playerTwo, private ball, private countdown) {}
+    constructor(public playerOne: Player, public playerTwo: Player, public ball: Ball, public countdown: number) {}
 	
 }

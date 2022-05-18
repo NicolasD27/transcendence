@@ -66,7 +66,7 @@ function gameEngine(game: any, socket: Socket, match_id: number)
 			else
 			{
 				game.playerOne.score++;
-				socket.emit('masterScored', match_id);
+				socket.emit('masterScored', {match_id: match_id});
 				delete game.ball;
 
 				var a2 = rand(80, 120);
@@ -81,7 +81,7 @@ function gameEngine(game: any, socket: Socket, match_id: number)
 			else
 			{
 				game.playerTwo.score++;
-				socket.emit('slaveScored', match_id);
+				socket.emit('slaveScored', {match_id: match_id});
 				delete game.ball;
 
 				var a22 = rand(80, 120);
@@ -97,23 +97,47 @@ function gameEngine(game: any, socket: Socket, match_id: number)
 	game.ball.y += game.ball.yv;
 }
 
-function playerMove(this: any, game: any, playerInput: any)
+function playerMove(started: number, game: any, playerInput: any)
 {
-	if (playerInput.masterA === true && game.playerOne.y >= 0 && this.started === 1)
+	if (playerInput.masterA === true && game.playerOne.y >= 0 && started === 1)
 	{
 		if (game.playerOne.y !== 0)
 			game.playerOne.y -= 5;
 	}
-	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && this.started === 1)
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && started === 1)
 		game.playerOne.y += 5;
 
-	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && this.started === 1)
+	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && started === 1)
 	{
 		if (game.playerTwo.y !== 0)
 			game.playerTwo.y -= 5;
 	}
-	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && this.started === 1)
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && started === 1)
 		game.playerTwo.y += 5;
+}
+
+function printer(p5: any, data: any)
+{
+	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
+	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
+
+	//ajouter une ligne verticale ?
+
+	if (data.countdown != 0)
+	{
+		p5.textSize(200);
+		p5.fill(p5.color(255, 255, 255));
+		p5.text(data.countdown, width / 2 - 50, height / 2 + 50);
+	}
+	else
+	{
+		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
+		p5.textSize(50);
+		p5.fill(p5.color(255, 255, 255));
+		p5.text(data.playerOne.score, 440, 50);
+		p5.text(data.playerTwo.score, 540, 50);
+	}
+
 }
 
 export class Match extends Component
@@ -127,6 +151,7 @@ export class Match extends Component
 	match_size: number;
 	slaveId: string;
 	masterId: string;
+	myId: string;
 
 	setup = (p5: any) =>
 	{
@@ -138,146 +163,152 @@ export class Match extends Component
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Waiting for other player...', 220, height / 2);
+		p5.text('Waiting for other player... ', 220, height / 2);
 
-		//ICI IMPLEMENTER L'ATTENTE POUR LE MATCHMAKING, BOUTONS ETC...
-
-		this.socket.emit('find_match');
-		this.socket.on('launch_match', (data) => {
+		this.socket.emit('find_match');	//faire le find_match quand on clic sur un boutton, n'importe
+		this.socket.on('launch_match', (data) =>
+		{
 			this.match_id = data.id;
 			this.match_size = data.room_size;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
-			//on peut recup ici bcp d'autres data, genre la taille du match ou autres
+
+			this.socket.emit("askForMyID");
+			this.socket.on("receiveMyID", (data) =>
+			{
+				this.myId = data
+
+				if (this.myId === this.masterId && this.masterId)		//Master
+				{
+					console.log("IM A MASTER")
+					this.type = "master";
+					var a2 = rand(80, 120);
+					var b2 = 200 - a2;
+		
+					var game = new Game(
+						new Player(15, 200, playerWidth, 100, 0),
+						new Player(width - 30, 200, playerWidth, 100, 0),
+						new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
+						this.countdown);
+		
+					var playerInput = new PlayerInput();
+		
+					p5.background(0);
+					p5.textSize(50);
+					p5.fill(p5.color(255, 255, 255));
+					p5.text('Waiting for other player...', 120, height / 2);
+
+					this.socket.on('updateMatch', (data) =>
+					{
+						p5.clear();
+						p5.background(0);
+						printer(p5, data);
+					});
+		
+					this.socket.on('masterToMasterKeyPressed', data =>
+					{
+						if (data === 'a')
+							playerInput.masterA = true;
+						else if (data === 'z')
+							playerInput.masterZ = true;
+					});
+		
+					this.socket.on('slaveToMasterKeyPressed', data =>
+					{
+						if (data === 'a')
+							playerInput.slaveA = true;
+						else if (data === 'z')
+							playerInput.slaveZ = true;
+					});
+		
+					this.socket.on('masterToMasterKeyReleased', data =>
+					{
+						if (data === 'a')
+							playerInput.masterA = false;
+						else if (data === 'z')
+							playerInput.masterZ = false;
+					});
+		
+					this.socket.on('slaveToMasterKeyReleased', data =>
+					{
+						if (data === 'a')
+							playerInput.slaveA = false;
+						else if (data === 'z')
+							playerInput.slaveZ = false;
+					});
+		
+					var counter = 0;
+					this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+					this.socket.on('serverTick', () =>
+					{
+						if (counter <= this.fq * this.countdown)
+							counter++;
+						if (counter % this.fq === 0 && counter > 0)
+						{
+							game.countdown--;
+							this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+						}
+						if (counter > this.fq * this.countdown)
+						{
+							this.started = 1;
+							playerMove(this.started, game, playerInput);
+							gameEngine(game, this.socket, this.match_id);
+							this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+						}
+						if (game.playerOne.score >= finalScore)
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 1, score1: game.playerOne.score, score2: game.playerTwo.score});
+						else if (game.playerTwo.score >= finalScore)
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 2, score1: game.playerOne.score, score2: game.playerTwo.score});
+					});
+		
+					this.socket.on('clientDisconnect', (data) =>
+					{
+						if (data === this.slaveId)
+						{
+							this.socket.off('serverTick');
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 1, score1: game.playerOne.score, score2: game.playerTwo.score});
+							//clear screen or reload ?
+						}
+					});
+		
+			}
+				else if (this.myId === this.slaveId && this.slaveId)	//Slave
+				{
+					console.log("IM A SLAVE")
+					this.type = "slave";
+		
+					this.started = 1;
+		
+					this.socket.on('updateMatch', (data) =>
+					{
+						p5.clear();
+						p5.background(0);
+						printer(p5, data);
+					});
+		
+					this.socket.on('clientDisconnect', (data) =>
+					{
+						if (data === this.masterId)
+						{
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 2, score1: game.playerOne.score, score2: game.playerTwo.score});
+							//clear screen or reload ?
+						}
+					});
+		
+				}
+				else					//Spect
+				{
+					this.type = "spect";
+		
+					this.socket.on('updateMatch', (data) =>
+					{
+						p5.clear();
+						p5.background(0);
+						printer(p5, data);
+					});
+				}
+			});
 		});
-
-		if (this.match_size === 1)		//Master
-		{
-			this.type = "master";
-			var a2 = rand(80, 120);
-			var b2 = 200 - a2;
-
-			var game = new Game(
-				new Player(15, 150, playerWidth, 100, 0),
-				new Player(770, 150, playerWidth, 100, 0),
-				new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
-				this.countdown);
-
-			var playerInput = new PlayerInput();
-
-			p5.background(0);
-			p5.textSize(50);
-			p5.fill(p5.color(255, 255, 255));
-			p5.text('Waiting for other player...', 120, height / 2);
-
-			this.socket.on('updateMatch', (data) =>
-			{
-				p5.clear();
-				p5.background(0);
-				p5.printer(data);
-			});
-
-			this.socket.on('masterToMasterKeyPressed', data =>
-			{
-				if (data === 'a')
-					playerInput.masterA = true;
-				else if (data === 'z')
-					playerInput.masterZ = true;
-			});
-
-			this.socket.on('slaveToMasterKeyPressed', data =>
-			{
-				if (data === 'a')
-					playerInput.slaveA = true;
-				else if (data === 'z')
-					playerInput.slaveZ = true;
-			});
-
-			this.socket.on('masterToMasterKeyReleased', data =>
-			{
-				if (data === 'a')
-					playerInput.masterA = false;
-				else if (data === 'z')
-					playerInput.masterZ = false;
-			});
-
-			this.socket.on('slaveToMasterKeyReleased', data =>
-			{
-				if (data === 'a')
-					playerInput.slaveA = false;
-				else if (data === 'z')
-					playerInput.slaveZ = false;
-			});
-
-			this.socket.on('launchMatch', () =>
-			{
-				var counter = 0;
-				this.socket.emit('sendUpdateMatch', this.match_id, game);
-				this.socket.on('serverTick', () =>
-				{
-					if (counter <= this.fq * this.countdown)
-						counter++;
-					if (counter % this.fq === 0 && counter > 0)
-					{
-						game.countdown--;
-						this.socket.emit('sendUpdateMatch', this.match_id, game);
-					}
-					if (counter > this.fq * this.countdown)
-					{
-						this.started = 1;
-						playerMove(game, playerInput);
-						gameEngine(game, this.socket, this.match_id);
-						this.socket.emit('sendUpdateMatch', this.match_id, game);
-					}
-					if (game.playerOne.score >= finalScore || game.playerTwo.score >= finalScore)
-						this.socket.emit("gameFinished");		//envoyer au server qui a gagne aussi ca serait pas mal lol
-				});
-			});
-
-			this.socket.on('clientDisconnect', (data) =>
-			{
-				this.socket.off('serverTick');
-				if (data === this.slaveId)
-				{
-					//le slave vient de se deco, master gagne par defaut et renvoie l'info au server
-				}
-			});
-
-	}
-		else if (this.match_size === 2)	//Slave
-		{
-			this.type = "slave";
-
-			this.socket.emit('readyToStart', this.match_id,);
-			this.started = 1;
-
-			this.socket.on('updateMatch', (data) =>
-			{
-				p5.clear();
-				p5.background(0);
-				p5.printer(data);
-			});
-
-			this.socket.on('clientDisconnect', (data) =>
-			{
-				if (data === this.masterId)
-				{
-					//le master vient de se deco, slave gagne par defaut et renvoie l'info au server
-				}
-			});
-
-		}
-		else					//Spect
-		{
-			this.type = "spect";
-
-			this.socket.on('updateMatch', (data) =>
-			{
-				p5.clear();
-				p5.background(0);
-				p5.printer(data);
-			});
-		}
 	}
 
 	draw = (p5: any) =>
@@ -286,19 +317,19 @@ export class Match extends Component
 	keyTyped = (p5: any) =>
 	{
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', this.match_id, p5.key);
+			this.socket.emit('masterKeyPressed', {match_id: this.match_id, command: p5.key});
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', this.match_id, p5.key);
+			this.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
 	}
 
 	keyReleased = (p5: any) =>
 	{
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyReleased', this.match_id, p5.key);
+			this.socket.emit('masterKeyReleased', {match_id: this.match_id, command: p5.key});
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyReleased', this.match_id, p5.key);
+			this.socket.emit('slaveKeyReleased', {match_id: this.match_id, command: p5.key});
 	}
 
 	render()
