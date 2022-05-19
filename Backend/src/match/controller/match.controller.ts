@@ -40,7 +40,7 @@ export class MatchController {
     }
 
     @UseGuards(TwoFactorGuard)
-    @Delete()
+    @Delete(':id')
     destroyMatch(@Param('id') id: string, @GetUsername() username: string): Promise<MatchDto> {
         return this.matchService.destroyMatch(username, id);
     }

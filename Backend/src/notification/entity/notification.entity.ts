@@ -8,9 +8,8 @@ import { NotificationDto } from "../dto/notification.dto";
 
 
 
-@Entity('notification') 
+@Entity('notifications') 
 export class Notification implements PolymorphicChildInterface {
-    con
     @PrimaryGeneratedColumn()
     id: number
 

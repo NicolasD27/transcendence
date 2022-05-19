@@ -9,7 +9,7 @@ import { Participation } from "src/channel/entity/participation.entity";
 import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
 import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
-import { Notification } from "src/notifications/entity/notification.entity";
+import { Notification } from "src/notification/entity/notification.entity";
 
 export enum UserStatus {
 	OFFLINE,

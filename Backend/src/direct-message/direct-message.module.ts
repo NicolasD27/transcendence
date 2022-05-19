@@ -12,7 +12,7 @@ import { Channel } from '../channel/entity/channel.entity';
 import { Participation } from 'src/channel/entity/participation.entity';
 import { ModerationTimeOut } from 'src/channel/entity/moderationTimeOut.entity';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
-import { NotificationService } from 'src/notifications/service/notification.service';
+import { NotificationService } from 'src/notification/service/notification.service';
 
 @Module({
 	imports: [

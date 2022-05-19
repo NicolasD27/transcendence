@@ -7,13 +7,14 @@ import { Match } from './entity/match.entity';
 import { MatchController } from './controller/match.controller';
 import { User } from '../user/entity/user.entity';
 import { AuthService } from '../user/service/auth.service';
-import { NotificationService } from 'src/notifications/service/notification.service';
-import { NotificationRepository } from 'src/notifications/repository/notification.repository';
-import { Notification } from 'src/notifications/entity/notification.entity';
+import { NotificationService } from 'src/notification/service/notification.service';
+import { NotificationRepository } from 'src/notification/repository/notification.repository';
+import { Notification } from 'src/notification/entity/notification.entity';
+import { MatchRepository } from './repository/match.repository';
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([User, Match, Notification, NotificationRepository]),
+		TypeOrmModule.forFeature([User, Match, MatchRepository, Notification, NotificationRepository]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
             signOptions: {

@@ -6,7 +6,7 @@ import { FriendshipRepository } from 'src/friendship/repository/friendship.repos
 import { Match } from 'src/match/entity/match.entity';
 import { MatchRepository } from 'src/match/repository/match.repository';
 import { UserDto } from 'src/user/dto/user.dto';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { NotificationDto } from '../dto/notification.dto';
 import { Notification } from '../entity/notification.entity';
@@ -16,12 +16,20 @@ import { NotificationRepository } from '../repository/notification.repository';
 @Injectable()
 export class NotificationService {
     constructor(
-        private  notificationsRepository: NotificationRepository,
+        
+		private notificationsRepository: NotificationRepository,
         @InjectRepository(User)
         private  usersRepository: Repository<User>,
-        private  friendshipsRepository: FriendshipRepository,
-        private  matchsRepository: MatchRepository,
-        ) {}
+        @InjectRepository(Friendship)
+		private friendshipsRepository: Repository<Friendship>,
+        @InjectRepository(Match)
+		private matchsRepository: Repository<Match>,
+        // private connection: Connection
+        ) {
+            // notificationsRepository = connection.getCustomRepository(NotificationRepository)
+            // friendshipsRepository = connection.getCustomRepository(FriendshipRepository)
+            // matchsRepository = connection.getCustomRepository(MatchRepository)
+        }
 
     async findAllByUser(user_id: string): Promise<NotificationDto[]>
     {
@@ -39,14 +47,16 @@ export class NotificationService {
             if (notifications[i].entityType == "Friendship") {
                 await this.friendshipsRepository.findOne(notifications[i].entityId)
                 .then(parent => {
-                    notificationsDto.push(Notification.toFriendshipDto(notifications[i], parent));
+                    if (parent)
+                        notificationsDto.push(Notification.toFriendshipDto(notifications[i], parent));
                 })
                 
             }
             else if (notifications[i].entityType == "Match") {
                 await this.matchsRepository.findOne(notifications[i].entityId)
                 .then(parent => {
-                    notificationsDto.push(Notification.toMatchDto(notifications[i], parent));
+                    if (parent)
+                        notificationsDto.push(Notification.toMatchDto(notifications[i], parent));
                 })
             }                
         };
@@ -55,15 +65,16 @@ export class NotificationService {
 
     async create(parent: Friendship | Match, receiver: User): Promise<Notification> {
         const notification = await this.notificationsRepository.create({
-            receiver: receiver
+            receiver: receiver,
+            parent: parent
         })
-        notification.parent = parent
+        // notification.parent = parent
         await this.notificationsRepository.save(notification)
         return notification
     }
 
     
-    async destroy(username: string, id: string): Promise<NotificationDto> {
+    async destroy(username: string, id: string): Promise<Notification> {
         const notification = await this.notificationsRepository.findOne(id);
         if (!notification)
             throw new NotFoundException(`Notification #${id} not found`);
@@ -71,18 +82,38 @@ export class NotificationService {
             throw new UnauthorizedException();
         let parentFind;
         await this.notificationsRepository.remove(notification);
-        if (notification.entityType == "Friendship") {
-            parentFind = await this.friendshipsRepository.findOne(notification.entityId)
-            return Notification.toFriendshipDto(notification, parentFind)
-        }
-        else if (notification.entityType == "Match") {
-            parentFind = await this.matchsRepository.findOne(notification.entityId)
-            return Notification.toMatchDto(notification, parentFind)
+        return notification
+    }
+
+    async actionPerformedMatch(parent: Match) {
+        let notification = await this.notificationsRepository.findOne({
+            where: {
+                entityId: parent.id,
+                entityType: "Match"
+            }
+        })
+        if (notification) {
+
+            notification.awaitingAction = false
+            notification = await this.notificationsRepository.save(notification)
+            console.log(notification)
         }
     }
 
-    async actionPerformed(parent: Friendship | Match) {
-        parent.notification.awaitingAction = false
+    async actionPerformedFriendship(parent: Friendship) {
+        let notification = await this.notificationsRepository.findOne({
+            where: {
+                entityId: parent.id,
+                entityType: "Friendship"
+            }
+        })
+        if (notification) {
+
+            notification.awaitingAction = false
+            notification = await this.notificationsRepository.save(notification)
+            console.log(notification)
+        }
     }
+    
 
 }

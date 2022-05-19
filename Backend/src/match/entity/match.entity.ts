@@ -3,7 +3,7 @@ import { User } from "../../user/entity/user.entity";
 import { MatchDto } from "../dto/match.dto";
 import { BALL_VX, BALL_VY, GAME_LENGTH, GAME_HEIGHT, GAME_SLEEP } from '../match.constants';
 import { PolymorphicChildren } from "typeorm-polymorphic"
-import { Notification } from "src/notifications/entity/notification.entity";
+import { Notification } from "src/notification/entity/notification.entity";
 
 export enum MatchStatus {
     INVITE_SEND,
@@ -17,7 +17,7 @@ export enum CustomModes {
     CUSTOM
 }
 
-@Entity()
+@Entity("matchs")
 export class Match {
 	@PrimaryGeneratedColumn()
 	public id: number;
@@ -31,8 +31,8 @@ export class Match {
     @PolymorphicChildren(() => Notification)
         notification: Notification;
 
-    @Column({ default: GAME_SLEEP})
-    public sleep: number;
+    // @Column({ default: GAME_SLEEP})
+    // public sleep: number;
 
     @Column({ default: 0})
     public score1: number;
@@ -54,23 +54,23 @@ export class Match {
     @Column({ default: CustomModes.NORMAL })
     public mode: number;
 
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public y1: number;
+    // @Column({ type: "float", default: GAME_HEIGHT / 2 })
+    // public y1: number;
 
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public y2: number;
+    // @Column({ type: "float", default: GAME_HEIGHT / 2 })
+    // public y2: number;
 
-    @Column({ type: "float", default: GAME_LENGTH / 2 })
-    public bx: number;
+    // @Column({ type: "float", default: GAME_LENGTH / 2 })
+    // public bx: number;
 
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public by: number;
+    // @Column({ type: "float", default: GAME_HEIGHT / 2 })
+    // public by: number;
 
-    @Column({ type: "float", default: BALL_VX })
-    public bvx: number;
+    // @Column({ type: "float", default: BALL_VX })
+    // public bvx: number;
 
-    @Column({ type: "float", default: BALL_VY })
-    public bvy: number;
+    // @Column({ type: "float", default: BALL_VY })
+    // public bvy: number;
 
     
     static toDto(match: Match): MatchDto {
@@ -83,13 +83,13 @@ export class Match {
             score2: match.score2,
             mode: match.mode,
             date: match.date,
-            sleep: match.sleep,
-            y1: match.y1,
-            y2: match.y2,
-            bx: match.bx,
-            by: match.by,
-            bvx: match.bvx,
-            bvy: match.bvy,
+            // sleep: match.sleep,
+            // y1: match.y1,
+            // y2: match.y2,
+            // bx: match.bx,
+            // by: match.by,
+            // bvx: match.bvx,
+            // bvy: match.bvy,
         }
         return dto
 	}

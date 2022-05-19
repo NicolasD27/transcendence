@@ -3,6 +3,7 @@ import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { TwoFactorGuard } from 'src/guards/two-factor.guard';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { NotificationDto } from '../dto/notification.dto';
+import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';
 
 
@@ -20,7 +21,7 @@ export class NotificationController {
 
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
-    async destroy(@Param('id') id: string, @GetUsername() username): Promise<NotificationDto> {
+    async destroy(@Param('id') id: string, @GetUsername() username): Promise<Notification> {
         console.log('destroyNotification', id);
         return this.notificationService.destroy(username,id);
     }

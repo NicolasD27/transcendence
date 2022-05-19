@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Fragment } from "react";
+import React, { Dispatch, Fragment, SetStateAction } from "react";
 import './Progress-bar.css';
 import accept from '../asset/accept.png';
 import refuse from '../asset/failed.svg';
@@ -20,7 +20,7 @@ interface Friendship {
 interface Match {
 	id: number,
 	user1: User,
-	user2: User
+	user2: User 
 }
 
 interface Props {
@@ -28,7 +28,9 @@ interface Props {
     entityType: string,
     entityId: number,
 	name: string,
-	awaitingAction: boolean
+	awaitingAction: boolean,
+	newNotifsLength: number,
+	setNewNotifsLength: Dispatch<SetStateAction<number>>;
 }
 
 
@@ -43,18 +45,19 @@ const Notification: React.FC<Props> = (props) => {
 	if (content == "")
 	{
 		setAwaitingAction(awaitingAction => props.awaitingAction)
-		if (props.entityType == "Frienship")
+		if (props.entityType == "Friendship")
 			setContent(content => `${props.name} wants to be your friend`)
 		else if (props.entityType == "Match")
 			setContent(content => `${props.name} challenged you`)
 	}
 
 	const handleAccept = () => {
-		if (props.entityType == "Frienship")
+		if (props.entityType == "Friendship")
 		{
 			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.entityId}`, {status: 1}, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
+				props.setNewNotifsLength(props.newNotifsLength - 1)
 			})
 		}
 		else if (props.entityType == "Match")
@@ -62,16 +65,18 @@ const Notification: React.FC<Props> = (props) => {
 			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${props.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
+				props.setNewNotifsLength(props.newNotifsLength - 1)
 			})
 		}
 	}
 
 	const handleRefuse = () => {
-		if (props.entityType == "Frienship")
+		if (props.entityType == "Friendship")
 		{
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.entityId}`, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
+				props.setNewNotifsLength(props.newNotifsLength - 1)
 			})
 		}
 		else if (props.entityType == "Match")
@@ -79,6 +84,7 @@ const Notification: React.FC<Props> = (props) => {
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${props.entityId}`, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
+				props.setNewNotifsLength(props.newNotifsLength - 1)
 			})
 		}
 	}

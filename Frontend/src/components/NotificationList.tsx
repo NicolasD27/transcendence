@@ -8,14 +8,15 @@ import bell from '../asset/notification.svg';
 interface INotification {
 	id: number,
 	entityType: string,
-	entityId: number,
+	entityId: number, 
 	name: string,
 	awaitingAction: boolean
 }
 
 const NotificationList = ({myId}: {myId: number}) => {
-    const [notifications, setNotifications] = React.useState([])
+    const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
+	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
 
 	const [isMounted, setIsMounted] = useState(false);
 	if (isMounted === false) {
@@ -25,6 +26,7 @@ const NotificationList = ({myId}: {myId: number}) => {
 				const notifications = setNotifications(notifications => res.data);
 				setIsMounted(isMounted => true)
 				
+				
 			})
 		
 	}
@@ -33,10 +35,13 @@ const NotificationList = ({myId}: {myId: number}) => {
 		setOpen(open => !open)
 	}
 
+	if (notifications.length > 0 && newNotifsLength == -1)
+		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+
 
 	return (
 		<Fragment>
-			<img className="notifications-opener" src={bell} alt="" onClick={handleOpen}/>
+			<img className="notifications-opener" src={bell} alt="" onClick={handleOpen}/>{newNotifsLength > 0 &&<span className="notifications-indicator">{newNotifsLength}</span>}
 			<div className={`notifications-list-wrapper ${open ? "notifications-open" : "notifications-close"}`}>
 				
 				
@@ -44,7 +49,7 @@ const NotificationList = ({myId}: {myId: number}) => {
 				<div className="notifications-list-container">
 
 					{isMounted && notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} id={notification.id} entityId={notification.entityId} entityType={notification.entityType} name={notification.name} awaitingAction={notification.awaitingAction}/>
+						<Notification key={notification.id} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} id={notification.id} entityId={notification.entityId} entityType={notification.entityType} name={notification.name} awaitingAction={notification.awaitingAction}/>
 						))}
 				</div>
 			</div>

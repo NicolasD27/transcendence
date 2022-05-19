@@ -23,9 +23,11 @@ import DatabaseFilesController from './controller/database-file/database-file.co
 import { UserService } from './service/user.service';
 import { MatchService } from 'src/match/service/match.service';
 import { Match } from 'src/match/entity/match.entity';
-import { NotificationService } from 'src/notifications/service/notification.service';
-import { Notification } from 'src/notifications/entity/notification.entity';
-import { NotificationRepository } from 'src/notifications/repository/notification.repository';
+import { NotificationService } from 'src/notification/service/notification.service';
+import { Notification } from 'src/notification/entity/notification.entity';
+import { NotificationRepository } from 'src/notification/repository/notification.repository';
+import { FriendshipRepository } from '../friendship/repository/friendship.repository';
+import { MatchRepository } from '../match/repository/match.repository';
 
 
 @Global()
@@ -38,7 +40,7 @@ import { NotificationRepository } from 'src/notifications/repository/notificatio
             }
         }),
         PassportModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match, Notification, NotificationRepository])
+        TypeOrmModule.forFeature([User, Friendship, FriendshipRepository, DatabaseFile, Match, MatchRepository, Notification, NotificationRepository])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [

@@ -4,7 +4,7 @@ import { Exclude, instanceToPlain, plainToInstance } from "class-transformer";
 import { User } from "../../user/entity/user.entity";
 import { FriendshipDto } from "../dto/friendship.dto";
 import { PolymorphicChildren } from "typeorm-polymorphic"
-import { Notification } from "src/notifications/entity/notification.entity";
+import { Notification } from "src/notification/entity/notification.entity";
 
 export enum FriendshipStatus {
     PENDING,
@@ -14,7 +14,7 @@ export enum FriendshipStatus {
 
 }
 
-@Entity('friendship')
+@Entity('friendships')
 export class Friendship {
     @PrimaryGeneratedColumn()
     id: number

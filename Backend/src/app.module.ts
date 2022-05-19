@@ -10,7 +10,7 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { MatchModule } from './match/match.module';
 import { ChannelModule } from './channel/channel.module';
 import { DirectMessageModule } from './direct-message/direct-message.module';
-import { NotificationModule } from './notifications/notification.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
 	imports: [
