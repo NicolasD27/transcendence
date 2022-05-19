@@ -32,12 +32,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		private readonly chatService: ChatService,
 		private readonly channelService: ChannelService,
 		private readonly userService: UserService,
-		)
+	)
 	{}
 
 	@SubscribeMessage('msg_to_server')
-	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string }) {
-		
+	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string })
+	{
 		console.log("// msg_to_server " + data.activeChannelId);
 
 		const username = getUsernameFromSocket(socket);
@@ -57,7 +57,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	}
 
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: CustomSocket, data: { channelId: string }) {
+	async connectToChannel(socket: CustomSocket, data: { channelId: string })
+	{
 
 		// console.log(socket.request.headers.cookie);
 		
@@ -77,9 +78,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('ban')
 	async banUser(
 		socket: CustomSocket,
-		banUserFromChannelDto: BanUserFromChannelDto)
+		banUserFromChannelDto: BanUserFromChannelDto
+	)
 	{
-		try {
+		try
+		{
 			const username = getUsernameFromSocket(socket);
 
 			const bannedUser = await this.channelService.changeBanStatus(
@@ -97,19 +100,15 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				}
 			);
 
-			// activeUsers.display(banUserFromChannelDto.userId);
-
 			if (activeUsers.isActiveUser(banUserFromChannelDto.userId) == true)
 			{
 				const targetedClientSocket = await this.server
 					.in(activeUsers.getSocketId(banUserFromChannelDto.userId).socketId)
 					.fetchSockets();
-
 				if (targetedClientSocket.length)
 				{
 					console.log(`${banUserFromChannelDto.userId} kicked from channel#${banUserFromChannelDto.channelId}`);
 					targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
-
 					this.server.to("user#" + bannedUser.id)
 						.emit('mute', {
 							channelId: banUserFromChannelDto.channelId,
@@ -125,7 +124,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			console.log(e.message);
 			return ;
 		}
-
 	}
 
 	@SubscribeMessage('mute')
@@ -228,15 +226,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 	}
 
-	afterInit(server: Server) {
+	afterInit(server: Server)
+	{
 		this.logger.log('Init');
 	}
 
-	async handleConnection(client: CustomSocket, @Request() req, ...args: any[]) {
+	async handleConnection(client: CustomSocket, @Request() req, ...args: any[])
+	{
 		this.logger.log(`/// ${client.user.username} connected via ${client.id}`);
 	}
 
-	handleDisconnect(client: CustomSocket) {
+	handleDisconnect(client: CustomSocket)
+	{
 		this.logger.log(`${client.user.username} disconected`);
 	}
 }

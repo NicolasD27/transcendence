@@ -147,7 +147,7 @@ export class ChannelService {
 		if (myChannel.isPrivate)
 			throw new UnauthorizedException("Private channels can not be joined. You need an invitation.");
 		if (myChannel.isProtected
-			&& await bcrypt.compare(notHashedPassword, myChannel.hashedPassword))
+			&& !(await bcrypt.compare(notHashedPassword, myChannel.hashedPassword)))
 			throw new UnauthorizedException("Wrong password");
 
 		const participations = await this.participationRepo.find({
@@ -241,10 +241,17 @@ export class ChannelService {
 		if (!myChannel)
 			throw new NotFoundException();
 		const mySender = await this.userRepo.findOne({username});
+		const myParticipation = await this.participationRepo.find({
+			where: {
+				user: mySender.id,
+				channel: createChannelInviteDto.channelId,
+			}
+		});
+		if (!myParticipation)
+			throw new UnauthorizedException("You have not joined this channel.");
 		const myReceiver = await this.userRepo.findOne({where:{ id: createChannelInviteDto.userId }});
 		if (!myReceiver)
 			throw new NotFoundException();
-
 		//? check the black list of the receiver to avoid spam
 		const blacklisted = await this.friendshipRepo.find({
 			where: [
