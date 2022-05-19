@@ -46,9 +46,10 @@ const App = () => {
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/login" element={<Login isAuth={isAuth}/>} />
-          <Route path="/profil" element={<Profil isAuth={isAuth}/>} />
+          <Route path="/profil/:id" element={<Profil isAuth={isAuth}/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
+  
       </Routes>
       
     </Fragment>

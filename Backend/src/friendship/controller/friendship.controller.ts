@@ -1,13 +1,27 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Request, UseFilters, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    UseFilters,
+    UseGuards,
+    ValidationPipe
+} from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { TwoFactorGuard } from 'src/guards/two-factor.guard';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { createFriendshipDto } from '../dto/create-friendship.dto';
 import { FriendshipDto } from '../dto/friendship.dto';
 import { updateFriendshipDto } from '../dto/update-friendship.dto';
-import { Friendship } from '../entity/friendship.entity';
 import { FriendshipService } from '../service/friendship.service';
+import { ParseIntPipe } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Friendships')
 @Controller('friendships')
 @UseFilters(HttpExceptionFilter)
 export class FriendshipController {
@@ -33,7 +47,7 @@ export class FriendshipController {
 
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
-    update(@Param('id') id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
+    update(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
         console.log('updateFriendship', id);
         return this.friendshipService.update(username, +id, body.status);
     }
@@ -41,7 +55,7 @@ export class FriendshipController {
     //pour supprimer les invitations (status == 0)
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
-    async destroy(@Param('id') id: string, @GetUsername() username): Promise<FriendshipDto> {
+    async destroy(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
         console.log('destroyFriendship', id);
         return this.friendshipService.destroy(username,id);
     }

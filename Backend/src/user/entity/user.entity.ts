@@ -10,6 +10,7 @@ import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
 import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 import { Notification } from "src/notification/entity/notification.entity";
+import { ChannelInvite } from "src/channel/entity/channelInvite.entity";
 
 export enum UserStatus {
 	OFFLINE,
@@ -66,6 +67,11 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.user)
 	moderationTimeOuts: ModerationTimeOut[];
+
+	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.sender)
+	channelInviteSenders: ChannelInvite[];
+	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.receiver)
+	channelInviteReceivers: ChannelInvite[];
 
 	@OneToMany(() => Msg, msg => msg.user)
 	messages: Msg[];

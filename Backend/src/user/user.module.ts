@@ -28,6 +28,8 @@ import { Notification } from 'src/notification/entity/notification.entity';
 import { NotificationRepository } from 'src/notification/repository/notification.repository';
 import { FriendshipRepository } from '../friendship/repository/friendship.repository';
 import { MatchRepository } from '../match/repository/match.repository';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelModule } from 'src/channel/channel.module';
 
 
 @Global()
