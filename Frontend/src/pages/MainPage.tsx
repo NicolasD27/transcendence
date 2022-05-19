@@ -162,7 +162,7 @@ const PrintUnfriendBlockProfile = (props:any) => {
 }
 
 interface PropsPrintFriendProfile {
-	//friendshipId: number;
+	friends: FriendsFormat[];
 	user:  PropsStateUsers;
 	statusIcon: string;
 	key: number;
@@ -195,13 +195,21 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 	}, [])
 
 	const deleteFriend = (user:any) => {
-			/*props.user.filter((friend) => {
-
-			})*/
-		axios
-			.delete(`http://localhost:8000/api/friendships/${user.friendshipId}`, { withCredentials: true })
-			.catch((err) => 
-				console.log(err))
+		for (let i = 0; i < props.friends.length; i++)
+		{
+			if (props.friends[i].id === props.user.id)
+			{
+				console.log(`props.friend[${i}].friendshipId:` , props.friends[i].friendshipId)
+				axios
+					.delete(`http://localhost:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
+					.then(() => {
+						const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
+						props.setFriends(newFriendsList)
+					})
+					.catch((err) => 
+						console.log(err))
+			}
+		}
 	}
 
 	return (
@@ -510,20 +518,14 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					.filter((user) => {
 						if (user.id !== props.idMe)
 							return user.pseudo.toLowerCase().includes(searchValue.toLowerCase())
-						console.log("user: ", user)
 					})
-					.map((user) => {
-						let statusIcon = (user.status === 1 ? statutIconGreen : statutIconRed);
-						if (Boolean(isAlreadyFriend(user.id)) === true)
+					.map((user_) => {
+						let statusIcon = (user_.status === 1 ? statutIconGreen : statutIconRed);
+						if (Boolean(isAlreadyFriend(user_.id)) === true)
 						{
 							return (
-								<PrintFriendProfile user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends} /*setSelectedUser={setSelectedUser}*//>
+								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
 							)
-							/*console.log("username: ", user.username)
-							friends.
-							return (
-								<PrintFriendProfile user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}/>
-							)*/
 						}
 						/*else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
 						{
@@ -540,7 +542,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						}*/
 						else
 							return (
-								<PrintSendFriendRequestProfile user={user} statusIcon={statusIcon} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user.id}/>
+								<PrintSendFriendRequestProfile user={user_} statusIcon={statusIcon} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user_.id}/>
 							)
 					})
 			}
@@ -556,10 +558,10 @@ const UserList : React.FC<PropsUserList> = (props) => {
 			{
 					!searchValue && 
 					friends
-						.map((user) => {
-							let statusIcon = (user.status === 1 ? statutIconGreen : statutIconRed);
+						.map((friend) => {
+							let statusIcon = (friend.status === 1 ? statutIconGreen : statutIconRed);
 							return (
-								<PrintFriendProfile /*friendshipId={user.friendshipId}*/ user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
 							)
 						})
 			}
@@ -585,7 +587,7 @@ interface  PropsStateUsers {
 }
 
 interface FriendsFormat {
-	//friendshipId : number;
+	friendshipId : number;
 	id : number;
 	username : string;
 	pseudo : string;
@@ -647,7 +649,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 					var friend = res.data;
 					friend.map((list:any) => {
 						let friends_tmp : FriendsFormat;
-						friends_tmp = { /*friendshipId: list.id ,*/ id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarId : list.following.avatarId, status : list.following.status }
+						friends_tmp = { friendshipId: list.id , id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarId : list.following.avatarId, status : list.following.status }
 						setFriends(friends => [...friends, friends_tmp])
 					})
 				})
