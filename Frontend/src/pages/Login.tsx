@@ -62,7 +62,7 @@ const Login = ({isAuth}: {isAuth: boolean}) => {
 					<Chat />
 				</section>
 			</div>
-			{getID && <NotificationList myId={idPerso} />}
+			{getIDMe && <NotificationList myId={idMe} />}
 		</Fragment>
 	);
 };

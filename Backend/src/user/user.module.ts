@@ -30,6 +30,11 @@ import { FriendshipRepository } from '../friendship/repository/friendship.reposi
 import { MatchRepository } from '../match/repository/match.repository';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelModule } from 'src/channel/channel.module';
+import { Channel } from 'src/channel/entity/channel.entity';
+import { Participation } from '../channel/entity/participation.entity';
+import { Msg } from 'src/message/entity/msg.entity';
+import { ModerationTimeOut } from '../channel/entity/moderationTimeOut.entity';
+import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 
 
 @Global()
@@ -42,7 +47,7 @@ import { ChannelModule } from 'src/channel/channel.module';
             }
         }),
         PassportModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship, FriendshipRepository, DatabaseFile, Match, MatchRepository, Notification, NotificationRepository])
+        TypeOrmModule.forFeature([User, Channel, Participation, Msg, ModerationTimeOut, ChannelInvite, Friendship, FriendshipRepository, DatabaseFile, Match, MatchRepository, Notification, NotificationRepository])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
@@ -56,7 +61,8 @@ import { ChannelModule } from 'src/channel/channel.module';
         UserGateway,
         DatabaseFilesService,
         MatchService,
-        NotificationService
+        NotificationService,
+        ChannelService
     ],
     exports: [
         FtStrategy,
