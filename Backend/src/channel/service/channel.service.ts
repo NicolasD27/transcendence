@@ -21,6 +21,7 @@ import { ChannelInviteDto } from '../dto/channel-invite.dto';
 import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
 import { DeleteChannelInviteDto } from '../dto/delete-invite.dto';
 import { AcceptChannelInviteDto } from '../dto/accept-channel-invite.dto';
+import { NotificationService } from '../../notification/service/notification.service';
 
 
 @Injectable()
@@ -46,7 +47,9 @@ export class ChannelService {
 		private channelInviteRepo: Repository<ChannelInvite>,
 
 		@InjectRepository(Friendship)
-		private friendshipRepo: Repository<Friendship>
+		private friendshipRepo: Repository<Friendship>,
+
+		private notificationService: NotificationService
 	)
 	{}
 
@@ -273,6 +276,7 @@ export class ChannelService {
 			receiver: myReceiver,
 		});
 		const myinvite = await this.channelInviteRepo.save(newInvite);
+		await this.notificationService.create(newInvite, newInvite.receiver)
 		return ChannelInvite.toDto(myinvite);
 	}
 

@@ -11,6 +11,11 @@
 
 }
 
+.notification-name {
+    cursor: pointer;
+    font-weight: bold;
+}
+
 .notification-icon {
     width: 25px;
     height: 25px;

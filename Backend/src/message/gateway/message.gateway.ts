@@ -37,7 +37,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@SubscribeMessage('msg_to_server')
 	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string }) {
-
+		
 		console.log("// msg_to_server " + data.activeChannelId);
 
 		const username = getUsernameFromSocket(socket);
@@ -215,7 +215,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 			if (activeUsers.isActiveUser(newInviteDto.receiver.id))
 			{
-				this.server.to(activeUsers.getSocketId(newInviteDto.receiver.id).socketId)
+				this.server.to("user#" + newInviteDto.receiver.id)
 					.emit('new_channel_invite_received', newInviteDto);
 			}
 			else

@@ -29,7 +29,7 @@ export class Match {
 	public user2: User;
 
     @PolymorphicChildren(() => Notification)
-        notification: Notification;
+    notification: Notification;
 
     // @Column({ default: GAME_SLEEP})
     // public sleep: number;

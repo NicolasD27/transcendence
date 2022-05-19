@@ -5,6 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PolymorphicParent } from "typeorm-polymorphic";
 import { PolymorphicChildInterface } from "typeorm-polymorphic/dist/polymorphic.interface";
 import { NotificationDto } from "../dto/notification.dto";
+import { ChannelInvite } from '../../channel/entity/channelInvite.entity';
 
 
 
@@ -13,7 +14,7 @@ export class Notification implements PolymorphicChildInterface {
     @PrimaryGeneratedColumn()
     id: number
 
-    @PolymorphicParent(() => [Friendship, Match], {
+    @PolymorphicParent(() => [Friendship, Match, ChannelInvite], {
         eager: false
     })
     parent: Friendship | Match;
@@ -52,6 +53,20 @@ export class Notification implements PolymorphicChildInterface {
             entityId: parent.id,
             entityType: "Match",
             awaitingAction: notification.awaitingAction
+        }
+        return dto
+    }
+
+    static toChannelInviteDto(notification: Notification, parent: ChannelInvite): NotificationDto {
+        
+        const dto: NotificationDto = {
+            id: notification.id,
+            receiver: User.toDto(notification.receiver),
+            name: parent.sender.pseudo,
+            entityId: parent.id,
+            entityType: "ChannelInvite",
+            awaitingAction: notification.awaitingAction,
+            secondName: parent.channel.name
         }
         return dto
     }

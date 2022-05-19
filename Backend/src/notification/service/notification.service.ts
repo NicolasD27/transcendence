@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { not } from 'joi';
+import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 import { Friendship } from 'src/friendship/entity/friendship.entity';
 import { FriendshipRepository } from 'src/friendship/repository/friendship.repository';
 import { Match } from 'src/match/entity/match.entity';
@@ -24,6 +25,8 @@ export class NotificationService {
 		private friendshipsRepository: Repository<Friendship>,
         @InjectRepository(Match)
 		private matchsRepository: Repository<Match>,
+        @InjectRepository(ChannelInvite)
+		private channelInvitesRepository: Repository<ChannelInvite>,
         // private connection: Connection
         ) {
             // notificationsRepository = connection.getCustomRepository(NotificationRepository)
@@ -58,17 +61,23 @@ export class NotificationService {
                     if (parent)
                         notificationsDto.push(Notification.toMatchDto(notifications[i], parent));
                 })
-            }                
+            }     
+            else if (notifications[i].entityType == "ChannelInvite") {
+                await this.channelInvitesRepository.findOne(notifications[i].entityId)
+                .then(parent => {
+                    if (parent)
+                        notificationsDto.push(Notification.toChannelInviteDto(notifications[i], parent));
+                })
+            }              
         };
         return notificationsDto;
     }
 
-    async create(parent: Friendship | Match, receiver: User): Promise<Notification> {
+    async create(parent: Friendship | Match | ChannelInvite, receiver: User): Promise<Notification> {
         const notification = await this.notificationsRepository.create({
             receiver: receiver,
             parent: parent
         })
-        // notification.parent = parent
         await this.notificationsRepository.save(notification)
         return notification
     }
@@ -105,6 +114,21 @@ export class NotificationService {
             where: {
                 entityId: parent.id,
                 entityType: "Friendship"
+            }
+        })
+        if (notification) {
+
+            notification.awaitingAction = false
+            notification = await this.notificationsRepository.save(notification)
+            console.log(notification)
+        }
+    }
+
+    async actionPerformedChannelInvite(parent: ChannelInvite) {
+        let notification = await this.notificationsRepository.findOne({
+            where: {
+                entityId: parent.id,
+                entityType: "ChannelInvite"
             }
         })
         if (notification) {

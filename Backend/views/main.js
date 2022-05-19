@@ -46,15 +46,14 @@ const app = new Vue({
 			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
 		sendMessage() {
-			if(this.validateInput()) {
+
 				const message = {
 					activeChannelId: this.channelId,
 					content: this.content,
-					author: this.author
 				}
 				this.socket.emit('msg_to_server', message)
-				// console.log(message);
-			}
+				console.log("here", message);
+			
 			this.content = '';
 		},
 		receivedMessage(message) {
@@ -72,7 +71,8 @@ const app = new Vue({
 				this.receivedMessage(msgs[i]);
 			}
 		},
-		async sendInvite() {
+		sendInvite() {
+			console.log("sending invite ...", { channelId: this.channelId, userId: this.idToInvite})
 			this.socket.emit('sendInvite', { channelId: this.channelId, userId: this.idToInvite});
 		},
 		// closeChannel() {

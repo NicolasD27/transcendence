@@ -19,14 +19,8 @@ export class MatchService {
 		private matchsRepository: Repository<Match>,
 		@InjectRepository(User)
 		private usersRepository: Repository<User>,
-		private readonly notificationService: NotificationService,
-		private notificationsRepository: NotificationRepository,
-		private connection: Connection
-		
-	) {
-		// matchsRepository = this.connection.getCustomRepository(MatchRepository)
-
-	}
+		private readonly notificationService: NotificationService,		
+	) {}
 
 	async findAll(): Promise<MatchDto[]> {
         return this.matchsRepository.find()

@@ -4,6 +4,8 @@ import './Progress-bar.css';
 import accept from '../asset/accept.png';
 import refuse from '../asset/failed.svg';
 import "./Notification.css";
+import { useNavigate } from 'react-router-dom';
+import { INotification } from "./NotificationList";
 
 interface User {
 	id: number,
@@ -24,11 +26,7 @@ interface Match {
 }
 
 interface Props {
-	id: number,
-    entityType: string,
-    entityId: number,
-	name: string,
-	awaitingAction: boolean,
+	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
 }
@@ -36,62 +34,90 @@ interface Props {
 
 
 
-const Notification: React.FC<Props> = (props) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
-
+	const navigate = useNavigate()
 
 	
 	if (content == "")
 	{
-		setAwaitingAction(awaitingAction => props.awaitingAction)
-		if (props.entityType == "Friendship")
-			setContent(content => `${props.name} wants to be your friend`)
-		else if (props.entityType == "Match")
-			setContent(content => `${props.name} challenged you`)
+		setAwaitingAction(awaitingAction => notification.awaitingAction)
+		if (notification.entityType == "Friendship")
+			setContent(content => ` wants to be your friend`)
+		else if (notification.entityType == "Match")
+			setContent(content => ` challenged you`)
+		else if (notification.entityType == "ChannelInvite")
+			setContent(content => ` invited you to join `)
 	}
 
 	const handleAccept = () => {
-		if (props.entityType == "Friendship")
+		if (notification.entityType == "Friendship")
 		{
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.entityId}`, {status: 1}, { withCredentials: true })
+			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${notification.entityId}`, {status: 1}, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
-				props.setNewNotifsLength(props.newNotifsLength - 1)
+				setNewNotifsLength(newNotifsLength - 1)
 			})
 		}
-		else if (props.entityType == "Match")
+		else if (notification.entityType == "Match")
 		{
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${props.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
+			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
-				props.setNewNotifsLength(props.newNotifsLength - 1)
+				setNewNotifsLength(newNotifsLength - 1)
 			})
+		}
+		else if (notification.entityType == "ChannelInvite")
+		{
+			// axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
+			// .then(res => {
+				console.log("todo accept invite")
+				setAwaitingAction(awaitingAction => false)
+				setNewNotifsLength(newNotifsLength - 1)
+			// })
 		}
 	}
 
 	const handleRefuse = () => {
-		if (props.entityType == "Friendship")
+		if (notification.entityType == "Friendship")
 		{
-			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.entityId}`, { withCredentials: true })
+			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${notification.entityId}`, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
-				props.setNewNotifsLength(props.newNotifsLength - 1)
+				setNewNotifsLength(newNotifsLength - 1)
 			})
 		}
-		else if (props.entityType == "Match")
+		else if (notification.entityType == "Match")
 		{
-			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${props.entityId}`, { withCredentials: true })
+			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, { withCredentials: true })
 			.then(res => {
 				setAwaitingAction(awaitingAction => false)
-				props.setNewNotifsLength(props.newNotifsLength - 1)
+				setNewNotifsLength(newNotifsLength - 1)
 			})
+		}
+		else if (notification.entityType == "ChannelInvite")
+		{
+			// axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
+			// .then(res => {
+				console.log("todo refuse invite")
+				setAwaitingAction(awaitingAction => false)
+				setNewNotifsLength(newNotifsLength - 1)
+			// })
 		}
 	}
+
+	const handleClick = () => {
+		if (notification.entityType == "Friendship")
+			navigate(`/profil/${notification.entityId}`)
+	}
+
 	return (
 		<Fragment>
 			<div className="notification-container">
-                {content} {awaitingAction && <div><img className="notification-icon" src={accept} alt="" onClick={handleAccept}/><img className="notification-icon" src={refuse} alt="" onClick={handleRefuse}/></div>}
+                <div><span className="notification-name" onClick={handleClick}>{notification.name}</span>{content}{notification.secondName 
+				&& <span className="notification-name">{notification.secondName}</span>}</div> {awaitingAction 
+				&& <div><img className="notification-icon" src={accept} alt="" onClick={handleAccept}/><img className="notification-icon" src={refuse} alt="" onClick={handleRefuse}/></div>}
             </div>
 		</Fragment>
 	);

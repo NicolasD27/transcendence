@@ -1,10 +1,12 @@
+import { Notification } from "src/notification/entity/notification.entity";
 import { User } from "src/user/entity/user.entity";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PolymorphicChildren } from "typeorm-polymorphic";
 import { ChannelInviteDto } from "../dto/channel-invite.dto";
 import { Channel } from "./channel.entity";
 
-@Entity()
-export class ChannelInvite extends BaseEntity {
+@Entity('channel_invites')
+export class ChannelInvite {
 
 	@PrimaryGeneratedColumn()
 	public id: number;
@@ -17,6 +19,9 @@ export class ChannelInvite extends BaseEntity {
 
 	@ManyToOne(() => User, user => user.channelInviteReceivers, { eager: true })
 	receiver: User;
+
+	@PolymorphicChildren(() => Notification)
+    notification: Notification;
 
 	@Column({
 		nullable: false,

@@ -17,7 +17,6 @@ interface Props {
 
   
   const ProtectedRoute = ({isAuth, isLoading , redirectPath = '/', children }: Props) => {
-    console.log("protected")
     if (isLoading)
       return <Loader />
     if (!isAuth ) {

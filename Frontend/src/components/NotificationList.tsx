@@ -3,14 +3,26 @@ import React, { Fragment, Component, useState, useEffect } from "react";
 import Notification from "./Notification";
 import './NotificationList.css';
 import bell from '../asset/notification.svg';
+import socketIOClient from "socket.io-client";
 
 
-interface INotification {
+
+export interface INotification {
 	id: number,
 	entityType: string,
 	entityId: number, 
 	name: string,
-	awaitingAction: boolean
+	awaitingAction: boolean,
+	secondName?: string
+}
+function getAccessTokenFromCookies() {
+	try {
+		const cookieString = document.cookie.split('; ').find((cookie) => cookie.startsWith('accessToken'))
+		if (cookieString)
+			return ('bearer ' + cookieString.split('=')[1]);
+	} catch (ex) {
+		return '';
+	}
 }
 
 const NotificationList = ({myId}: {myId: number}) => {
@@ -18,18 +30,44 @@ const NotificationList = ({myId}: {myId: number}) => {
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
 
-	const [isMounted, setIsMounted] = useState(false);
-	if (isMounted === false) {
-		
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-			.then(res => {
-				const notifications = setNotifications(notifications => res.data);
-				setIsMounted(isMounted => true)
-				
-				
+	useEffect(() => {
+		if (myId != 0) {
+			const socket = socketIOClient(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
+				reconnection: true,
+				transports : ['websocket', 'polling', 'flashsocket'],
+				transportOptions: {
+					polling: {
+						extraHeaders: {
+							Authorization: getAccessTokenFromCookies()
+						}
+					}
+				}
 			})
+			socket.on("new_channel_invite_received", data => {
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+				.then(res => {
+					setNotifications(notifications => res.data);	
+			})
+			});
+			socket.on("match_invite_to_client", data => {
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+				.then(res => {
+					setNotifications(notifications => res.data);	
+			})
+			});
+			socket.on("notifyFriendRequest", data => {
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+				.then(res => {
+					setNotifications(notifications => res.data);	
+			})
+			});			
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+			.then(res => {
+				setNotifications(notifications => res.data);	
+			})
+		}
+	}, [myId])
 		
-	}
 
 	const handleOpen = () => {
 		setOpen(open => !open)
@@ -48,8 +86,8 @@ const NotificationList = ({myId}: {myId: number}) => {
 				<h3 className="notifications-title">Notifications</h3>
 				<div className="notifications-list-container">
 
-					{isMounted && notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} id={notification.id} entityId={notification.entityId} entityType={notification.entityType} name={notification.name} awaitingAction={notification.awaitingAction}/>
+					{notifications.map((notification: INotification, i) => (
+						<Notification key={notification.id} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification}/>
 						))}
 				</div>
 			</div>

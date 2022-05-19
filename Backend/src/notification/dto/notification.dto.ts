@@ -33,5 +33,9 @@ export class NotificationDto {
     @Expose()
     awaitingAction: boolean;
 
+    @ApiProperty()
+    @Expose()
+    secondName?: string;
+
     
 }
