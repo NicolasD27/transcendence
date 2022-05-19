@@ -144,7 +144,7 @@ export class ChannelService {
 		if (myChannel.isPrivate)
 			throw new UnauthorizedException("Private channels can not be joined. You need an invitation.");
 		if (myChannel.isProtected
-			&& await bcrypt.compare(notHashedPassword, myChannel.hashedPassword))
+			&& !(await bcrypt.compare(notHashedPassword, myChannel.hashedPassword)))
 			throw new UnauthorizedException("Wrong password");
 
 		const participations = await this.participationRepo.find({
