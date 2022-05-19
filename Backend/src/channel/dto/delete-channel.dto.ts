@@ -6,5 +6,5 @@ export class DeleteChannelDto
 	@ApiProperty()
 	@IsString()
 	@MaxLength(32)
-	readonly password: string;
+	readonly name: string;
 }

@@ -167,7 +167,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		return ;
 	}
 
-	@SubscribeMessage('rescue')
+	@SubscribeMessage('rescue')	// unrestrict ?
 	async unbanUser(
 		socket: CustomSocket,
 		data: { userId: number, channelId: number })
@@ -208,8 +208,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('sendInvite')
 	async createChannelInvite(socket: CustomSocket, createChannelInviteDto: CreateChannelInviteDto)
 	{
-		//! check the black list of the receiver to avoid spam
-
 		try
 		{
 			const newInviteDto = await this.channelService.saveInvite(getUsernameFromSocket(socket), createChannelInviteDto);
@@ -226,7 +224,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		catch (e)
 		{
 			console.log("error: " + e.message);
-			return { error: e.message };	// an emit could be done to the client room of this socket
+			return { error: e.message };	// todo : an emit could be done to the client room of this socket
 		}
 	}
 

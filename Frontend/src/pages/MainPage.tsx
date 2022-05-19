@@ -12,7 +12,7 @@ import playIcon from "../asset/PlayIcon_blue.svg"
 import Avatar from '../components/Avatar';
 import CloseChatWindow from '../asset/CloseChatWindow.svg'
 import { Channel, channel } from 'diagnostics_channel';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { collapseTextChangeRangesAcrossMultipleVersions, createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 import { join } from 'path';
 
 const dataUrlChannelsJoined = "http://localhost:8000/api/channels/"
@@ -110,21 +110,23 @@ const SearchBarAddGroup = (props:any) => {
 }
 
 interface PropsPrintNormalFriendProfile {
-	user : FriendsFormat;
+	user : PropsStateUsers;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
+	setChatFriendState :  Dispatch<SetStateAction<boolean>>;
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
 }
 
 const PrintNormalProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => {
+	
 	return (
 		<>
-			<div id="username">{props.user.username}</div>
+			<div id="username">{props.user.pseudo}</div>
 					<div id='friend_buttons'>
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => ""/*props.setChatFriendState(true)*/}/> 
+								<button id="friendChat_button" onClick={() => props.setChatFriendState(true)}/> 
 							</>
 						) ||
 							<div id='profileBlocked'>
@@ -160,50 +162,98 @@ const PrintUnfriendBlockProfile = (props:any) => {
 }
 
 interface PropsPrintFriendProfile {
-	user: FriendsFormat;
-	status: string;
+	//friendshipId: number;
+	user:  PropsStateUsers;
+	statusIcon: string;
 	key: number;
+	setChatFriendState :  Dispatch<SetStateAction<boolean>>;
+	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
 }
+
 const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 
-	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)
-	
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
-	
+	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)	
 	const [ isBlocked, setIsBlocked ]= useState(false)
+	const [ profileAvatar, setProfileAvatar ] = useState("")
+
+	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	const navigate = useNavigate()
+	
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
+	}
+
+	useEffect(() => {
+		console.log("Pseudo: ", props.user.pseudo)
+		console.log("id: ", props.user.id)
+		console.log("avatarId:" , props.user.avatarId)
+		if (props.user.avatarId != null)
+		{
+			console.log("catching avatar !!")
+			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+		}
+	}, [])
 
 	const deleteFriend = (user:any) => {
+			/*props.user.filter((friend) => {
+
+			})*/
 		axios
-			.delete(`${dataUrlFriends}/${user.id}`)
+			.delete(`http://localhost:8000/api/friendships/${user.friendshipId}`, { withCredentials: true })
 			.catch((err) => 
 				console.log(err))
 	}
 
-	/*useEffect(() => {
-		props.setSelectedUser(props.user)
-	}, [props.user])*/
-
 	return (
 		<div className='user'>
 				<div id='userAvatarIcon'>
-					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
+					{
+						props.user.avatarId == null && 
+						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					{
+						props.user.avatarId != null &&
+						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					<img src={props.statusIcon} className="userStatusIcon" alt="StatusIcon"/>
 				</div>
-			{!friendDeleteColumnState && <PrintNormalProfile user={props.user} /*username={props.username}*/ setFriendDeleteColumnState={setFriendDeleteColumnState} /*setChatFriendState={props.setChatFriendState} setSelectedUser={props.setSelectedUser}*/ isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
-			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} /*username={props.username}*/ setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
+			{!friendDeleteColumnState && <PrintNormalProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatFriendState={props.setChatFriendState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
+			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 		</div>
 	)
 }
 
 const PrintUserFriendRequestReceived = (props:any) => {
+	const [ profileAvatar, setProfileAvatar ] = useState("")
+
+	const navigate = useNavigate()
+	
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
+	}
+
+	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	
+	useEffect(() => {
+		if (props.user.avatarId != null)
+			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+	}, [])
+
 	return (
 		<>
 			<div className='user'>
 				<div id='userAvatarIcon'>
-					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
+				{
+						props.user.avatarId == null && 
+						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					{
+						props.user.avatarId != null &&
+						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					<img src={props.statusIcon} className="userStatusIcon" alt="StatutIcon"/>
 				</div>
-				<div id="username">{props.username}</div>
+				<div id="username">{props.user.pseudo}</div>
 				<div id='friendRequest_buttons'>
 					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} /> 
 					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} /> 
@@ -214,14 +264,36 @@ const PrintUserFriendRequestReceived = (props:any) => {
 }
 
 const PrintInvitationSentProfile = (props:any) => {
+	const [ profileAvatar, setProfileAvatar ] = useState("")
+
+	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	
+	const navigate = useNavigate()
+	
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
+	}
+
+	useEffect(() => {
+		if (props.user.avatarId != null)
+			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+	}, [])
+
 	return (
 		<>
 			<div className='user'>
 				<div id='userAvatarIcon'>
-					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt="StatutIcon"/>
+					{
+						props.user.avatarId == null && 
+						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					{
+						props.user.avatarId != null &&
+						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					<img src={props.statusIcon} className="userStatusIcon" alt="StatutIcon"/>
 				</div>
-				<div id="username">{props.username}</div>
+				<div id="username">{props.user.pseudo}</div>
 				<div id='invitation_sent'>
 					Invitation Sent
 				</div>
@@ -231,14 +303,37 @@ const PrintInvitationSentProfile = (props:any) => {
 }
 
 const PrintSendFriendRequestProfile = (props:any) => {
+	const [ profileAvatar, setProfileAvatar ] = useState("")
+
+	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	
+	const navigate = useNavigate()
+	
+	const onProfil = (idstring: string) => {
+		navigate("/profil/" + idstring)
+	}
+
+	useEffect(() => {
+		console.log(props.user.avatarId)
+		if (props.user.avatarId != null)
+			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+	}, [])
+
 	return (
 		<>
 			<div className='user'>
 				<div id='userAvatarIcon'>
-					<img src={user1} className="userAvatar" alt="userAvatar"/>
-					<img src={props.status} className="userStatutIcon" alt=" StatutIcon"/>
+					{
+						props.user.avatarId == null && 
+						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					{
+						props.user.avatarId != null &&
+						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+					}
+					<img src={props.statusIcon} className="userStatusIcon" alt=" StatutIcon"/>
 				</div>
-				<div id="username">{props.username}</div>
+				<div id="username">{props.user.pseudo}</div>
 				<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>  
 			</div>
 		</>
@@ -297,7 +392,7 @@ const PrintChannelsToJoin = ({channel, setJoinedChannels}:any) => {
 						<button id="confirmPassword" onClick={() => checkPassword()}/>
 					</div>) || (
 							axios
-								.post(dataUrlChannelsJoined, channel)
+								.post(dataUrlChannelsJoined, channel,  { withCredentials: true })
 								.then((res) => {
 									setJoinedChannels(res.data)
 								})
@@ -305,22 +400,23 @@ const PrintChannelsToJoin = ({channel, setJoinedChannels}:any) => {
 									console.log(err)
 								)
 					)
-				) 
-			
+				)
 			}
 		</div>
 	)
 }
 
 interface  PropsUserList {
+	idMe : number;
 	users : PropsStateUsers[];
 	setUsers : Dispatch<SetStateAction<PropsStateUsers[]>>;
 	friends: FriendsFormat[];
 	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
 	searchValue: string;
 	setSearchValue : Dispatch<SetStateAction<string>>;
+	setChatFriendState : Dispatch<SetStateAction<boolean>>;
 }
-/*{/*existingChannels, joinedChannels, users, setUsers, friends, setFriends/*, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue, setJoinedChannels, setChatFriendState, chatChannelState, setChatChannelState, setSelectedUser}*/
+/*{/*existingChannels, joinedChannels, users, setUsers, friends, setFriends/*, friendRequestsSent, setFriendRequestsSent, friendRequestReceived, setFriendRequestReceived, searchValue, setSearchValue, setJoinedChannels, setChatFriendState, chatChannelState, setChatChannelState}*/
 const UserList : React.FC<PropsUserList> = (props) => {
 
 	/*const isAlreadyMember = (channelId: any) => {
@@ -412,16 +508,22 @@ const UserList : React.FC<PropsUserList> = (props) => {
 				searchValue !== ""
 				&& users
 					.filter((user) => {
-						return user.username.toLowerCase().includes(searchValue.toLowerCase())
+						if (user.id !== props.idMe)
+							return user.pseudo.toLowerCase().includes(searchValue.toLowerCase())
+						console.log("user: ", user)
 					})
 					.map((user) => {
-						let status = (user.status === 1 ? statutIconGreen : statutIconRed);
+						let statusIcon = (user.status === 1 ? statutIconGreen : statutIconRed);
 						if (Boolean(isAlreadyFriend(user.id)) === true)
 						{
-							console.log("username: ", user.username)
 							return (
-								<PrintFriendProfile user={user} status={status} key={user.id} /*setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}*//>
+								<PrintFriendProfile user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends} /*setSelectedUser={setSelectedUser}*//>
 							)
+							/*console.log("username: ", user.username)
+							friends.
+							return (
+								<PrintFriendProfile user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}/>
+							)*/
 						}
 						/*else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
 						{
@@ -438,7 +540,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						}*/
 						else
 							return (
-								<PrintSendFriendRequestProfile user={user} status={status} username={user.username} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user.id}/>
+								<PrintSendFriendRequestProfile user={user} statusIcon={statusIcon} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user.id}/>
 							)
 					})
 			}
@@ -455,9 +557,9 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					!searchValue && 
 					friends
 						.map((user) => {
-							let status = (user.status === 1 ? statutIconGreen : statutIconRed);
+							let statusIcon = (user.status === 1 ? statutIconGreen : statutIconRed);
 							return (
-								<PrintFriendProfile user={user} status={status} key={user.id} />//setChatFriendState={setChatFriendState} setSelectedUser={setSelectedUser}/>
+								<PrintFriendProfile /*friendshipId={user.friendshipId}*/ user={user} statusIcon={statusIcon} key={user.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
 							)
 						})
 			}
@@ -472,22 +574,22 @@ interface PropsUsers {
 	setChatFriendState : Dispatch<SetStateAction<boolean>>;
 	chatChannelState : boolean;
 	setChatChannelState : Dispatch<SetStateAction<boolean>>;
-	setSelectedUser :  Dispatch<SetStateAction<PropsStateUsers[]>>;
 }
 
 interface  PropsStateUsers {
 	id : number;
 	username : string;
 	pseudo : string;
-	avatarID : number;
+	avatarId : string;
 	status : number;
 }
 
 interface FriendsFormat {
+	//friendshipId : number;
 	id : number;
 	username : string;
 	pseudo : string;
-	avatarID : number;
+	avatarId : string;
 	status : number;
 }
 
@@ -538,38 +640,22 @@ const Users : React.FC<PropsUsers> = (props) => {
 	useEffect(() => {
 		if (props.idMe !== 0)
 		{
+			setFriends([])
 			axios
 				.get(`http://localhost:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
 					var friend = res.data;
 					friend.map((list:any) => {
-					let friends_tmp : FriendsFormat; 
-					friends_tmp = { id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarID : list.following.avatarID, status : list.following.status }
-					setFriends(friends => [...friends, friends_tmp])
+						let friends_tmp : FriendsFormat;
+						friends_tmp = { /*friendshipId: list.id ,*/ id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarId : list.following.avatarId, status : list.following.status }
+						setFriends(friends => [...friends, friends_tmp])
 					})
 				})
 				.catch (err => 
 					console.log(err)
 				)
 		}}, [props.idMe])
-	/*if (friendsState === false )
-	{
-		axios 
-		.get(`http://localhost:8000/api/friendships/${1}`, { withCredentials: true })
-		.then (res => {
-			let friend = res.data;
-			friend.map((list:any) => {
-				let friends_tmp : FriendsFormat; 
-				friends_tmp = { id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarID : list.following.avatarID, status : list.following.status }
-				setFriends(friends => [...friends, friends_tmp])
-			})
-		})
-		.catch (err => 
-			console.log(err)
-		)
-		setFriendsState(true)
-	}
-*/
+
 	/*useEffect(() => {
 		axios
 		.get(dataUrlFriendRequestsReceived, { withCredentials: true })
@@ -606,6 +692,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 			{
 				//!createChannelButtonState && 
 				<UserList 
+					idMe={props.idMe}
 					/*existingChannels={existingChannels}
 					joinedChannels={joinedChannels}*/
 					users={props.users}
@@ -618,11 +705,10 @@ const Users : React.FC<PropsUsers> = (props) => {
 					setFriendRequestReceived={setFriendRequestReceived}*/
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
-					/*setJoinedChannels={setJoinedChannels}
+					//setJoinedChannels={setJoinedChannels}
 					setChatFriendState={props.setChatFriendState}
-					chatChannelState={props.chatChannelState}
-					setChatChannelState={props.setChatChannelState}
-					setSelectedUser={props.setSelectedUser}*/
+					/*chatChannelState={props.chatChannelState}
+					setChatChannelState={props.setChatChannelState}*/
 				/>
 			}
 		</div>
@@ -661,19 +747,19 @@ const Body : React.FC<PropsBody> = (props) => {
 
 	const idMe = props.idMe;
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
-	const [ selectedUser, setSelectedUser ] = useState<PropsStateUsers[]>(users)
 	const [ chatFriendState, setChatFriendState ] = useState(false) 
 	const [ chatChannelState, setChatChannelState ] = useState(false) 
 
 	const  [ userstate, setUserState ] = useState(false);
 
 	useEffect(() => {
+		setUsers([])
 		axios
 			.get(dataUrlUsers , { withCredentials : true })
 			.then (res => {
 				const user = res.data;
 				setUsers(user)
-				console.log(user)
+				console.log("users: ", user)
 			})
 			.catch (err => 
 				console.log(err)
@@ -696,11 +782,11 @@ const Body : React.FC<PropsBody> = (props) => {
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-			{(!chatFriendState && <Users idMe={idMe} users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState} setSelectedUser={setSelectedUser}/>) 
+			{(!chatFriendState && <Users idMe={idMe} users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState}/>) 
 			|| (<Chat setChatFriendState={setChatFriendState}/>)}
 		</section>
 	)
-	return null;
+	//return null;
 }
 
 interface PropsHeader {
@@ -711,12 +797,14 @@ const Header : React.FC<PropsHeader> = (props) => {
 	const idMe = props.idMe;
 
 	const navigate = useNavigate()
+
 	const onPlay = () => {
 		navigate("")
 	}
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
+
 	const onLogout = () => {
 		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
 			.then(res => {

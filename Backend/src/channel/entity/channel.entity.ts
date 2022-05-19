@@ -15,6 +15,9 @@ export class Channel extends BaseEntity {
 	@Column({ default: false })
 	public isPrivate: boolean;
 
+	@Column({ default: false })
+	public isProtected: boolean;
+
 	@Column({ unique: true })
 	public name: string;
 
@@ -42,6 +45,8 @@ export class Channel extends BaseEntity {
 	static toDto(channel: Channel) {
 		const dto: ChannelDto = {
 			id: channel.id,
+			isPrivate: channel.isPrivate,
+			isProtected: channel.isProtected,
             name: channel.name,
             owner: User.toDto(channel.owner),
             description: channel.description

@@ -196,18 +196,13 @@ button {
 	margin-left: 18px;
 }
 
-#userAvatarIcon:hover {
-	cursor: pointer;
-}
-
 .userAvatar {
 	position: relative;
 	width: 40px;
 	height: 40px;
-	border-radius: 100%;
 }
 
-.userStatusIcon {
+.userStatutIcon {
 	position: absolute;
 	top: 28px;
 	left: 28px;
