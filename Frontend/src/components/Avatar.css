@@ -29,9 +29,11 @@
 }
 
 .image-upload {
-	position: absolute;
-	top: 65px;
-	left: 48%;
+	width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 	outline: none;
 	color: transparent;
 	box-sizing: border-box;

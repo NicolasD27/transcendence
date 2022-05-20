@@ -869,7 +869,7 @@ const Header : React.FC<PropsHeader> = (props) => {
 		)
 }
 
-const MainPage = () => {
+const MainPage = ({isAuth}: {isAuth: boolean}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 

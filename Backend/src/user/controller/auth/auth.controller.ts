@@ -35,12 +35,12 @@ export class AuthController {
             payload = (await this.authService.signUp(profile));
 
         const maxAge = 7200000
-        res.cookie('accessToken', payload.accessToken, { maxAge })
-        res.cookie('username', payload.user.username, { maxAge })
+        res.cookie('accessToken', payload.accessToken, { maxAge: maxAge, domain: process.env.APP_HOST || "localhost" })
+        res.cookie('username', payload.user.username, { maxAge: maxAge, domain: process.env.APP_HOST || "localhost" })
         if (payload.user.isTwoFactorEnable)
-            return {url: "http://localhost:3000/login-2FA"}
+            return {url: `http://${process.env.APP_HOST || "localhost"}:3000/login-2FA`}
         else
-            return {url: "http://localhost:3000/login"}
+            return {url: `http://${process.env.APP_HOST || "localhost"}:3000/login`}
     }
 
     @ApiBearerAuth()

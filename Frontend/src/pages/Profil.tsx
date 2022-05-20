@@ -9,8 +9,9 @@ import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
+import NotificationList from '../components/NotificationList';
 
-const Profil = () => {
+const Profil = ({isAuth}: {isAuth: boolean}) => {
 	interface matchFormat {
 		idMatch: number;
 		nameP: string;
@@ -97,6 +98,7 @@ const Profil = () => {
 					<Achievement />
 				</div>
 			</div>
+			{getIDMe && <NotificationList myId={idMe} />}
 		</Fragment>
 	);
 };

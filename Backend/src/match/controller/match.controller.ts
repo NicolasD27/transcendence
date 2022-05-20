@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req,  Session, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req,  Session, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Request } from 'express';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
@@ -37,6 +37,12 @@ export class MatchController {
     @Post()
     createMatch(@Body(ValidationPipe) createMatchDto: CreateMatchDto): Promise<MatchDto> {
         return this.matchService.createMatch(createMatchDto);
+    }
+
+    @UseGuards(TwoFactorGuard)
+    @Delete(':id')
+    destroyMatch(@Param('id') id: string, @GetUsername() username: string): Promise<MatchDto> {
+        return this.matchService.destroyMatch(username, id);
     }
 
     // @UseGuards(TwoFactorGuard)

@@ -6,6 +6,6 @@ export class UpdatePseudoDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    @Length(1, 20)
+    @Length(1, 20) 
     pseudo: string
 }
