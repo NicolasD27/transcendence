@@ -307,9 +307,10 @@ export class ChannelService {
 	async acceptChannelInvite(
 		username: string,
 		userId: number,
-		acceptChannelInviteDto: AcceptChannelInviteDto
+		inviteId: number
 	)
 	{
+		console.log('accepting invite...')
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
@@ -318,11 +319,11 @@ export class ChannelService {
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {
-				id: acceptChannelInviteDto.inviteId,
+				id: inviteId,
 			}
 		});
 		if (!myInvite)
-			throw new NotFoundException(`Invitation ${acceptChannelInviteDto.inviteId} not found`);
+			throw new NotFoundException(`Invitation ${inviteId} not found`);
 		if (myInvite.receiver.id != myUser.id)
 			throw new UnauthorizedException();
 		
@@ -355,7 +356,7 @@ export class ChannelService {
 	async removeInvitation(
 		username: string,
 		userId: number,
-		deleteChannelInviteDto: DeleteChannelInviteDto
+		inviteId: number
 	)
 	{
 		const myUser = await this.userRepo.findOne({ username });
@@ -366,7 +367,7 @@ export class ChannelService {
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {
-				id: deleteChannelInviteDto.inviteId,
+				id: inviteId,
 			}
 		});
 		if (!myInvite)

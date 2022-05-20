@@ -7,10 +7,11 @@ import "./Notification.css";
 import { useNavigate } from 'react-router-dom';
 import { INotification } from "./NotificationList";
 
-interface User {
+export interface User {
 	id: number,
 	pseudo: string,
-	avatarId: number
+	avatarId: number,
+	status: number
 }
 
 interface Friendship {
@@ -42,6 +43,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 	
 	if (content == "")
 	{
+		console.log(notification.receiver)
 		setAwaitingAction(awaitingAction => notification.awaitingAction)
 		if (notification.entityType == "Friendship")
 			setContent(content => ` wants to be your friend`)
@@ -70,12 +72,11 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 		}
 		else if (notification.entityType == "ChannelInvite")
 		{
-			// axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
-			// .then(res => {
-				console.log("todo accept invite")
+			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, {}, { withCredentials: true })
+			.then(res => {
 				setAwaitingAction(awaitingAction => false)
 				setNewNotifsLength(newNotifsLength - 1)
-			// })
+			})
 		}
 	}
 
@@ -98,12 +99,12 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 		}
 		else if (notification.entityType == "ChannelInvite")
 		{
-			// axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
-			// .then(res => {
+			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, { withCredentials: true })
+			.then(res => {
 				console.log("todo refuse invite")
 				setAwaitingAction(awaitingAction => false)
 				setNewNotifsLength(newNotifsLength - 1)
-			// })
+			})
 		}
 	}
 
@@ -113,13 +114,11 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 	}
 
 	return (
-		<Fragment>
-			<div className="notification-container">
-                <div><span className="notification-name" onClick={handleClick}>{notification.name}</span>{content}{notification.secondName 
-				&& <span className="notification-name">{notification.secondName}</span>}</div> {awaitingAction 
-				&& <div><img className="notification-icon" src={accept} alt="" onClick={handleAccept}/><img className="notification-icon" src={refuse} alt="" onClick={handleRefuse}/></div>}
-            </div>
-		</Fragment>
+		<div className="notification-container">
+			<div><span className="notification-name" onClick={handleClick}>{notification.name}</span>{content}{notification.secondName 
+			&& <span className="notification-name">{notification.secondName}</span>}</div> {awaitingAction 
+			&& <div><img className="notification-icon" src={accept} alt="" onClick={handleAccept}/><img className="notification-icon" src={refuse} alt="" onClick={handleRefuse}/></div>}
+		</div>
 	);
 };
 

@@ -1,5 +1,6 @@
 .notifications-list-wrapper {
     position: absolute;
+    display: block;
     width: calc(25% + 12px);
     color: white;
     height: 540px;
@@ -31,6 +32,7 @@
 
 #app {
     position: relative;
+    overflow: hidden;
 }
 
 .notifications-opener {

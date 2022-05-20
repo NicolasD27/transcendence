@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Fragment, Component, useState, useEffect } from "react";
-import Notification from "./Notification";
+import Notification, { User } from "./Notification";
 import './NotificationList.css';
 import bell from '../asset/notification.svg';
 import socketIOClient from "socket.io-client";
@@ -11,6 +11,7 @@ export interface INotification {
 	id: number,
 	entityType: string,
 	entityId: number, 
+	receiver: User,
 	name: string,
 	awaitingAction: boolean,
 	secondName?: string
@@ -47,26 +48,34 @@ const NotificationList = ({myId}: {myId: number}) => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
 					setNotifications(notifications => res.data);	
+					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+
 			})
 			});
 			socket.on("match_invite_to_client", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
 					setNotifications(notifications => res.data);	
+					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+
 			})
 			});
 			socket.on("notifyFriendRequest", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
 					setNotifications(notifications => res.data);	
+					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+
 			})
 			});			
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 			.then(res => {
 				setNotifications(notifications => res.data);	
+				setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+
 			})
 		}
-	}, [myId])
+	}, [myId, notifications.length])
 		
 
 	const handleOpen = () => {
