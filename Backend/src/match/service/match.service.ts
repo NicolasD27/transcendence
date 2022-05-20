@@ -110,7 +110,7 @@ export class MatchService {
 		const user = await this.usersRepository.findOne({ username })
 		if (!user)
             throw new NotFoundException(`User ${username} not found`);
-		let match = await this.matchsRepository.findOne(
+		const match = await this.matchsRepository.findOne(
 			{
 				mode: mode,
 				status: MatchStatus.MATCH_MAKING
@@ -122,12 +122,11 @@ export class MatchService {
 			return this.matchsRepository.save(match)
 		}
 		else {
-			// match = await this.matchsRepository.create({
-			// 	user1: user,
-			// 	mode: mode,
-			// 	status: MatchStatus.MATCH_MAKING
-			// })
-			// match = await this.matchsRepository.save(match)
+			return this.matchsRepository.save({
+				user1: user,
+				mode: mode,
+				status: MatchStatus.MATCH_MAKING
+			})
 		}
 	}
 

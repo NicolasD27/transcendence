@@ -30,9 +30,6 @@ export class Match {
     @PolymorphicChildren(() => Notification)
     notification: Notification;
 
-    // @Column({ default: GAME_SLEEP})
-    // public sleep: number;
-
     @Column({ default: 0})
     public score1: number;
 

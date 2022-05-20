@@ -47,11 +47,6 @@ export class MatchDto {
     @ApiProperty()
     @Expose()
     @IsNumber()
-    sleep: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
     room_size: number;
 
     @ApiProperty()
