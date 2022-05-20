@@ -109,13 +109,13 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 				<button id='addGroup' onClick={handleClick}/>
 			</div>
 			{
-				props.createChannelButtonState && 
+				/*props.createChannelButtonState && 
 				<>
 					<div className='usersList'>
 						<PrintFriendToAddChannel friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
 					</div>
 					<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
-				</>
+				</>*/
 			}
 		</>
 	)
@@ -346,7 +346,7 @@ const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (
 interface PropsPrintSendFriendRequestProfile {
 	user:  PropsStateUsers;
 	statusIcon: string;
-	sendFriendshipRequest : Function;
+	//sendFriendshipRequest : Function;
 	key: number;
 }
 
@@ -381,7 +381,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 					<img src={props.statusIcon} className="userStatusIcon" alt=" StatutIcon"/>
 				</div>
 				<div id="username">{props.user.pseudo}</div>
-				<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>  
+				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>  
 			</div>
 		</>
 	)
@@ -661,7 +661,7 @@ interface PropsStateChannel {
 const Users : React.FC<PropsUsers> = (props) => {
 	const [ joinedChannels, setJoinedChannels ] = useState([])
 	const [ existingChannels, setExistingChannels ] = useState<PropsStateChannel[]>([])
-	const [ friends, setFriends ] = React.useState<FriendsFormat[]>([])
+	const [ friends, setFriends ] = useState<FriendsFormat[]>([])
 	const [ friendsState, setFriendsState ] = useState(false)
 
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState([])
@@ -745,7 +745,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 
 	return (
 		<div className='chatArea'>
-			<SearchBarAddGroup setSearchValue={setSearchValue} friends={friends} createChannelButtonState={null} setCreateChannelButtonState={null}/>
+			<SearchBarAddGroup setSearchValue={setSearchValue} friends={friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
 			{
 				//!createChannelButtonState && 
 				<UserList 
