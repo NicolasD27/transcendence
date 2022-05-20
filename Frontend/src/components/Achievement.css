@@ -36,7 +36,6 @@
 	border: transparent;
 	border-radius: 130px;
 	transform: translateY(-45vh);
-	opacity: 0.4;
 }
 
 @media only screen and (max-width: 1155px) {

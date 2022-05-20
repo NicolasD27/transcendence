@@ -29,6 +29,7 @@ const Profil = () => {
 	const [getIDMe, setGetIDMe] = useState(false);
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
+	const [getSucces, setGetSucces] = useState(false);
 
 	const navigate = useNavigate()
 	const onPlay = () => {
@@ -42,14 +43,14 @@ const Profil = () => {
 		navigate("/login")
 	}
 	const onLogout = () => {
-		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
 			.then(res => {
 			})
 		navigate("/")
 	}
 
 	if (getIDMe === false) {
-		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
@@ -59,7 +60,8 @@ const Profil = () => {
 
 	if (getmatch === false) {
 		setMatchID([])
-		axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
+		setGetSucces(false)
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
@@ -94,7 +96,7 @@ const Profil = () => {
 				<ProgressBar matchs={matchTri} />
 				<div className='boxStats'>
 					<HistoryMatch historys={matchTri} />
-					<Achievement />
+					<Achievement historys={matchTri} />
 				</div>
 			</div>
 		</Fragment>

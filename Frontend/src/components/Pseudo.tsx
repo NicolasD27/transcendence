@@ -36,7 +36,7 @@ const Pseudo: React.FC<Props> = (props) => {
 			if (username) { //Si le nom n'est pas vide
 				const bodyFormData = new FormData();
 				bodyFormData.append('pseudo', tmpPseudo)
-				axios.post(`http://localhost:8000/api/users/pseudo`, bodyFormData, { withCredentials: true })
+				axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/pseudo`, bodyFormData, { withCredentials: true })
 					.then(res => {
 						setGetPseudo(false)
 						props.setGetMatch(false)
