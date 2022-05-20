@@ -32,14 +32,14 @@
 
 
 #input {
-    width: 160px;
+    width: 190px;
     height: 48px;
-    padding: 5px 25px;
+    padding: 5px 10px 5px 30px;
     border: 3px solid #C0F4FE;
     border-radius: 100vh;
     font-size: 20px;
-    letter-spacing: 5px;
+    letter-spacing: 12px;
     color: #C0F4FE;
-    box-shadow: 0px 0px 10px #C0F4FE, 0px 0px 10px #C0F4FE inset;
+    box-shadow: 0px 0px 10px #c0f4fe, 0px 0px 10px #c0f4fe inset;
 
 } 

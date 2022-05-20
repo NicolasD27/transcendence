@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
@@ -30,6 +30,28 @@ const Profil = ({isAuth}: {isAuth: boolean}) => {
 	const [getIDMe, setGetIDMe] = useState(false);
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
+	const [isTwoFactorEnable, setIsTwoFactorEnable] = useState(false);
+
+	useEffect(() => {
+		setId(Number(idstring.id))
+	}, [Number(idstring.id)])
+
+	useEffect(() => {
+		setMatchID([])
+		axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
+			.then(res => {
+				const matchs = res.data;
+				matchs.forEach((list: any) => {
+					let singleMatch: matchFormat;
+					if (list.user1.id === id)
+						singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					else
+						singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+					setMatchID(matchID => [...matchID, singleMatch]);
+				});
+			})
+	}, [id])
+
 
 	const navigate = useNavigate()
 	const onPlay = () => {
@@ -54,30 +76,38 @@ const Profil = ({isAuth}: {isAuth: boolean}) => {
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
+				setIsTwoFactorEnable(res.data.isTwoFactorEnable)
 			})
 		setGetIDMe(getIDMe => true)
 	}
 
-	if (getmatch === false) {
-		setMatchID([])
-		axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
-			.then(res => {
-				const matchs = res.data;
-				matchs.forEach((list: any) => {
-					let singleMatch: matchFormat;
-					if (list.user1.id === id)
-						singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
-					else
-						singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-					setMatchID(matchID => [...matchID, singleMatch]);
-				});
-			})
-		setGetMatch(getmatch => true)
-	}
+	// if (getmatch === false) {
+	// 	setMatchID([])
+	// 	axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
+	// 		.then(res => {
+	// 			const matchs = res.data;
+	// 			matchs.forEach((list: any) => {
+	// 				let singleMatch: matchFormat;
+	// 				if (list.user1.id === id)
+	// 					singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+	// 				else
+	// 					singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+	// 				setMatchID(matchID => [...matchID, singleMatch]);
+	// 			});
+	// 		})
+	// 	setGetMatch(getmatch => true)
+	// }
 
-	const matchTri = [...matchID].sort((a, b) => {
-		return b.idMatch - a.idMatch;
-	});
+	useEffect(() => {
+		const matchTri = [...matchID].sort((a, b) => {
+			return b.idMatch - a.idMatch;
+		});
+		setMatchID(matchTri)
+	}, [matchID.length])
+
+	// const matchTri = [...matchID].sort((a, b) => {
+	// 	return b.idMatch - a.idMatch;
+	// });
 
 	return (
 		<Fragment>
@@ -89,12 +119,12 @@ const Profil = ({isAuth}: {isAuth: boolean}) => {
 			</div >
 			<div className='boxProfil'>
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMatch()} className="offProfil" />
-				{id === idMe && <ToggleQRcode />}
+				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable}/>}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
-				<ProgressBar matchs={matchTri} />
+				<ProgressBar matchs={matchID} />
 				<div className='boxStats'>
-					<HistoryMatch historys={matchTri} />
+					<HistoryMatch historys={matchID} />
 					<Achievement />
 				</div>
 			</div>

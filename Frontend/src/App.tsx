@@ -13,6 +13,7 @@ import './pages/Login.css';
 import './pages/Profil.css';
 import './pages/Login2FA.css'
 import './pages/404NotFound.css'
+import './App.css'
 import NotFound from './pages/404NotFound';
 import ProtectedRoute from './protectedRoute';
 import Loader from './components/Loader';

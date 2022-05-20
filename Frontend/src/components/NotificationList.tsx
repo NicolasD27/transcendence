@@ -13,6 +13,7 @@ export interface INotification {
 	entityId: number, 
 	receiver: User,
 	name: string,
+	senderId: number,
 	awaitingAction: boolean,
 	secondName?: string
 }
@@ -47,43 +48,41 @@ const NotificationList = ({myId}: {myId: number}) => {
 			socket.on("new_channel_invite_received", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});
 			socket.on("match_invite_to_client", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});
 			socket.on("notifyFriendRequest", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});			
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 			.then(res => {
-				setNotifications(notifications => res.data);	
-				setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+				setNotifications(notifications => res.data.reverse());	
+				
 
 			})
 		}
-	}, [myId, notifications.length])
+	}, [myId])
+
+	useEffect(() => {
+		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+	}, [notifications.length])
 		
 
 	const handleOpen = () => {
 		setOpen(open => !open)
 	}
-
-	if (notifications.length > 0 && newNotifsLength == -1)
-		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
 
 
 	return (

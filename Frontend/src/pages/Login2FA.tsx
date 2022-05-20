@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Login2FA.css';
 import { useNavigate } from 'react-router-dom';
 
-import mainTitle from '../asset/mainTitle.svg'
+import mainTitle from '../asset/Pong-Legacy.svg'
 
 	
 
@@ -58,18 +58,6 @@ const Login2FA = ({setIsAuth} : {setIsAuth: Dispatch<SetStateAction<boolean>>}) 
 
 	
 	return (
-		/*<div>
-			<div className="img-holder">
-				<img src={profileImg} alt="" id="img" className="img" />
-			</div>
-			<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
-			<div className="label">
-				<label className="image-upload" htmlFor="input">Upload</label>
-			</div>
-			<ul>
-				{this.state.persons.map(person => <li style={{ color: 'white' }}>{person['name']}</li>)}
-			</ul>
-		</div>*/
 		<div className="login-wrapper">
 			<div >
 				<img src={mainTitle} className='mainTitle' alt="mainTitle"/>

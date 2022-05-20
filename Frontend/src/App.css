@@ -1,0 +1,6 @@
+#app {
+    position: relative;
+    overflow: hidden;
+    font-family: 'Oswald', sans-serif;
+    height: 100vh;
+}

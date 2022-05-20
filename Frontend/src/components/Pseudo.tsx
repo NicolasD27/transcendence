@@ -1,4 +1,4 @@
-import React, { Fragment, Dispatch, SetStateAction } from "react";
+import React, { Fragment, Dispatch, SetStateAction, useEffect } from "react";
 import axios from 'axios';
 import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
@@ -17,14 +17,22 @@ const Pseudo: React.FC<Props> = (props) => {
 	const id = props.id;
 	const idMe = props.idMe;
 
-	if (getpseudo === false) {
+	useEffect(() => {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}`, { withCredentials: true })
 			.then(res => {
 				const profil = res.data;
 				setPseudo(pseudo => profil.pseudo)
 			})
-		setGetPseudo(true)
-	}
+	}, [props.id])
+
+	// if (getpseudo === false) {
+	// 	axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}`, { withCredentials: true })
+	// 		.then(res => {
+	// 			const profil = res.data;
+	// 			setPseudo(pseudo => profil.pseudo)
+	// 		})
+	// 	setGetPseudo(true)
+	// }
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		settmpPseudo(tmpPseudo => e.target.value)

@@ -30,10 +30,7 @@
 
 
 
-#app {
-    position: relative;
-    overflow: hidden;
-}
+
 
 .notifications-opener {
     width: 40px;
@@ -41,6 +38,7 @@
     position: absolute;
     top: 94px;
     right: 20px;
+    cursor: pointer;
 }
 
 .notifications-indicator {
@@ -52,7 +50,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
     text-align: center;
     line-height: 18px;

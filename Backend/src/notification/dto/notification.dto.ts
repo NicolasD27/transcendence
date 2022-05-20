@@ -23,6 +23,10 @@ export class NotificationDto {
 
     @ApiProperty()
     @Expose()
+    senderId: number
+
+    @ApiProperty()
+    @Expose()
     entityType: string;
 
     @ApiProperty()
