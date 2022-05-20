@@ -38,8 +38,8 @@ const Profil = () => {
 		navigate("/profil/" + idstring)
 		window.location.reload()//Necessaire
 	}
-	const onMainPage = () => {
-		navigate("/mainpage")
+	const onMatch = () => {
+		navigate("/login")
 	}
 	const onLogout = () => {
 		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
@@ -87,7 +87,7 @@ const Profil = () => {
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 			<div className='boxProfil'>
-				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
+				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMatch()} className="offProfil" />
 				{id === idMe && <ToggleQRcode />}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />

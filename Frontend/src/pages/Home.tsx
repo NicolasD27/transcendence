@@ -4,14 +4,14 @@ import mainTitle from '../asset/Pong-Legacy.svg'
 
 const Home = () => {
 	const navigate = useNavigate()
-	const onMainPage = () => {
-		navigate("mainpage")
+	const onLogin = () => {
+		navigate("login")
 	}
 	return (
 		<div className='box'>
 			<img src={mainTitle} className='mainTitle' />
 			<h2 className='subtitleStyle'>Play fun</h2>
-			<div><button onClick={() => onMainPage()} className='ButtonStyle loginButton'>Login</button></div>
+			<div><button onClick={() => onLogin()} className='ButtonStyle loginButton'>Login</button></div>
 		</div >
 	);
 }
