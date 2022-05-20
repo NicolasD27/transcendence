@@ -1,5 +1,5 @@
 export default class Player
 {
-    constructor(private x,private y,private w,private h,private point) {}
+    constructor(public x: number,public y: number,public w: number,public h: number,public point: number) {}
 	
 }

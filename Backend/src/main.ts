@@ -26,7 +26,7 @@ async function bootstrap() {
     .setDescription('Trancendence documentation')
     .setVersion('0.2')
     .build()
-    
+
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api', app, document)
 	const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })

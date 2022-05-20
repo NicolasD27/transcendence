@@ -4,6 +4,7 @@ import axios from 'axios';
 import mainTitle from '../asset/Pong-Legacy.svg';
 import searchIcon from '../asset/searchIcon.svg';
 import addGroupIcon from "../asset/addGroupIcon.svg"
+import { Match } from '../components/Match'
 import { cp } from 'fs/promises';
 import NotificationList from '../components/NotificationList';
 //import gameArea from '../asset/gameArea.svg';
@@ -58,14 +59,14 @@ const Login = ({isAuth}: {isAuth: boolean}) => {
 					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 				</div >
 				<section id="gameAndChatSection">
-					<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-					<Chat />
+					<div className='gameArea' id='gameArea'></div>
+					<Match/ >
+					<Chat/>
 				</section>
 			</div>
 			{getIDMe && <NotificationList myId={idMe} />}
 		</Fragment>
 	);
 };
-
 
 export default Login;

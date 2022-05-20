@@ -55,9 +55,9 @@
 			<div class="col-md-6 offset-md-3 col-sm-12">
 				<h1 class="text-center">{{ title }}</h1>
 				<br>
-				
+
 				<div id="dm">
-					
+
 					<input v-model="receiver" placeholder="edit me" type="string">
 
 					<div class="card">
@@ -72,7 +72,7 @@
 					<br>
 					<button id="sendDM" class="btn" @click.prevent="sendDirectMessage">Send</button>
 				</div>
-				
+
 			</div>
 		</div>
 
@@ -91,7 +91,7 @@
 			<button @click.prevent="findMatch">Find Match</button>
 			<input type="text" v-model="opponent_id">
 			<button @click.prevent="challengeUser">Challenge</button>
-			
+
 			<ul>
 				<li >{{ match.id }} : {{ match.y1 }}, {{ match.y2 }}, {{ match.bx }}, {{ match.by }}, {{ match.bvx }}, {{ match.bvy }}</li>
 			</ul>
