@@ -1,6 +1,5 @@
 #bloc {
-	width: 1300px;
-	margin: auto
+	margin: 0 15px;
 }
 
 .boxNav {
@@ -23,7 +22,8 @@
 .navButton {
 	font-family: 'Tourney', cursive;
 	font-weight: 200;
-	width: 115px;
+	/* width: 130px; */
+	padding: 0 15px;
 	height: 48px;
 }
 
@@ -32,7 +32,7 @@
 	content: "";
 	z-index: -1;
 	opacity: 0;
-	width: 115px;
+	width: calc(100% + 6px);
 	height: 48px;
 	left: -3px;
 	top: -3px;
@@ -41,11 +41,11 @@
 	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #FF0777);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
-	transition: opacity 1s, box-shadow 2s;
+	transition: opacity 300ms, box-shadow 600ms;
 }
 
 .navButton:hover::before {

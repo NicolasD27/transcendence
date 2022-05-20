@@ -1,12 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from 'src/notification/entity/notification.entity';
+import { NotificationService } from 'src/notification/service/notification.service';
 import { UserDto } from 'src/user/dto/user.dto';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { createFriendshipDto } from '../dto/create-friendship.dto';
 import { FriendshipDto } from '../dto/friendship.dto';
 import { updateFriendshipDto } from '../dto/update-friendship.dto';
 import { Friendship, FriendshipStatus } from '../entity/friendship.entity';
+import { FriendshipRepository } from '../repository/friendship.repository';
 
 @Injectable()
 export class FriendshipService {
@@ -14,8 +17,12 @@ export class FriendshipService {
         @InjectRepository(Friendship)
         private  friendshipsRepository: Repository<Friendship>,
         @InjectRepository(User)
-        private  usersRepository: Repository<User>
-        ) {}
+        private  usersRepository: Repository<User>,
+        private readonly notificationService: NotificationService,
+        private connection: Connection
+        ) {
+            // friendshipsRepository = connection.getCustomRepository(FriendshipRepository)
+        }
 
     async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
         const user = await this.usersRepository.findOne(user_id);
@@ -27,7 +34,7 @@ export class FriendshipService {
                 { following: user },
             ],
         })
-        .then(items => items.map(e=> Friendship.toDto(e)));;
+        .then(items => items.map(e=> Friendship.toDto(e)));
     }
 
     async findAllActiveFriendsByUser(user_id: number): Promise<UserDto[]> {
@@ -81,10 +88,14 @@ export class FriendshipService {
         })
         if (friendship)
             throw new BadRequestException("Frienship already exist");
-        return Friendship.toDto(await this.friendshipsRepository.save({
+        
+        friendship = await this.friendshipsRepository.create({
             follower: follower,
             following: following,
-        }));
+        });
+        await this.friendshipsRepository.save(friendship)
+        this.notificationService.create(friendship, following);
+        return Friendship.toDto(friendship)
     }
 
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
@@ -95,6 +106,7 @@ export class FriendshipService {
         if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_2 || friendship.status == FriendshipStatus.BLOCKED_BY_2)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_1 || friendship.status == FriendshipStatus.BLOCKED_BY_1)))
             throw new UnauthorizedException("you can't do that !");
         friendship.status = newStatus;
+        this.notificationService.actionPerformedFriendship(friendship)
         return Friendship.toDto(await  this.friendshipsRepository.save(friendship));
 
     }
@@ -106,6 +118,7 @@ export class FriendshipService {
             throw new NotFoundException(`Friendship #${id} not found`);
         if ((username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
+        this.notificationService.actionPerformedFriendship(friendship)
         return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
 
     }

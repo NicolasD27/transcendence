@@ -21,6 +21,7 @@ import { ChannelInviteDto } from '../dto/channel-invite.dto';
 import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
 import { DeleteChannelInviteDto } from '../dto/delete-invite.dto';
 import { AcceptChannelInviteDto } from '../dto/accept-channel-invite.dto';
+import { NotificationService } from '../../notification/service/notification.service';
 
 
 @Injectable()
@@ -46,7 +47,9 @@ export class ChannelService {
 		private channelInviteRepo: Repository<ChannelInvite>,
 
 		@InjectRepository(Friendship)
-		private friendshipRepo: Repository<Friendship>
+		private friendshipRepo: Repository<Friendship>,
+
+		private notificationService: NotificationService
 	)
 	{}
 
@@ -280,6 +283,7 @@ export class ChannelService {
 			receiver: myReceiver,
 		});
 		const myinvite = await this.channelInviteRepo.save(newInvite);
+		await this.notificationService.create(newInvite, newInvite.receiver)
 		return ChannelInvite.toDto(myinvite);
 	}
 
@@ -303,9 +307,10 @@ export class ChannelService {
 	async acceptChannelInvite(
 		username: string,
 		userId: number,
-		acceptChannelInviteDto: AcceptChannelInviteDto
+		inviteId: number
 	)
 	{
+		console.log('accepting invite...')
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
@@ -314,11 +319,11 @@ export class ChannelService {
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {
-				id: acceptChannelInviteDto.inviteId,
+				id: inviteId,
 			}
 		});
 		if (!myInvite)
-			throw new NotFoundException(`Invitation ${acceptChannelInviteDto.inviteId} not found`);
+			throw new NotFoundException(`Invitation ${inviteId} not found`);
 		if (myInvite.receiver.id != myUser.id)
 			throw new UnauthorizedException();
 		
@@ -351,7 +356,7 @@ export class ChannelService {
 	async removeInvitation(
 		username: string,
 		userId: number,
-		deleteChannelInviteDto: DeleteChannelInviteDto
+		inviteId: number
 	)
 	{
 		const myUser = await this.userRepo.findOne({ username });
@@ -362,7 +367,7 @@ export class ChannelService {
 
 		const myInvite = await this.channelInviteRepo.findOne({
 			where: {
-				id: deleteChannelInviteDto.inviteId,
+				id: inviteId,
 			}
 		});
 		if (!myInvite)
@@ -744,7 +749,6 @@ export class ChannelService {
 				channel: myChannel.id,
 			}
 		});
-
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined.");
 			

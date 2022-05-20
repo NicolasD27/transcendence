@@ -3,6 +3,8 @@ import * as bcrypt from "bcrypt"
 import { Exclude, instanceToPlain, plainToInstance } from "class-transformer";
 import { User } from "../../user/entity/user.entity";
 import { FriendshipDto } from "../dto/friendship.dto";
+import { PolymorphicChildren } from "typeorm-polymorphic"
+import { Notification } from "src/notification/entity/notification.entity";
 
 export enum FriendshipStatus {
     PENDING,
@@ -12,8 +14,8 @@ export enum FriendshipStatus {
 
 }
 
-@Entity()
-export class Friendship extends BaseEntity {
+@Entity('friendships')
+export class Friendship {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -25,6 +27,9 @@ export class Friendship extends BaseEntity {
 
     @ManyToOne(() => User, user => user.followings, { eager: true })
     following: User;
+
+    @PolymorphicChildren(() => Notification)
+    notification: Notification;
 
     static toDto(friendship: Friendship): FriendshipDto {
 		const dto: FriendshipDto = {

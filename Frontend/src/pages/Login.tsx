@@ -5,6 +5,7 @@ import mainTitle from '../asset/Pong-Legacy.svg';
 import searchIcon from '../asset/searchIcon.svg';
 import addGroupIcon from "../asset/addGroupIcon.svg"
 import { cp } from 'fs/promises';
+import NotificationList from '../components/NotificationList';
 //import gameArea from '../asset/gameArea.svg';
 
 const Chat = () => {
@@ -21,7 +22,7 @@ const Chat = () => {
 	)
 }
 
-const Login = () => {
+const Login = ({isAuth}: {isAuth: boolean}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 
@@ -61,6 +62,7 @@ const Login = () => {
 					<Chat />
 				</section>
 			</div>
+			{getIDMe && <NotificationList myId={idMe} />}
 		</Fragment>
 	);
 };

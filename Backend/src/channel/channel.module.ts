@@ -11,12 +11,15 @@ import { ChannelController } from "./controller/channel.controller";
 import { ModerationTimeOut } from "./entity/moderationTimeOut.entity";
 import { ChatGateway } from "src/message/gateway/message.gateway";
 import { ChannelInvite } from "./entity/channelInvite.entity";
+import { NotificationRepository } from "src/notification/repository/notification.repository";
+import { Notification } from "src/notification/entity/notification.entity";
+import { NotificationService } from "src/notification/service/notification.service";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([
 			Channel, User, Msg, Participation,
-			ModerationTimeOut, ChannelInvite
+			ModerationTimeOut, ChannelInvite, Notification, NotificationRepository
 		]),
 		JwtModule.register({
             secret: process.env.JWT_ACCESS_TOKEN_SECRET,
@@ -27,7 +30,7 @@ import { ChannelInvite } from "./entity/channelInvite.entity";
 		//ChatGateway,
 	],
 	controllers: [ChannelController],
-	providers: [ChannelService, AuthService],
+	providers: [ChannelService, AuthService, NotificationService],
 	exports: [ChannelService]
 })
 export class ChannelModule {}

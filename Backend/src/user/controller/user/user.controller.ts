@@ -64,27 +64,27 @@ export class UserController {
 		return await this.channelService.getChannelInvites(request.cookies.username, userId);
 	}
 
-	@Patch(':userId/invites')
+	@Patch(':userId/invites/:inviteId')
 	@UseGuards(TwoFactorGuard)
 	async acceptChannelInvite(
         @Param('userId', ParseIntPipe) userId: number,
+        @Param('inviteId', ParseIntPipe) inviteId: number,
         @Req() request: Request,
-        @Body() acceptChannelInviteDto: AcceptChannelInviteDto
     )
 	{
-		await this.channelService.acceptChannelInvite(request.cookies.username, userId, acceptChannelInviteDto);
+		await this.channelService.acceptChannelInvite(request.cookies.username, userId, inviteId);
 		return ;
 	}
 
-	@Delete(':userId/invites')
+	@Delete(':userId/invites/:inviteId')
 	@UseGuards(TwoFactorGuard)
 	async deleteChannelInvite(
         @Param('userId', ParseIntPipe) userId: number,
         @Req() request: Request,
-        @Body() deleteChannelInviteDto: DeleteChannelInviteDto
+        @Param('inviteId', ParseIntPipe) inviteId: number
     )
 	{
-		await this.channelService.removeInvitation(request.cookies.username, userId, deleteChannelInviteDto);
+		await this.channelService.removeInvitation(request.cookies.username, userId, inviteId);
 		return ;
 	}
 

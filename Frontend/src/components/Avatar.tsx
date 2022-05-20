@@ -23,24 +23,24 @@ export class Avatar extends React.Component<Props> {
 		})
 		const bodyFormData = new FormData();
 		bodyFormData.append('file', event.target.files[0])
-		axios.post(`http://localhost:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/avatar`, bodyFormData, { withCredentials: true })
 			.then(res => {
-				axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 					.then(res => {
-						const persons = res.data;
-						if (persons.avatarId != null)
-							this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+						const user = res.data;
+						if (user.avatarId != null)
+							this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
 						this.props.setGetMatch(false)
 					})
 			})
 	};
 
 	componentDidMount() {
-		axios.get(`http://localhost:8000/api/users/${this.props.id}`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
-				const persons = res.data;
-				if (persons.avatarId != null)
-					this.setState({ profileImg: `http://localhost:8000/api/database-files/${persons.avatarId}` })
+				const user = res.data;
+				if (user.avatarId != null)
+					this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
 				else
 					this.setState({ profileImg: this.state.imgDefault })
 			})
@@ -48,17 +48,17 @@ export class Avatar extends React.Component<Props> {
 
 	render() {
 		const { profileImg } = this.state
-		let buttonUpload = <div></div>
+		
 
-		if (this.props.id === this.props.idMe)
-			buttonUpload = <div>
-				<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
-				<label className="image-upload" htmlFor="input">Upload</label>
-			</div>
+		
+		const buttonUpload = <div style={{ borderRadius: "50%", height: 130, width: 130 }}>
+			<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
+			<label className="image-upload" htmlFor="input">Upload</label>
+		</div>
 
 		return (
 			<div className="img" style={{ backgroundImage: `url(${profileImg})`, height: 130, width: 130 }}>
-				{buttonUpload}
+				{this.props.id === this.props.idMe && buttonUpload}
 			</div>
 		);
 	}
