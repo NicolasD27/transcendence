@@ -52,36 +52,11 @@ export class MatchDto {
     @ApiProperty()
     @Expose()
     @IsNumber()
-    y1: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
-    y2: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
-    bx: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
-    by: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
-    bvx: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
-    bvy: number;
-
-    @ApiProperty()
-    @Expose()
-    @IsNumber()
     room_size: number;
+
+    @ApiProperty()
+    @Expose()
+    @IsNumber()
+    winner: string;
 
 }

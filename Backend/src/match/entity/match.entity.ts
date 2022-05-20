@@ -19,7 +19,7 @@ export enum CustomModes {
 export class Match {
 	@PrimaryGeneratedColumn()
 	public id: number;
-	
+
 	@ManyToOne(() => User, user => user.matchs1, { eager: true })	// when real users will be used
 	public user1: User;
 
@@ -49,28 +49,13 @@ export class Match {
     @Column({ default: CustomModes.NORMAL })
     public mode: number;
 
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public y1: number;
-
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public y2: number;
-
-    @Column({ type: "float", default: GAME_LENGTH / 2 })
-    public bx: number;
-
-    @Column({ type: "float", default: GAME_HEIGHT / 2 })
-    public by: number;
-
-    @Column({ type: "float", default: BALL_VX })
-    public bvx: number;
-
-    @Column({ type: "float", default: BALL_VY })
-    public bvy: number;
-
     @Column({ type: "float", default: 0 })
     public room_size: number;
 
-    
+    @Column({ type: "text", default: 0 })
+    public winner: string;
+
+
     static toDto(match: Match): MatchDto {
 		const dto: MatchDto = {
             id: match.id,
@@ -82,13 +67,8 @@ export class Match {
             mode: match.mode,
             date: match.date,
             sleep: match.sleep,
-            y1: match.y1,
-            y2: match.y2,
-            bx: match.bx,
-            by: match.by,
-            bvx: match.bvx,
-            bvy: match.bvy,
-            room_size: match.room_size
+            room_size: match.room_size,
+            winner: match.winner
         }
         return dto
 	}

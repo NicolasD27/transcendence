@@ -152,6 +152,7 @@ export class Match extends Component
 	slaveId: string;
 	masterId: string;
 	myId: string;
+	spacePressed = false;
 
 	setup = (p5: any) =>
 	{
@@ -163,9 +164,8 @@ export class Match extends Component
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Waiting for other player... ', 220, height / 2);
+		p5.text('Press SPACE to find a match', 220, height / 2);
 
-		this.socket.emit('find_match');	//faire le find_match quand on clic sur un boutton, n'importe
 		this.socket.on('launch_match', (data) =>
 		{
 			this.match_id = data.id;
@@ -184,15 +184,15 @@ export class Match extends Component
 					this.type = "master";
 					var a2 = rand(80, 120);
 					var b2 = 200 - a2;
-		
+
 					var game = new Game(
 						new Player(15, 200, playerWidth, 100, 0),
 						new Player(width - 30, 200, playerWidth, 100, 0),
 						new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
 						this.countdown);
-		
+
 					var playerInput = new PlayerInput();
-		
+
 					p5.background(0);
 					p5.textSize(50);
 					p5.fill(p5.color(255, 255, 255));
@@ -204,7 +204,7 @@ export class Match extends Component
 						p5.background(0);
 						printer(p5, data);
 					});
-		
+
 					this.socket.on('masterToMasterKeyPressed', data =>
 					{
 						if (data === 'a')
@@ -212,7 +212,7 @@ export class Match extends Component
 						else if (data === 'z')
 							playerInput.masterZ = true;
 					});
-		
+
 					this.socket.on('slaveToMasterKeyPressed', data =>
 					{
 						if (data === 'a')
@@ -220,7 +220,7 @@ export class Match extends Component
 						else if (data === 'z')
 							playerInput.slaveZ = true;
 					});
-		
+
 					this.socket.on('masterToMasterKeyReleased', data =>
 					{
 						if (data === 'a')
@@ -228,7 +228,7 @@ export class Match extends Component
 						else if (data === 'z')
 							playerInput.masterZ = false;
 					});
-		
+
 					this.socket.on('slaveToMasterKeyReleased', data =>
 					{
 						if (data === 'a')
@@ -236,7 +236,7 @@ export class Match extends Component
 						else if (data === 'z')
 							playerInput.slaveZ = false;
 					});
-		
+
 					var counter = 0;
 					this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 					this.socket.on('serverTick', () =>
@@ -256,50 +256,91 @@ export class Match extends Component
 							this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
 						if (game.playerOne.score >= finalScore)
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 1, score1: game.playerOne.score, score2: game.playerTwo.score});
+						{
+							this.socket.off('serverTick');
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
+						}
 						else if (game.playerTwo.score >= finalScore)
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 2, score1: game.playerOne.score, score2: game.playerTwo.score});
+						{
+							this.socket.off('serverTick');
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
+						}
 					});
-		
+
+					this.socket.on('serverGameFinished', (data) =>
+					{
+						let winner: string;
+						if (data === 1)
+							winner = this.masterId;
+						else
+							winner = this.slaveId;
+						p5.background(0);
+						p5.textSize(50);
+						p5.fill(p5.color(255, 255, 255));
+						p5.text(`The winner is : ${winner}`, 120, height / 2);
+					});
+
 					this.socket.on('clientDisconnect', (data) =>
 					{
 						if (data === this.slaveId)
 						{
 							this.socket.off('serverTick');
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 1, score1: game.playerOne.score, score2: game.playerTwo.score});
-							//clear screen or reload ?
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
 						}
 					});
-		
+
 			}
 				else if (this.myId === this.slaveId && this.slaveId)	//Slave
 				{
 					console.log("IM A SLAVE")
 					this.type = "slave";
-		
+
 					this.started = 1;
-		
+
 					this.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
 						printer(p5, data);
 					});
-		
+
+					this.socket.on('serverGameFinished', (data) =>
+					{
+						let winner: string;
+						if (data === 1)
+							winner = this.masterId;
+						else
+							winner = this.slaveId;
+						p5.background(0);
+						p5.textSize(50);
+						p5.fill(p5.color(255, 255, 255));
+						p5.text(`The winner is : ${winner}`, 120, height / 2);
+					});
+
 					this.socket.on('clientDisconnect', (data) =>
 					{
 						if (data === this.masterId)
-						{
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: 2, score1: game.playerOne.score, score2: game.playerTwo.score});
-							//clear screen or reload ?
-						}
+							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
 					});
-		
+
 				}
 				else					//Spect
 				{
 					this.type = "spect";
-		
+
+					this.socket.on('serverGameFinished', (data) =>
+					{
+						let winner: string;
+						if (data === 1)
+							winner = this.masterId;
+						else
+							winner = this.slaveId;
+						p5.background(0);
+						p5.textSize(50);
+						p5.fill(p5.color(255, 255, 255));
+						p5.text(`The winner is : ${winner}`, 120, height / 2);
+					});
+
 					this.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
@@ -321,6 +362,16 @@ export class Match extends Component
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
 			this.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
+
+		if ((p5.key === " ") && this.spacePressed === false)		//remove this to test with only one account
+		{
+			this.spacePressed = true;
+			this.socket.emit('find_match');
+			p5.background(0);
+			p5.textSize(50);
+			p5.fill(p5.color(255, 255, 255));
+			p5.text(`Creating / Finding match...`, 120, height / 2);
+		}
 	}
 
 	keyReleased = (p5: any) =>

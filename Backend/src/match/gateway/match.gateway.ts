@@ -7,18 +7,14 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 	} from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server } from 'socket.io';
 import { CustomModes, MatchStatus } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
-//import Player  from '../interface/player.interface'
-//import Ball from '../interface/ball.interface';
 import Game from '../interface/game.interface'
 import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { UserService } from 'src/user/service/user.service';
 import { CustomSocket } from 'src/auth-socket.adapter';
-import { match } from 'assert';
-import { number } from 'joi';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -33,21 +29,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			private readonly userService: UserService,
 		) {}
 
-		/*// @UseGuards(WsGuard)
-		@SubscribeMessage('connect_to_match')
-		async connectToMatch(socket: CustomSocket, data: { opponent_id: string }) {
-			console.log(data)
-			const username = getUsernameFromSocket(socket)
-			const user = await this.userService.findByUsername(username);
-			let match: MatchDto = await this.matchService.createMatch({user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
-			socket.join("match#" + match.id);
-			match.room_size++;
-			this.server.to("match#" + match.id).emit('update_to_client', match)
-		}*/
-
 		// @UseGuards(WsGuard)
 		@SubscribeMessage('find_match')
-		async findMatch(socket: CustomSocket) {
+		async findMatch(socket: CustomSocket) {			//add checks if slave & master != username
 			const username = getUsernameFromSocket(socket)
 			let match = await this.matchService.matchmaking(username, CustomModes.NORMAL );
 			socket.join("match#" + match.id);
@@ -136,9 +120,14 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		//@UseGuards(WsGuard)
 		@SubscribeMessage('gameFinished')
-		async gameFinished(socket: CustomSocket, data: {match_id: string, winner: number, score1: number, score2: number}) {
-			//game finished, winner (1 master, 2 slave)
-			//and send final score + winner
+		async gameFinished(socket: CustomSocket, data: {match_id: string, winner: string, score1: number, score2: number}) {
+			console.log("ITS FINISHED")
+			let match = await this.matchService.findOne(data.match_id);
+			match.status = MatchStatus.FINISHED;
+			match.winner = data.winner;
+
+			this.matchService.updateMatch(getUsernameFromSocket(socket), match.id.toString(), match);
+			this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
 		}
 
 		//@UseGuards(WsGuard)
