@@ -346,6 +346,19 @@ button {
 	background-color: #E11515;
 }
 
+#unblock_buttons {
+	position: absolute;
+	right: 0px;
+	margin-left: 10px;
+	width: 90px;
+	height: 100%;
+	border: 1px solid #E11515;
+	background-color: #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
+	color: #C0F4FE;
+}
+
 #unfriendColumnButton {
 	background-image: url('../asset/ColumnIcon_blue.svg');
 	background-repeat: no-repeat;
@@ -427,55 +440,68 @@ button {
 
 #chatTop{
 	position: relative;
+	display: flex;
+	align-items: center;
 	width: 297px;
 	height: 54px;
 	margin-top: 16px;
 	margin-left: 18px;
 }
 
+#chatCloseButton {
+	background-image: url('../asset/CloseChatWindow.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 30px;
+	width: 30px;
+	/*margin-top: 17px;
+	margin-bottom: 17px;*/
+	margin-right: 2px;
+	padding: 0px;
+}
+
+#chatCloseButton:hover {
+	background-image: url('../asset/CloseChatWindowHover.svg');
+}
+
+
 #friendChatAvatarIcon {
+	position: relative;
 	width: 54px;
 	height: 54px;
-	margin: 0;
+}
+
+#friendChatAvatarIcon:hover {
+	cursor: pointer;
 }
 
 .friendchatAvatar {
 	width: 54px;
 	height: 54px;
+	z-index: 1;
+}
+
+.friendchaStatusIcon {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 16.14px;
+	height: 16.14px;
+	z-index: 1;
 }
 
 #chatUsername {
-	position: absolute;
 	color: #C0F4FE;
 	width: 189px;
 	height: 30px;
-	top: 12px;
-	left: 68px;
-	right: 40px;
 	font-size: 22px;
+	margin-left : 10px;
 	white-space: nowrap; 
 	font-weight: normal;
 	text-align: left;
 	line-height: 30px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-}
-
-#chatColumnButton {
-	background-image: url('../asset/CloseChatWindow.svg');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	height: 20px;
-	width: 5px;
-	margin-top: 17px;
-	margin-bottom: 17px;
-	margin-right: 10px;
-	padding: 0px;
-	border: none;
-}
-
-#chatColumnButton:hover {
-	background-image: url('../asset/CloseChatWindowHover.svg');
 }
 
 .messageArea {

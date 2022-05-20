@@ -172,7 +172,7 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 						(<button id='block_buttons' onClick={() => props.setIsBlocked(true)}>
 							Block
 						</button>)) ||
-						(<button id='block_buttons' onClick={() => props.setIsBlocked(false)}>
+						(<button id='unblock_buttons' onClick={() => props.setIsBlocked(false)}>
 							Unblock
 						</button>)
 				}
@@ -783,11 +783,12 @@ const Chat : React.FC<PropsChat> = (props) => {
 	return (
 		<div className='chatArea'>
 			<div id='chatTop'>
+				<button id='chatCloseButton' onClick={() => props.setChatFriendState(false)}/>
 				<div id='friendChatAvatarIcon'>
 					<img src={user1} className="friendchatAvatar" alt="friendAvatar"/>
+					<img src={statutIconGreen} className="friendchaStatusIcon" alt="friendchaStatusIcon"/>
 				</div>
 				<div id="chatUsername">{username}</div>
-				<button id='chatColumnButton' onClick={() => props.setChatFriendState(false)}/>
 			</div>
 			<div className='messageArea'></div>
 			<div id="sendTextArea"> 
