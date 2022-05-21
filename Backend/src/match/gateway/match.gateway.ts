@@ -57,6 +57,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		// @UseGuards(WsGuard)
 		@SubscribeMessage('accept_challenge')
 		async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
+			console.log("accepting match...")
 			const username = getUsernameFromSocket(socket)
 			const user = await this.userService.findByUsername(username);
 			let match = await this.matchService.updateMatch(username, data.match_id, {status: MatchStatus.ACTIVE});

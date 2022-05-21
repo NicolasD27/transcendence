@@ -6,6 +6,7 @@ import refuse from '../asset/refuse.svg';
 import "./Notification.css";
 import { useNavigate } from 'react-router-dom';
 import { INotification } from "./NotificationList";
+import { Socket } from "socket.io";
 
 export interface User {
 	id: number,
@@ -18,12 +19,13 @@ interface Props {
 	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
+	socket: Socket
 }
 
 
 
 
-const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength}) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
 	const navigate = useNavigate()
@@ -50,13 +52,13 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 		}
 		else if (notification.entityType == "Match")
 		{
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, {status: 1, score1: 0, score2: 0}, { withCredentials: true })
-			.then(res => {
-				setAwaitingAction(false)
-				setNewNotifsLength(newNotifsLength - 1)
-			})
+			setAwaitingAction(false)
+			setNewNotifsLength(newNotifsLength - 1)
+			navigate("/login")
+			socket.emit("accept_challenge", {match_id: notification.entityId})
+			console.log("sending accept event")
 		}
-		else if (notification.entityType == "ChannelInvite")
+		else if (notification.entityType == "ChannelInvite") 
 		{
 			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, {}, { withCredentials: true })
 			.then(res => {

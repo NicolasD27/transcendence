@@ -17,17 +17,52 @@ import './App.css'
 import NotFound from './pages/404NotFound';
 import ProtectedRoute from './protectedRoute';
 import Loader from './components/Loader';
+import socketIOClient, { io } from 'socket.io-client';
+import { Socket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+
+function getAccessTokenFromCookies() {
+	try {
+		const cookieString = document.cookie.split('; ').find((cookie) => cookie.startsWith('accessToken'))
+		if (cookieString)
+			return ('bearer ' + cookieString.split('=')[1]);
+	} catch (ex) {
+		return '';
+	}
+}
+
+interface ServerToClientEvents {
+  noArg: () => void;
+  basicEmit: (a: number, b: string, c: Buffer) => void;
+  withAck: (d: string, callback: (e: number) => void) => void;
+}
+
+interface ClientToServerEvents {
+  hello: () => void;
+}
 
 
 const App = () => {
   const [isAuth, setIsAuth] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [socket, setSocket] = React.useState<any>();
 
   if (!isAuth) {
     axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				setIsAuth(true)
         setIsLoading(false)
+        setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
+				reconnection: true,
+				transports : ['websocket', 'polling', 'flashsocket'],
+				transportOptions: {
+					polling: {
+						extraHeaders: {
+							Authorization: getAccessTokenFromCookies()
+						}
+					}
+				}
+			}))
 			})
       .catch(err => {
         setIsAuth(false)
@@ -42,8 +77,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
-          <Route path="/login" element={<Login isAuth={isAuth}/>} />
-          <Route path="/profil/:id" element={<Profil isAuth={isAuth}/>} />
+          <Route path="/login" element={<Login isAuth={isAuth} socket={socket} />} />
+          <Route path="/profil/:id" element={<Profil isAuth={isAuth} socket={socket}/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
   

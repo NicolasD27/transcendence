@@ -10,8 +10,9 @@ import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
+import { Socket } from 'socket.io-client';
 
-const Profil = ({isAuth}: {isAuth: boolean}) => {
+const Profil = ({isAuth, socket}: {isAuth: boolean, socket: any}) => {
 	interface matchFormat {
 		idMatch: number;
 		nameP: string;
@@ -128,7 +129,7 @@ const Profil = ({isAuth}: {isAuth: boolean}) => {
 					<Achievement />
 				</div>
 			</div>
-			{getIDMe && <NotificationList myId={idMe} />}
+			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
 		</Fragment>
 	);
 };

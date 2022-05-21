@@ -7,7 +7,9 @@ import addGroupIcon from "../asset/addGroupIcon.svg"
 import { Match } from '../components/Match'
 import { cp } from 'fs/promises';
 import NotificationList from '../components/NotificationList';
+import { Socket } from 'socket.io-client';
 //import gameArea from '../asset/gameArea.svg';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 const Chat = () => {
 	return (
@@ -23,7 +25,7 @@ const Chat = () => {
 	)
 }
 
-const Login = ({isAuth}: {isAuth: boolean}) => {
+const Login = ({isAuth, socket}: {isAuth: boolean, socket: any}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 
@@ -60,11 +62,11 @@ const Login = ({isAuth}: {isAuth: boolean}) => {
 				</div >
 				<section id="gameAndChatSection">
 					<div className='gameArea' id='gameArea'></div>
-					<Match/ >
+					<Match />
 					<Chat/>
 				</section>
 			</div>
-			{getIDMe && <NotificationList myId={idMe} />}
+			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
 		</Fragment>
 	);
 };
