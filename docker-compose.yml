@@ -32,6 +32,7 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
       - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID}
       - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET}
+      - POST=${POST}
     ports: 
       - "8000:8000" # expose-to-the-world : only-in-the-docker
     container_name: backend-transcendence

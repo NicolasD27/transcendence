@@ -11,7 +11,7 @@ export class CreateChannelDto {
 	readonly name: string;
 
 	@ApiProperty()
-	@IsString()
+	//@IsString()
 	// @MinLength(0)
 	@MaxLength(200)
 	readonly description: string;
