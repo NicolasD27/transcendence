@@ -18,7 +18,7 @@ const Pseudo: React.FC<Props> = (props) => {
 	const idMe = props.idMe;
 
 	if (getpseudo === false) {
-		axios.get(`http://localhost:8000/api/users/${id}`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}`, { withCredentials: true })
 			.then(res => {
 				const profil = res.data;
 				setPseudo(pseudo => profil.pseudo)

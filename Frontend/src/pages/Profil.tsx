@@ -9,8 +9,9 @@ import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
+import NotificationList from '../components/NotificationList';
 
-const Profil = () => {
+const Profil = ({isAuth}: {isAuth: boolean}) => {
 	interface matchFormat {
 		idMatch: number;
 		nameP: string;
@@ -39,8 +40,8 @@ const Profil = () => {
 		navigate("/profil/" + idstring)
 		window.location.reload()//Necessaire
 	}
-	const onMatch = () => {
-		navigate("/login")
+	const onMainPage = () => {
+		navigate("/mainpage")
 	}
 	const onLogout = () => {
 		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
@@ -89,7 +90,7 @@ const Profil = () => {
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 			<div className='boxProfil'>
-				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMatch()} className="offProfil" />
+				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
 				{id === idMe && <ToggleQRcode />}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
@@ -99,6 +100,7 @@ const Profil = () => {
 					<Achievement historys={matchTri} />
 				</div>
 			</div>
+			{getIDMe && <NotificationList myId={idMe} />}
 		</Fragment>
 	);
 };

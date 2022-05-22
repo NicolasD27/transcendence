@@ -8,6 +8,8 @@ function getAccessTokenFromCookies() {
 	}
 }
 
+const g_channelId = 10;
+
 const app = new Vue({
 	el: '#app',
 	data: {
@@ -22,6 +24,7 @@ const app = new Vue({
 		channelId: '',
 		banId: '',
 		banTimeOut: 60,
+		idToInvite: 2,
 		socket: null,
 		socketOptions: {
 			reconnection: false,
@@ -45,19 +48,18 @@ const app = new Vue({
 			this.socket.emit('connect_to_channel', { channelId: this.channelId });
 		},
 		sendMessage() {
-			if(this.validateInput()) {
+
 				const message = {
 					activeChannelId: this.channelId,
 					content: this.content,
-					author: this.author
 				}
 				this.socket.emit('msg_to_server', message)
-				// console.log(message);
-			}
+				console.log("here", message);
+			
 			this.content = '';
 		},
 		receivedMessage(message) {
-			console.log(message);
+			// console.log(message);
 			this.messages.push(message);
 		},
 		validateInput() {
@@ -70,6 +72,10 @@ const app = new Vue({
 			for (let i = msgs.length - 1; i >= 0; --i) {
 				this.receivedMessage(msgs[i]);
 			}
+		},
+		sendInvite() {
+			console.log("sending invite ...", { channelId: this.channelId, userId: this.idToInvite})
+			this.socket.emit('sendInvite', { channelId: this.channelId, userId: this.idToInvite});
 		},
 		// closeChannel() {
 		// 	this.socket.emit('leave', { channelId: this.channelId });
@@ -90,11 +96,11 @@ const app = new Vue({
 			console.log(data);
 			let message_content;
 			if (i === 1)
-				message_content = `${data.user_id} has been banned`;
+				message_content = `${data.user.username} has been banned`;
 			else if (i === 2)
-				message_content = `${data.user_id} has been muted`;
+				message_content = `${data.user.username} has been muted`;
 			else if (i === 3)
-				message_content = `${data.user_id} has been rescued`;
+				message_content = `${data.user.username} has been rescued`;
 			else
 			{
 				console.log("error: moderationMessage() needs a number between 1 and 3 in second argument.");
@@ -106,6 +112,10 @@ const app = new Vue({
 				user: {	username: "Moderation" }
 			}
 			this.receivedMessage(m);
+		},
+		newChannelInviteReceived(data) {
+			console.log("newChannelInviteReceived");
+			console.log(data);
 		},
 		connectToMatch() {
 			// this.room = 'a';
@@ -193,6 +203,9 @@ const app = new Vue({
 		});
 		this.socket.on('rescue', (data) => {
 			this.moderationMessage(data, 3);
+		});
+		this.socket.on('new_channel_invite_received',(data)=>{
+			this.newChannelInviteReceived(data);
 		});
 	}
 });

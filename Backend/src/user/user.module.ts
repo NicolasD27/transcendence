@@ -23,6 +23,18 @@ import DatabaseFilesController from './controller/database-file/database-file.co
 import { UserService } from './service/user.service';
 import { MatchService } from 'src/match/service/match.service';
 import { Match } from 'src/match/entity/match.entity';
+import { NotificationService } from 'src/notification/service/notification.service';
+import { Notification } from 'src/notification/entity/notification.entity';
+import { NotificationRepository } from 'src/notification/repository/notification.repository';
+import { FriendshipRepository } from '../friendship/repository/friendship.repository';
+import { MatchRepository } from '../match/repository/match.repository';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelModule } from 'src/channel/channel.module';
+import { Channel } from 'src/channel/entity/channel.entity';
+import { Participation } from '../channel/entity/participation.entity';
+import { Msg } from 'src/message/entity/msg.entity';
+import { ModerationTimeOut } from '../channel/entity/moderationTimeOut.entity';
+import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 
 
 @Global()
@@ -35,7 +47,7 @@ import { Match } from 'src/match/entity/match.entity';
             }
         }),
         PassportModule.register({}),
-        TypeOrmModule.forFeature([User, Friendship, DatabaseFile, Match])
+        TypeOrmModule.forFeature([User, Channel, Participation, Msg, ModerationTimeOut, ChannelInvite, Friendship, FriendshipRepository, DatabaseFile, Match, MatchRepository, Notification, NotificationRepository])
     ],
     controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
     providers: [
@@ -48,13 +60,16 @@ import { Match } from 'src/match/entity/match.entity';
         FriendshipService,
         UserGateway,
         DatabaseFilesService,
-        MatchService
+        MatchService,
+        NotificationService,
+        ChannelService
     ],
     exports: [
         FtStrategy,
         PassportModule,
 		UserService,
-		TypeOrmModule
+		TypeOrmModule,
+        AuthService
     ]
 })
 export class UserModule {}

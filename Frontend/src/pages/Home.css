@@ -1,3 +1,13 @@
+/* .ButtonStyle > a {
+	color: white;
+	
+} */
+
+a {
+	color: inherit !important;
+	text-decoration: none !important;
+}
+
 .box {
 	display: flex;
 	flex-direction: column;
@@ -25,11 +35,12 @@
 	z-index: 0;
 	margin: 0%;
 	background-color: #11ffee00;
-	font-family: 'Open Sans';
-	font-size: 24px;
+	font-family: 'Tourney', cursive;
+	font-weight: 200;
+	font-size: 28px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, rgba(44, 72, 222, 0) 21.35%, rgba(214, 16, 94, 0) 75.52%, #FF0777);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, rgba(44, 72, 222, 0) 21.35%, rgba(214, 16, 94, 0) 75.52%, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
@@ -54,14 +65,19 @@
 	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #FF0777);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, #FF0777);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
-	transition: opacity 1s, box-shadow 2s;
+	transition: opacity 300ms, box-shadow 600ms;
 }
 
 .loginButton:hover::before {
 	opacity: 1;
 	box-shadow: 2px 1000px 1px transparent inset;
+}
+ 
+.loginLink {
+	width: 100%;
+    display: inline-block;
 }

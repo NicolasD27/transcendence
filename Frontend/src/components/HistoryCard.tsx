@@ -19,11 +19,11 @@ const HistoryCard: React.FC<Props> = (props) => {
 	let avatarOppenent: string;
 
 	if (idP != null)
-		avatarPlayer = `http://${process.env.REACT_APP_HOST || "localhost"}/api/database-files/${idP}`
+		avatarPlayer = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${idP}`
 	else
 		avatarPlayer = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
 	if (idO != null)
-		avatarOppenent = `http://${process.env.REACT_APP_HOST || "localhost"}/api/database-files/${idO}`
+		avatarOppenent = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${idO}`
 	else
 		avatarOppenent = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
 

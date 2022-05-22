@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { Msg } from "../../message/entity/msg.entity";
 import { User } from "../../user/entity/user.entity";
 import { ChannelDto } from "../dto/channel.dto";
+import { ChannelInvite } from "./channelInvite.entity";
 import { ModerationTimeOut } from "./moderationTimeOut.entity";
 import { Participation } from "./participation.entity";
 
@@ -11,8 +12,11 @@ export class Channel extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	// @Column()
-	// public isPrivate: boolean;
+	@Column({ default: false })
+	public isPrivate: boolean;
+
+	@Column({ default: false })
+	public isProtected: boolean;
 
 	@Column({ unique: true })
 	public name: string;
@@ -35,9 +39,14 @@ export class Channel extends BaseEntity {
 	@OneToMany(() => ModerationTimeOut, moderationTimeOut => moderationTimeOut.channel)
 	moderationTimeOuts: ModerationTimeOut[];
 
+	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.channel)
+	channelInvites: ChannelInvite[];
+
 	static toDto(channel: Channel) {
 		const dto: ChannelDto = {
 			id: channel.id,
+			isPrivate: channel.isPrivate,
+			isProtected: channel.isProtected,
             name: channel.name,
             owner: User.toDto(channel.owner),
             description: channel.description

@@ -4,9 +4,9 @@ services:
     image: postgres
     restart: always
     environment: 
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
     container_name: postgres-db
     volumes:
       - ./pgdata:/postgresql/data
@@ -18,17 +18,21 @@ services:
     restart: always
     environment: 
       - DB_TYPE=${DB_TYPE}
-      - POSTGRES_HOST=${DB_HOST}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASS=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
       - POSTGRES_SYNC=false
-      - POSTGRES_PORT=${DB_PORT}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
       - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
+      - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID}
+      - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET}
+      - POST=${POST}
     ports: 
       - "8000:8000" # expose-to-the-world : only-in-the-docker
     container_name: backend-transcendence
@@ -43,6 +47,8 @@ services:
       dockerfile: ./Dockerfile
     image: frontend:latest
     restart: always
+    environment:
+      - REACT_APP_HOST=${APP_HOST}
     ports:
       - "3000:3000"
     container_name: frontend-transcendence

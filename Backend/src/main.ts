@@ -14,6 +14,7 @@ async function bootstrap() {
 
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 	const port = +process.env.APP_PORT || 8000
+	console.log(process.env.APP_HOST || "localhost")
 	app.useGlobalFilters(new HttpExceptionFilter);
 	app.setGlobalPrefix('api')
 	app.use(cookieParser());
@@ -25,12 +26,12 @@ async function bootstrap() {
     .setDescription('Trancendence documentation')
     .setVersion('0.2')
     .build()
-    
+
 	const document = SwaggerModule.createDocument(app, options)
 	SwaggerModule.setup('api', app, document)
 	const sessionMiddleware = session({ resave: false, saveUninitialized: false, secret: '!Paris' })
 	app.enableCors({
-		"origin": ["http://localhost:3000", "http://localhost:8000"],
+		"origin": [`http://${process.env.APP_HOST || "localhost"}:3000`, `http://${process.env.APP_HOST || "localhost"}:8000`],
 		"methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
 		"preflightContinue": false,
 		credentials: true,

@@ -8,17 +8,27 @@ export class ChannelDto {
 
 	@ApiProperty()
 	@Expose()
-    @IsNumber()
+	@IsNumber()
 	id: number
 
 	@ApiProperty()
 	@Expose()
-    @IsString()
+	// todo: add a decorator
+	isPrivate: boolean
+
+	@ApiProperty()
+	@Expose()
+	// todo: add a decorator
+	isProtected: boolean
+
+	@ApiProperty()
+	@Expose()
+	@IsString()
 	name: string
 
 	@ApiProperty()
 	@Expose()
-    @IsString()
+	@IsString()
 	description: string
 
 	@ApiProperty()
