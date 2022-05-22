@@ -8,7 +8,7 @@ import axios from 'axios';
 import Login2FA from './pages/Login2FA';
 import './pages/Home.css';
 import './pages/Home.css';
-import './pages/MainPage';
+import './pages/MainPage.css';
 import './pages/Profil.css';
 import './pages/Login2FA.css'
 import './pages/404NotFound.css'
