@@ -14,6 +14,7 @@ import CloseChatWindow from '../asset/CloseChatWindow.svg'
 import { Channel, channel } from 'diagnostics_channel';
 import { collapseTextChangeRangesAcrossMultipleVersions, createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 import { join } from 'path';
+import Match from '../components/Match';
 
 const dataUrlChannelsJoined = "http://localhost:8000/api/channels/"
 const dataUrlExistingChannel = "http://localhost:8000/api/channels"
@@ -109,7 +110,7 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 				<button id='addGroup' onClick={handleClick}/>
 			</div>
 			{
-				/*props.createChannelButtonState && 
+				/*props.createChannelButtonState &&
 				<>
 					<div className='usersList'>
 						<PrintFriendToAddChannel friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
@@ -131,7 +132,7 @@ interface PropsPrintNormalFriendProfile {
 }
 
 const PrintNormalProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => {
-	
+
 	return (
 		<>
 			<div id="username">{props.user.pseudo}</div>
@@ -139,7 +140,7 @@ const PrintNormalProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => 
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatFriendState(true)}/> 
+								<button id="friendChat_button" onClick={() => props.setChatFriendState(true)}/>
 							</>
 						) ||
 							<div id='profileBlocked'>
@@ -168,7 +169,7 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 						<p>Unfriend</p>
 				</button>
 				{
-						(!props.isBlocked && 
+						(!props.isBlocked &&
 						(<button id='block_buttons' onClick={() => props.setIsBlocked(true)}>
 							Block
 						</button>)) ||
@@ -193,13 +194,13 @@ interface PropsPrintFriendProfile {
 
 const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 
-	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)	
+	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)
 	const [ isBlocked, setIsBlocked ]= useState(false)
 	const [ profileAvatar, setProfileAvatar ] = useState("")
 
 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 	const navigate = useNavigate()
-	
+
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
@@ -212,7 +213,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 		}
 	}, [])
 
-	
+
 	const deleteFriend = (user : PropsStateUsers) => {
 		for (let i = 0; i < props.friends.length; i++)
 		{
@@ -225,7 +226,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 						const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
 						props.setFriends(newFriendsList)
 					})
-					.catch((err) => 
+					.catch((err) =>
 						console.log(err))
 			}
 		}
@@ -235,7 +236,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 		<div className='user'>
 				<div id='userAvatarIcon'>
 					{
-						props.user.avatarId == null && 
+						props.user.avatarId == null &&
 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
 					}
 					{
@@ -262,13 +263,13 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 	const [ profileAvatar, setProfileAvatar ] = useState("")
 
 	const navigate = useNavigate()
-	
+
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
 
 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
-	
+
 	useEffect(() => {
 		if (props.user.avatarId != null)
 			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
@@ -279,7 +280,7 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 			<div className='user'>
 				<div id='userAvatarIcon'>
 				{
-						props.user.avatarId == null && 
+						props.user.avatarId == null &&
 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
 					}
 					{
@@ -290,8 +291,8 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 				</div>
 				<div id="username">{props.user.pseudo}</div>
 				<div id='friendRequest_buttons'>
-					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} /> 
-					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} /> 
+					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} />
+					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} />
 				</div>
 			</div>
 		</>
@@ -308,9 +309,9 @@ const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (
 	const [ profileAvatar, setProfileAvatar ] = useState("")
 
 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
-	
+
 	const navigate = useNavigate()
-	
+
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
@@ -325,7 +326,7 @@ const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (
 			<div className='user'>
 				<div id='userAvatarIcon'>
 					{
-						props.user.avatarId == null && 
+						props.user.avatarId == null &&
 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
 					}
 					{
@@ -352,11 +353,11 @@ interface PropsPrintSendFriendRequestProfile {
 
 const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfile> = (props) => {
 	const [ profileAvatar, setProfileAvatar ] = useState("")
-	
+
 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
-	
+
 	const navigate = useNavigate()
-	
+
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
@@ -371,7 +372,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 			<div className='user'>
 				<div id='userAvatarIcon'>
 					{
-						props.user.avatarId == null && 
+						props.user.avatarId == null &&
 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
 					}
 					{
@@ -381,7 +382,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 					<img src={props.statusIcon} className="userStatusIcon" alt=" StatutIcon"/>
 				</div>
 				<div id="username">{props.user.pseudo}</div>
-				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>  
+				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>
 			</div>
 		</>
 	)
@@ -405,7 +406,7 @@ const PrintChannelsJoined : React.FC<PropsPrintChannelsJoined> = (props) => {
 					!isMute && <button id="muteChannel" onClick={() => setIsMute(true)}/> ||
 					<button id="unmuteChannel" onClick={() => setIsMute(false)}/>
 				}
-				<button id="channelChat_button" onClick={() => props.setChatChannelState(!props.chatChannelState)}/> 
+				<button id="channelChat_button" onClick={() => props.setChatChannelState(!props.chatChannelState)}/>
 			</div>
 		</div>
 	)
@@ -437,7 +438,7 @@ const PrintChannelsToJoin : React.FC<PropsPrintChannelsToJoin> = (props) => {
 			<div id='channelAvatarIcon'></div>
 			{
 				(!isButtonClicked &&
-					( 
+					(
 						<>
 							<div id="channelName">{props.channel.name}</div>
 							<button id="channelSendRequest_buttons" onClick={() => setIsButtonClicked(true)}/>
@@ -455,7 +456,7 @@ const PrintChannelsToJoin : React.FC<PropsPrintChannelsToJoin> = (props) => {
 									.then((res) => {
 										props.setJoinedChannels(res.data)
 									})
-									.catch((err) => 
+									.catch((err) =>
 										console.log(err)
 									)*/
 					//)
@@ -536,7 +537,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 				setFriends(res.data)
 				axios.delete(`${dataUrlFriendRequestsReceived}/${res.data.id}`)
 			})
-			.catch((err) => 
+			.catch((err) =>
 				console.log(err)
 			)
 	}
@@ -544,7 +545,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const declineFriendshipRequest = (user:PropsStateUsers) => {
 		axios
 			.delete(`${dataUrlFriendRequestsReceived}/${user.id}`)
-			.catch((err) => 
+			.catch((err) =>
 				console.log(err)
 			)
 	}*/
@@ -603,7 +604,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					})
 			}
 			{/*
-				!searchValue && 
+				!searchValue &&
 					(joinedChannels
 						.map((channel:any) => {
 								return (
@@ -612,7 +613,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						}))
 			*/}
 			{
-					!searchValue && 
+					!searchValue &&
 					friends
 						.map((friend) => {
 							let statusIcon = (friend.status === 1 ? statutIconGreen : statutIconRed);
@@ -708,7 +709,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 						setFriends(friends => [...friends, friends_tmp])
 					})
 				})
-				.catch (err => 
+				.catch (err =>
 					console.log(err)
 				)
 		}}, [props.idMe])
@@ -720,19 +721,19 @@ const Users : React.FC<PropsUsers> = (props) => {
 			const request = res.data;
 			setFriendRequestReceived(request)
 		})
-		.catch (err => { 
+		.catch (err => {
 			console.log(err)
 		})
 	}, [friendRequestReceived])
 
 	useEffect(() => {
-		axios 
+		axios
 		.get(dataUrlFriendRequestsSent, { withCredentials: true })
 		.then (res => {
 			const request = res.data;
 			setFriendRequestsSent(request)
 		})
-		.catch (err => { 
+		.catch (err => {
 			console.log(err)
 		})
 	}, [friendRequestsSent])*/
@@ -747,8 +748,8 @@ const Users : React.FC<PropsUsers> = (props) => {
 		<div className='chatArea'>
 			<SearchBarAddGroup setSearchValue={setSearchValue} friends={friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
 			{
-				//!createChannelButtonState && 
-				<UserList 
+				//!createChannelButtonState &&
+				<UserList
 					idMe={props.idMe}
 					existingChannels={existingChannels}
 					//joinedChannels={joinedChannels}
@@ -791,7 +792,7 @@ const Chat : React.FC<PropsChat> = (props) => {
 				<div id="chatUsername">{username}</div>
 			</div>
 			<div className='messageArea'></div>
-			<div id="sendTextArea"> 
+			<div id="sendTextArea">
 				<div id='writingTextArea'>
 					<input type='text' placeholder='Aa' name='searchFriend'  /*onChange={handleSearchRequest}*/ />
 				</div>
@@ -809,8 +810,8 @@ const Body : React.FC<PropsBody> = (props) => {
 
 	const idMe = props.idMe;
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
-	const [ chatFriendState, setChatFriendState ] = useState(false) 
-	const [ chatChannelState, setChatChannelState ] = useState(false) 
+	const [ chatFriendState, setChatFriendState ] = useState(false)
+	const [ chatChannelState, setChatChannelState ] = useState(false)
 
 	const  [ userstate, setUserState ] = useState(false);
 
@@ -822,16 +823,17 @@ const Body : React.FC<PropsBody> = (props) => {
 				const user = res.data;
 				setUsers(user)
 			})
-			.catch (err => 
+			.catch (err =>
 				console.log(err)
 			)
 	}, [])
 
 	return (
 		<section id="gameAndChatSection">
-			<div className='gameArea'><div className='gameAreaSeparation'></div></div>
-			{(!chatFriendState && <Users idMe={idMe} users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState}/>) 
+			<div className='gameArea' id='gameArea'></div>
+			{(!chatFriendState && <Users idMe={idMe} users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState}/>)
 			|| (<Chat setChatFriendState={setChatFriendState}/>)}
+			<Match/>
 		</section>
 	)
 }

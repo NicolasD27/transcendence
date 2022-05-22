@@ -16,7 +16,7 @@ export class AuthController {
     constructor(
         private authService: AuthService
     ) {}
-    
+
     @Get('42')
     @UseGuards(FtOauthGuard)
     ftAuth() {
@@ -40,7 +40,7 @@ export class AuthController {
         if (payload.user.isTwoFactorEnable)
             return {url: `http://${process.env.APP_HOST || "localhost"}:3000/login-2FA`}
         else
-            return {url: `http://${process.env.APP_HOST || "localhost"}:3000/login`}
+            return {url: `http://${process.env.APP_HOST || "localhost"}:3000/mainpage`}
     }
 
     @ApiBearerAuth()
