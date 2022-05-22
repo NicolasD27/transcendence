@@ -4,8 +4,8 @@ import mainTitle from '../asset/Pong-Legacy.svg'
 
 const Home = () => {
 	const navigate = useNavigate()
-	const onLogin = () => {
-		navigate("login")
+	const onMainPage = () => {
+		navigate("mainpage")
 	}
 	return (
 		<div className='box'>

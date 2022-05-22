@@ -24,7 +24,7 @@ const Login2FA = ({setIsAuth} : {setIsAuth: Dispatch<SetStateAction<boolean>>}) 
         axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, {code: code}, {withCredentials: true	})
 			.then(res => {
 				setIsAuth(true)
-				navigate("/login")
+				navigate("/mainpage")
 
 			})
 			.catch(err => {
