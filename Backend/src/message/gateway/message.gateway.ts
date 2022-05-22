@@ -61,7 +61,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	{
 
 		// console.log(socket.request.headers.cookie);
-		
+
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connectToChannel ${username} on ${data.channelId}`);
 

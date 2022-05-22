@@ -27,19 +27,19 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		private readonly friendshipService: FriendshipService,
 	) {}
 
-	
+
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendStatusUpdate')						// this runs the function when the event msg_to_server is triggered
 	async sendStatusUpdate(socket: CustomSocket, data: { newStatus: UserStatus}) {
 		console.log("receiving status update")
 		const username = getUsernameFromSocket(socket);
-		const user = await this.userService.updateStatusByUsername(data.newStatus, username);		
+		const user = await this.userService.updateStatusByUsername(data.newStatus, username);
 		const friends = await this.friendshipService.findAllActiveFriendsByUser(user.id)
 		console.log(friends, user)
 		friends.forEach((friend) => {
 			this.server.to("user#" + friend.id).emit('notifyStatusUpdate', user);
-		})	
+		})
 	}
 
 	// @UseGuards(WsGuard)
@@ -47,7 +47,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async sendFriendRequest(socket: CustomSocket, data: { user_id: number}) {
 		console.log("receiving friend request")
 		const username = getUsernameFromSocket(socket);
-		const user = await this.userService.findByUsername(username);		
+		const user = await this.userService.findByUsername(username);
 		const friendship = await this.friendshipService.create({user1_id: user.id, user2_id: data.user_id})
 		this.server.to("user#" + data.user_id).emit('notifyFriendRequest', friendship);
 	}
@@ -68,14 +68,14 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	// 	console.log(data)
 	// 	const match = await this.matchService.updatePositionCurrentMatch(data.match_id, username, data.command);
 	// 	this.socket.to("match#" + data.match_id).emit('update_to_client', match)
-		
+
 	// }
 
 
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
-	
+
 	// @UseGuards(WsGuard)
 	async handleConnection(socket: CustomSocket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
@@ -90,7 +90,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				// }
 				socket.join("user#" + user.id);
 				this.logger.log(`user #${user.id} connected to his room: `);
-		
+
 	}
 
 	handleDisconnect(client: Socket, ...args) {

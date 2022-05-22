@@ -168,7 +168,7 @@ export class ChannelService {
 
 		await this.participationRepo.save(newParticipation);
 
-		return newParticipation; 
+		return newParticipation;
 	}
 
 	async leave(username: string, channelId: string)
@@ -267,7 +267,7 @@ export class ChannelService {
 		});
 		if (blacklisted.length)
 			throw new UnauthorizedException("You or this user is blacklisted.");
-		
+
 		const previousInvite = await this.channelInviteRepo.findOne({
 			where: {
 				sender: mySender.id,
@@ -326,7 +326,7 @@ export class ChannelService {
 			throw new NotFoundException(`Invitation ${inviteId} not found`);
 		if (myInvite.receiver.id != myUser.id)
 			throw new UnauthorizedException();
-		
+
 		const myChannel = await this.channelRepo.findOne({ where : { id: myInvite.channel.id } });
 		if (!myChannel)
 		{
@@ -521,7 +521,7 @@ export class ChannelService {
 		newBanStatus: number)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
-		
+
 		const myChannel = await this.channelRepo.findOne(id);
 		if (! myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
@@ -575,7 +575,7 @@ export class ChannelService {
 				this.moderationTimeOutRepo.save(ban);
 			}
 		});
-		
+
 		let myTimeout = new Date();
 
 		// console.log("// now : " + myTimeout);
@@ -599,7 +599,7 @@ export class ChannelService {
 	async revertBanStatus(id: string, username: string, futureUnBannedID: string)
 	{
 		const banhammer = await this.userRepo.findOne({ username });
-		
+
 		const myChannel = await this.channelRepo.findOne(id);
 		if (! myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
@@ -751,11 +751,11 @@ export class ChannelService {
 		});
 		if (! participation)
 			throw new UnauthorizedException("Channel was not joined.");
-			
+
 		if (myChannel.owner.id != myUser.id)
 			throw new UnauthorizedException("Only the owner of a channel can delete it.");
 
-		// ? this checks the password but private channels aren't supposed to have passwords 
+		// ? this checks the password but private channels aren't supposed to have passwords
 		// if (! await bcrypt.compare(deleteChannelDto.password, myChannel.hashedPassword))
 		// 	throw new UnauthorizedException("wrong password");
 
