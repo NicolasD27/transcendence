@@ -2,14 +2,13 @@ import React, { Fragment } from 'react';
 import { useState, useEffect } from 'react';
 import { Routes, Route } from "react-router-dom";
 import Home from './pages/Home';
-import Login from './pages/Login';
 import Profil from './pages/Profil';
+import MainPage from './pages/MainPage';
 import axios from 'axios';
 import Login2FA from './pages/Login2FA';
 import './pages/Home.css';
-import './pages/Login.css';
 import './pages/Home.css';
-import './pages/Login.css';
+import './pages/MainPage.css';
 import './pages/Profil.css';
 import './pages/Login2FA.css'
 import './pages/404NotFound.css'
@@ -71,19 +70,15 @@ const App = () => {
   }
   return (
     <Fragment>
-      
-      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
-          <Route path="/login" element={<Login isAuth={isAuth} socket={socket} />} />
-          <Route path="/profil/:id" element={<Profil isAuth={isAuth} socket={socket}/>} />
+          <Route path="/mainpage" element={<MainPage  socket={socket} />} />
+          <Route path="/profil/:id" element={<Profil socket={socket}/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
-  
       </Routes>
-      
     </Fragment>
   );
 }

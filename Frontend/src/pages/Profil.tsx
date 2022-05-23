@@ -12,7 +12,7 @@ import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
 import { Socket } from 'socket.io-client';
 
-const Profil = ({isAuth, socket}: {isAuth: boolean, socket: any}) => {
+const Profil = ({socket}: {socket: any}) => {
 	interface matchFormat {
 		idMatch: number;
 		nameP: string;
@@ -62,8 +62,8 @@ const Profil = ({isAuth, socket}: {isAuth: boolean, socket: any}) => {
 		navigate("/profil/" + idstring)
 		window.location.reload()//Necessaire
 	}
-	const onMatch = () => {
-		navigate("/login")
+	const onMainPage = () => {
+		navigate("/mainpage")
 	}
 	const onLogout = () => {
 		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
@@ -119,7 +119,7 @@ const Profil = ({isAuth, socket}: {isAuth: boolean, socket: any}) => {
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 			<div className='boxProfil'>
-				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMatch()} className="offProfil" />
+				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
 				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable}/>}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
