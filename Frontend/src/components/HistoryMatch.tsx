@@ -8,8 +8,11 @@ interface Props {
 }
 
 interface Card {
+	winner: string;
 	nameP: string;
 	nameO: string;
+	pseudoP: string;
+	pseudoO: string;
 	avatarP: string;
 	avatarO: string;
 	scoreP: number;
@@ -27,7 +30,7 @@ const HistoryMatch: React.FC<Props> = (props) => {
 				<div className="labelHistory">Match History:</div>
 				<div className="boxHistory">
 					{historys.map((match, i) => (
-						<HistoryCard key={i} namePlayer={match.nameP} nameOppenent={match.nameO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
+						<HistoryCard key={i} winner={match.winner} namePlayer={match.nameP} nameOppenent={match.nameO} pseudoP={match.pseudoP} pseudoO={match.pseudoO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
 							scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
 					))}
 				</div>

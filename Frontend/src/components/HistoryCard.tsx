@@ -2,8 +2,11 @@ import React, { Fragment } from "react";
 import './HistoryCard.css';
 
 interface Props {
+	winner: string;
 	namePlayer: string;
 	nameOppenent: string;
+	pseudoP: string;
+	pseudoO: string;
 	avatarPlayer: string;
 	avatarOppenent: string;
 	scorePlayer: number;
@@ -11,6 +14,7 @@ interface Props {
 }
 
 const HistoryCard: React.FC<Props> = (props) => {
+	const winner = props.winner;
 	const idP = props.avatarPlayer;
 	const idO = props.avatarOppenent;
 	const scorePlayer = props.scorePlayer;
@@ -31,12 +35,14 @@ const HistoryCard: React.FC<Props> = (props) => {
 		<div className="boxCard">
 			<div>
 				<img src={avatarPlayer} alt="" id="img" className="imgCard" />
-				<div className="nameStyle">{props.namePlayer}</div>
+				{winner == props.namePlayer && <div className="nameStyle glowingText">{props.pseudoP}</div>}
+				{winner != props.namePlayer && <div className="nameStyle ">{props.pseudoP}</div>}
 			</div>
 			<div className="scoreStyle">{scorePlayer}  -  {scoreOppenent}</div>
 			<div>
 				<img src={avatarOppenent} alt="" id="img" className="imgCard" />
-				<div className="nameStyle">{props.nameOppenent}</div>
+				{winner == props.nameOppenent && <div className="nameStyle glowingText">{props.pseudoO}</div>}
+				{winner != props.nameOppenent && <div className="nameStyle">{props.pseudoO}</div>}
 			</div>
 		</div >
 	);

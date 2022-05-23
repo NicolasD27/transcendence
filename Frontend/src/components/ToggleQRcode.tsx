@@ -7,12 +7,12 @@ const ToggleQRcode = () => {
 	const [ischecked, setIsChecked] = useState(false);
 	const handleChange = () => {
 		if (ischecked === false) {
-			axios.post(`http://localhost:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
+			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
 				.then(res => {
 				})
 		}
 		else {
-			axios.post(`http://localhost:8000/api/2fa/turn-off-2FA`, {}, { withCredentials: true })
+			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-off-2FA`, {}, { withCredentials: true })
 		}
 		setIsChecked(!ischecked)
 	}
