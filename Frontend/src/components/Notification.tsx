@@ -107,12 +107,12 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 				<span className="notification-name" onClick={handleClick}>{notification.name}</span>{content}
 				{notification.secondName && <span className="notification-name">{notification.secondName}</span>}
 			</div> 
-			{/* {awaitingAction &&  */}
+			{awaitingAction && 
 			<div className="notification-icon-wrapper" >
 				<div className="notification-icon-container"><img className="notification-icon" src={accept} alt="" onClick={handleAccept}/></div>
 				<div className="notification-icon-container"><img className="notification-icon" src={refuse} alt="" onClick={handleRefuse}/></div>
 			</div>
-			{/* } */}
+			}
 		</div>
 	);
 };
