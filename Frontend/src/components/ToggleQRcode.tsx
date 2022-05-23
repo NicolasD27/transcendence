@@ -11,13 +11,13 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 	}, [isTwoFactorEnable])
 	const handleChange = () => {
 		if (ischecked === false) {
-			axios.post(`http://localhost:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
+			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
 				.then(res => {
 					setIsChecked(true)
 				})
 		}
 		else {
-			axios.post(`http://localhost:8000/api/2fa/turn-off-2FA`, {}, { withCredentials: true })
+			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-off-2FA`, {}, { withCredentials: true })
 			.then(res => {
 				setIsChecked(false)
 			})

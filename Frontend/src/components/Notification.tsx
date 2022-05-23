@@ -64,6 +64,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			.then(res => {
 				setAwaitingAction(false)
 				setNewNotifsLength(newNotifsLength - 1)
+				console.log("to do : navigate to channel etc...")
 			})
 		}
 	}

@@ -156,7 +156,7 @@ export class Match extends Component
 
 	setup = (p5: any) =>
 	{
-		this.socket = io('http://localhost:8000', {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
+		this.socket = io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
 
 		let cvn = p5.createCanvas(width, height);
 		cvn.parent("gameArea");

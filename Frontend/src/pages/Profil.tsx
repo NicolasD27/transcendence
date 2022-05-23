@@ -39,7 +39,7 @@ const Profil = ({socket}: {socket: any}) => {
 
 	useEffect(() => {
 		setMatchID([])
-		axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
 				matchs.forEach((list: any) => {
@@ -66,14 +66,14 @@ const Profil = ({socket}: {socket: any}) => {
 		navigate("/mainpage")
 	}
 	const onLogout = () => {
-		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
 			.then(res => {
 			})
 		navigate("/")
 	}
 
 	if (getIDMe === false) {
-		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
@@ -84,7 +84,7 @@ const Profil = ({socket}: {socket: any}) => {
 
 	// if (getmatch === false) {
 	// 	setMatchID([])
-	// 	axios.get(`http://localhost:8000/api/users/${id}/matchs/`, { withCredentials: true })
+	// 	axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 	// 		.then(res => {
 	// 			const matchs = res.data;
 	// 			matchs.forEach((list: any) => {

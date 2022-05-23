@@ -17,17 +17,17 @@ import { join } from 'path';
 import Match from '../components/Match';
 import NotificationList from '../components/NotificationList';
 
-const dataUrlChannelsJoined = "http://localhost:8000/api/channels/"
-const dataUrlExistingChannel = "http://localhost:8000/api/channels"
-const dataUrlFriends = "http://localhost:8000/api/friendships/"
+const dataUrlChannelsJoined = `http://${process.env.REACT_APP_HOST || `localhost`}:8000/api/channels/`
+const dataUrlExistingChannel = `http://${process.env.REACT_APP_HOST || `localhost`}:8000/api/channels`
+const dataUrlFriends = `http://${process.env.REACT_APP_HOST || `localhost`}:8000/api/friendships/`
 
 //////////////////////////////
-//const dataUrlFriendRequestsSent = "http://localhost:3001/friendRequestsSent"
-//const dataUrlFriendRequestsReceived = "http://localhost:3001/friendRequestsReceived"
+//const dataUrlFriendRequestsSent = `http://${process.env.REACT_APP_HOST || `localhost`}:3001/friendRequestsSent`
+//const dataUrlFriendRequestsReceived = `http://${process.env.REACT_APP_HOST || `localhost`}:3001/friendRequestsReceived`
 //////////////////////////////
 
 
-const dataUrlUsers = "http://localhost:8000/api/users"
+const dataUrlUsers = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users`
 //import gameArea from '../asset/gameArea.svg';
 
 interface PropsPrintFriendToAddChannel {
@@ -187,7 +187,7 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 interface PropsPrintFriendProfile {
 	friends: FriendsFormat[];
 	user:  PropsStateUsers;
-	statusIcon: string;
+	status: number;
 	key: number;
 	setChatFriendState :  Dispatch<SetStateAction<boolean>>;
 	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
@@ -210,7 +210,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 		if (props.user.avatarId != null)
 		{
 			console.log("catching avatar !!")
-			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
 		}
 	}, [])
 
@@ -222,7 +222,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 			{
 				console.log(`props.friend[${i}].friendshipId:` , props.friends[i].friendshipId)
 				axios
-					.delete(`http://localhost:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
+					.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
 					.then(() => {
 						const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
 						props.setFriends(newFriendsList)
@@ -236,15 +236,8 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 	return (
 		<div className='user'>
 				<div id='userAvatarIcon'>
-					{
-						props.user.avatarId == null &&
-						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					{
-						props.user.avatarId != null &&
-						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					<img src={props.statusIcon} className="userStatusIcon" alt="StatusIcon"/>
+					<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
+					<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt="StatusIcon"/>
 				</div>
 			{!friendDeleteColumnState && <PrintNormalProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatFriendState={props.setChatFriendState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
@@ -252,102 +245,102 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 	)
 }
 
-interface PropsPrintUserFriendRequestReceived {
-	user :  PropsStateUsers;
-	statusIcon : string;
-	acceptFriendshipRequest : Function;
-	declineFriendshipRequest: Function;
-	key : number;
-}
+// interface PropsPrintUserFriendRequestReceived {
+// 	user :  PropsStateUsers;
+// 	status : number;
+// 	acceptFriendshipRequest : Function;
+// 	declineFriendshipRequest: Function;
+// 	key : number;
+// }
 
-const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestReceived> = (props) => {
-	const [ profileAvatar, setProfileAvatar ] = useState("")
+// const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestReceived> = (props) => {
+// 	const [ profileAvatar, setProfileAvatar ] = useState("")
 
-	const navigate = useNavigate()
+// 	const navigate = useNavigate()
 
-	const onProfil = (idstring: string) => {
-		navigate("/profil/" + idstring)
-	}
+// 	const onProfil = (idstring: string) => {
+// 		navigate("/profil/" + idstring)
+// 	}
 
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+// 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 
-	useEffect(() => {
-		if (props.user.avatarId != null)
-			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
-	}, [])
+// 	useEffect(() => {
+// 		if (props.user.avatarId != null)
+// 			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+// 	}, [])
 
-	return (
-		<>
-			<div className='user'>
-				<div id='userAvatarIcon'>
-				{
-						props.user.avatarId == null &&
-						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					{
-						props.user.avatarId != null &&
-						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					<img src={props.statusIcon} className="userStatusIcon" alt="StatutIcon"/>
-				</div>
-				<div id="username">{props.user.pseudo}</div>
-				<div id='friendRequest_buttons'>
-					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} />
-					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} />
-				</div>
-			</div>
-		</>
-	)
-}
+// 	return (
+// 		<>
+// 			<div className='user'>
+// 				<div id='userAvatarIcon'>
+// 				{
+// 						props.user.avatarId == null &&
+// 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+// 					}
+// 					{
+// 						props.user.avatarId != null &&
+// 						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+// 					}
+// 					<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt="StatutIcon"/>
+// 				</div>
+// 				<div id="username">{props.user.pseudo}</div>
+// 				<div id='friendRequest_buttons'>
+// 					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user)} />
+// 					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user)} />
+// 				</div>
+// 			</div>
+// 		</>
+// 	)
+// }
 
-interface PropsPrintInvitationSentProfile {
-	user : PropsStateUsers;
-	statusIcon : string;
-	key : number;
-}
+// interface PropsPrintInvitationSentProfile {
+// 	user : PropsStateUsers;
+// 	status : number;
+// 	key : number;
+// }
 
-const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (props) => {
-	const [ profileAvatar, setProfileAvatar ] = useState("")
+// const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (props) => {
+// 	const [ profileAvatar, setProfileAvatar ] = useState("")
 
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+// 	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 
-	const navigate = useNavigate()
+// 	const navigate = useNavigate()
 
-	const onProfil = (idstring: string) => {
-		navigate("/profil/" + idstring)
-	}
+// 	const onProfil = (idstring: string) => {
+// 		navigate("/profil/" + idstring)
+// 	}
 
-	useEffect(() => {
-		if (props.user.avatarId != null)
-			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
-	}, [])
+// 	useEffect(() => {
+// 		if (props.user.avatarId != null)
+// 			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+// 	}, [])
 
-	return (
-		<>
-			<div className='user'>
-				<div id='userAvatarIcon'>
-					{
-						props.user.avatarId == null &&
-						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					{
-						props.user.avatarId != null &&
-						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					<img src={props.statusIcon} className="userStatusIcon" alt="StatutIcon"/>
-				</div>
-				<div id="username">{props.user.pseudo}</div>
-				<div id='invitation_sent'>
-					Invitation Sent
-				</div>
-			</div>
-		</>
-	)
-}
+// 	return (
+// 		<>
+// 			<div className='user'>
+// 				<div id='userAvatarIcon'>
+// 					{
+// 						props.user.avatarId == null &&
+// 						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+// 					}
+// 					{
+// 						props.user.avatarId != null &&
+// 						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+// 					}
+// 					<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt="StatutIcon"/>
+// 				</div>
+// 				<div id="username">{props.user.pseudo}</div>
+// 				<div id='invitation_sent'>
+// 					Invitation Sent
+// 				</div>
+// 			</div>
+// 		</>
+// 	)
+// }
 
 interface PropsPrintSendFriendRequestProfile {
 	user:  PropsStateUsers;
-	statusIcon: string;
+	status: number;
 	//sendFriendshipRequest : Function;
 	key: number;
 }
@@ -365,7 +358,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 
 	useEffect(() => {
 		if (props.user.avatarId != null)
-			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
+			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
 	}, [])
 
 	return (
@@ -380,7 +373,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 						props.user.avatarId != null &&
 						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
 					}
-					<img src={props.statusIcon} className="userStatusIcon" alt=" StatutIcon"/>
+					<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt=" StatutIcon"/>
 				</div>
 				<div id="username">{props.user.pseudo}</div>
 				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>
@@ -578,11 +571,11 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							return user_.pseudo.toLowerCase().includes(searchValue.toLowerCase())
 					})
 					.map((user_) => {
-						let statusIcon = (user_.status === 1 ? statutIconGreen : statutIconRed);
+						
 						if (Boolean(isAlreadyFriend(user_.id)) === true)
 						{
 							return (
-								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={user_} status={user_.status} key={user_.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
 							)
 						}
 						/*else if (Boolean(isThereAFriendshipRequest(user.id)) === true)
@@ -600,7 +593,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						}*/
 						else
 							return (
-								<PrintSendFriendRequestProfile user={user_} statusIcon={statusIcon} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user_.id}/>
+								<PrintSendFriendRequestProfile user={user_} status={user_.status} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user_.id}/>
 							)
 					})
 			}
@@ -617,9 +610,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					!searchValue &&
 					friends
 						.map((friend) => {
-							let statusIcon = (friend.status === 1 ? statutIconGreen : statutIconRed);
 							return (
-								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={friend} status={friend.status} key={friend.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
 							)
 						})
 			}
@@ -685,7 +677,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 
 	useEffect(() => {
 		axios
-		.get("http://localhost:8000/api/channels" , { withCredentials: true })
+		.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels` , { withCredentials: true })
 		.then (res => {
 			let channel = res.data;
 			setExistingChannels(channel)
@@ -701,7 +693,7 @@ const Users : React.FC<PropsUsers> = (props) => {
 		if (props.idMe !== 0)
 		{
 			axios
-				.get(`http://localhost:8000/api/friendships/${props.idMe}`, { withCredentials: true })
+				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
 				 	let friend = res.data;
 					friend.map((list:any) => {
@@ -856,7 +848,7 @@ const Header : React.FC<PropsHeader> = (props) => {
 	}
 
 	const onLogout = () => {
-		axios.post(`http://localhost:8000/api/auth/logout`, {}, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
 			.then(res => {
 			})
 		navigate("/")
@@ -877,10 +869,10 @@ const MainPage = ({socket}: {socket: any}) => {
 	const [getIDMe, setGetIDMe] = useState(false);
 
 	useEffect(() => {
-		axios.get(`http://localhost:8000/api/users/me`, { withCredentials: true })
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
 				const id_tmp = res.data;
-				setIdMe(idME => id_tmp.id)
+				setIdMe(id_tmp.id)
 			})
 		setGetIDMe(getIDMe => true)
 	} , [])
