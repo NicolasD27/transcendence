@@ -44,3 +44,11 @@
 		transform: translateY(-45vh) translateX(-27vw);
 	}
 }
+
+.iconOpa {
+	opacity: 1;
+}
+
+.iconNoOpa {
+	opacity: 0.4;
+}

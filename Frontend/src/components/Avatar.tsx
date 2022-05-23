@@ -62,9 +62,9 @@ export class Avatar extends React.Component<Props> {
 
 	render() {
 		const { profileImg } = this.state
-		
 
-		
+
+
 		const buttonUpload = <div style={{ borderRadius: "50%", height: 130, width: 130 }}>
 			<input type="file" accept="image/*" name="image-upload" id="input" onChange={this.imageHandler} />
 			<label className="image-upload" htmlFor="input">Upload</label>

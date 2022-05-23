@@ -14,9 +14,12 @@ import { Socket } from 'socket.io-client';
 
 const Profil = ({socket}: {socket: any}) => {
 	interface matchFormat {
+		winner: string;
 		idMatch: number;
 		nameP: string;
 		nameO: string;
+		pseudoP: string;
+		pseudoO: string;
 		avatarP: string;
 		avatarO: string;
 		scoreP: number;
@@ -45,9 +48,9 @@ const Profil = ({socket}: {socket: any}) => {
 				matchs.forEach((list: any) => {
 					let singleMatch: matchFormat;
 					if (list.user1.id === id)
-						singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
-						singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
 			})
@@ -82,33 +85,12 @@ const Profil = ({socket}: {socket: any}) => {
 		setGetIDMe(getIDMe => true)
 	}
 
-	// if (getmatch === false) {
-	// 	setMatchID([])
-	// 	axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
-	// 		.then(res => {
-	// 			const matchs = res.data;
-	// 			matchs.forEach((list: any) => {
-	// 				let singleMatch: matchFormat;
-	// 				if (list.user1.id === id)
-	// 					singleMatch = { idMatch: list.id, nameP: list.user1.pseudo, nameO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
-	// 				else
-	// 					singleMatch = { idMatch: list.id, nameP: list.user2.pseudo, nameO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-	// 				setMatchID(matchID => [...matchID, singleMatch]);
-	// 			});
-	// 		})
-	// 	setGetMatch(getmatch => true)
-	// }
-
 	useEffect(() => {
 		const matchTri = [...matchID].sort((a, b) => {
 			return b.idMatch - a.idMatch;
 		});
 		setMatchID(matchTri)
 	}, [matchID.length])
-
-	// const matchTri = [...matchID].sort((a, b) => {
-	// 	return b.idMatch - a.idMatch;
-	// });
 
 	return (
 		<Fragment>
@@ -126,7 +108,7 @@ const Profil = ({socket}: {socket: any}) => {
 				<ProgressBar matchs={matchID} />
 				<div className='boxStats'>
 					<HistoryMatch historys={matchID} />
-					<Achievement />
+					<Achievement historys={matchID} />
 				</div>
 			</div>
 			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
