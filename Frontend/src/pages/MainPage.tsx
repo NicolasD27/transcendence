@@ -16,6 +16,7 @@ import { collapseTextChangeRangesAcrossMultipleVersions, createEmitAndSemanticDi
 import { join } from 'path';
 import Match from '../components/Match';
 import NotificationList from '../components/NotificationList';
+import { Socket } from 'socket.io';
 
 const dataUrlChannelsJoined = `http://${process.env.REACT_APP_HOST || `localhost`}:8000/api/channels/`
 const dataUrlExistingChannel = `http://${process.env.REACT_APP_HOST || `localhost`}:8000/api/channels`
@@ -364,18 +365,20 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 	return (
 		<>
 			<div className='user'>
-				<div id='userAvatarIcon'>
-					{
-						props.user.avatarId == null &&
-						<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					{
-						props.user.avatarId != null &&
-						<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
-					}
-					<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt=" StatutIcon"/>
+				<div className='flex-v-centered'>
+					<div id='userAvatarIcon'>
+						{
+							props.user.avatarId == null &&
+							<img src={defaultAvatar} className="userAvatar" alt="defaultAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+						}
+						{
+							props.user.avatarId != null &&
+							<img src={profileAvatar} className="userAvatar" alt="profileAvatar" onClick={() => onProfil(props.user.id.toString())}/>
+						}
+						<img src={props.status === 1 ? statutIconGreen : statutIconRed} className="userStatusIcon" alt=" StatutIcon"/>
+					</div>
+					<div id="username">{props.user.pseudo}</div>
 				</div>
-				<div id="username">{props.user.pseudo}</div>
 				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>
 			</div>
 		</>
@@ -797,6 +800,7 @@ const Chat : React.FC<PropsChat> = (props) => {
 
 interface PropsBody {
 	idMe: number;
+	socket: any
 }
 
 const Body : React.FC<PropsBody> = (props) => {
@@ -824,15 +828,16 @@ const Body : React.FC<PropsBody> = (props) => {
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>
+			<Match socket={props.socket}/>
 			{(!chatFriendState && <Users idMe={idMe} users={users} setUsers={setUsers} setChatFriendState={setChatFriendState} chatChannelState={chatChannelState} setChatChannelState={setChatChannelState}/>)
 			|| (<Chat setChatFriendState={setChatFriendState}/>)}
-			<Match/>
 		</section>
 	)
 }
 
 interface PropsHeader {
 	idMe : number;
+	socket: any
 }
 
 const Header : React.FC<PropsHeader> = (props) => {
@@ -841,7 +846,9 @@ const Header : React.FC<PropsHeader> = (props) => {
 	const navigate = useNavigate()
 
 	const onPlay = () => {
-		navigate("")
+		props.socket.emit('find_match')
+		navigate("/mainpage")
+
 	}
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
@@ -879,8 +886,8 @@ const MainPage = ({socket}: {socket: any}) => {
 
 	return (
 		<div id='bloc'>
-			<Header idMe={idMe}/>
-			<Body idMe={idMe}/>
+			<Header idMe={idMe} socket={socket}/>
+			<Body idMe={idMe} socket={socket}/>
 			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
 		</div>
 	);

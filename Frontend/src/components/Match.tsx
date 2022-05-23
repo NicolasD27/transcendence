@@ -1,11 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Sketch from "react-p5";
 import { io, Socket } from "socket.io-client"
 
-let width = 954;
-let height = 532;
+
 let playerWidth = 15;
-let finalScore = 5;
+let finalScore = 10;
 
 function PlayerInput(this: any)
 {
@@ -55,11 +54,12 @@ function negRand()
 		return (1);
 }
 
-function gameEngine(game: any, socket: Socket, match_id: number)
+function gameEngine(game: any, socket: Socket, match_id: number, width: number, height: number)
 {
-	if(game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
+	game.playerTwo.x = width - playerWidth
+	if(game.ball.x + game.ball.xv > width - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr )
 	{
-		if (game.ball.x + game.ball.xv > width - playerWidth - game.ball.xr)
+		if (game.ball.x + game.ball.xv > width - game.ball.xr)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 				game.ball.xv = -game.ball.xv;
@@ -74,7 +74,7 @@ function gameEngine(game: any, socket: Socket, match_id: number)
 				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
 			}
 		}
-		else if (game.ball.x + game.ball.xv < game.ball.xr + playerWidth)
+		else if (game.ball.x + game.ball.xv < game.ball.xr)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 				game.ball.xv = -game.ball.xv;
@@ -97,7 +97,7 @@ function gameEngine(game: any, socket: Socket, match_id: number)
 	game.ball.y += game.ball.yv;
 }
 
-function playerMove(started: number, game: any, playerInput: any)
+function playerMove(started: number, game: any, playerInput: any, width: number, height: number)
 {
 	if (playerInput.masterA === true && game.playerOne.y >= 0 && started === 1)
 	{
@@ -116,7 +116,7 @@ function playerMove(started: number, game: any, playerInput: any)
 		game.playerTwo.y += 5;
 }
 
-function printer(p5: any, data: any)
+function printer(p5: any, data: any, width: number, height: number)
 {
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
@@ -140,9 +140,16 @@ function printer(p5: any, data: any)
 
 }
 
-export class Match extends Component
+interface Props {
+	socket: any
+}
+
+export class Match extends React.Component<Props> 
 {
-	socket: Socket;
+	state = {
+		width: 954,
+		height: 532
+	}
 	type = "";
 	started = 0;
 	countdown = 3;
@@ -154,27 +161,57 @@ export class Match extends Component
 	myId: string;
 	spacePressed = false;
 
+	componentDidMount() {
+
+		const gameArea = document.getElementById("gameArea")
+		this.setState({
+			width: gameArea ? gameArea.offsetWidth - 8 : 954,
+			height: gameArea ? gameArea.offsetHeight - 8 : 532
+		})
+		window.addEventListener('resize', () => {
+			console.log("resized")
+			const gameArea = document.getElementById("gameArea")
+			const width = gameArea ? gameArea.offsetWidth : 954
+			const height = gameArea ? gameArea.offsetHeight : 532
+			this.setState({
+				width: width - 8,
+				height: height - 8
+			})
+			
+		})
+		
+	}
+
+	windowResized = (p5: any) => {
+		const gameArea = document.getElementById("gameArea")
+		const width = gameArea ? gameArea.offsetWidth : 954
+		const height = gameArea ? gameArea.offsetHeight : 532
+		p5.resizeCanvas(width - 8, height - 8, true)
+	}
+	
+
+	
 	setup = (p5: any) =>
 	{
-		this.socket = io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {withCredentials: true, transports: ['websocket', 'polling', 'flashsocket']});
 
-		let cvn = p5.createCanvas(width, height);
+		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Press SPACE to find a match', 220, height / 2);
+		p5.text('Press SPACE to find a match', 220, this.state.height / 2);
 
-		this.socket.on('launch_match', (data) =>
+		this.props.socket.on('launch_match', (data) =>
 		{
+			console.log("launching match...")
 			this.match_id = data.id;
 			this.match_size = data.room_size;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
 
-			this.socket.emit("askForMyID");
-			this.socket.on("receiveMyID", (data) =>
+			this.props.socket.emit("askForMyID");
+			this.props.socket.on("receiveMyID", (data) =>
 			{
 				this.myId = data
 
@@ -186,9 +223,9 @@ export class Match extends Component
 					var b2 = 200 - a2;
 
 					var game = new Game(
-						new Player(15, 200, playerWidth, 100, 0),
-						new Player(width - 30, 200, playerWidth, 100, 0),
-						new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
+						new Player(0, this.state.height / 2 - 50, playerWidth, 100, 0),
+						new Player(this.state.width - playerWidth, this.state.height / 2 - 50, playerWidth, 100, 0),
+						new Ball(this.state.width / 2, this.state.height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
 						this.countdown);
 
 					var playerInput = new PlayerInput();
@@ -196,16 +233,16 @@ export class Match extends Component
 					p5.background(0);
 					p5.textSize(50);
 					p5.fill(p5.color(255, 255, 255));
-					p5.text('Waiting for other player...', 120, height / 2);
+					p5.text('Waiting for other player...', 120, this.state.height / 2);
 
-					this.socket.on('updateMatch', (data) =>
+					this.props.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data);
+						printer(p5, data, this.state.width, this.state.height);
 					});
 
-					this.socket.on('masterToMasterKeyPressed', data =>
+					this.props.socket.on('masterToMasterKeyPressed', data =>
 					{
 						if (data === 'a')
 							playerInput.masterA = true;
@@ -213,7 +250,7 @@ export class Match extends Component
 							playerInput.masterZ = true;
 					});
 
-					this.socket.on('slaveToMasterKeyPressed', data =>
+					this.props.socket.on('slaveToMasterKeyPressed', data =>
 					{
 						if (data === 'a')
 							playerInput.slaveA = true;
@@ -221,7 +258,7 @@ export class Match extends Component
 							playerInput.slaveZ = true;
 					});
 
-					this.socket.on('masterToMasterKeyReleased', data =>
+					this.props.socket.on('masterToMasterKeyReleased', data =>
 					{
 						if (data === 'a')
 							playerInput.masterA = false;
@@ -229,7 +266,7 @@ export class Match extends Component
 							playerInput.masterZ = false;
 					});
 
-					this.socket.on('slaveToMasterKeyReleased', data =>
+					this.props.socket.on('slaveToMasterKeyReleased', data =>
 					{
 						if (data === 'a')
 							playerInput.slaveA = false;
@@ -238,36 +275,36 @@ export class Match extends Component
 					});
 
 					var counter = 0;
-					this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
-					this.socket.on('serverTick', () =>
+					this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+					this.props.socket.on('serverTick', () =>
 					{
 						if (counter <= this.fq * this.countdown)
 							counter++;
 						if (counter % this.fq === 0 && counter > 0)
 						{
 							game.countdown--;
-							this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+							this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
 						if (counter > this.fq * this.countdown)
 						{
 							this.started = 1;
-							playerMove(this.started, game, playerInput);
-							gameEngine(game, this.socket, this.match_id);
-							this.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
+							playerMove(this.started, game, playerInput, this.state.width, this.state.height);
+							gameEngine(game, this.props.socket, this.match_id, this.state.width, this.state.height);
+							this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
 						if (game.playerOne.score >= finalScore)
 						{
-							this.socket.off('serverTick');
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.off('serverTick');
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
 						}
 						else if (game.playerTwo.score >= finalScore)
 						{
-							this.socket.off('serverTick');
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.off('serverTick');
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
 						}
 					});
 
-					this.socket.on('serverGameFinished', (data) =>
+					this.props.socket.on('serverGameFinished', (data) =>
 					{
 						let winner: string;
 						if (data === 1)
@@ -277,15 +314,15 @@ export class Match extends Component
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, height / 2);
+						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
 					});
 
-					this.socket.on('clientDisconnect', (data) =>
+					this.props.socket.on('clientDisconnect', (data) =>
 					{
 						if (data === this.slaveId)
 						{
-							this.socket.off('serverTick');
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.off('serverTick');
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
 						}
 					});
 
@@ -297,14 +334,14 @@ export class Match extends Component
 
 					this.started = 1;
 
-					this.socket.on('updateMatch', (data) =>
+					this.props.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data);
+						printer(p5, data, this.state.width, this.state.height);
 					});
 
-					this.socket.on('serverGameFinished', (data) =>
+					this.props.socket.on('serverGameFinished', (data) =>
 					{
 						let winner: string;
 						if (data === 1)
@@ -314,13 +351,13 @@ export class Match extends Component
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, height / 2);
+						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
 					});
 
-					this.socket.on('clientDisconnect', (data) =>
+					this.props.socket.on('clientDisconnect', (data) =>
 					{
 						if (data === this.masterId)
-							this.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
 					});
 
 				}
@@ -328,7 +365,7 @@ export class Match extends Component
 				{
 					this.type = "spect";
 
-					this.socket.on('serverGameFinished', (data) =>
+					this.props.socket.on('serverGameFinished', (data) =>
 					{
 						let winner: string;
 						if (data === 1)
@@ -338,14 +375,14 @@ export class Match extends Component
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, height / 2);
+						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
 					});
 
-					this.socket.on('updateMatch', (data) =>
+					this.props.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data);
+						printer(p5, data, this.state.width, this.state.height);
 					});
 				}
 			});
@@ -358,34 +395,38 @@ export class Match extends Component
 	keyTyped = (p5: any) =>
 	{
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyPressed', {match_id: this.match_id, command: p5.key});
+			this.props.socket.emit('masterKeyPressed', {match_id: this.match_id, command: p5.key});
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
+			this.props.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
 
 		if ((p5.key === " ") && this.spacePressed === false)		//remove this to test with only one account
 		{
 			this.spacePressed = true;
-			this.socket.emit('find_match');
+			this.props.socket.emit('find_match');
 			p5.background(0);
 			p5.textSize(50);
 			p5.fill(p5.color(255, 255, 255));
-			p5.text(`Creating / Finding match...`, 120, height / 2);
+			p5.text(`Creating / Finding match...`, 120, this.state.height / 2);
 		}
 	}
 
 	keyReleased = (p5: any) =>
 	{
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "master" && this.started === 1)
-			this.socket.emit('masterKeyReleased', {match_id: this.match_id, command: p5.key});
+			this.props.socket.emit('masterKeyReleased', {match_id: this.match_id, command: p5.key});
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
-			this.socket.emit('slaveKeyReleased', {match_id: this.match_id, command: p5.key});
+			this.props.socket.emit('slaveKeyReleased', {match_id: this.match_id, command: p5.key});
 	}
 
 	render()
 	{
-		return <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}/>
+		return (
+			<Fragment>
+				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased} windowResized={this.windowResized}/>}
+			</Fragment>
+		)
 	}
 }
 
