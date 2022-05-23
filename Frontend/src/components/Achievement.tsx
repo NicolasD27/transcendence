@@ -7,6 +7,7 @@ interface Props {
 }
 
 interface Card {
+	winner: string;
 	nameP: string;
 	nameO: string;
 	avatarP: string;
