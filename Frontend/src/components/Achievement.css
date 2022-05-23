@@ -36,10 +36,19 @@
 	border: transparent;
 	border-radius: 130px;
 	transform: translateY(-45vh);
+	opacity: 0.4;
 }
 
 @media only screen and (max-width: 1155px) {
 	.iconAchievement {
 		transform: translateY(-45vh) translateX(-27vw);
 	}
+}
+
+.iconOpa {
+	opacity: 1;
+}
+
+.iconNoOpa {
+	opacity: 0.4;
 }

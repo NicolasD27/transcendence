@@ -40,12 +40,9 @@ const Achievement: React.FC<Props> = (props) => {
 		<div className="boxA">
 			<div className="labelAchievement">Achievements:</div>
 			<div className="boxAchievement">
-				{succes1 === true && <div className='iconAchievement' style={{ opacity: 1 }}><img src={iconAchi} /></div>}
-				{succes1 === false && <div className='iconAchievement' style={{ opacity: 0.4 }}><img src={iconAchi} /></div>}
-				{succes2 === true && <div className='iconAchievement' style={{ opacity: 1 }}><img src={iconAchi} /></div>}
-				{succes2 === false && <div className='iconAchievement' style={{ opacity: 0.4 }}><img src={iconAchi} /></div>}
-				{succes3 === true && <div className='iconAchievement' style={{ opacity: 1 }}><img src={iconAchi} /></div>}
-				{succes3 === false && <div className='iconAchievement' style={{ opacity: 0.4 }}><img src={iconAchi} /></div>}
+				<div className={'iconAchievement ' + (succes1 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
+				<div className={'iconAchievement ' + (succes2 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
+				<div className={'iconAchievement ' + (succes3 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
 			</div>
 		</div>
 	);
