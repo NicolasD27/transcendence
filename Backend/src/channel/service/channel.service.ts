@@ -330,7 +330,7 @@ export class ChannelService {
 		return ChannelInvite.toDto(myinvite);
 	}
 
-	async getChannelInvites(username: string, userId: number)
+	async getChannelInvites(username: string, userId: number, paginationQueryDto: PaginationQueryDto)
 	{
 		console.log("getChannelInvites");
 		const myUser = await this.userRepo.findOne({username});
@@ -341,7 +341,9 @@ export class ChannelService {
 		const invites = await this.channelInviteRepo.find({
 			where: {
 				receiver: myUser.id,
-			}
+			},
+			take: paginationQueryDto.limit,
+			skip: paginationQueryDto.offset
 		})
 		.then(inv => inv.map(e=> ChannelInvite.toDto(e)));
 		return (invites);

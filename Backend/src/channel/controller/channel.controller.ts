@@ -42,9 +42,9 @@ export class ChannelController {
 		@Query() paginationQuery: PaginationQueryDto
 	)
 	{
-		if (! search)
-			return await this.channelService.findAll(paginationQuery);
-		return await this.channelService.searchForChannel(paginationQuery, search);
+		if (search && search.length)
+			return await this.channelService.searchForChannel(paginationQuery, search);
+		return await this.channelService.findAll(paginationQuery);
 	}
 
 	@Post()
