@@ -4,6 +4,8 @@ import Notification, { User } from "./Notification";
 import './NotificationList.css';
 import bell from '../asset/notification.svg';
 import socketIOClient from "socket.io-client";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 
 
@@ -13,77 +15,58 @@ export interface INotification {
 	entityId: number, 
 	receiver: User,
 	name: string,
+	senderId: number,
 	awaitingAction: boolean,
 	secondName?: string
 }
-function getAccessTokenFromCookies() {
-	try {
-		const cookieString = document.cookie.split('; ').find((cookie) => cookie.startsWith('accessToken'))
-		if (cookieString)
-			return ('bearer ' + cookieString.split('=')[1]);
-	} catch (ex) {
-		return '';
-	}
-}
 
-const NotificationList = ({myId}: {myId: number}) => {
+
+const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>}) => {
     const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
 
 	useEffect(() => {
 		if (myId != 0) {
-			const socket = socketIOClient(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
-				reconnection: true,
-				transports : ['websocket', 'polling', 'flashsocket'],
-				transportOptions: {
-					polling: {
-						extraHeaders: {
-							Authorization: getAccessTokenFromCookies()
-						}
-					}
-				}
-			})
+			
 			socket.on("new_channel_invite_received", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});
 			socket.on("match_invite_to_client", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});
 			socket.on("notifyFriendRequest", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data);	
-					setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+					setNotifications(notifications => res.data.reverse());	
 
 			})
 			});			
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 			.then(res => {
-				setNotifications(notifications => res.data);	
-				setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+				setNotifications(notifications => res.data.reverse());	
+				
 
 			})
 		}
-	}, [myId, notifications.length])
+	}, [myId])
+
+	useEffect(() => {
+		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
+	}, [notifications.length])
 		
 
 	const handleOpen = () => {
 		setOpen(open => !open)
 	}
-
-	if (notifications.length > 0 && newNotifsLength == -1)
-		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
 
 
 	return (
@@ -96,7 +79,7 @@ const NotificationList = ({myId}: {myId: number}) => {
 				<div className="notifications-list-container">
 
 					{notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification}/>
+						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification}/>
 						))}
 				</div>
 			</div>
@@ -104,4 +87,4 @@ const NotificationList = ({myId}: {myId: number}) => {
 	);
 };
 
-export default NotificationList;
+export default NotificationList; 

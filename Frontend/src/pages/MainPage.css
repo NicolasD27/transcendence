@@ -1,6 +1,5 @@
 #bloc {
-	width: 1300px;
-	margin: auto
+	margin: 0 40px;
 }
 
 .boxNav {
@@ -18,6 +17,7 @@
 	width: 247px;
 	height: 28px;
 	margin-right: auto;
+	cursor: pointer;
 }
 
 .navButton {
@@ -25,6 +25,7 @@
 	font-weight: 200;
 	width: 115px;
 	height: 48px;
+	text-align: center;
 }
 
 .navButton::before {
@@ -58,11 +59,12 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: 656px;
+	height: calc(80vh - 154px);
+	margin-top: 60px;
 }
 
 .gameArea {
-	width: 933px;
+	width: calc(78% - 40px );
 	height: 100%;
 	background:
 		linear-gradient(black, black) padding-box,
@@ -70,6 +72,10 @@
 	border-radius: 25px;
 	border: 4px solid transparent;
 	margin-right: 26px;
+}
+
+.p5canvas {
+	border-radius: 25px;
 }
 
 .gameAreaSeparation {
@@ -82,7 +88,7 @@
 .chatArea{
 	display: flex;
 	flex-direction: column;
-	width: 341px;
+	width: 22%;
 	height: 100%;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
@@ -92,26 +98,22 @@
 
 .searchAndAdd {
 	display: flex;
-	flex-direction: row;
-	margin-top: 16px;
-	margin-left: 18px;
+	margin: 18px;
 	height: 54px;
-	width: 297px;
 	border: none;
 }
 
 #searchBar {
 	display: flex;
-	flex-direction: row;
 	justify-content: space-between;
 	border: 3px solid #C0F4FE;
 	border-radius: 20px;
 	margin-right: 16px;
-	width: 227px;
+	flex-grow: 1;
 }
 
 #searchIcon {
-	width: 15%;
+	width: 28px;
 	margin-left: 20px;
 	margin-right: 10px;
 	margin-top: 0px;
@@ -160,11 +162,8 @@ button {
 }
 
 .usersList {
-	width: 297px;
 	min-height: 484px;
-	margin-top: 16px;
-	margin-right: 18px;
-	margin-left: 18px;
+	margin: 0 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
@@ -177,16 +176,21 @@ button {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: space-between;
 	border: 2px solid #C0F4FE;
 	color: #C0F4FE;
 	border-radius: 20px;
 	height: 54px;
-	width: 297px;
 	margin: 14px 0;
 }
 
 .user:hover{
 	border: 2px solid #E11515;
+}
+
+.flex-v-centered {
+	display: flex;
+	align-items: center;
 }
 
 #userAvatarIcon{
@@ -442,7 +446,6 @@ button {
 	position: relative;
 	display: flex;
 	align-items: center;
-	width: 297px;
 	height: 54px;
 	margin-top: 16px;
 	margin-left: 18px;

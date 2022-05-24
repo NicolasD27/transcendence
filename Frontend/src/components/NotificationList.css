@@ -1,9 +1,9 @@
 .notifications-list-wrapper {
     position: absolute;
     display: block;
-    width: calc(25% + 12px);
+    width: calc(22% + 42px);
     color: white;
-    height: 540px;
+    height: calc(80vh - 154px);
     top: 154px;
     padding: 20px 0;
     overflow: scroll;
@@ -25,34 +25,32 @@
 
 .notifications-close {
     transition: right 600ms;
-    right: calc(-25% - 12px);
+    right: calc(-22% - 42px);
 }
 
 
 
-#app {
-    position: relative;
-    overflow: hidden;
-}
+
 
 .notifications-opener {
     width: 40px;
     height: 40px;
     position: absolute;
     top: 94px;
-    right: 20px;
+    right: 40px;
+    cursor: pointer;
 }
 
 .notifications-indicator {
     position: absolute;
-    right: 15px;
+    right: 35px;
     color: #C0F4FE;
     background: #E11515;
     top: 115px;
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: bold;
     text-align: center;
     line-height: 18px;

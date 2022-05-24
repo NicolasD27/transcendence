@@ -46,6 +46,20 @@ export class Avatar extends React.Component<Props> {
 			})
 	}
 
+	componentDidUpdate(prevProps: Props) {
+		if (prevProps.id != this.props.id) {
+			console.log("here")
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
+			.then(res => {
+				const user = res.data;
+				if (user.avatarId != null)
+				this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
+				else
+				this.setState({ profileImg: this.state.imgDefault })
+			})
+		}
+	}
+
 	render() {
 		const { profileImg } = this.state
 

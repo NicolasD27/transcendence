@@ -59,7 +59,6 @@ export class MatchService {
 			id: +id,
 			...updateMatchDto
 		});
-		console.log(current_username, match)
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)

@@ -37,6 +37,7 @@ export class Notification implements PolymorphicChildInterface {
             id: notification.id,
             receiver: User.toDto(notification.receiver),
             name: parent.follower.pseudo,
+            senderId: parent.follower.id,
             entityId: parent.id,
             entityType: "Friendship",
             awaitingAction: notification.awaitingAction
@@ -50,6 +51,7 @@ export class Notification implements PolymorphicChildInterface {
             id: notification.id,
             receiver: User.toDto(notification.receiver),
             name: parent.user1.pseudo,
+            senderId: parent.user1.id,
             entityId: parent.id,
             entityType: "Match",
             awaitingAction: notification.awaitingAction
@@ -63,6 +65,7 @@ export class Notification implements PolymorphicChildInterface {
             id: notification.id,
             receiver: User.toDto(notification.receiver),
             name: parent.sender.pseudo,
+            senderId: parent.sender.id,
             entityId: parent.id,
             entityType: "ChannelInvite",
             awaitingAction: notification.awaitingAction,

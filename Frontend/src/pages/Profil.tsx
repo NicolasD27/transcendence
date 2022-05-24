@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
@@ -10,8 +10,9 @@ import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
+import { Socket } from 'socket.io-client';
 
-const Profil = ({ isAuth }: { isAuth: boolean }) => {
+const Profil = ({socket}: {socket: any}) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -33,7 +34,28 @@ const Profil = ({ isAuth }: { isAuth: boolean }) => {
 	const [getIDMe, setGetIDMe] = useState(false);
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
-	const [getSucces, setGetSucces] = useState(false);
+	const [isTwoFactorEnable, setIsTwoFactorEnable] = useState(false);
+
+	useEffect(() => {
+		setId(Number(idstring.id))
+	}, [Number(idstring.id)])
+
+	useEffect(() => {
+		setMatchID([])
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
+			.then(res => {
+				const matchs = res.data;
+				matchs.forEach((list: any) => {
+					let singleMatch: matchFormat;
+					if (list.user1.id === id)
+						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+					else
+						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+					setMatchID(matchID => [...matchID, singleMatch]);
+				});
+			})
+	}, [id])
+
 
 	const navigate = useNavigate()
 	const onPlay = () => {
@@ -58,52 +80,38 @@ const Profil = ({ isAuth }: { isAuth: boolean }) => {
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
+				setIsTwoFactorEnable(res.data.isTwoFactorEnable)
 			})
 		setGetIDMe(getIDMe => true)
 	}
 
-	if (getmatch === false) {
-		setMatchID([])
-		setGetSucces(false)
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
-			.then(res => {
-				const matchs = res.data;
-				matchs.forEach((list: any) => {
-					let singleMatch: matchFormat;
-					if (list.user1.id === id)
-						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
-					else
-						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-					setMatchID(matchID => [...matchID, singleMatch]);
-				});
-			})
-		setGetMatch(getmatch => true)
-	}
-
-	const matchTri = [...matchID].sort((a, b) => {
-		return b.idMatch - a.idMatch;
-	});
+	useEffect(() => {
+		const matchTri = [...matchID].sort((a, b) => {
+			return b.idMatch - a.idMatch;
+		});
+		setMatchID(matchTri)
+	}, [matchID.length])
 
 	return (
 		<Fragment>
 			<div className='boxNav'>
-				<img src={mainTitle} className='titleNav' />
+				<img src={mainTitle} className='titleNav' onClick={() => onMainPage()}/>
 				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
 				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 			<div className='boxProfil'>
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
-				{id === idMe && <ToggleQRcode />}
+				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable}/>}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
-				<ProgressBar matchs={matchTri} />
+				<ProgressBar matchs={matchID} />
 				<div className='boxStats'>
-					<HistoryMatch historys={matchTri} />
-					<Achievement historys={matchTri} />
+					<HistoryMatch historys={matchID} />
+					<Achievement historys={matchID} />
 				</div>
 			</div>
-			{getIDMe && <NotificationList myId={idMe} />}
+			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
 		</Fragment>
 	);
 };

@@ -81,21 +81,18 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.logger.log(`match socket connected: ${socket.id}`);
 
 		const username = getUsernameFromSocket(socket);
-		let user;
-		// try {
-			user = await this.userService.findByUsername(username);
-			// }
-			// catch (ex) {
-				// return ;
-				// }
-				socket.join("user#" + user.id);
-				this.logger.log(`user #${user.id} connected to his room: `);
+		const user = await this.userService.findByUsername(username);
+		this.userService.updateStatusByUsername(UserStatus.ONLINE, username)
+		socket.join("user#" + user.id);
+		this.logger.log(`user #${user.id} connected to his room: `);
 
 	}
 
 	handleDisconnect(client: Socket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
 		console.log(args)
+		const username = getUsernameFromSocket(client);
+		this.userService.updateStatusByUsername(UserStatus.OFFLINE, username)
 		// this.socket.to("match#" + data.match_id).emit('playerDisconnect');
 	}
 }
