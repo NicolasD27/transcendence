@@ -1,5 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req,  Session, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Query,
+	UseGuards,
+	ValidationPipe
+} from '@nestjs/common';
 import { Request } from 'express';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
 import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
@@ -17,8 +29,8 @@ export class MatchController {
 
     @UseGuards(TwoFactorGuard)
     @Get()
-    findAll(): Promise<MatchDto[]> {
-        return this.matchService.findAll();
+    findAll(@Query() paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
+        return this.matchService.findAll(paginationQuery);
     }
 
     @UseGuards(TwoFactorGuard)

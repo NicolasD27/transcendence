@@ -10,7 +10,8 @@ import {
 	HttpStatus,
 	Delete,
 	Patch,
-	Put
+	Put,
+	Query
 } from "@nestjs/common";
 import { CreateChannelDto } from "../dto/create-channel.dto";
 import { ChannelService } from "../service/channel.service";
@@ -22,8 +23,8 @@ import { MsgDto } from "src/message/dto/message.dto";
 import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
-import { CreateChannelInviteDto } from "../dto/create-channel-invite.dto";
 import { ParseIntPipe } from "@nestjs/common";
+import { PaginationQueryDto } from "../dto/pagination-query.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -34,16 +35,24 @@ export class ChannelController {
 		// private readonly chatGateway: ChatGateway,
 	) {}
 
-	@Get()
 	@UseGuards(TwoFactorGuard)
-	async findAll()
+	@Get()
+	async findAll(
+		@Query('search') search: string,
+		@Query() paginationQuery: PaginationQueryDto
+	)
 	{
-		return await this.channelService.findAll();
+		if (search && search.length)
+			return await this.channelService.searchForChannel(paginationQuery, search);
+		return await this.channelService.findAll(paginationQuery);
 	}
 
 	@Post()
 	@UseGuards(TwoFactorGuard)
-	async create(@Req() request: Request, @Body() createChannelDto: CreateChannelDto)
+	async create(
+		@Req() request: Request,
+		@Body() createChannelDto: CreateChannelDto
+	)
 	{
 		return await this.channelService.create(request.cookies.username, createChannelDto);
 	}
@@ -57,8 +66,11 @@ export class ChannelController {
 
 	@Put(':id/')
 	@UseGuards(TwoFactorGuard)
-	async updatePassword(@Param('id', ParseIntPipe) id: number, @Req() request: Request,
-		@Body() updateChannelPassword: UpdateChannelPassword)
+	async updatePassword(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request,
+		@Body() updateChannelPassword: UpdateChannelPassword
+	)
 	{
 		await this.channelService.updatePassword(id.toString(), request.cookies.username, updateChannelPassword);
 		return ;
@@ -78,7 +90,11 @@ export class ChannelController {
 
 	@Delete(':id/')
 	@UseGuards(TwoFactorGuard)
-	async remove(@Param('id', ParseIntPipe) id: number, @Req() request: Request, @Body() deleteChannelDto: DeleteChannelDto)
+	async remove(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request,
+		@Body() deleteChannelDto: DeleteChannelDto
+	)
 	{
 		await this.channelService.remove(id.toString(), request.cookies.username, deleteChannelDto);
 		return ;
@@ -88,22 +104,25 @@ export class ChannelController {
 
 	@Get(':id/users')
 	@UseGuards(TwoFactorGuard)
-	async getChannelUsers(@Param('id', ParseIntPipe) id: number)
+	async getChannelUsers(
+		@Query() paginationQuery: PaginationQueryDto,
+		@Param('id', ParseIntPipe) id: number
+	)
 	{
-		return this.channelService.getChannelUsers(id.toString());
+		return this.channelService.getChannelUsers(id.toString(), paginationQuery);
 	}
 
 	@Get(':id/messages')
 	@UseGuards(TwoFactorGuard)
-	async getChannelMessages(@Param('id', ParseIntPipe) id: number, @Req() request: Request) : Promise<MsgDto[]>
+	async getChannelMessages(
+		@Query() paginationQuery: PaginationQueryDto,
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request
+	) : Promise<MsgDto[]>
 	{
-		const username = request.cookies.username;
-		console.log(`// getChannelMessages() ${username} ${id}`);
-
-		if (! await this.channelService.checkUserJoinedChannel(username, id.toString()))
+		if (! await this.channelService.checkUserJoinedChannel(request.cookies.username, id.toString()))
 			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
-
-		return this.channelService.getChannelMessages(id.toString());
+		return this.channelService.getChannelMessages(id.toString(), paginationQuery);
 	}
 
 	// ? Invites
@@ -124,7 +143,11 @@ export class ChannelController {
 
 	@Post(':id/join')
 	@UseGuards(TwoFactorGuard)
-	async join(@Param('id', ParseIntPipe) id: number, @Req() request: Request, @Body() body: JoinChannelDto)
+	async join(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request,
+		@Body() body: JoinChannelDto
+	)
 	{
 		await this.channelService.join(request.cookies.username, id.toString(), body.password);
 		return ;
@@ -132,7 +155,10 @@ export class ChannelController {
 
 	@Delete(':id/leave')
 	@UseGuards(TwoFactorGuard)
-	async leave(@Param('id', ParseIntPipe) id: number, @Req() request: Request)
+	async leave(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request
+	)
 	{
 		await this.channelService.leave(request.cookies.username, id.toString());
 		return ;
@@ -143,10 +169,10 @@ export class ChannelController {
 	@Post(':channelID/moderators/:userID')
 	@UseGuards(TwoFactorGuard)
 	async giveModoToUser(
-						@Param('channelID', ParseIntPipe) channelID: string,
-						@Param('userID', ParseIntPipe) userID: string,
-						@Req() request: Request,
-						)
+		@Param('channelID', ParseIntPipe) channelID: string,
+		@Param('userID', ParseIntPipe) userID: string,
+		@Req() request: Request,
+	)
 	{
 		await this.channelService.giveModerationRights(channelID, request.cookies.username, userID, true);
 		return ;
@@ -158,7 +184,7 @@ export class ChannelController {
 		@Param('channelID', ParseIntPipe) channelID: number,
 		@Param('userID', ParseIntPipe) userID: number,
 		@Req() request: Request,
-		)
+	)
 	{
 		await this.channelService.giveModerationRights(
 			channelID.toString(),

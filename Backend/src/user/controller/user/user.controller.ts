@@ -10,7 +10,8 @@ import {
     UploadedFile,
     UseGuards,
     UseInterceptors,
-    ValidationPipe
+    ValidationPipe,
+	Query
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import * as session from 'express-session';
@@ -29,6 +30,7 @@ import { ChannelService } from 'src/channel/service/channel.service';
 import { AcceptChannelInviteDto } from 'src/channel/dto/accept-channel-invite.dto';
 import { DeleteChannelInviteDto } from 'src/channel/dto/delete-invite.dto';
 import { ParseIntPipe } from "@nestjs/common";
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -52,16 +54,27 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get()
-    findAll(): Promise<UserDto[]> {
+    findAll(
+		@Query('search') search: string,
+		@Query() paginationQueryDto: PaginationQueryDto,
+	): Promise<UserDto[]>
+	{
         console.log('findAllUsers');
-        return this.userService.findAll();
+		if (search && search.length)
+			return this.userService.searchForUsers(paginationQueryDto, search);
+        return this.userService.findAll(paginationQueryDto);
     }
 
     @Get(':userId/invites')
 	@UseGuards(TwoFactorGuard)
-	async getInvites(@Param('userId', ParseIntPipe) userId: number, @Req() request: Request)
+	async getInvites(
+		@Query() paginationQueryDto: PaginationQueryDto,
+		@Param('userId', ParseIntPipe) userId: number,
+		@Req() request: Request
+	)
 	{
-		return await this.channelService.getChannelInvites(request.cookies.username, userId);
+		return this.channelService.getChannelInvites(request.cookies.username,
+			userId, paginationQueryDto);
 	}
 
 	@Patch(':userId/invites/:inviteId')
@@ -99,8 +112,12 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get(':id/matchs')
-    findAllMatchsByUser(@Param('id', ParseIntPipe) id: string): Promise<MatchDto[]> {
-        return this.matchService.findAllMatchsByUser(id);
+    findAllMatchsByUser(
+		@Query() paginationQueryDto: PaginationQueryDto,
+		@Param('id', ParseIntPipe) id: string
+	): Promise<MatchDto[]>
+	{
+        return this.matchService.findAllMatchsByUser(id, paginationQueryDto);
     }
 
     @ApiBearerAuth()

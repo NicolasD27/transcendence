@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Request, UseFilters, UseGuards, ValidationPipe } from '@nestjs/common';
+import {  Controller, Delete, Get, Param, Query, UseFilters, UseGuards } from '@nestjs/common';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { TwoFactorGuard } from 'src/guards/two-factor.guard';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
@@ -14,9 +15,13 @@ export class NotificationController {
 
     @UseGuards(TwoFactorGuard)
     @Get(':user_id')
-    findAllByUser(@Param('user_id') user_id: string): Promise<NotificationDto[]> {
+    findAllByUser(
+		@Query() paginationQuery: PaginationQueryDto,
+		@Param('user_id') user_id: string
+	): Promise<NotificationDto[]>
+	{
         console.log('findAllNotificationsByUser', user_id);
-        return  this.notificationService.findAllByUser(user_id);
+        return  this.notificationService.findAllByUser(user_id, paginationQuery);
     }
 
     @UseGuards(TwoFactorGuard)

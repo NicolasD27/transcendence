@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { not } from 'joi';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 import { Friendship } from 'src/friendship/entity/friendship.entity';
 import { FriendshipRepository } from 'src/friendship/repository/friendship.repository';
@@ -34,7 +35,7 @@ export class NotificationService {
             // matchsRepository = connection.getCustomRepository(MatchRepository)
         }
 
-    async findAllByUser(user_id: string): Promise<NotificationDto[]>
+    async findAllByUser(user_id: string, paginationQuery: PaginationQueryDto): Promise<NotificationDto[]>
     {
         const user = await this.usersRepository.findOne(user_id);
         if (!user)
@@ -43,7 +44,10 @@ export class NotificationService {
             where: [
                 { receiver: user },
             ],
-        })
+			order: { id: "DESC" },
+			take: paginationQuery.limit,
+			skip: paginationQuery.offset,
+        });
         let notificationsDto:NotificationDto[] = [];
         for(let i = 0; i < notifications.length; i++)
         {

@@ -10,6 +10,7 @@ import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match, MatchStatus } from '../entity/match.entity';
 import { MatchRepository } from '../repository/match.repository';
 import { NotificationRepository } from '../../notification/repository/notification.repository';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 
 @Injectable()
 export class MatchService {
@@ -21,8 +22,13 @@ export class MatchService {
 		private readonly notificationService: NotificationService,
 	) {}
 
-	async findAll(): Promise<MatchDto[]> {
-        return this.matchsRepository.find()
+	async findAll(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
+        return this.matchsRepository.find({
+			where:{
+			},
+			take: paginationQuery.limit,
+			skip: paginationQuery.offset,
+			})
 			.then(items => items.map(e=> Match.toDto(e)));
     }
 
@@ -33,16 +39,19 @@ export class MatchService {
         return Match.toDto(match);
     }
 
-	async findAllMatchsByUser(id: string): Promise<MatchDto[]>
+	async findAllMatchsByUser(id: string,paginationQueryDto: PaginationQueryDto): Promise<MatchDto[]>
     {
         return this.matchsRepository.find({
-		where: [
-			{ user1: +id },
-			{ user2: +id },
-		]})
+			where: [
+				{ user1: +id },
+				{ user2: +id },
+			],
+			order: { id: "ASC" },
+			take: paginationQueryDto.limit,
+			skip: paginationQueryDto.offset,
+		})
 		.then(items => items.map(e=> Match.toDto(e)));
     }
-
 
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
