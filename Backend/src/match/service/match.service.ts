@@ -22,8 +22,13 @@ export class MatchService {
 		private readonly notificationService: NotificationService,
 	) {}
 
-	async findAll(): Promise<MatchDto[]> {
-        return this.matchsRepository.find()
+	async findAll(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
+        return this.matchsRepository.find({
+			where:{
+			},
+			take: paginationQuery.limit,
+			skip: paginationQuery.offset,
+			})
 			.then(items => items.map(e=> Match.toDto(e)));
     }
 
@@ -41,12 +46,12 @@ export class MatchService {
 				{ user1: +id },
 				{ user2: +id },
 			],
+			order: { id: "ASC" },
 			take: paginationQueryDto.limit,
 			skip: paginationQueryDto.offset,
 		})
 		.then(items => items.map(e=> Match.toDto(e)));
     }
-
 
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
