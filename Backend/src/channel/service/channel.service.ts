@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan, Connection } from 'typeorm';
+import { getConnection, Repository, MoreThan, Connection, Like } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -22,6 +22,8 @@ import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.e
 import { DeleteChannelInviteDto } from '../dto/delete-invite.dto';
 import { AcceptChannelInviteDto } from '../dto/accept-channel-invite.dto';
 import { NotificationService } from '../../notification/service/notification.service';
+import { skip, take } from 'rxjs';
+import { PaginationQueryDto } from '../dto/pagination-query.dto';
 
 
 @Injectable()
@@ -53,12 +55,41 @@ export class ChannelService {
 	)
 	{}
 
-	saltRounds = 12;
+	private saltRounds = 12;
 
-	async findAll(): Promise<ChannelDto[]>
+	async findAll(
+		paginationQuery: PaginationQueryDto,
+		search?: string,
+	): Promise<ChannelDto[]>
 	{
-		return await this.channelRepo.find({ where: { isPrivate: false, } })
-			.then(items => items.map(e=> Channel.toDto(e)));
+		const { limit, offset } = paginationQuery;
+		return await this.channelRepo.find({
+			where: {
+				isPrivate: false,
+			},
+			order: { name: "ASC" },
+			take: limit,
+			skip: offset,
+		})
+		.then(items => items.map(e=> Channel.toDto(e)));
+	}
+
+	async searchForChannel(
+		paginationQuery: PaginationQueryDto,
+		search?: string,
+	): Promise<ChannelDto[]>
+	{
+		const { limit, offset } = paginationQuery;
+		return await this.channelRepo.find({
+			where: {
+				isPrivate: false,
+				name: Like(`${search}%`),
+			},
+			order: { name: "ASC" },
+			take: limit,
+			skip: offset,
+		})
+		.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
 	async findAllOfUser(username: string): Promise<ChannelDto[]>
@@ -199,16 +230,19 @@ export class ChannelService {
 		return true;
 	}
 
-	async getChannelUsers(id: string): Promise<UserDto[]>
+	async getChannelUsers(id: string, paginationQuery: PaginationQueryDto): Promise<UserDto[]>
 	{
+		const { limit, offset } = paginationQuery;
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException("channel not found");
 		const myParticipations = await this.participationRepo.find({
-            relations: ['user'],
-            where: [
-                { channel: myChannel },
-            ],
+			// relations: ['user'],
+			where: {
+					channel: myChannel
+			},
+			take: limit,
+			skip: offset,
         });
 		const users = [];
 		myParticipations.forEach((participation) => {
@@ -217,13 +251,22 @@ export class ChannelService {
 		return users.map(e=> User.toDto(e));
 	}
 
-	async getChannelMessages(id: string): Promise<MsgDto[]>
+	async getChannelMessages(
+		id: string,
+		paginationQuery: PaginationQueryDto
+	): Promise<MsgDto[]>
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`channel ${id} not found`);
-
-		const msgs = await this.msgRepo.find({ where: { channel: id } })
+		const { limit, offset } = paginationQuery;
+		const msgs = await this.msgRepo.find({
+			where: {
+				channel: id
+			},
+			take: limit,
+			skip: offset,
+			})
 			.then(items => items.map(e=> Msg.toDto(e)));
 
 		return msgs;
