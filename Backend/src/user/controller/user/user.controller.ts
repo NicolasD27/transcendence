@@ -120,6 +120,8 @@ export class UserController {
         return this.matchService.findAllMatchsByUser(id, paginationQueryDto);
     }
 
+	// ? checking the file size/myme type at the bottome of :
+	// ? https://wanago.io/2021/11/08/api-nestjs-uploading-files-to-server/
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post('avatar')
