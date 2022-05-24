@@ -150,7 +150,6 @@ export class ChannelService {
 			name : createChannelDto.name,
 			isPrivate: createChannelDto.isPrivate,
 			isProtected : createChannelDto.isProtected,
-			description: createChannelDto.description,
 			owner : user,
 			hashedPassword : hash,
 		});

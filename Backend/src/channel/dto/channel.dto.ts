@@ -24,15 +24,10 @@ export class ChannelDto {
 	@ApiProperty()
 	@Expose()
 	@IsString()
-	name: string
+	name: string;
 
 	@ApiProperty()
 	@Expose()
-	@IsString()
-	description: string
-
-	@ApiProperty()
-	@Expose()
-	owner: UserDto
+	owner: UserDto;
 
 }
