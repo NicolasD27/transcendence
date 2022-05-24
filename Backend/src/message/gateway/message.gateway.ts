@@ -65,13 +65,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connectToChannel ${username} on ${data.channelId}`);
 
-		this.channelService.checkUserJoinedChannelWS(username, data.channelId)
-		.catch(()=>{
-			console.log("can not join the channel");
-		})
-		.then(()=>{
-			socket.join("channel#" + data.channelId);
-		});
+		// this.channelService.checkUserJoinedChannelWS(username, data.channelId)
+		// .catch(()=>{
+		// 	console.log("can not join the channel");
+		// })
+		// .then(()=>{
+		// 	socket.join("channel#" + data.channelId);
+		// });
+
+		await this.channelService.checkUserJoinedChannel(username, data.channelId);
+		socket.join("channel#" + data.channelId);
+
 		return ;
 	}
 
@@ -100,6 +104,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				}
 			);
 
+			activeUsers.display();
 			if (activeUsers.isActiveUser(banUserFromChannelDto.userId) == true)
 			{
 				const targetedClientSocket = await this.server

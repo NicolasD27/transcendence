@@ -58,8 +58,7 @@ export class ChannelService {
 	private saltRounds = 12;
 
 	async findAll(
-		paginationQuery: PaginationQueryDto,
-		search?: string,
+		paginationQuery: PaginationQueryDto
 	): Promise<ChannelDto[]>
 	{
 		const { limit, offset } = paginationQuery;
@@ -150,7 +149,6 @@ export class ChannelService {
 			name : createChannelDto.name,
 			isPrivate: createChannelDto.isPrivate,
 			isProtected : createChannelDto.isProtected,
-			description: createChannelDto.description,
 			owner : user,
 			hashedPassword : hash,
 		});
@@ -477,8 +475,6 @@ export class ChannelService {
 				bannedState: 2,
 			}
 		});
-		// todo : it is awful, I need to do something
-		console.log(tos);
 		const _now = new Date();
 		tos.forEach(element => {
 			if (element.date > _now)
@@ -515,7 +511,7 @@ export class ChannelService {
 					})
 					.then(()=>{
 						const _now = new Date();
-						const activeTOs = this.moderationTimeOutRepo.findOneOrFail({
+						const activeTOs = this.moderationTimeOutRepo.find({
 							where: {
 								user: myUser,
 								channel: myChannel,
