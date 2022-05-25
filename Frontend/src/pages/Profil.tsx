@@ -12,7 +12,7 @@ import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
 import { Socket } from 'socket.io-client';
 
-const Profil = ({socket}: {socket: any}) => {
+const Profil = ({ socket }: { socket: any }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -41,20 +41,27 @@ const Profil = ({socket}: {socket: any}) => {
 	}, [Number(idstring.id)])
 
 	useEffect(() => {
-		setMatchID([])
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
+				setMatchID(matchID => [])
 				matchs.forEach((list: any) => {
 					let singleMatch: matchFormat;
 					if (list.user1.id === id)
 						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
 						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+					console.log("ScoreP: " + singleMatch.scoreP)
+					console.log("ScoreO: " + singleMatch.scoreO)
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
 			})
-	}, [id])
+		const matchTri = [...matchID].sort((a, b) => {
+			return b.idMatch - a.idMatch;
+		});
+		setMatchID(matchTri)
+		setGetMatch(true);
+	}, [getmatch])
 
 
 	const navigate = useNavigate()
@@ -85,24 +92,24 @@ const Profil = ({socket}: {socket: any}) => {
 		setGetIDMe(getIDMe => true)
 	}
 
-	useEffect(() => {
+	/*useEffect(() => {
 		const matchTri = [...matchID].sort((a, b) => {
 			return b.idMatch - a.idMatch;
 		});
 		setMatchID(matchTri)
-	}, [matchID.length])
+	}, [matchID.length])*/
 
 	return (
 		<Fragment>
 			<div className='boxNav'>
-				<img src={mainTitle} className='titleNav' onClick={() => onMainPage()}/>
+				<img src={mainTitle} className='titleNav' onClick={() => onMainPage()} />
 				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
 				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 			<div className='boxProfil'>
 				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
-				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable}/>}
+				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
 				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
 				<ProgressBar matchs={matchID} />
@@ -111,7 +118,7 @@ const Profil = ({socket}: {socket: any}) => {
 					<Achievement historys={matchID} />
 				</div>
 			</div>
-			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
+			{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 		</Fragment>
 	);
 };
