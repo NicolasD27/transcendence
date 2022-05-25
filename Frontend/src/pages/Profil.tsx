@@ -11,6 +11,7 @@ import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
 import { Socket } from 'socket.io-client';
+import './MainPage.css'
 
 const Profil = ({ socket }: { socket: any }) => {
 	interface matchFormat {
@@ -101,24 +102,29 @@ const Profil = ({ socket }: { socket: any }) => {
 
 	return (
 		<Fragment>
-			<div className='boxNav'>
-				<img src={mainTitle} className='titleNav' onClick={() => onMainPage()} />
-				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
-				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
-			</div >
-			<div className='boxProfil'>
-				<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
-				{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
-				<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
-				<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
-				<ProgressBar matchs={matchID} />
-				<div className='boxStats'>
-					<HistoryMatch historys={matchID} />
-					<Achievement historys={matchID} />
-				</div>
+			<div id='bloc'>
+				<div className='boxNav'>
+					<img src={mainTitle} className='titleNav' onClick={() => onMainPage()} />
+					<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
+					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
+					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
+				</div >
+				<section id="gameAndChatSection">
+					<div className='boxProfil'>
+						<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
+						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
+						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
+						<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
+						<ProgressBar matchs={matchID} />
+						<div className='boxStats'>
+							<HistoryMatch historys={matchID} />
+							<Achievement historys={matchID} />
+						</div>
+					</div>
+					<div className='chatArea' />
+				</section>
+				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 			</div>
-			{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 		</Fragment>
 	);
 };
