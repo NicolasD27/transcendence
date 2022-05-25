@@ -1,10 +1,13 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import Sketch from "react-p5";
-import { io, Socket } from "socket.io-client"
+import { Socket } from "socket.io-client"
 
 
 let playerWidth = 15;
 let finalScore = 10;
+let buttonAdder = 15;
+let ballSpeed = 20;
+let magicBallSpeed = ballSpeed;
 
 function PlayerInput(this: any)
 {
@@ -41,11 +44,6 @@ function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number)
 	this.countdown = cd;
 }
 
-function rand(min: number, max: number)
-{
-	return Math.random() * (max - min) + min;
-}
-
 function negRand()
 {
 	if (Math.random() > 0.5)
@@ -56,37 +54,52 @@ function negRand()
 
 function gameEngine(game: any, socket: Socket, match_id: number, width: number, height: number)
 {
-	game.playerTwo.x = width - playerWidth
 	if(game.ball.x + game.ball.xv > width - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr )
 	{
 		if (game.ball.x + game.ball.xv > width - game.ball.xr)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
-				game.ball.xv = -game.ball.xv;
+			{
+				//magicBallSpeed += 5;	//for special mode
+
+				var relativeIntersectY = (game.playerTwo.y + 50) - game.ball.y;
+				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
+				var bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
+				game.ball.xv = -(magicBallSpeed * Math.cos(bounceAngle));
+				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
+			}
 			else
 			{
 				game.playerOne.score++;
+				magicBallSpeed = ballSpeed;
 				socket.emit('masterScored', {match_id: match_id});
 				delete game.ball;
 
-				var a2 = rand(80, 120);
-				var b2 = 200 - a2;
-				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
+				let bounceAngle = Math.random() - 0.5;
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20)
 			}
 		}
 		else if (game.ball.x + game.ball.xv < game.ball.xr)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
-				game.ball.xv = -game.ball.xv;
+			{
+				//magicBallSpeed += 5;	//for special mode
+
+				var relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
+				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
+				var bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
+				game.ball.xv = magicBallSpeed * Math.cos(bounceAngle);
+				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
+			}
 			else
 			{
 				game.playerTwo.score++;
+				magicBallSpeed = ballSpeed;
 				socket.emit('slaveScored', {match_id: match_id});
 				delete game.ball;
 
-				var a22 = rand(80, 120);
-				var b22 = 200 - a22;
-				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a22) * negRand(), Math.sqrt(b22) * negRand(), 20, 20);
+				let bounceAngle = Math.random() - 0.5;
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20)
 			}
 		}
 	}
@@ -102,18 +115,18 @@ function playerMove(started: number, game: any, playerInput: any, width: number,
 	if (playerInput.masterA === true && game.playerOne.y >= 0 && started === 1)
 	{
 		if (game.playerOne.y !== 0)
-			game.playerOne.y -= 5;
+			game.playerOne.y -= buttonAdder;
 	}
 	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && started === 1)
-		game.playerOne.y += 5;
+		game.playerOne.y += buttonAdder;
 
 	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && started === 1)
 	{
 		if (game.playerTwo.y !== 0)
-			game.playerTwo.y -= 5;
+			game.playerTwo.y -= buttonAdder;
 	}
 	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && started === 1)
-		game.playerTwo.y += 5;
+		game.playerTwo.y += buttonAdder;
 }
 
 function printer(p5: any, data: any, width: number, height: number)
@@ -121,21 +134,21 @@ function printer(p5: any, data: any, width: number, height: number)
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
 
-	//ajouter une ligne verticale ?
-
 	if (data.countdown != 0)
 	{
 		p5.textSize(200);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text(data.countdown, width / 2 - 50, height / 2 + 50);
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(data.countdown, width / 2, height / 2);
 	}
 	else
 	{
+		p5.rect(width / 2, 0, 2, height);
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text(data.playerOne.score, 440, 50);
-		p5.text(data.playerTwo.score, 540, 50);
+		p5.textAlign(p5.CENTER, p5.TOP);
+		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
 	}
 
 }
@@ -144,7 +157,7 @@ interface Props {
 	socket: any
 }
 
-export class Match extends React.Component<Props> 
+export class Match extends React.Component<Props>
 {
 	state = {
 		width: 954,
@@ -177,9 +190,7 @@ export class Match extends React.Component<Props>
 				width: width - 8,
 				height: height - 8
 			})
-			
 		})
-		
 	}
 
 	windowResized = (p5: any) => {
@@ -188,9 +199,7 @@ export class Match extends React.Component<Props>
 		const height = gameArea ? gameArea.offsetHeight : 532
 		p5.resizeCanvas(width - 8, height - 8, true)
 	}
-	
 
-	
 	setup = (p5: any) =>
 	{
 
@@ -200,7 +209,8 @@ export class Match extends React.Component<Props>
 		p5.background(0);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Press SPACE to find a match', 220, this.state.height / 2);
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text('Press SPACE to find a match', this.state.width / 2, this.state.height / 2);
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -209,6 +219,7 @@ export class Match extends React.Component<Props>
 			this.match_size = data.room_size;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
+			//this.mode = data.mode (savoir si c'est un mod special)
 
 			this.props.socket.emit("askForMyID");
 			this.props.socket.on("receiveMyID", (data) =>
@@ -219,13 +230,13 @@ export class Match extends React.Component<Props>
 				{
 					console.log("IM A MASTER")
 					this.type = "master";
-					var a2 = rand(80, 120);
-					var b2 = 200 - a2;
+
+					let bounceAngle = Math.random() - 0.5;
 
 					var game = new Game(
 						new Player(0, this.state.height / 2 - 50, playerWidth, 100, 0),
 						new Player(this.state.width - playerWidth, this.state.height / 2 - 50, playerWidth, 100, 0),
-						new Ball(this.state.width / 2, this.state.height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
+						new Ball(this.state.width / 2, this.state.height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20),
 						this.countdown);
 
 					var playerInput = new PlayerInput();
@@ -233,7 +244,8 @@ export class Match extends React.Component<Props>
 					p5.background(0);
 					p5.textSize(50);
 					p5.fill(p5.color(255, 255, 255));
-					p5.text('Waiting for other player...', 120, this.state.height / 2);
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text('Waiting for other player...', this.state.width / 2, this.state.height / 2);
 
 					this.props.socket.on('updateMatch', (data) =>
 					{
@@ -314,7 +326,8 @@ export class Match extends React.Component<Props>
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -351,7 +364,8 @@ export class Match extends React.Component<Props>
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -375,7 +389,8 @@ export class Match extends React.Component<Props>
 						p5.background(0);
 						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('updateMatch', (data) =>
@@ -400,14 +415,15 @@ export class Match extends React.Component<Props>
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
 			this.props.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
 
-		if ((p5.key === " ") && this.spacePressed === false)		//remove this to test with only one account
+		if ((p5.key === " ") && this.spacePressed === false)
 		{
 			this.spacePressed = true;
 			this.props.socket.emit('find_match');
 			p5.background(0);
 			p5.textSize(50);
 			p5.fill(p5.color(255, 255, 255));
-			p5.text(`Creating / Finding match...`, 120, this.state.height / 2);
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
 		}
 	}
 
