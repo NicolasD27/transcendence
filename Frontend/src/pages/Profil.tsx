@@ -52,8 +52,6 @@ const Profil = ({ socket }: { socket: any }) => {
 						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
 					else
 						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-					console.log("ScoreP: " + singleMatch.scoreP)
-					console.log("ScoreO: " + singleMatch.scoreO)
 					setMatchID(matchID => [...matchID, singleMatch]);
 				});
 			})
