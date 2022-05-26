@@ -1,10 +1,11 @@
+import { IsString, MaxLength, MinLength } from "@nestjs/class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength } from "class-validator";
 
 export class DeleteChannelDto
 {
 	@ApiProperty()
 	@IsString()
+	@MinLength(1)
 	@MaxLength(32)
 	readonly name: string;
 }

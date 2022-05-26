@@ -112,8 +112,6 @@ export class UserService {
     
     }
 
-    
-
 	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
     //     const user = await this.usersRepository.preload({
     //         id: +id,
