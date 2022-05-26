@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan, Connection, Like, ILike, In } from 'typeorm';
+import { getConnection, Repository, MoreThan, ILike } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -10,7 +10,6 @@ import { ChannelDto } from '../dto/channel.dto';
 import * as bcrypt from 'bcrypt';
 import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
-import { UpdateChannelPassword } from '../dto/update-channel-password.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
 import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
@@ -21,9 +20,7 @@ import { ChannelInviteDto } from '../dto/channel-invite.dto';
 import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
 import { NotificationService } from '../../notification/service/notification.service';
 import { PaginationQueryDto } from '../dto/pagination-query.dto';
-import { identity } from 'rxjs';
-import { channel } from 'diagnostics_channel';
-
+import { UpdateChannelDto } from '../dto/update-channel-visibility.dto';
 
 @Injectable()
 export class ChannelService {
@@ -111,10 +108,10 @@ export class ChannelService {
 		return myChannels;
 	}
 
-	async findOne(channelId: number): Promise<ChannelDto>
+	async findOneNotPrivate(channelId: number): Promise<ChannelDto>
 	{
 		const myChannel = await this.channelRepo.findOne(channelId);
-		if (!myChannel)
+		if (! myChannel || myChannel.isPrivate)
 			throw new NotFoundException();
 		return Channel.toDto(myChannel);
 	}
@@ -141,7 +138,8 @@ export class ChannelService {
 		})
 		if (channelExist)
 			throw new UnauthorizedException("This channel name is already taken.");
-
+		if (createChannelDto.isProtected && !createChannelDto.password)					// todo : test it
+			throw new UnauthorizedException("You need to fill the 'possword' field");
 		if (createChannelDto.isPrivate === false)
 			myPassword = createChannelDto.password;
 
@@ -178,10 +176,13 @@ export class ChannelService {
 			throw new NotFoundException("Channel not found");
 		if (myChannel.isPrivate)
 			throw new UnauthorizedException("Private channels can not be joined. You need an invitation.");
-		if (myChannel.isProtected
-			&& !(await bcrypt.compare(notHashedPassword, myChannel.hashedPassword)))
-			throw new UnauthorizedException("Wrong password");
-
+		if (myChannel.isProtected)
+		{
+			if (!notHashedPassword)
+				throw new UnauthorizedException("Channel password is missing");
+			if (!await bcrypt.compare(notHashedPassword, myChannel.hashedPassword))
+				throw new UnauthorizedException("Wrong password");
+		}
 		const participations = await this.participationRepo.find({
 			where: {
 				user: myUser.id,
@@ -190,14 +191,13 @@ export class ChannelService {
 		});
 		if (participations.length)
 			throw new UnauthorizedException("Channel already joined");
-
+		// ? give back moderation rights if this user is the owner
 		const b_isOwner = (myChannel.owner.id === myUser.id);
 		const newParticipation = await this.participationRepo.create({
 			user: myUser,
 			channel: myChannel,
 			isModo: b_isOwner,
 		});
-
 		await this.participationRepo.save(newParticipation);
 
 		return newParticipation;
@@ -537,25 +537,41 @@ export class ChannelService {
 		});
 	}
 
-	async updatePassword(id: string, username: string, updateChannelPassword: UpdateChannelPassword)
+	async updateChannelProtection(id: string, username: string, updateChannelDto: UpdateChannelDto)
 	{
 		const myChannel = await this.channelRepo.findOne(id);
 		if (!myChannel)
-			throw new NotFoundException(`channel #${id} not found`);
+			throw new NotFoundException(`Channel #${id} not found`);
 
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
-			throw new NotFoundException(`username #${username} not found`);
+			throw new NotFoundException(`Username ${username} not found`);
 
 		if (myUser.id != myChannel.owner.id)
-			throw new UnauthorizedException("you are not owning this channel");
+			throw new UnauthorizedException("You are not owning this channel");
+		if (myChannel.isPrivate)
+			throw new UnauthorizedException("A private channel can't be public so you can't add/modify/remove a password.");
+		if (myChannel.isProtected)
+			if (! await bcrypt.compare(updateChannelDto.previousPassword, myChannel.hashedPassword))
+				throw new UnauthorizedException("Wrong password");
 
-		if (! await bcrypt.compare(updateChannelPassword.previousPassword, myChannel.hashedPassword))
-			throw new UnauthorizedException("wrong password");
-
-		myChannel.hashedPassword = await bcrypt.hash(updateChannelPassword.newPassword, this.saltRounds);
-
-		await this.channelRepo.save(myChannel);
+		if (updateChannelDto.isProtected == true)
+		{
+			if (! myChannel.isProtected)
+			{
+				myChannel.isProtected = true;
+			}
+			myChannel.hashedPassword = await bcrypt.hash(updateChannelDto.newPassword, this.saltRounds);
+			await this.channelRepo.save(myChannel);
+		}
+		else
+		{
+			if (myChannel.isProtected == true)
+			{
+				myChannel.isProtected = false;
+				await this.channelRepo.save(myChannel);
+			}
+		}
 	}
 
 	async changeBanStatus(
@@ -769,9 +785,10 @@ export class ChannelService {
 		if (!newOwnerParticipation)
 			throw new UnauthorizedException("This user have not joined the channel");
 
-		console.log("// changeChannelOwnerDto.password : " + changeChannelOwnerDto.password);
-		if (! await bcrypt.compare(changeChannelOwnerDto.password, myChannel.hashedPassword))
-			throw new UnauthorizedException("wrong password");
+		if (myChannel.isProtected)				// todo : test it
+			if (changeChannelOwnerDto.password
+					&& ! await bcrypt.compare(changeChannelOwnerDto.password, myChannel.hashedPassword))
+				throw new UnauthorizedException("wrong password");
 
 		myChannel.owner = newOwner;
 		await this.channelRepo.save(myChannel);
