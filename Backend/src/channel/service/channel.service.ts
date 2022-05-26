@@ -108,10 +108,10 @@ export class ChannelService {
 		return myChannels;
 	}
 
-	async findOne(channelId: number): Promise<ChannelDto>
+	async findOneNotPrivate(channelId: number): Promise<ChannelDto>
 	{
 		const myChannel = await this.channelRepo.findOne(channelId);
-		if (!myChannel)
+		if (! myChannel || myChannel.isPrivate)
 			throw new NotFoundException();
 		return Channel.toDto(myChannel);
 	}

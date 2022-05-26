@@ -61,7 +61,7 @@ export class ChannelController {
 	@UseGuards(TwoFactorGuard)
 	async findOne(@Param('id', ParseIntPipe) id: number)
 	{
-		return this.channelService.findOne(id);
+		return this.channelService.findOneNotPrivate(id);
 	}
 
 	@Put(':id/')
@@ -128,20 +128,6 @@ export class ChannelController {
 			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
 		return this.channelService.getChannelMessages(id.toString(), paginationQuery);
 	}
-
-	// ? Invites
-
-	// @Post(':id/invite')
-	// @UseGuards(TwoFactorGuard)
-	// async createChannelInvite(
-	// 	@Param('id', ParseIntPipe) id: number,
-	// 	@Req() request: Request,
-	// 	@Body() createChannelInviteDto: CreateChannelInviteDto
-	// )
-	// {
-	// 	await this.channelService.saveInvite(request.cookies.username, id, createChannelInviteDto);
-	// 	return ;
-	// }
 
 	// ? Join / Leave
 
