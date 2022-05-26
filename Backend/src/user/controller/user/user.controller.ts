@@ -51,6 +51,14 @@ export class UserController {
         return this.userService.findMe(username);
     }
 
+	@Get('me/channels')
+	// !@UseGuards(TwoFactorGuard)
+	async findJoinedChannels(@Req() request: Request)
+	{
+		console.log('me/channels');
+		return await this.channelService.getJoinedChannels(request.cookies.username);
+	}
+
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get()

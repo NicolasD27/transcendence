@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan, Connection, Like, ILike } from 'typeorm';
+import { getConnection, Repository, MoreThan, Connection, Like, ILike, In } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -21,6 +21,8 @@ import { ChannelInviteDto } from '../dto/channel-invite.dto';
 import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
 import { NotificationService } from '../../notification/service/notification.service';
 import { PaginationQueryDto } from '../dto/pagination-query.dto';
+import { identity } from 'rxjs';
+import { channel } from 'diagnostics_channel';
 
 
 @Injectable()
@@ -88,21 +90,25 @@ export class ChannelService {
 		.then(items => items.map(e=> Channel.toDto(e)));
 	}
 
-	async findAllOfUser(username: string): Promise<ChannelDto[]>
+	async getJoinedChannels(username: string): Promise<ChannelDto[]>
 	{
 		const myUser = await this.userRepo.findOne({username});
 		if (!myUser)	// ? useless because of the guard
 			throw new NotFoundException(`username ${username} not found`);
+		// const myUser = await this.userRepo.findOne(1);
 
-		// todo : chopper les channels ou l'utilisateur est via participation
-
-		const myParticipation = await this.participationRepo.find({
-			where: { userId: myUser.id }
+		const myParticipations = await this.participationRepo.find({
+			where: { user: myUser },
 		});
 
-		// ! finish this.
-
-		return [];
+		let i: number;
+		let myChannels: ChannelDto[] = [];
+		for (i = 0; i < myParticipations.length; ++i)
+		{
+			myChannels.push(Channel.toDto(myParticipations[i].channel));
+		}
+		// console.log(myChannels);
+		return myChannels;
 	}
 
 	async findOne(channelId: number): Promise<ChannelDto>
