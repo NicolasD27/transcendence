@@ -14,5 +14,5 @@ export class ChangeChannelOwnerDto
 	@Expose()
 	@IsString()
 	@MaxLength(32)
-	readonly password: string;
+	readonly password?: string;
 }

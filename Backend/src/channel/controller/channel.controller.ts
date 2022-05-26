@@ -20,11 +20,11 @@ import { ApiTags } from "@nestjs/swagger";
 import { JoinChannelDto } from "../dto/join-channel.dto";
 import { TwoFactorGuard } from "src/guards/two-factor.guard";
 import { MsgDto } from "src/message/dto/message.dto";
-import { UpdateChannelPassword } from "../dto/update-channel-password.dto";
 import { DeleteChannelDto } from "../dto/delete-channel.dto";
 import { ChangeChannelOwnerDto } from "../dto/change-owner.dto";
 import { ParseIntPipe } from "@nestjs/common";
 import { PaginationQueryDto } from "../dto/pagination-query.dto";
+import { UpdateChannelDto } from "../dto/update-channel-visibility.dto";
 
 @ApiTags('Channels')
 @Controller('channels/')
@@ -66,13 +66,17 @@ export class ChannelController {
 
 	@Put(':id/')
 	@UseGuards(TwoFactorGuard)
-	async updatePassword(
+	async updateProtection(
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request,
-		@Body() updateChannelPassword: UpdateChannelPassword
+		@Body() updateChannelDto: UpdateChannelDto
 	)
 	{
-		await this.channelService.updatePassword(id.toString(), request.cookies.username, updateChannelPassword);
+		await this.channelService.updateChannelProtection(
+			id.toString(),
+			request.cookies.username,
+			updateChannelDto
+		);
 		return ;
 	}
 
