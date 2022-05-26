@@ -52,7 +52,7 @@ export class UserController {
     }
 
 	@Get('me/channels')
-	// !@UseGuards(TwoFactorGuard)
+	@UseGuards(TwoFactorGuard)
 	async findJoinedChannels(@Req() request: Request)
 	{
 		console.log('me/channels');
