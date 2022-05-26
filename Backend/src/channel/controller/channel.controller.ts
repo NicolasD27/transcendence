@@ -36,7 +36,7 @@ export class ChannelController {
 	) {}
 
 	@Get()
-	// @UseGuards(TwoFactorGuard)
+	@UseGuards(TwoFactorGuard)
 	async findAll(
 		@Query('search') search: string,
 		@Query() paginationQuery: PaginationQueryDto
