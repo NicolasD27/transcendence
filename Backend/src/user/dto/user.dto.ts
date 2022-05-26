@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { IsString, IsEnum, IsNumber, IsBoolean } from "class-validator";
+import { IsString, IsEnum, IsNumber, IsBoolean, IsOptional } from "class-validator";
 import { UserStatus } from "../entity/user.entity";
 
 @Exclude()
@@ -23,6 +23,7 @@ export class UserDto {
 	@ApiProperty()
 	@Expose()
     @IsNumber()
+	@IsOptional()
 	avatarId?: number
 
 	@ApiProperty()
@@ -35,5 +36,4 @@ export class UserDto {
     @IsBoolean()
 	isTwoFactorEnable: boolean
 
-	
 }

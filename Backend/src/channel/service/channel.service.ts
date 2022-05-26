@@ -138,10 +138,8 @@ export class ChannelService {
 		})
 		if (channelExist)
 			throw new UnauthorizedException("This channel name is already taken.");
-
 		if (createChannelDto.isProtected && !createChannelDto.password)					// todo : test it
 			throw new UnauthorizedException("You need to fill the 'possword' field");
-
 		if (createChannelDto.isPrivate === false)
 			myPassword = createChannelDto.password;
 
@@ -178,10 +176,13 @@ export class ChannelService {
 			throw new NotFoundException("Channel not found");
 		if (myChannel.isPrivate)
 			throw new UnauthorizedException("Private channels can not be joined. You need an invitation.");
-		if (myChannel.isProtected
-			&& !(await bcrypt.compare(notHashedPassword, myChannel.hashedPassword)))
-			throw new UnauthorizedException("Wrong password");
-
+		if (myChannel.isProtected)
+		{
+			if (!notHashedPassword)
+				throw new UnauthorizedException("Channel password is missing");
+			if (!await bcrypt.compare(notHashedPassword, myChannel.hashedPassword))
+				throw new UnauthorizedException("Wrong password");
+		}
 		const participations = await this.participationRepo.find({
 			where: {
 				user: myUser.id,
@@ -190,14 +191,13 @@ export class ChannelService {
 		});
 		if (participations.length)
 			throw new UnauthorizedException("Channel already joined");
-
+		// ? give back moderation rights if this user is the owner
 		const b_isOwner = (myChannel.owner.id === myUser.id);
 		const newParticipation = await this.participationRepo.create({
 			user: myUser,
 			channel: myChannel,
 			isModo: b_isOwner,
 		});
-
 		await this.participationRepo.save(newParticipation);
 
 		return newParticipation;

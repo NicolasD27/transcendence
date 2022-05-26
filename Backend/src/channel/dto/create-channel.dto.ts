@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, MaxLength, IsBoolean, MinLength, Matches } from "@nestjs/class-validator";
+import { IsString, IsNotEmpty, MaxLength, IsBoolean, Matches, IsOptional, MinLength } from "@nestjs/class-validator";
 
 export class CreateChannelDto {
 
@@ -18,10 +18,10 @@ export class CreateChannelDto {
 	readonly isProtected: boolean;
 
 	@ApiProperty()
+	@IsOptional()
 	@IsString()
-	// @MinLength(1)
+	@MinLength(1)
 	@MaxLength(32)
-	// todo: test this regex :
-	// @Matches(/[\x20-\x7E]/, { message: 'You can only use ASCII characters' })
+	@Matches(/[\x20-\x7E]/, { message: 'You can only use ASCII characters' })
 	readonly password?: string;
 }
