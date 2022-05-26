@@ -4,7 +4,7 @@ import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance }
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { MatchDto } from 'src/match/dto/match.dto';
 import { Match } from 'src/match/entity/match.entity';
-import { Connection, Like, Repository } from 'typeorm';
+import { Connection, ILike, Like, Repository } from 'typeorm';
 import { UpdatePseudoDto } from '../dto/update-pseudo.dto';
 import { UserDto } from '../dto/user.dto';
 import { User, UserStatus } from '../entity/user.entity';
@@ -35,7 +35,7 @@ export class UserService {
 		const { limit, offset } = paginationQuery;
         return await this.usersRepository.find({
 				where : {
-					username: Like(`${search}%`),
+					username: ILike(`${search}%`),
 				},
 				order: { pseudo: "ASC" },
 				take: limit,

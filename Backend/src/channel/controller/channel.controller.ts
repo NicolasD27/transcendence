@@ -35,8 +35,8 @@ export class ChannelController {
 		// private readonly chatGateway: ChatGateway,
 	) {}
 
-	@UseGuards(TwoFactorGuard)
 	@Get()
+	// @UseGuards(TwoFactorGuard)
 	async findAll(
 		@Query('search') search: string,
 		@Query() paginationQuery: PaginationQueryDto

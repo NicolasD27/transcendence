@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
-import { getConnection, Repository, MoreThan, Connection, Like } from 'typeorm';
+import { getConnection, Repository, MoreThan, Connection, Like, ILike } from 'typeorm';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { Participation } from '../entity/participation.entity';
 import { User } from '../../user/entity/user.entity';
@@ -19,10 +19,7 @@ import { ChannelInvite } from '../entity/channelInvite.entity';
 import { CreateChannelInviteDto } from '../dto/create-channel-invite.dto';
 import { ChannelInviteDto } from '../dto/channel-invite.dto';
 import { Friendship, FriendshipStatus } from 'src/friendship/entity/friendship.entity';
-import { DeleteChannelInviteDto } from '../dto/delete-invite.dto';
-import { AcceptChannelInviteDto } from '../dto/accept-channel-invite.dto';
 import { NotificationService } from '../../notification/service/notification.service';
-import { skip, take } from 'rxjs';
 import { PaginationQueryDto } from '../dto/pagination-query.dto';
 
 
@@ -82,7 +79,7 @@ export class ChannelService {
 		return await this.channelRepo.find({
 			where: {
 				isPrivate: false,
-				name: Like(`${search}%`),
+				name: ILike(`${search}%`),
 			},
 			order: { name: "ASC" },
 			take: limit,
