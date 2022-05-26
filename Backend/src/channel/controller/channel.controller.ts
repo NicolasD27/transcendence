@@ -65,7 +65,7 @@ export class ChannelController {
 	}
 
 	@Put(':id/')
-	// @UseGuards(TwoFactorGuard)
+	@UseGuards(TwoFactorGuard)
 	async updateProtection(
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request,
