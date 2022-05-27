@@ -64,7 +64,7 @@
 }
 
 .gameArea {
-	width: calc(78% - 40px );
+	width: calc(78% - 40px);
 	height: 100%;
 	background:
 		linear-gradient(black, black) padding-box,
@@ -81,11 +81,11 @@
 .gameAreaSeparation {
 	border: 1px solid rgb(255, 255, 255);
 	width: 0;
-	height : 100%;
+	height: 100%;
 	margin-left: 50%;
 }
 
-.chatArea{
+.chatArea {
 	display: flex;
 	flex-direction: column;
 	width: 22%;
@@ -133,8 +133,7 @@ input {
 	font-size: 22px;
 }
 
-::placeholder
-{
+::placeholder {
 	color: #C0F4FE;
 }
 
@@ -184,7 +183,7 @@ button {
 	margin: 14px 0;
 }
 
-.user:hover{
+.user:hover {
 	border: 2px solid #E11515;
 }
 
@@ -193,7 +192,7 @@ button {
 	align-items: center;
 }
 
-#userAvatarIcon{
+#userAvatarIcon {
 	position: relative;
 	width: 40px;
 	height: 40px;
@@ -236,7 +235,7 @@ button {
 	margin: 7px 10px 7px 6px;
 }
 
-#friend_buttons > button {
+#friend_buttons>button {
 	padding: 0;
 	border: none;
 }
@@ -326,7 +325,7 @@ button {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-  	margin: 0;
+	margin: 0;
 	border: none;
 }
 
@@ -391,7 +390,7 @@ button {
 	margin-bottom: 9px;
 }
 
-#AcceptFriendButton{
+#AcceptFriendButton {
 	background-image: url('../asset/AcceptyFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
@@ -401,11 +400,11 @@ button {
 	border: none;
 }
 
-#AcceptFriendButton:hover{
+#AcceptFriendButton:hover {
 	background-image: url('../asset/AcceptFriendIcon_red.svg');
 }
 
-#DeclineFriendButton{
+#DeclineFriendButton {
 	background-image: url('../asset/DeclineFriendIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
@@ -414,7 +413,7 @@ button {
 	border: none;
 }
 
-#DeclineFriendButton:hover{
+#DeclineFriendButton:hover {
 	background-image: url('../asset/DeclineFriendIcon_red.svg');
 }
 
@@ -430,7 +429,7 @@ button {
 	background-position: 50%;
 }
 
-#AddFriendButton:hover{
+#AddFriendButton:hover {
 	background-image: url('../asset/AddFriendIcon_red.svg');
 }
 
@@ -442,7 +441,7 @@ button {
 	text-align: center;
 }
 
-#chatTop{
+#chatTop {
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -498,8 +497,8 @@ button {
 	width: 189px;
 	height: 30px;
 	font-size: 22px;
-	margin-left : 10px;
-	white-space: nowrap; 
+	margin-left: 10px;
+	white-space: nowrap;
 	font-weight: normal;
 	text-align: left;
 	line-height: 30px;
@@ -570,7 +569,7 @@ button {
 	margin: 14px 0;
 }
 
-.channel:hover{
+.channel:hover {
 	border: 2px solid #E11515;
 }
 
@@ -671,7 +670,7 @@ button {
 }
 
 #channelPassword input {
-	width:138px;
+	width: 138px;
 	color: #C0F4FE;
 	font-size: 14px;
 	font-weight: normal;
@@ -679,7 +678,7 @@ button {
 	margin-right: 10px;
 }
 
-#confirmPassword{
+#confirmPassword {
 	width: 32px;
 	height: 32px;
 	background-image: url('../asset/ConfirmPasswordIcon_blue.svg');
@@ -871,3 +870,4 @@ button {
 	background-color: #E11515;
 	border-color: #E11515;
 }*/
+
