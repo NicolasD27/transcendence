@@ -708,7 +708,7 @@ button {
 	background-image: url('../asset/ColumnIcon_red.svg');
 }
 
-.checkbox_addToChannel {
+.checkbox_Channel {
 	position: relative;
 	margin-top: 9px;
 	margin-right: 18px;
@@ -718,7 +718,7 @@ button {
 	width: 20px;
 }
 
-.checkbox_addToChannel label  {
+.checkbox_Channel label  {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -729,23 +729,73 @@ button {
 	cursor: pointer;
 }
 
-.checkbox_addToChannel label:hover {
+.checkbox_Channel label:hover {
 	border: 1px solid #E11515;
 }
 
-.checkbox_addToChannel input[type="checkbox"] {
+.checkbox_Channel input[type="checkbox"] {
 	visibility: hidden;
 }
 
-.checkbox_addToChannel input[type="checkbox"]:checked + label {
+.checkbox_Channel input[type="checkbox"]:checked + label {
 	background-color: #E11515;
 	border-color: #E11515;
+}
+
+#checkbox_nextChannelButton {
+	width: 297px;
+	min-height: 48px;
+	margin: 14px 18px 20px 18px;
+	border: 2px solid #C0F4FE;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #C0F4FE;
+}
+
+#checkbox_nextChannelButton:hover {
+	border: 2px solid #E11515;
+	cursor: pointer;
+}
+
+#checkbox_nextChannelButton:active {
+	background-color: #E11515;
+}
+
+.channelCreationSettings {
+	width: 297px;
+	min-height: 200px;
+	margin-top: 16px;
+	margin-right: 18px;
+	margin-left: 18px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#checkbox_previousChannelButton {
+	width: 297px;
+	min-height: 48px;
+	margin: 238px 18px 12px 18px;
+	border: 2px solid #C0F4FE;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #C0F4FE;
+}
+
+#checkbox_previousChannelButton:hover {
+	border: 2px solid #E11515;
+	cursor: pointer;
+}
+
+#checkbox_previousChannelButton:active {
+	background-color: #E11515;
 }
 
 #checkbox_createChannelButton {
 	width: 297px;
 	min-height: 48px;
-	margin: 14px 18px 20px 18px;
+	margin: 0px 18px 18px 18px;
 	border: 2px solid #C0F4FE;
 	border-radius: 20px;
 	font-size: 14px;
@@ -761,3 +811,63 @@ button {
 #checkbox_createChannelButton:active {
 	background-color: #E11515;
 }
+
+.enterChannelName {
+	border-radius: 20px;
+	margin-right: 16px;
+	width: 297px;
+	color: #C0F4FE;
+	font-size: 15px;
+}
+
+.enterChannelName label {
+	margin-bottom: 8px;
+}
+
+.enterChannelName input {
+	border: 2px solid #C0F4FE;
+	height: 48px;
+	border-radius: 15px;
+	width: 100%;
+	margin-right: 17px;
+	color: #C0F4FE;
+	padding: 0px 20px;
+}
+
+.enterChannelName input::placeholder {
+	color: rgb(66, 65, 65);
+}
+/*
+.checkbox_ChannelSettings {
+	position: relative;
+	margin-top: 9px;
+	margin-right: 18px;
+	margin-left: 62px;
+	margin-bottom: 9px;
+	height: 20px;
+	width: 20px;
+}
+
+.checkbox_ChannelSettings label  {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	border: 1px solid #C0F4FE;
+	cursor: pointer;
+}
+
+.checkbox_ChannelSettings label:hover {
+	border: 1px solid #E11515;
+}
+
+.checkbox_ChannelSettings input[type="checkbox"] {
+	visibility: hidden;
+}
+
+.checkbox_ChannelSettings input[type="checkbox"]:checked + label {
+	background-color: #E11515;
+	border-color: #E11515;
+}*/
