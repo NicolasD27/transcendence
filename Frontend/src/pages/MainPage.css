@@ -762,7 +762,7 @@ button {
 }
 
 .channelCreationSettings {
-	width: 297px;
+	width: 92%;
 	min-height: 200px;
 	margin-top: 16px;
 	margin-right: 18px;
@@ -814,7 +814,7 @@ button {
 .enterChannelName {
 	border-radius: 20px;
 	margin-right: 16px;
-	width: 297px;
+	width: 80%;
 	color: #C0F4FE;
 	font-size: 15px;
 }
@@ -870,4 +870,11 @@ button {
 	background-color: #E11515;
 	border-color: #E11515;
 }*/
+
+.errorPassword {
+	border: 0.1px solid red;
+	background-color: none;
+	font-size: 12px;
+	width: 60%;
+}
 
