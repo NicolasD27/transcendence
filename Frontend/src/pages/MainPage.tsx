@@ -574,7 +574,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							return user_.pseudo.toLowerCase().includes(searchValue.toLowerCase())
 					})
 					.map((user_) => {
-						
+
 						if (Boolean(isAlreadyFriend(user_.id)) === true)
 						{
 							return (
@@ -824,7 +824,7 @@ const Body : React.FC<PropsBody> = (props) => {
 				console.log(err)
 			)
 	}, [])
- 
+
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>
@@ -846,9 +846,7 @@ const Header : React.FC<PropsHeader> = (props) => {
 	const navigate = useNavigate()
 
 	const onPlay = () => {
-		props.socket.emit('find_match')
 		navigate("/mainpage")
-
 	}
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)

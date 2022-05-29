@@ -77,6 +77,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				socket.emit('masterScored', {match_id: match_id});
 				delete game.ball;
 
+
 				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
 				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
@@ -88,9 +89,9 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				if (game.mode === "HARDCORE")
 					magicBallSpeed += 5;	//for special mode
 
-				var relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
-				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
-				var bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
+				relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
+				normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
+				bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
 				game.ball.xv = magicBallSpeed * Math.cos(bounceAngle);
 				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
 			}
@@ -137,7 +138,7 @@ function printer(p5: any, data: any, width: number, height: number)
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
 
-	if (data.countdown != 0)
+	if (data.countdown !== 0)
 	{
 		p5.textSize(200);
 		p5.fill(p5.color(255, 255, 255));
@@ -209,6 +210,17 @@ export class Match extends React.Component<Props>
 
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
+
+		p5.clear()
+		p5.fill(p5.color(141, 141, 141));
+		p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
+		p5.textSize(50);
+		p5.fill(p5.color(255, 255, 255));
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(`Normal mode`, this.state.width / 4, this.state.height / 2);
+		p5.fill(p5.color(255, 255, 255));
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -400,7 +412,8 @@ export class Match extends React.Component<Props>
 
 	draw = (p5: any) =>
 	{
-		if (p5.mouseX < this.state.width / 2 && this.modeSelected === false)
+		if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+			p5.mouseY > 0 && p5.mouseY < this.state.height)
 		{
 			p5.clear()
 			p5.fill(p5.color(141, 141, 141));
@@ -424,7 +437,8 @@ export class Match extends React.Component<Props>
 				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
 			}
 		}
-		else if (p5.mouseX >= this.state.width / 2 && this.modeSelected === false)
+		else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+		p5.mouseY > 0 && p5.mouseY < this.state.height)
 		{
 			p5.clear()
 			p5.fill(p5.color(141, 141, 141));
