@@ -144,12 +144,12 @@ function printer(p5: any, data: any, width: number, height: number)
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.CENTER);
 		p5.text(data.countdown, width / 2, height / 2);
+		p5.textSize(50);
 	}
 	else
 	{
 		p5.rect(width / 2, 0, 2, height);
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
-		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.TOP);
 		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
@@ -211,13 +211,14 @@ export class Match extends React.Component<Props>
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
+		p5.textFont('Tourney');
 		p5.clear()
 		p5.fill(p5.color(141, 141, 141));
 		p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.CENTER);
-		p5.text(`Normal mode`, this.state.width / 4, this.state.height / 2);
+		p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.CENTER);
 		p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
@@ -248,7 +249,6 @@ export class Match extends React.Component<Props>
 					var playerInput = new PlayerInput();
 
 					p5.background(0);
-					p5.textSize(50);
 					p5.fill(p5.color(255, 255, 255));
 					p5.textAlign(p5.CENTER, p5.CENTER);
 					p5.text('Waiting for other player...', this.state.width / 2, this.state.height / 2);
@@ -330,7 +330,6 @@ export class Match extends React.Component<Props>
 						else
 							winner = this.slaveId;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
 						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
@@ -368,7 +367,6 @@ export class Match extends React.Component<Props>
 						else
 							winner = this.slaveId;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
 						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
@@ -393,7 +391,6 @@ export class Match extends React.Component<Props>
 						else
 							winner = this.slaveId;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
 						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
@@ -418,7 +415,6 @@ export class Match extends React.Component<Props>
 			p5.clear()
 			p5.fill(p5.color(141, 141, 141));
 			p5.rect(0, 0, this.state.width / 2, this.state.height);
-			p5.textSize(50);
 			p5.fill(p5.color(255, 255, 255));
 			p5.textAlign(p5.CENTER, p5.CENTER);
 			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
@@ -431,7 +427,6 @@ export class Match extends React.Component<Props>
 				this.props.socket.emit('find_match');
 				this.modeSelected = true;
 				p5.background(0);
-				p5.textSize(50);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
@@ -443,10 +438,9 @@ export class Match extends React.Component<Props>
 			p5.clear()
 			p5.fill(p5.color(141, 141, 141));
 			p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
-			p5.textSize(50);
 			p5.fill(p5.color(255, 255, 255));
 			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Normal mode`, this.state.width / 4, this.state.height / 2);
+			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
 			p5.fill(p5.color(255, 255, 255));
 			p5.textAlign(p5.CENTER, p5.CENTER);
 			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
@@ -456,7 +450,6 @@ export class Match extends React.Component<Props>
 				this.props.socket.emit('find_match');
 				this.modeSelected = true;
 				p5.background(0);
-				p5.textSize(50);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
