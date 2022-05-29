@@ -36,12 +36,13 @@ function Ball(this: any, x: number, y: number, xv: number, yv: number, xr: numbe
 	this.yr = yr;
 }
 
-function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number)
+function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number, mode: string)
 {
 	this.playerOne = playerOne;
 	this.playerTwo = playerTwo;
 	this.ball = ball;
 	this.countdown = cd;
+	this.mode = mode;
 }
 
 function negRand()
@@ -60,7 +61,8 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 			{
-				//magicBallSpeed += 5;	//for special mode
+				if (game.mode === "HARDCORE")
+					magicBallSpeed += 5;	//for special mode
 
 				var relativeIntersectY = (game.playerTwo.y + 50) - game.ball.y;
 				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -75,15 +77,16 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				socket.emit('masterScored', {match_id: match_id});
 				delete game.ball;
 
-				let bounceAngle = Math.random() - 0.5;
-				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20)
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
 		else if (game.ball.x + game.ball.xv < game.ball.xr)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 			{
-				//magicBallSpeed += 5;	//for special mode
+				if (game.mode === "HARDCORE")
+					magicBallSpeed += 5;	//for special mode
 
 				var relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
 				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -98,8 +101,8 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				socket.emit('slaveScored', {match_id: match_id});
 				delete game.ball;
 
-				let bounceAngle = Math.random() - 0.5;
-				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20)
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
 	}
@@ -168,11 +171,12 @@ export class Match extends React.Component<Props>
 	countdown = 3;
 	fq = 30;
 	match_id: number;
-	match_size: number;
 	slaveId: string;
 	masterId: string;
 	myId: string;
-	spacePressed = false;
+	leftClick = false;
+	modeSelected = false;
+	mode = "";
 
 	componentDidMount() {
 
@@ -206,20 +210,12 @@ export class Match extends React.Component<Props>
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
-		p5.background(0);
-		p5.textSize(50);
-		p5.fill(p5.color(255, 255, 255));
-		p5.textAlign(p5.CENTER, p5.CENTER);
-		p5.text('Press SPACE to find a match', this.state.width / 2, this.state.height / 2);
-
 		this.props.socket.on('launch_match', (data) =>
 		{
 			console.log("launching match...")
 			this.match_id = data.id;
-			this.match_size = data.room_size;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
-			//this.mode = data.mode (savoir si c'est un mod special)
 
 			this.props.socket.emit("askForMyID");
 			this.props.socket.on("receiveMyID", (data) =>
@@ -231,13 +227,11 @@ export class Match extends React.Component<Props>
 					console.log("IM A MASTER")
 					this.type = "master";
 
-					let bounceAngle = Math.random() - 0.5;
-
 					var game = new Game(
 						new Player(0, this.state.height / 2 - 50, playerWidth, 100, 0),
 						new Player(this.state.width - playerWidth, this.state.height / 2 - 50, playerWidth, 100, 0),
-						new Ball(this.state.width / 2, this.state.height / 2, (magicBallSpeed * Math.cos(bounceAngle)) * negRand(), (magicBallSpeed * - Math.sin(bounceAngle)) * negRand(), 20, 20),
-						this.countdown);
+						new Ball(this.state.width / 2, this.state.height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+						(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
 
 					var playerInput = new PlayerInput();
 
@@ -405,7 +399,58 @@ export class Match extends React.Component<Props>
 	}
 
 	draw = (p5: any) =>
-	{}
+	{
+		if (p5.mouseX < this.state.width / 2 && this.modeSelected === false)
+		{
+			p5.clear()
+			p5.fill(p5.color(141, 141, 141));
+			p5.rect(0, 0, this.state.width / 2, this.state.height);
+			p5.textSize(50);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+			if (this.leftClick === true)
+			{
+				this.mode = "NORMAL";
+				this.props.socket.emit('find_match');
+				this.modeSelected = true;
+				p5.background(0);
+				p5.textSize(50);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
+			}
+		}
+		else if (p5.mouseX >= this.state.width / 2 && this.modeSelected === false)
+		{
+			p5.clear()
+			p5.fill(p5.color(141, 141, 141));
+			p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
+			p5.textSize(50);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Normal mode`, this.state.width / 4, this.state.height / 2);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+			if (this.leftClick === true)
+			{
+				this.mode = "HARDCORE";
+				this.props.socket.emit('find_match');
+				this.modeSelected = true;
+				p5.background(0);
+				p5.textSize(50);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
+			}
+		}
+		if (this.leftClick === true)
+			this.leftClick = false;
+	}
 
 	keyTyped = (p5: any) =>
 	{
@@ -414,17 +459,6 @@ export class Match extends React.Component<Props>
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
 			this.props.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
-
-		if ((p5.key === " ") && this.spacePressed === false)
-		{
-			this.spacePressed = true;
-			this.props.socket.emit('find_match');
-			p5.background(0);
-			p5.textSize(50);
-			p5.fill(p5.color(255, 255, 255));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
-		}
 	}
 
 	keyReleased = (p5: any) =>
@@ -436,11 +470,18 @@ export class Match extends React.Component<Props>
 			this.props.socket.emit('slaveKeyReleased', {match_id: this.match_id, command: p5.key});
 	}
 
+	mouseClicked = (p5: any) =>
+	{
+		if(p5.mouseButton === p5.LEFT && this.started === 0)
+			this.leftClick = true;
+	}
+
 	render()
 	{
 		return (
 			<Fragment>
-				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased} windowResized={this.windowResized}/>}
+				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
+				windowResized={this.windowResized} mouseClicked={this.mouseClicked}/>}
 			</Fragment>
 		)
 	}
