@@ -13,7 +13,10 @@ const Message: React.FC<Props> = (props) => {
 		<div className={props.own ? "message own" : "message"}>
 			<div className="messageTop">
 				<img className="messageImg" src={props.avatar} alt="" />
-				<p className="messageTxt">{props.own === false && <div className="messageUsername">{props.name}</div>} {props.message}</p>
+				<div className="messageTxt">
+					{props.own === false && <div className="messageUsername">{props.name}</div>}
+					{props.message}
+				</div>
 			</div>
 		</div >
 	);
