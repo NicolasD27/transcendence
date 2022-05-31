@@ -90,7 +90,7 @@ const Conversation: React.FC<Props> = (props) => {
 
 		<div className='convArea'>
 			<div id='chatTop'>
-				<button id='chatCloseButton' onClick={() => props.setChatState({'chatState' : false, id : 0, chatName : "" , type : "chat" })} />
+				<button id='chatCloseButton' onClick={() => props.setChatState({'chatState' : false, id : 0, chatName : "" , type : "directM" })} />
 				<div id="chatUsername">{props.nameChat}</div>
 			</div>
 			<div className='messages'>

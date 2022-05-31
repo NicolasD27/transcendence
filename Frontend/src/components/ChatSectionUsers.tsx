@@ -102,18 +102,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 
 		}}, [props.idMe])
 
-	useEffect(() => {
-		if (props.socket)
-		{
-			props.socket.on("notifyFriendRequest", data => {
-				console.log("data:", data)
-				console.log("data follower id:", data.follower.id)
-				setFriendRequestReceived(friendRequestReceived => [...friendRequestReceived , data.follower.id])
-			})
-
-		}
-	}, [props.idMe])
-
 	/*useEffect(() => {
 		props.socket.on()
 		/*axios

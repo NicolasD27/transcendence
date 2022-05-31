@@ -40,9 +40,20 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friends = props.friends
 	const searchValue = props.searchValue
 	const searchUsers = props.searchUsers
-	const friendRequestReceived = props.friendRequestReceived;
+	//const friendRequestReceived = props.friendRequestReceived;
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
-
+	const [ friendRequestReceived, setFriendRequestReceived ] = useState<number[]>([])
+	
+	useEffect(() => {
+		if (props.socket)
+		{
+			props.socket.on("notifyFriendRequest", data => {
+				console.log("data:", data)
+				console.log("data follower id:", data.follower.id)
+				setFriendRequestReceived(friendRequestReceived => [...friendRequestReceived , data.follower.id])
+			})
+		}
+	}, [props.idMe])
 
 	const isAlreadyFriend = (id:number) => {
 		for(var i = 0; i < friends.length; i++ )

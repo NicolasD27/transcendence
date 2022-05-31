@@ -19,7 +19,7 @@ const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (prop
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': true, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'direc' })}/>
+								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': true, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
 							</>
 						) ||
 							<div id='profileBlocked'>

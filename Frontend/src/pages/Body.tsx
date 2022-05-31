@@ -21,7 +21,7 @@ const Body : React.FC<PropsBody> = (props) => {
 	const idMe = props.idMe;
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
 	const  [ userstate, setUserState ] = useState(false);
-	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "chat" })
+	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "directMessage" })
 	//const [ chatChannelState, setChatChannelState ] = useState(false)
  
 	return (
