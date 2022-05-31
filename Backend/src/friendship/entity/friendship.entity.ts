@@ -9,8 +9,8 @@ import { Notification } from "src/notification/entity/notification.entity";
 export enum FriendshipStatus {
     PENDING,
     ACTIVE,
-    BLOCKED_BY_1,
-    BLOCKED_BY_2
+    BLOCKED_BY_FOLLOWER,
+    BLOCKED_BY_FOLLOWING
 
 }
 
