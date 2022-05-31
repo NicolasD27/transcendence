@@ -5,8 +5,8 @@ import { PropsStateUsers } from './ChatSectionUsers'
 interface PropsPrintUserFriendRequestReceived {
 	user :  PropsStateUsers;
 	statusIcon : string;
-	/*acceptFriendshipRequest : Function;
-	declineFriendshipRequest: Function;*/
+	acceptFriendshipRequest : Function;
+	declineFriendshipRequest: Function;
 	key : number;
 }
 
@@ -41,8 +41,8 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 				</div>
 				<div id="username">{props.user.pseudo}</div>
 				<div id='friendRequest_buttons'>
-					<button id="AcceptFriendButton" /*onClick={() => props.acceptFriendshipRequest(props.user)} *//> 
-					<button id="DeclineFriendButton" /*onClick={() => props.declineFriendshipRequest(props.user)}*/ /> 
+					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user.id)} /> 
+					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user.id)} /> 
 				</div>
 			</div>
 	)

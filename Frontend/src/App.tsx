@@ -52,17 +52,17 @@ const App = () => {
 				setIsAuth(true)
         setIsLoading(false)
         setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
-				reconnection: true,
-				transports : ['websocket', 'polling', 'flashsocket'],
-				transportOptions: {
-					polling: {
-						extraHeaders: {
-							Authorization: getAccessTokenFromCookies()
-						}
-					}
-				}
-			}))
-			})
+          reconnection: true,
+          transports : ['websocket', 'polling', 'flashsocket'],
+          transportOptions: {
+            polling: {
+              extraHeaders: {
+                Authorization: getAccessTokenFromCookies()
+              }
+            }
+          }
+        }))
+      })
       .catch(err => {
         setIsAuth(false)
         setIsLoading(false)

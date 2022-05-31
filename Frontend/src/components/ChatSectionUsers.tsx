@@ -2,8 +2,9 @@ import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
+import { isConstructorDeclaration } from 'typescript';
 
-interface PropsUsers {
+interface PropsSectionUsers {
 	socket : any;
 	idMe : number;
 	//users : PropsStateUsers[];
@@ -37,7 +38,7 @@ export interface PropsStateChannel {
 	description : string;
 }
 
-const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
+const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	const [ searchUsers, setSearchUsers ] = useState<PropsStateUsers[]>([])
 	const [ friends, setFriends ] = useState<FriendsFormat[]>([])
 	const [ joinedChannels, setJoinedChannels ] = useState<PropsStateChannel[]>([])
@@ -45,8 +46,8 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 	const [ existingChannels, setExistingChannels ] = useState<PropsStateChannel[]>([])
 	const [ friendsState, setFriendsState ] = useState(false)
 
-	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number>()
-	//const [ friendRequestReceived, setFriendRequestReceived ] = useState(0)
+	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
+	const [ friendRequestReceived, setFriendRequestReceived ] = useState<number[]>([])
 	const [ searchValue, setSearchValue ] = useState("")
 	const [ createChannelButtonState, setCreateChannelButtonState ] = useState(false)
 
@@ -61,7 +62,6 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 	}, [searchValue])
 
 	useEffect(() => {
-		console.log("joinedChannel")
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me/channels`, {withCredentials: true})
 			.then((response) => setJoinedChannels(response.data))
@@ -82,7 +82,7 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 
 
 	useEffect(() => {
-		if (props.idMe !== 0)
+		if (props.idMe)
 		{
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
@@ -97,14 +97,24 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 				.catch (err =>
 					console.log(err)
 				)
+
 		}}, [props.idMe])
 
-	/*useEffect(() => {
-		props.socket.on("notifyFriendReques", (data) => {setFriendRequestReceived(data.user2_id)})
-	}, [props.socket])/*[friendRequestReceived])*/
+	useEffect(() => {
+		if (props.socket)
+		{
+			props.socket.on("notifyFriendRequest", data => {
+				console.log("data:", data)
+				console.log("data follower id:", data.follower.id)
+				setFriendRequestReceived(friendRequestReceived => [...friendRequestReceived , data.follower.id])
+			})
+
+		}
+	}, [props.idMe])
 
 	/*useEffect(() => {
-		axios
+		props.socket.on()
+		/*axios
 		.get(dataUrlFriendRequestsSent, { withCredentials: true })
 		.then (res => {
 			const request = res.data;
@@ -123,10 +133,11 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 
 	return (
 		<div className='chatArea'>
-			<SearchBarAddGroup setSearchValue={setSearchValue} friends={friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
+			<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
 			{
 				!createChannelButtonState && 
 				<UserList 
+					socket = {props.socket}
 					idMe={props.idMe}
 					existingChannels={existingChannels}
 					joinedChannels={joinedChannels}
@@ -135,10 +146,10 @@ const ChatSectionUsers : React.FC<PropsUsers> = (props) => {
 					searchUsers={searchUsers}
 					friends={friends}
 					setFriends={setFriends}
-					/*friendRequestsSent={friendRequestsSent}
+					friendRequestsSent={friendRequestsSent}
 					setFriendRequestsSent={setFriendRequestsSent}
 					friendRequestReceived={friendRequestReceived}
-					setFriendRequestReceived={setFriendRequestReceived}*/
+					setFriendRequestReceived={setFriendRequestReceived}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
 					setChatFriendState={props.setChatFriendState}

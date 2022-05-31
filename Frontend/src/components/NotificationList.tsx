@@ -33,28 +33,23 @@ const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultE
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
 					setNotifications(notifications => res.data.reverse());	
-
 			})
 			});
 			socket.on("match_invite_to_client", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
-
+					setNotifications(notifications => res.data.reverse());
 			})
 			});
 			socket.on("notifyFriendRequest", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 				.then(res => {
 					setNotifications(notifications => res.data.reverse());	
-
 			})
 			});			
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());	
-				
-
 			})
 		}
 	}, [myId])

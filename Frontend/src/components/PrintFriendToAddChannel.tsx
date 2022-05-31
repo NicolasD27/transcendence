@@ -5,6 +5,7 @@ import statusIconRed from "../asset/statusIconRed.svg"
 import {FriendsFormat} from './ChatSectionUsers'
 
 interface PropsPrintFriendToAddChannel {
+	idMe : number;
 	friends : FriendsFormat[];
 	selectedFriend : FriendsFormat[];
 	setSelectedFriend : Dispatch<SetStateAction<FriendsFormat[]>>;
@@ -34,6 +35,10 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 	return (
 		<>
 			{props.friends
+				.filter(friend => {
+					if (friend.id !== props.idMe)
+						return friend;
+				})
 				.map((user:FriendsFormat) => {
 					let statusIcon = (user.status === 1 ? statusIconGreen : statusIconRed)
 

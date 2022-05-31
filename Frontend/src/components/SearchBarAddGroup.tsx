@@ -6,6 +6,7 @@ import searchIcon from '../asset/searchIcon.svg'
 import { FriendsFormat } from './ChatSectionUsers'
 
 interface PropsSearchBarAddGroup {
+	idMe : number;
 	setSearchValue : Dispatch<SetStateAction<string>>
 	friends: FriendsFormat[];
 	createChannelButtonState : boolean;
@@ -86,7 +87,7 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 						||
 						<>
 							<div className='usersList'>
-								<PrintFriendToAddChannel friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
+								<PrintFriendToAddChannel idMe={props.idMe} friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
 							</div>
 							<button id="checkbox_nextChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Next</button>
 						</>
