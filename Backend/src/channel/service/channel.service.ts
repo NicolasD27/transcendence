@@ -256,11 +256,11 @@ export class ChannelService {
 		const blacklisted = await this.friendshipRepo.find({
 			where: [
 				{
-					status: FriendshipStatus.BLOCKED_BY_1,
+					status: FriendshipStatus.BLOCKED_BY_FOLLOWER,
 					following: mySender
 				},
 				{
-					status: FriendshipStatus.BLOCKED_BY_1,
+					status: FriendshipStatus.BLOCKED_BY_FOLLOWING,
 					follower: mySender
 				}
 			]

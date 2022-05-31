@@ -103,7 +103,7 @@ export class FriendshipService {
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
-        if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_2 || friendship.status == FriendshipStatus.BLOCKED_BY_2)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_1 || friendship.status == FriendshipStatus.BLOCKED_BY_1)))
+        if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWING || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWING)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWER || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWER)))
             throw new UnauthorizedException("you can't do that !");
         friendship.status = newStatus;
         this.notificationService.actionPerformedFriendship(friendship)

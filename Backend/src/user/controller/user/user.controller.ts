@@ -10,11 +10,12 @@ import {
     UploadedFile,
     UseGuards,
     UseInterceptors,
-    ValidationPipe
+    ValidationPipe,
+    Query
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 // import * as session from 'express-session';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UserDto } from 'src/user/dto/user.dto';
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 import { GetUsername } from '../../decorator/get-username.decorator';
@@ -29,6 +30,7 @@ import { ChannelService } from 'src/channel/service/channel.service';
 import { AcceptChannelInviteDto } from 'src/channel/dto/accept-channel-invite.dto';
 import { DeleteChannelInviteDto } from 'src/channel/dto/delete-invite.dto';
 import { ParseIntPipe } from "@nestjs/common";
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -49,10 +51,26 @@ export class UserController {
         return this.userService.findMe(username);
     }
 
-    @ApiBearerAuth()
+	@Get('me/channels')
+	@UseGuards(TwoFactorGuard)
+	async findJoinedChannels(@Req() request: Request)
+	{
+		console.log('me/channels');
+		return await this.channelService.getJoinedChannels(request.cookies.username);
+	}
+
+    @ApiQuery({
+        name: "search",
+        type: String,
+        required: false
+      })
     @UseGuards(TwoFactorGuard)
     @Get()
-    findAll(): Promise<UserDto[]> {
+    findAll(
+		@Query() paginationQueryDto?: PaginationQueryDto,
+		@Query('search') search?: string,
+	): Promise<UserDto[]>
+	{
         console.log('findAllUsers');
         return this.userService.findAll();
     }
