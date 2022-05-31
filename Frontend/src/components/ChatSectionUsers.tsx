@@ -3,15 +3,17 @@ import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
 import { isConstructorDeclaration } from 'typescript';
+import { chatStateFormat } from '../pages/Body'
 
 interface PropsSectionUsers {
 	socket : any;
 	idMe : number;
 	//users : PropsStateUsers[];
 	//setUsers : Dispatch<SetStateAction<PropsStateUsers[]>>;
-	setChatFriendState : Dispatch<SetStateAction<boolean>>;
-	chatChannelState : boolean;
-	setChatChannelState : Dispatch<SetStateAction<boolean>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
+	/*chatChannelState : boolean;
+	setChatChannelState : Dispatch<SetStateAction<boolean>>;*/
 }
 
 export interface  PropsStateUsers {
@@ -152,9 +154,10 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 					setFriendRequestReceived={setFriendRequestReceived}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
-					setChatFriendState={props.setChatFriendState}
-					chatChannelState={props.chatChannelState}
-					setChatChannelState={props.setChatChannelState}
+					setChatParamsState={props.setChatParamsState}
+					chatParamsState={props.chatParamsState}
+					/*chatChannelState={props.chatChannelState}
+					setChatChannelState={props.setChatChannelState}*/
 				/>
 			}
 		</div>

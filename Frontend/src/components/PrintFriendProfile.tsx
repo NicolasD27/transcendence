@@ -5,13 +5,15 @@ import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import {FriendsFormat} from './ChatSectionUsers'
 import {PropsStateUsers} from './ChatSectionUsers'
+import { chatStateFormat } from '../pages/Body';
 
 interface PropsPrintFriendProfile {
 	friends: FriendsFormat[];
 	user:  PropsStateUsers;
 	statusIcon: string;
 	key: number;
-	setChatFriendState : Dispatch<SetStateAction<boolean>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
 	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
 }
 
@@ -60,7 +62,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 					<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
 					<img src={props.statusIcon} className="userStatusIcon" alt="StatusIcon"/>
 				</div>
-			{!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatFriendState={props.setChatFriendState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
+			{!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 		</div>
 	)

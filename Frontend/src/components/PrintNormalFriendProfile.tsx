@@ -1,10 +1,11 @@
 import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import { chatStateFormat } from '../pages/Body';
 import { PropsStateUsers } from './ChatSectionUsers'
 
 interface PropsPrintNormalFriendProfile {
 	user : PropsStateUsers;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
-	setChatFriendState :  Dispatch<SetStateAction<boolean>>;
+	setChatParamsState :  Dispatch<SetStateAction<chatStateFormat>>;
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
 }
@@ -18,7 +19,7 @@ const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (prop
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatFriendState(true)}/>
+								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': true, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'direc' })}/>
 							</>
 						) ||
 							<div id='profileBlocked'>
