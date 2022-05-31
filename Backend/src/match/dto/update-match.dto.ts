@@ -1,6 +1,6 @@
+import { IsOptional, IsEnum, IsNumber, Min } from "@nestjs/class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNumber, Min } from "class-validator";
-import {  MatchStatus } from "../entity/match.entity";
+import { MatchStatus } from "../entity/match.entity";
 
 export class UpdateMatchDto {
     @ApiProperty()
@@ -8,11 +8,13 @@ export class UpdateMatchDto {
     status: MatchStatus;
 
     @ApiProperty()
+	@IsOptional()
     @IsNumber()
     @Min(0)
     score1?: number;
 
     @ApiProperty()
+	@IsOptional()
     @IsNumber()
     @Min(0)
     score2?: number;

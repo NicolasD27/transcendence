@@ -1,9 +1,10 @@
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { MatchDto } from 'src/match/dto/match.dto';
 import { Match } from 'src/match/entity/match.entity';
-import { Connection, Repository } from 'typeorm';
+import { Connection, Like, Repository } from 'typeorm';
 import { UpdatePseudoDto } from '../dto/update-pseudo.dto';
 import { UserDto } from '../dto/user.dto';
 import { User, UserStatus } from '../entity/user.entity';
@@ -19,8 +20,25 @@ export class UserService {
 	) {}
 
 
-    async findAll(): Promise<UserDto[]> {
-        return this.usersRepository.find()
+    async findAll(paginationQuery: PaginationQueryDto): Promise<UserDto[]> {
+		const { limit, offset } = paginationQuery;
+        return await this.usersRepository.find({
+				where : {},
+				order: { pseudo: "ASC" },
+				take: limit,
+				skip: offset
+			})
+            .then(items => items.map(e=> User.toDto(e)));
+    }
+
+	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
+		const { limit, offset } = paginationQuery;
+        return await this.usersRepository.find({
+				where : `"username" ILIKE '${search}%'`,
+				order: { pseudo: "ASC" },
+				take: limit,
+				skip: offset
+			})
             .then(items => items.map(e=> User.toDto(e)));
     }
 
@@ -91,8 +109,6 @@ export class UserService {
         return this.usersRepository.save(user).then(user => {return true}).catch(err => {return false});
     
     }
-
-    
 
 	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
     //     const user = await this.usersRepository.preload({

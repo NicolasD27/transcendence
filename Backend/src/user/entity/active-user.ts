@@ -37,11 +37,8 @@ export class ActiveUsers {
 		return found.state;
 	}
 
-	display(userId: number)
+	display()
 	{
-		console.log(userId);
 		console.log(this.users);
-		console.log("display has userId : " + this.users.has(Number(userId)));
-		console.log(typeof(userId));
 	}
 }

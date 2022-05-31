@@ -46,12 +46,12 @@
 
 @media only screen and (max-width: 1155px) {
 	.boxHistory {
-		width: 75vw;
+		width: 55vw;
 	}
 }
 
 @media only screen and (max-height: 1500px) {
 	.boxHistory {
-		height: 35vh;
+		height: 30vh;
 	}
 }

@@ -22,9 +22,6 @@ export class Channel extends BaseEntity {
 	public name: string;
 
 	@Column()
-	public description: string;
-
-	@Column()
 	hashedPassword: string;
 
 	@ManyToOne(() => User, user => user.channels, { eager: true })
@@ -49,7 +46,6 @@ export class Channel extends BaseEntity {
 			isProtected: channel.isProtected,
             name: channel.name,
             owner: User.toDto(channel.owner),
-            description: channel.description
 		}
 		return dto;
 	}

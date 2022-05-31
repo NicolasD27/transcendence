@@ -72,14 +72,21 @@ export class UserController {
 	): Promise<UserDto[]>
 	{
         console.log('findAllUsers');
-        return this.userService.findAll();
+		if (search && search.length)
+			return this.userService.searchForUsers(paginationQueryDto, search);
+        return this.userService.findAll(paginationQueryDto);
     }
 
     @Get(':userId/invites')
 	@UseGuards(TwoFactorGuard)
-	async getInvites(@Param('userId', ParseIntPipe) userId: number, @Req() request: Request)
+	async getInvites(
+		@Query() paginationQueryDto: PaginationQueryDto,
+		@Param('userId', ParseIntPipe) userId: number,
+		@Req() request: Request
+	)
 	{
-		return await this.channelService.getChannelInvites(request.cookies.username, userId);
+		return this.channelService.getChannelInvites(request.cookies.username,
+			userId, paginationQueryDto);
 	}
 
 	@Patch(':userId/invites/:inviteId')
@@ -117,10 +124,16 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get(':id/matchs')
-    findAllMatchsByUser(@Param('id', ParseIntPipe) id: string): Promise<MatchDto[]> {
-        return this.matchService.findAllMatchsByUser(id);
+    findAllMatchsByUser(
+		@Query() paginationQueryDto: PaginationQueryDto,
+		@Param('id', ParseIntPipe) id: string
+	): Promise<MatchDto[]>
+	{
+        return this.matchService.findAllMatchsByUser(id, paginationQueryDto);
     }
 
+	// ? checking the file size/myme type at the bottome of :
+	// ? https://wanago.io/2021/11/08/api-nestjs-uploading-files-to-server/
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post('avatar')
