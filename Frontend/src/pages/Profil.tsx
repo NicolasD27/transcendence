@@ -12,6 +12,8 @@ import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
 import { Socket } from 'socket.io-client';
 import './MainPage.css'
+import Message from '../components/Message';//!TEST!
+import Conversation from '../components/Conversation';//!TEST!
 
 const Profil = ({ socket }: { socket: any }) => {
 	interface matchFormat {
@@ -28,9 +30,7 @@ const Profil = ({ socket }: { socket: any }) => {
 	}
 
 	const idstring = useParams();
-	console.log("idstring: " + idstring.id)
 	const [id, setId] = useState(Number(idstring.id));
-	console.log("ID: " + id)
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
@@ -58,7 +58,7 @@ const Profil = ({ socket }: { socket: any }) => {
 		const matchTri = [...matchID].sort((a, b) => {
 			return b.idMatch - a.idMatch;
 		});
-		setMatchID(matchTri)
+		setMatchID(matchTri);
 		setGetMatch(true);
 	}, [getmatch])
 
@@ -119,7 +119,7 @@ const Profil = ({ socket }: { socket: any }) => {
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					<div className='chatArea' />
+					{/*idMe > 0 && <Conversation idMe={idMe} id={1} type={'channel'} nameChat={"string2"} socket={socket} />*/}
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 			</div>
