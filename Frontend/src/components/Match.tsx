@@ -164,8 +164,8 @@ interface Props {
 export class Match extends React.Component<Props>
 {
 	state = {
-		width: 954,
-		height: 532
+		width: 1200 - 8,
+		height: 750  - 8
 	}
 	type = "";
 	started = 0;
@@ -178,32 +178,6 @@ export class Match extends React.Component<Props>
 	leftClick = false;
 	modeSelected = false;
 	mode = "";
-
-	componentDidMount() {
-
-		const gameArea = document.getElementById("gameArea")
-		this.setState({
-			width: gameArea ? gameArea.offsetWidth - 8 : 954,
-			height: gameArea ? gameArea.offsetHeight - 8 : 532
-		})
-		window.addEventListener('resize', () => {
-			console.log("resized")
-			const gameArea = document.getElementById("gameArea")
-			const width = gameArea ? gameArea.offsetWidth : 954
-			const height = gameArea ? gameArea.offsetHeight : 532
-			this.setState({
-				width: width - 8,
-				height: height - 8
-			})
-		})
-	}
-
-	windowResized = (p5: any) => {
-		const gameArea = document.getElementById("gameArea")
-		const width = gameArea ? gameArea.offsetWidth : 954
-		const height = gameArea ? gameArea.offsetHeight : 532
-		p5.resizeCanvas(width - 8, height - 8, true)
-	}
 
 	setup = (p5: any) =>
 	{
@@ -488,7 +462,7 @@ export class Match extends React.Component<Props>
 		return (
 			<Fragment>
 				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
-				windowResized={this.windowResized} mouseClicked={this.mouseClicked}/>}
+				mouseClicked={this.mouseClicked}/>}
 			</Fragment>
 		)
 	}
