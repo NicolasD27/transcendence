@@ -34,9 +34,7 @@ export class UserService {
 	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;
         return await this.usersRepository.find({
-				where : {
-					username: Like(`${search}%`),
-				},
+				where : `"username" ILIKE '${search}%'`,
 				order: { pseudo: "ASC" },
 				take: limit,
 				skip: offset
@@ -111,8 +109,6 @@ export class UserService {
         return this.usersRepository.save(user).then(user => {return true}).catch(err => {return false});
     
     }
-
-    
 
 	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
     //     const user = await this.usersRepository.preload({
