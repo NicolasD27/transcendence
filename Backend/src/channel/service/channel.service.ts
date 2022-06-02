@@ -94,6 +94,7 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({username});
 		if (!myUser)	// ? useless because of the guard
 			throw new NotFoundException(`username ${username} not found`);
+		// const myUser = await this.userRepo.findOne(1);
 		const myParticipations = await this.participationRepo.find({
 			where: { user: myUser },
 		});
@@ -124,7 +125,7 @@ export class ChannelService {
 			for (let j:number = 0; j < tos.length; ++j)
 			{
 				restricted.push(User.toDto(tos[j].user));
-				restricted[j].bannedState = tos[j].bannedState;
+				restricted[j].bannedState = { type: tos[j].bannedState, until: tos[j].date };
 			}
 
 			// ? pushing the channel with moderation data
@@ -150,6 +151,7 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({ username });
 		if (! myUser)
 			throw new NotFoundException(`Username ${username} not found`);
+		// const myUser = await this.userRepo.findOne(1);
 		const myChannel = await this.channelRepo.findOne(id);
 		if (! myChannel || myChannel.isPrivate)
 			throw new NotFoundException(`Channel #${id} not found`);
@@ -179,14 +181,14 @@ export class ChannelService {
 		const tos = await this.moderationTimeOutRepo.find({
 			where: {
 				channel: myChannel,
-				date: MoreThan(_now),
+				// date: MoreThan(_now),
 			}
 		});
 		let restricted = [];
-		for (let i: number = 0; i < tos.length; ++i)
+		for (let j: number = 0; j < tos.length; ++j)
 		{
-			restricted.push(User.toDto(tos[i].user));
-			restricted[i].bannedState = tos[i].bannedState;
+			restricted.push(User.toDto(tos[j].user));
+			restricted[j].bannedState = { type: tos[j].bannedState, until: tos[j].date };
 		}
 		return Channel.toDtoWithModeration(
 			myChannel,
