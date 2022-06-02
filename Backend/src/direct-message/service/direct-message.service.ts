@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { DirectMessageDto } from '../dto/direct-message.dto';
@@ -13,6 +14,39 @@ export class DirectMessageService {
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
 	) {}
+
+	async getDirectMessagesFrom(
+		id: string,
+		username: string,
+		paginationQuery: PaginationQueryDto
+	): Promise<DirectMessageDto[]>
+	{
+		const myUser = await this.userRepo.findOne({username})
+		if (!myUser)
+			throw new NotFoundException(`user ${username} not found`);
+		const user = await this.userRepo.findOne(id);
+		if (!user)
+			throw new NotFoundException(`user ${id} not found`);
+		const { limit, offset } = paginationQuery;
+		console.log("pagination query ***********************:", limit, offset)
+		const msgs = await this.directMessageRepository.find({
+			where: [
+				{
+					sender: user,
+					receiver: myUser 
+				},
+				{
+					receiver: user,
+					sender: myUser
+				}
+			],
+			take: limit,
+			skip: offset,
+			})
+			.then(items => items.map(e=> DirectMessage.toDto(e)));
+
+		return msgs;
+	}
 
 	async saveMsg(content: string, receiverUsername: string, username: string) : Promise<DirectMessageDto> {
 

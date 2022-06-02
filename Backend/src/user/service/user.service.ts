@@ -34,9 +34,7 @@ export class UserService {
 	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;
         return await this.usersRepository.find({
-				where : {
-					username: Like(`${search}%`),
-				},
+				where : `"username" ILIKE '${search}%'`,
 				order: { pseudo: "ASC" },
 				take: limit,
 				skip: offset
