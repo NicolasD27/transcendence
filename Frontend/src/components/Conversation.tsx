@@ -62,7 +62,6 @@ const Conversation: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (props.id > 0) {
-			console.log("ID: " + props.id)
 			let recupMessage = "";
 			if (props.type === "channel")
 				recupMessage = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/messages`
@@ -70,10 +69,8 @@ const Conversation: React.FC<Props> = (props) => {
 				recupMessage = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/direct_messages/${props.id}`
 			axios.get(recupMessage, { withCredentials: true })
 				.then(res => {
-					console.log("HEIN")
 					setMessages(messages => []);
 					const prevMessages = res.data;
-					console.log("Messaaaaaages: " + JSON.stringify(prevMessages))
 					if (props.type === "channel")
 						prevMessages.forEach((list: any) => { newMessageChannel(list); });
 					else if (props.type === "directMessage")
@@ -95,7 +92,6 @@ const Conversation: React.FC<Props> = (props) => {
 			else if (props.type === "directMessage") {
 				console.log("Hola")
 				props.socket.on('direct_msg_to_client', (message) => {
-					console.log(JSON.stringify(message))
 					newMessageDirect(message);
 				});
 			}
@@ -116,14 +112,10 @@ const Conversation: React.FC<Props> = (props) => {
 			receiver: userFriend?.username,
 			content: tmptext,
 		}
-		console.log("idPerso: " + userPerso?.id)
-		console.log("usernamePerso: " + userPerso?.username)
-		console.log("pseudoPerso: " + userPerso?.pseudo)
 		if (tmptext !== "" && props.type === "channel")
 			props.socket.emit('msg_to_server', messageChannel)
 		else if (tmptext !== "" && props.type === "directMessage") {
 			props.socket.emit('direct_msg_to_server', messageDirect)
-			console.log("senddirectmsg")
 		}
 		setTmpText("");
 	}
@@ -148,7 +140,6 @@ const Conversation: React.FC<Props> = (props) => {
 	const newMessageDirect = (message: any) => {
 		let singleMessage: messagesFormat;
 		let avatartmp: string;
-		console.log("dznjdzjndzjndzjndjz")
 		if ((message.sender.username === props.nameChat) || (message.receiver.username === props.nameChat)) {
 			if (message.sender.avatarId === null)
 				avatartmp = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
@@ -159,7 +150,6 @@ const Conversation: React.FC<Props> = (props) => {
 			else
 				singleMessage = { id: message.id, message: message.content, name: message.sender.pseudo, avatar: avatartmp, own: false };
 			setMessages(messages => [...messages, singleMessage]);
-			console.log("YOoooooo: " + JSON.stringify(singleMessage))
 		}
 	}
 
