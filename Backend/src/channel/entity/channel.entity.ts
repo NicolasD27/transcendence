@@ -53,7 +53,12 @@ export class Channel extends BaseEntity
 		return dto;
 	}
 
-	static toDtoWithModerators(channel: Channel, modos: UserDto[])
+	static toDtoWithModeration(
+		channel: Channel,
+		modos: UserDto[],
+		// restricted: UserDto[]
+		restricted: any[]
+	)
 	{
 		const dto: ChannelDtoWithModeration = {
 			id: channel.id,
@@ -62,6 +67,7 @@ export class Channel extends BaseEntity
             name: channel.name,
             owner: User.toDto(channel.owner),
 			moderators: modos,
+			restricted: restricted,
 		}
 		return dto;
 	}

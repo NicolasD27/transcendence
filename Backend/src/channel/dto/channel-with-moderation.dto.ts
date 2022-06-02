@@ -34,4 +34,8 @@ export class ChannelDtoWithModeration {
 	@Expose()
 	moderators: UserDto[];
 
+	@ApiProperty()
+	@Expose()
+	restricted: UserDto[];
+
 }
