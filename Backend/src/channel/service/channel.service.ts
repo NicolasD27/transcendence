@@ -119,6 +119,39 @@ export class ChannelService {
 		return Channel.toDto(myChannel);
 	}
 
+	async findOneWithModerators(username: string, id: number)
+	{
+		const myUser = await this.userRepo.findOne({ username });
+		if (! myUser)
+			throw new NotFoundException(`Username ${username} not found`);
+		const myChannel = await this.channelRepo.findOne(id);
+		if (! myChannel)
+			throw new NotFoundException(`Channel #${id} not found`);
+		const myParticipation = await this.participationRepo.findOne({
+			where: {
+				user: myUser,
+				channel: myChannel
+			},
+        });
+		if (! myParticipation)
+			return Channel.toDtoWithModerators(myChannel, []);
+
+		const moderatorsParticipation = await this.participationRepo.find({
+			where: {
+				channel: myChannel,
+				isModo: true,
+			},
+		});
+		const channelModerators = [];
+		moderatorsParticipation.forEach((participation) => {
+			channelModerators.push(participation.user)
+		})
+		return Channel.toDtoWithModerators(
+			myChannel,
+			channelModerators.map(e=> User.toDto(e))
+		);
+	}
+
 	async findOneWS(channelId:number)
 	{
 		return await this.channelRepo.findOne(channelId);
@@ -133,6 +166,8 @@ export class ChannelService {
 		console.log(createChannelDto);
 
 		const	user = await this.userRepo.findOne({ username });
+		if (!user)
+			throw new UnauthorizedException();
 
 		const	channelExist = await this.channelRepo.findOne({
 			where: {

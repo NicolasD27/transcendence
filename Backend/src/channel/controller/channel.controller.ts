@@ -59,9 +59,13 @@ export class ChannelController {
 
 	@Get(':id/')
 	@UseGuards(TwoFactorGuard)
-	async findOne(@Param('id', ParseIntPipe) id: number)
+	async findOne(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request
+	)
 	{
-		return this.channelService.findOne(id);
+		// return this.channelService.findOne(id);
+		return this.channelService.findOneWithModerators(request.cookies.username, id);
 	}
 
 	@Put(':id/')
