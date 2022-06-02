@@ -23,6 +23,7 @@ import { NotificationService } from '../../notification/service/notification.ser
 import { PaginationQueryDto } from '../dto/pagination-query.dto';
 import { identity } from 'rxjs';
 import { channel } from 'diagnostics_channel';
+import { ChannelDtoWithModeration } from '../dto/channel-with-moderation.dto';
 
 
 @Injectable()
@@ -95,19 +96,29 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({username});
 		if (!myUser)	// ? useless because of the guard
 			throw new NotFoundException(`username ${username} not found`);
-		// const myUser = await this.userRepo.findOne(1);
-
 		const myParticipations = await this.participationRepo.find({
 			where: { user: myUser },
 		});
 
 		let i: number;
-		let myChannels: ChannelDto[] = [];
+		let j: number;
+		let myChannels: ChannelDtoWithModeration[] = [];
 		for (i = 0; i < myParticipations.length; ++i)
 		{
-			myChannels.push(Channel.toDto(myParticipations[i].channel));
+			const moderatorsParticipation = await this.participationRepo.find({
+				where: {
+					channel: myParticipations[i].channel,
+					isModo: true,
+				},
+			});
+			const channelModerators = [];
+			for (j = 0; j < moderatorsParticipation.length; ++j)
+				channelModerators.push(moderatorsParticipation[j].user)
+			myChannels.push(Channel.toDtoWithModerators(
+				myParticipations[i].channel,
+				channelModerators.map(e=> User.toDto(e))
+			));
 		}
-		// console.log(myChannels);
 		return myChannels;
 	}
 
