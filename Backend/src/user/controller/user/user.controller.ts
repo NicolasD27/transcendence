@@ -14,7 +14,6 @@ import {
     Query
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-// import * as session from 'express-session';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UserDto } from 'src/user/dto/user.dto';
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
@@ -27,8 +26,6 @@ import { MatchService } from 'src/match/service/match.service';
 import { UpdatePseudoDto } from 'src/user/dto/update-pseudo.dto';
 import { ApiTags } from "@nestjs/swagger";
 import { ChannelService } from 'src/channel/service/channel.service';
-import { AcceptChannelInviteDto } from 'src/channel/dto/accept-channel-invite.dto';
-import { DeleteChannelInviteDto } from 'src/channel/dto/delete-invite.dto';
 import { ParseIntPipe } from "@nestjs/common";
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 
@@ -63,7 +60,7 @@ export class UserController {
         name: "search",
         type: String,
         required: false
-      })
+    })
     @UseGuards(TwoFactorGuard)
     @Get()
     findAll(
