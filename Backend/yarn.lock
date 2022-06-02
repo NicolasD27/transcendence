@@ -725,10 +725,10 @@
     optional "0.1.4"
     tslib "2.3.1"
 
-"@nestjs/typeorm@^8.0.3":
-  version "8.0.3"
-  resolved "https://registry.npmjs.org/@nestjs/typeorm/-/typeorm-8.0.3.tgz"
-  integrity sha512-tf9rTXP6LeFInkwd+tktQhtLRsKp4RRYImprqT8gcHcJDx+xMP1IygnXELOKwF5vo2/mnhrGtBlRQ/iiS6170g==
+"@nestjs/typeorm@8.0.2":
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-8.0.2.tgz#8e9b8422be402e02d6addfe7c779639fbff267af"
+  integrity sha512-UHn4IsRkzm22eNDir/uI+x8gmgo66EO7SxWfVOiPpeLSdrTfZHKYz6q/P9KRgYbwXs8TrywVdIbJhp+4C0tzjQ==
   dependencies:
     uuid "8.3.2"
 
@@ -5619,7 +5619,7 @@ typedarray@^0.0.6:
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typeorm-polymorphic@^0.0.10:
+typeorm-polymorphic@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/typeorm-polymorphic/-/typeorm-polymorphic-0.0.10.tgz#4412b7df329feea0e4672b109e3ec824ac3cf21c"
   integrity sha512-HZ8jnccmfz4MdN2G1cBNhHsMcFCkSpNefmjumy97TaET7tgxxqFte3U9tm1Nk8SbZyWYqjJ7N4Osxpm3rNVnYQ==

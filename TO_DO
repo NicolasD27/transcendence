@@ -1,10 +1,400 @@
-_ comprendre les events de base pour le matchmaking, et les inclure dans le frontend
-pour pouvoir lancer le match et tester tout ca
-
-    -> connect_to_match, find_match, challenge_user, accept_challenge
-
-
-_ faire un bon handle pour les disconnects
-
-
-_ faire en sorte que quand le match fini (a decider encore) de renvoyer les infos cote server
+frontend-transcendence | Compiled with warnings.
+frontend-transcendence |
+frontend-transcendence | Warning
+frontend-transcendence | (2482:3) autoprefixer: Replace color-adjust to print-color-adjust. The color-adjust shorthand is currently deprecated.
+frontend-transcendence |
+frontend-transcendence | src/App.tsx
+frontend-transcendence |   Line 2:10:   'useState' is defined but never used              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:20:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 18:8:   'Loader' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 19:8:   'socketIOClient' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 20:10:  'Socket' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 21:10:  'DefaultEventsMap' is defined but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 33:11:  'ServerToClientEvents' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 39:11:  'ClientToServerEvents' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Achievement.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:9:   'getSucces' is assigned a value but never used                                                             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:20:  'setGetSucces' is assigned a value but never used                                                          @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 43:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |   Line 44:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |   Line 45:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/components/Avatar.tsx
+frontend-transcendence |   Line 1:17:   'Component' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 50:20:  Expected '!==' and instead saw '!='    eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/Chat.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 3:8:   'statusIconRed' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/ChatSectionUsers.tsx
+frontend-transcendence |   Line 46:10:  'friendsState' is assigned a value but never used                                                               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 46:24:  'setFriendsState' is assigned a value but never used                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 48:10:  'friendRequestsSent' is assigned a value but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 48:30:  'setFriendRequestsSent' is assigned a value but never used                                                      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 81:5:   React Hook useEffect has a missing dependency: 'searchValue'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 91:28:  Array.prototype.map() expects a return value from arrow function                                                array-callback-return
+frontend-transcendence |
+frontend-transcendence | src/components/HistoryCard.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 38:13:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 39:13:  Expected '!==' and instead saw '!='   eqeqeq
+frontend-transcendence |   Line 44:13:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 45:13:  Expected '!==' and instead saw '!='   eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/HistoryMatch.tsx
+frontend-transcendence |   Line 1:27:  'Component' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:38:  'useState' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'useEffect' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:10:  'createAdd' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:8:  'defaultAvatar' is assigned a value but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Notification.tsx
+frontend-transcendence |   Line 2:27:   'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 35:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 37:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 39:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 45:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 53:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 61:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 73:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 81:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 89:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/NotificationList.tsx
+frontend-transcendence |   Line 2:27:   'Component' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:38:   'useState' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:8:    'socketIOClient' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 30:12:  Expected '!==' and instead saw '!='
+                                                                              eqeqeq
+frontend-transcendence |   Line 60:5:   React Hook useEffect has a missing dependency: 'socket'. Either include it or remove the dependency array
+                                                                              react-hooks/exhaustive-deps
+frontend-transcendence |   Line 64:5:   React Hook useEffect has a missing dependency: 'notifications'. Either include it or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setNewNotifsLength' needs the current value of 'notifications'  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelCreationSettings.tsx
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelsJoined.tsx
+frontend-transcendence |   Line 1:27:   'useEffect' is defined but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 18:14:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |   Line 18:76:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelsToJoin.tsx
+frontend-transcendence |   Line 1:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintFriendProfile.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used
+                                                                                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 37:5:   React Hook useEffect has a missing dependency: 'props.user.avatarId'. Either include it or remove the dependency array. If 'setProfileAvatar' needs the current value of 'props.user.avatarId', you can also switch to useReducer instead of useState and read 'props.user.avatarId' in the reducer  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 48:73:  Expected '!==' and instead saw '!='
+                                                                                                                            eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/PrintFriendToAddChannel.tsx
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintNormalFriendProfile.tsx
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintSendFriendRequestProfile.tsx
+frontend-transcendence |   Line 1:38:  'Dispatch' is defined but never used
+                                                                                                                           @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'SetStateAction' is defined but never used
+                                                                                                                           @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 26:5:  React Hook useEffect has a missing dependency: 'props.user.avatarId'. Either include it or remove the dependency array. If 'setProfileAvatar' needs the current value of 'props.user.avatarId', you can also switch to useReducer instead of useState and read 'props.user.avatarId' in the reducer  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/PrintUnfriendBlockProfile.tsx
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Pseudo.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used                                                                   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 27:5:  React Hook useEffect has a missing dependency: 'id'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/SearchBarAddGroup.tsx
+frontend-transcendence |   Line 1:37:   'useEffect' is defined but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 78:27:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |   Line 86:7:   Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |
+frontend-transcendence | src/components/ToggleQRcode.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 30:4:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/components/UserList.tsx
+frontend-transcendence |   Line 1:17:    'useState' is defined but never used                                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:    'useEffect' is defined but never used                                                 @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:8:     'PrintInvitationSentProfile' is defined but never used                                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:8:     'PrintUserFriendRequestReceived' is defined but never used                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 120:22:  Array.prototype.filter() expects a value to be returned at the end of arrow function  array-callback-return
+frontend-transcendence |
+frontend-transcendence | src/pages/404NotFound.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Body.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:   'useEffect' is defined but never used              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:   'Dispatch' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:   'SetStateAction' is defined but never used         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 14:10:  'users' is assigned a value but never used         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 14:17:  'setUsers' is assigned a value but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:11:  'userstate' is assigned a value but never used     @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:22:  'setUserState' is assigned a value but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Header.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'Dispatch' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:  'SetStateAction' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Home.tsx
+frontend-transcendence |   Line 7:8:   'onMainPage' is assigned a value but never used                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 12:4:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/pages/Login2FA.tsx
+frontend-transcendence |   Line 1:17:   'Component' is defined but never used                                                                      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 64:16:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/pages/MainPage.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:   'Dispatch' is defined but never used                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:   'SetStateAction' is defined but never used                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:10:   'useNavigate' is defined but never used                                     @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 3:10:   'Socket' is defined but never used                                          @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 5:10:   'cp' is defined but never used                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:10:   'Channel' is defined but never used                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:19:   'channel' is defined but never used                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:10:   'collapseTextChangeRangesAcrossMultipleVersions' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:58:   'createEmitAndSemanticDiagnosticsBuilderProgram' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:106:  'isPropertySignature' is defined but never used                             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 8:10:   'join' is defined but never used                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Profil.tsx
+frontend-transcendence |   Line 2:23:   'useLocation' is defined but never used                                                                                                   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 13:10:  'Socket' is defined but never used                                                                                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:8:   'Message' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 16:8:   'Conversation' is defined but never used                                                                                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 42:5:   React Hook useEffect has a missing dependency: 'idstring.id'. Either include it or remove the dependency array                            react-hooks/exhaustive-deps
+frontend-transcendence |   Line 42:6:   React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 63:5:   React Hook useEffect has missing dependencies: 'id' and 'matchID'. Either include them or remove the dependency array                     react-hooks/exhaustive-deps
+frontend-transcendence |   Line 105:6:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                 jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | Search for the keywords to learn more about each warning.
+frontend-transcendence | To ignore, add // eslint-disable-next-line to the line before.
+frontend-transcendence |
+frontend-transcendence | assets by info 37 KiB [immutable] 24 assets
+frontend-transcendence | + 16 assets
+frontend-transcendence | runtime modules 28.5 KiB 14 modules
+frontend-transcendence | javascript modules 5.58 MiB
+frontend-transcendence |   modules by path ./node_modules/ 3.51 MiB 166 modules
+frontend-transcendence |   modules by path ./src/ 2.07 MiB 78 modules
+frontend-transcendence | asset modules 5.38 KiB (javascript) 37 KiB (asset)
+frontend-transcendence |   modules by path ./ 1010 bytes (javascript) 37 KiB (asset)
+frontend-transcendence |     ./src/asset/addGroupIcon_blue.svg 42 bytes (javascript) 3.36 KiB (asset) [built] [code generated]
+frontend-transcendence |     ./src/asset/AddGroupIcon_red.svg 42 bytes (javascript) 3.38 KiB (asset) [built] [code generated]
+frontend-transcendence |     + 22 modules
+frontend-transcendence |   modules by mime type image/svg+xml 4.4 KiB
+frontend-transcendence |     data:image/svg+xml,%3csvg xmlns=%27.. 281 bytes [built] [code generated]
+frontend-transcendence |     data:image/svg+xml,%3csvg xmlns=%27.. 279 bytes [built] [code generated]
+frontend-transcendence |     + 14 modules
+frontend-transcendence |
+frontend-transcendence | WARNING in ./node_modules/bootstrap/dist/css/bootstrap.css (./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[5].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[5].use[2]!./node_modules/source-map-loader/dist/cjs.js!./node_modules/bootstrap/dist/css/bootstrap.css)
+frontend-transcendence | Module Warning (from ./node_modules/postcss-loader/dist/cjs.js):
+frontend-transcendence | Warning
+frontend-transcendence |
+frontend-transcendence | (2482:3) autoprefixer: Replace color-adjust to print-color-adjust. The color-adjust shorthand is currently deprecated.
+frontend-transcendence |  @ ./node_modules/bootstrap/dist/css/bootstrap.css 8:6-245 22:17-24 26:7-21 58:25-39 59:36-47 59:50-64 63:6-73:7 64:54-65 64:68-82 70:42-53 70:56-70 72:21-28 83:0-215 83:0-215 84:22-29 84:33-47 84:50-64 61:4-74:5
+frontend-transcendence |  @ ./src/index.tsx 7:0-42
+frontend-transcendence |
+frontend-transcendence | WARNING in src/App.tsx
+frontend-transcendence |   Line 2:10:   'useState' is defined but never used              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:20:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 18:8:   'Loader' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 19:8:   'socketIOClient' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 20:10:  'Socket' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 21:10:  'DefaultEventsMap' is defined but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 33:11:  'ServerToClientEvents' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 39:11:  'ClientToServerEvents' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Achievement.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:9:   'getSucces' is assigned a value but never used                                                             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:20:  'setGetSucces' is assigned a value but never used                                                          @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 43:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |   Line 44:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |   Line 45:80:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/components/Avatar.tsx
+frontend-transcendence |   Line 1:17:   'Component' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 50:20:  Expected '!==' and instead saw '!='    eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/Chat.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 3:8:   'statusIconRed' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/ChatSectionUsers.tsx
+frontend-transcendence |   Line 46:10:  'friendsState' is assigned a value but never used                                                               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 46:24:  'setFriendsState' is assigned a value but never used                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 48:10:  'friendRequestsSent' is assigned a value but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 48:30:  'setFriendRequestsSent' is assigned a value but never used                                                      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 81:5:   React Hook useEffect has a missing dependency: 'searchValue'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 91:28:  Array.prototype.map() expects a return value from arrow function                                                array-callback-return
+frontend-transcendence |
+frontend-transcendence | src/components/HistoryCard.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 38:13:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 39:13:  Expected '!==' and instead saw '!='   eqeqeq
+frontend-transcendence |   Line 44:13:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 45:13:  Expected '!==' and instead saw '!='   eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/HistoryMatch.tsx
+frontend-transcendence |   Line 1:27:  'Component' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:38:  'useState' is defined but never used                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'useEffect' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:10:  'createAdd' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 24:8:  'defaultAvatar' is assigned a value but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Notification.tsx
+frontend-transcendence |   Line 2:27:   'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 35:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 37:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 39:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 45:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 53:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 61:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 73:31:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 81:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |   Line 89:36:  Expected '===' and instead saw '=='   eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/NotificationList.tsx
+frontend-transcendence |   Line 2:27:   'Component' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:38:   'useState' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:8:    'socketIOClient' is defined but never used
+                                                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 30:12:  Expected '!==' and instead saw '!='
+                                                                              eqeqeq
+frontend-transcendence |   Line 60:5:   React Hook useEffect has a missing dependency: 'socket'. Either include it or remove the dependency array
+                                                                              react-hooks/exhaustive-deps
+frontend-transcendence |   Line 64:5:   React Hook useEffect has a missing dependency: 'notifications'. Either include it or remove the dependency array. You can also replace multiple useState variables with useReducer if 'setNewNotifsLength' needs the current value of 'notifications'  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelCreationSettings.tsx
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelsJoined.tsx
+frontend-transcendence |   Line 1:27:   'useEffect' is defined but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 18:14:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |   Line 18:76:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |
+frontend-transcendence | src/components/PrintChannelsToJoin.tsx
+frontend-transcendence |   Line 1:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintFriendProfile.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used
+                                                                                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 37:5:   React Hook useEffect has a missing dependency: 'props.user.avatarId'. Either include it or remove the dependency array. If 'setProfileAvatar' needs the current value of 'props.user.avatarId', you can also switch to useReducer instead of useState and read 'props.user.avatarId' in the reducer  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 48:73:  Expected '!==' and instead saw '!='
+                                                                                                                            eqeqeq
+frontend-transcendence |
+frontend-transcendence | src/components/PrintFriendToAddChannel.tsx
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintNormalFriendProfile.tsx
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/PrintSendFriendRequestProfile.tsx
+frontend-transcendence |   Line 1:38:  'Dispatch' is defined but never used
+                                                                                                                           @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'SetStateAction' is defined but never used
+                                                                                                                           @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 26:5:  React Hook useEffect has a missing dependency: 'props.user.avatarId'. Either include it or remove the dependency array. If 'setProfileAvatar' needs the current value of 'props.user.avatarId', you can also switch to useReducer instead of useState and read 'props.user.avatarId' in the reducer  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/PrintUnfriendBlockProfile.tsx
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/components/Pseudo.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used                                                                   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 27:5:  React Hook useEffect has a missing dependency: 'id'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+frontend-transcendence |
+frontend-transcendence | src/components/SearchBarAddGroup.tsx
+frontend-transcendence |   Line 1:37:   'useEffect' is defined but never used                                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 78:27:  Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |   Line 86:7:   Unexpected mix of '&&' and '||'. Use parentheses to clarify the intended order of operations  no-mixed-operators
+frontend-transcendence |
+frontend-transcendence | src/components/ToggleQRcode.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 30:4:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/components/UserList.tsx
+frontend-transcendence |   Line 1:17:    'useState' is defined but never used                                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:    'useEffect' is defined but never used                                                 @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:8:     'PrintInvitationSentProfile' is defined but never used                                @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:8:     'PrintUserFriendRequestReceived' is defined but never used                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 120:22:  Array.prototype.filter() expects a value to be returned at the end of arrow function  array-callback-return
+frontend-transcendence |
+frontend-transcendence | src/pages/404NotFound.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Body.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:   'useEffect' is defined but never used              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:   'Dispatch' is defined but never used               @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:   'SetStateAction' is defined but never used         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 14:10:  'users' is assigned a value but never used         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 14:17:  'setUsers' is assigned a value but never used      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:11:  'userstate' is assigned a value but never used     @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:22:  'setUserState' is assigned a value but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Header.tsx
+frontend-transcendence |   Line 1:17:  'Fragment' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:27:  'useState' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:37:  'useEffect' is defined but never used       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:  'Dispatch' is defined but never used        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:  'SetStateAction' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Home.tsx
+frontend-transcendence |   Line 7:8:   'onMainPage' is assigned a value but never used                                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 12:4:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/pages/Login2FA.tsx
+frontend-transcendence |   Line 1:17:   'Component' is defined but never used                                                                      @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 64:16:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | src/pages/MainPage.tsx
+frontend-transcendence |   Line 1:17:   'Fragment' is defined but never used                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:48:   'Dispatch' is defined but never used                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 1:58:   'SetStateAction' is defined but never used                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 2:10:   'useNavigate' is defined but never used                                     @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 3:10:   'Socket' is defined but never used                                          @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 5:10:   'cp' is defined but never used                                              @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:10:   'Channel' is defined but never used                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 6:19:   'channel' is defined but never used                                         @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:10:   'collapseTextChangeRangesAcrossMultipleVersions' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:58:   'createEmitAndSemanticDiagnosticsBuilderProgram' is defined but never used  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 7:106:  'isPropertySignature' is defined but never used                             @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 8:10:   'join' is defined but never used                                            @typescript-eslint/no-unused-vars
+frontend-transcendence |
+frontend-transcendence | src/pages/Profil.tsx
+frontend-transcendence |   Line 2:23:   'useLocation' is defined but never used                                                                                                   @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 13:10:  'Socket' is defined but never used                                                                                                        @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 15:8:   'Message' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 16:8:   'Conversation' is defined but never used                                                                                                  @typescript-eslint/no-unused-vars
+frontend-transcendence |   Line 42:5:   React Hook useEffect has a missing dependency: 'idstring.id'. Either include it or remove the dependency array                            react-hooks/exhaustive-deps
+frontend-transcendence |   Line 42:6:   React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+frontend-transcendence |   Line 63:5:   React Hook useEffect has missing dependencies: 'id' and 'matchID'. Either include them or remove the dependency array                     react-hooks/exhaustive-deps
+frontend-transcendence |   Line 105:6:  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                 jsx-a11y/alt-text
+frontend-transcendence |
+frontend-transcendence | webpack 5.72.1 compiled with 2 warnings in 13260 ms
+frontend-transcendence | No issues found.

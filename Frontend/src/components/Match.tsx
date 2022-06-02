@@ -8,6 +8,7 @@ let finalScore = 10;
 let buttonAdder = 15;
 let ballSpeed = 20;
 let magicBallSpeed = ballSpeed;
+let accelerator = 2;
 
 function PlayerInput(this: any)
 {
@@ -15,6 +16,8 @@ function PlayerInput(this: any)
 	this.masterZ = false;
 	this.slaveA = false;
 	this.slaveZ = false;
+	this.masterAcc = 0;
+	this.slaveAcc = 0;
 }
 
 function Player(this: any, x: number, y: number, w: number, h: number, score: number)
@@ -116,21 +119,27 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 
 function playerMove(started: number, game: any, playerInput: any, width: number, height: number)
 {
-	if (playerInput.masterA === true && game.playerOne.y >= 0 && started === 1)
+	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1)
 	{
 		if (game.playerOne.y !== 0)
-			game.playerOne.y -= buttonAdder;
+			game.playerOne.y -= (buttonAdder + (playerInput.masterAcc += accelerator));
 	}
-	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && started === 1)
-		game.playerOne.y += buttonAdder;
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1)
+		game.playerOne.y += (buttonAdder + (playerInput.masterAcc += accelerator));
 
-	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && started === 1)
+	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1)
 	{
 		if (game.playerTwo.y !== 0)
-			game.playerTwo.y -= buttonAdder;
+			game.playerTwo.y -= (buttonAdder + (playerInput.slaveAcc += accelerator));
 	}
-	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && started === 1)
-		game.playerTwo.y += buttonAdder;
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1)
+		game.playerTwo.y += (buttonAdder + (playerInput.slaveAcc += accelerator));
+
+	if (playerInput.masterA === false && playerInput.masterZ === false)
+		playerInput.masterAcc = 0;
+
+	if (playerInput.slaveA === false && playerInput.slaveZ === false)
+		playerInput.slaveAcc = 0;
 }
 
 function printer(p5: any, data: any, width: number, height: number)
