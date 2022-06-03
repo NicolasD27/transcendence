@@ -181,7 +181,7 @@ export class ChannelService {
 		const tos = await this.moderationTimeOutRepo.find({
 			where: {
 				channel: myChannel,
-				// date: MoreThan(_now),
+				date: MoreThan(_now),
 			}
 		});
 		let restricted = [];
