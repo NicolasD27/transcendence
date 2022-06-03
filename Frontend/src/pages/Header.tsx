@@ -14,12 +14,13 @@ const Header : React.FC<PropsHeader> = (props) => {
 	const navigate = useNavigate()
 
 	const onPlay = () => {
-		props.socket.emit('find_match')
 		navigate("/mainpage")
+		window.location.reload()
 
 	}
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
+		window.location.reload()
 	}
 
 	const onLogout = () => {

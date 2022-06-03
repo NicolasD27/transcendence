@@ -142,10 +142,16 @@ function playerMove(started: number, game: any, playerInput: any, width: number,
 		playerInput.slaveAcc = 0;
 }
 
-function printer(p5: any, data: any, width: number, height: number)
+function printer(p5: any, data: any, width: number, height: number, type: string)
 {
+	if (type === "master")
+		p5.fill(p5.color(255, 0, 0));
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
+	p5.fill(p5.color(255, 255, 255));
+	if (type === "slave")
+		p5.fill(p5.color(255, 0, 0));
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
+	p5.fill(p5.color(255, 255, 255));
 
 	if (data.countdown !== 0)
 	{
@@ -240,7 +246,7 @@ export class Match extends React.Component<Props>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						printer(p5, data, this.state.width, this.state.height, this.type);
 					});
 
 					this.props.socket.on('masterToMasterKeyPressed', data =>
@@ -307,11 +313,8 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
+						this.props.socket.off('serverTick');
+						let winner: string = data;
 						p5.background(0);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
@@ -323,7 +326,7 @@ export class Match extends React.Component<Props>
 						if (data === this.slaveId)
 						{
 							this.props.socket.off('serverTick');
-							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0});
 						}
 					});
 
@@ -339,16 +342,13 @@ export class Match extends React.Component<Props>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						if (data)
+							printer(p5, data, this.state.width, this.state.height, this.type);
 					});
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
+						let winner: string = data;
 						p5.background(0);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
@@ -358,7 +358,7 @@ export class Match extends React.Component<Props>
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
 						if (data === this.masterId)
-							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0});
 					});
 
 				}
@@ -383,7 +383,7 @@ export class Match extends React.Component<Props>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						printer(p5, data, this.state.width, this.state.height, "");
 					});
 				}
 			});
