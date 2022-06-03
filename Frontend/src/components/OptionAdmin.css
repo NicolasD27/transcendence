@@ -1,0 +1,30 @@
+.optionArea {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 75%;
+	height: 100%;
+	gap: 10%;
+}
+
+.option {
+	width: 45%;
+	display: inline-block;
+	cursor: pointer;
+	color: #C0F4FE;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	font-size: 12px;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+	border-radius: 10px;
+}
+
+.option:hover {
+	color: #255784;
+	background: #C0F4FE;
+	-webkit-box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
+	box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
+}

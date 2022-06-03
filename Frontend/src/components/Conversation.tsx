@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Socket } from "socket.io";
 import Message from "./Message";
-import EditChannel from "./EditChannel";
+import ShowOptionAdmin from "./ShowOptionAdmin";
+import OptionAdmin from "./OptionAdmin";
 import './Conversation.css';
 
 import statusIconGreen from "../asset/statutIconGreen.svg"
@@ -29,36 +30,95 @@ interface userFormat {
 	username: string;
 	pseudo: string;
 	avatardId?: number;
-	status: number;
-	isTwoFactorEnable: boolean;
+}
+
+interface restrictedFormat {
+	id: number;
+	username: string;
+	pseudo: string;
+	avatardId?: number;
+	bannedtype: number;
 }
 
 const Conversation: React.FC<Props> = (props) => {
 	const [messages, setMessages] = React.useState<messagesFormat[]>([]);
 	const [tmptext, setTmpText] = React.useState("");
-	const [userPerso, setUserPerso] = React.useState<userFormat>();
+	const [showConv, setShowConv] = React.useState(true);
+
+	const [adminLevel, setAdminLevel] = React.useState(0);
+	const [activePass, setActivePass] = React.useState<boolean>(false);
+	const [users, setUsers] = React.useState<userFormat[]>([]);
+	const [moderators, setModeratos] = React.useState<userFormat[]>([]);
+	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
+	/*const [userPerso, setUserPerso] = React.useState<userFormat>();
 	const [userFriend, setUserFriend] = React.useState<userFormat>();
 
 	useEffect(() => {
 		if (props.type === "directMessage") {
-			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.id}`, { withCredentials: true })
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${props.id}`, { withCredentials: true })
 				.then(res => {
-					const friendships = res.data;
-					friendships.forEach(friendship => {
-						if (friendship.id === props.id) {
-							if (friendship.follower.id == props.idMe) {
-								setUserPerso(userPerso => friendship.follower)
-								setUserFriend(userFriend => friendship.following)
-							}
-							else {
-								setUserPerso(userPerso => friendship.following)
-								setUserFriend(userFriend => friendship.follower)
-							}
-						}
-					})
+					const friendship = res.data;
+					setUserFriend(userFriend => friendship.following)
+					console.log("UsernameFriend: " + friendship.username)
 				})
 		}
-	}, []);
+	}, []);*/
+
+	useEffect(() => {
+		if (props.type === "channel") {
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
+				.then(res => {
+					const infoChannel = res.data;
+					if (infoChannel.owner.id === props.idMe)
+						setAdminLevel(adminLevel => 1)
+					else {
+						infoChannel.moderators.forEach(element => {
+							if (element.id === props.idMe)
+								setAdminLevel(adminLevel => 2)
+						});
+					}
+					setActivePass(infoChannel.isProtected);
+					infoChannel.moderators.forEach((list: any) => {
+						let singleModerator: userFormat;
+						if (list.id !== props.idMe) {
+							if (list.avatarId === null)
+								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+							else
+								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleModerator = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId };
+							setModeratos(users => [...moderators, singleModerator]);
+						}
+					});
+					infoChannel.restricted.forEach((list: any) => {
+						let singleRestricted: restrictedFormat;
+						if (list.id !== props.idMe) {
+							if (list.avatarId === null)
+								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+							else
+								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, bannedtype: list.bannedState.type };
+							setUserRestricted(userRestricted => [...userRestricted, singleRestricted]);
+						}
+					});
+				})
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
+				.then(res => {
+					const tmpusers = res.data;
+					setUsers(users => [])
+					tmpusers.forEach((list: any) => {
+						let singleUser: userFormat;
+						if (list.id !== props.idMe) {
+							if (list.avatarId === null)
+								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+							else
+								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleUser = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId };
+							setUsers(users => [...users, singleUser]);
+						}
+					});
+				})
+		}
+	}, [showConv]);//Recuperer les infos du channels
 
 	useEffect(() => {
 		if (props.id > 0) {
@@ -81,7 +141,7 @@ const Conversation: React.FC<Props> = (props) => {
 			});
 			setMessages(messagesTri);
 		}
-	}, [props.id]);
+	}, [props.id]);//Recuperer les anciens messages
 
 	useEffect(() => {
 		if (props.socket) {
@@ -90,14 +150,12 @@ const Conversation: React.FC<Props> = (props) => {
 				props.socket.on('msg_to_client', (message) => { newMessageChannel(message); });
 			}
 			else if (props.type === "directMessage") {
-				console.log("Hola")
 				props.socket.on('direct_msg_to_client', (message) => {
 					newMessageDirect(message);
 				});
 			}
 		}
-		console.log("Type: " + props.type)
-	}, [props.socket]);
+	}, [props.socket]);//Ecouter les sockets
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTmpText(tmpText => e.target.value)
@@ -109,7 +167,7 @@ const Conversation: React.FC<Props> = (props) => {
 			content: tmptext,
 		}
 		const messageDirect = {
-			receiver: userFriend?.username,
+			receiver: props.nameChat,
 			content: tmptext,
 		}
 		if (tmptext !== "" && props.type === "channel")
@@ -154,24 +212,24 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	return (
-
 		<div className='convArea'>
 			<div id='chatTop'>
 				<button id='chatCloseButton' />
 				<div id="chatUsername">{props.nameChat}</div>
+				{props.type === "channel" && adminLevel > 0 && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>
-			<EditChannel id={props.id} />
-			<div className='messages'>
+			{showConv === true && <div className='messages'>
 				{messages.map((m, i) => (
 					<Message key={i} message={m.message} name={m.name} own={m.own} avatar={m.avatar} />
 				))}
-			</div>
-			<div className="sendText">
+			</div>}
+			{showConv === true && <div className="sendText">
 				<div className='writingText'>
 					<input type='text' name='typemessage' onChange={handleChange} value={tmptext} />
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
-			</div>
+			</div>}
+			{props.type === "channel" && showConv === false && <OptionAdmin socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} />}
 		</div>
 	);
 };
