@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 
 
 let playerWidth = 15;
-let finalScore = 10;
+let finalScore = 3;
 let buttonAdder = 15;
 let ballSpeed = 20;
 let magicBallSpeed = ballSpeed;
@@ -313,6 +313,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
+						this.started = -1;
 						this.props.socket.off('serverTick');
 						let winner: string = data;
 						p5.background(0);
@@ -323,7 +324,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.slaveId)
+						if (data === this.slaveId && this.started != -1)
 						{
 							this.props.socket.off('serverTick');
 							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0});
@@ -348,6 +349,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
+						this.started = -1;
 						let winner: string = data;
 						p5.background(0);
 						p5.fill(p5.color(255, 255, 255));
@@ -357,7 +359,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.masterId)
+						if (data === this.masterId && this.started != -1)
 							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0});
 					});
 
