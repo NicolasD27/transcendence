@@ -64,8 +64,8 @@
 }
 
 .gameArea {
-	width: calc(78% - 40px);
-	height: 100%;
+	width: 1200;
+	height: 750;
 	background:
 		linear-gradient(black, black) padding-box,
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;
@@ -89,7 +89,7 @@
 	display: flex;
 	flex-direction: column;
 	width: 22%;
-	height: 100%;
+	height: 750;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;
