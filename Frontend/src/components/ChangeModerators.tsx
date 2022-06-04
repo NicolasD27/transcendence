@@ -19,7 +19,7 @@ interface userFormat {
 	avatar: string;
 }
 
-const ChangeAdmin: React.FC<Props> = (props) => {
+const ChangeModerators: React.FC<Props> = (props) => {
 	const [filtreUsers, setFiltreUsers] = useState<userFormat[]>([])
 	const [selectedUsers, setSelectedUsers] = useState<userFormat[]>([])
 
@@ -37,9 +37,9 @@ const ChangeAdmin: React.FC<Props> = (props) => {
 					setFiltreUsers(filtreUsers => [...filtreUsers, list])
 			});
 		}
-		else
+		else if (props.mode === 5)
 			setFiltreUsers(props.moderators)
-	}, []);//Recuperer les anciens messages
+	}, []);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers.filter((friend: any) => friend.id === user.id).length === 0) {
@@ -92,4 +92,4 @@ const ChangeAdmin: React.FC<Props> = (props) => {
 	);
 };
 
-export default ChangeAdmin;
+export default ChangeModerators;

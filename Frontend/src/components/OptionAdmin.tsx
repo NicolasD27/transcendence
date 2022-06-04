@@ -1,6 +1,7 @@
 import React, { useState, Fragment, Dispatch, SetStateAction } from "react";
 import axios from "axios";
-import ChangeAdmin from "./ChangeAdmin";
+import ChangeModerators from "./ChangeModerators";
+import ChangeRestricted from "./ChangeRestricted";
 import './OptionAdmin.css';
 
 interface Props {
@@ -77,11 +78,11 @@ const OptionAdmin: React.FC<Props> = (props) => {
 				{props.id === 1 && props.activePass === false && <button className="option" onClick={() => changeStep(1)}>Add password</button>}
 				{props.id === 1 && props.activePass === true && <button className="option" onClick={() => changeStep(2)}>Remove password</button>}
 				{props.id === 1 && props.activePass === true && <button className="option" onClick={() => changeStep(3)}>Change password</button>}
-				{props.id === 1 && <button className="option" /*onClick={addAdmin}*/ onClick={() => changeStep(4)}>Add admin</button>}
-				{props.id === 1 && <button className="option" /*onClick={deleteAdmin}*/ onClick={() => changeStep(5)}>Remove admin</button>}
-				<button className="option" onClick={() => props.socket.emit('ban', { userId: 2, timeout: 20, channelId: 1 })}>Ban</button>
-				<button className="option" onClick={() => props.socket.emit('rescue', { userId: 2, channelId: 1 })}>Rescue</button>
-				<button className="option" onClick={() => props.socket.emit('mute', { userId: 2, timeout: 30, channelId: 1 })}>Mute</button>
+				{props.id === 1 && <button className="option" onClick={() => changeStep(4)}>Add admin</button>}
+				{props.id === 1 && <button className="option" onClick={() => changeStep(5)}>Remove admin</button>}
+				<button className="option" onClick={() => changeStep(6)}>Ban</button>
+				<button className="option" onClick={() => changeStep(7)}>Mute</button>
+				<button className="option" onClick={() => changeStep(8)}>Rescue</button>
 				<button className="option">Add to channel</button>
 			</div >}
 			{optionSelected === true && mode <= 3 && <div className="passwordArea">
@@ -95,7 +96,8 @@ const OptionAdmin: React.FC<Props> = (props) => {
 				</div>
 				<button onClick={() => handleSubmitPassword(mode)} className="option">Valider</button>
 			</div>}
-			{optionSelected === true && mode > 3 && <ChangeAdmin mode={mode} id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode >= 4 && mode <= 5 && <ChangeModerators mode={mode} id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode >= 6 && mode <= 8 && <ChangeRestricted socket={props.socket} mode={mode} id={props.id} users={props.users} userRestricted={props.userRestricted} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
 		</Fragment>
 	);
 };
