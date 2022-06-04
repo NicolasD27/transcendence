@@ -132,7 +132,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		//@UseGuards(WsGuard)
 		@SubscribeMessage('gameFinished')
 		async gameFinished(socket: CustomSocket, data: {match_id: string, winner: string, score1: number, score2: number}) {
-			console.log("ITS FINISHED")
+			this.logger.log("ITS FINISHED")
 			let match = await this.matchService.findOne(data.match_id);
 			match.status = MatchStatus.FINISHED;
 			match.winner = data.winner;
@@ -170,6 +170,5 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		handleDisconnect(client: CustomSocket, ...args) {
 			this.logger.log(`Client disconnected: ${client.id}`);
 			this.server.emit('clientDisconnect', getUsernameFromSocket(client));
-			console.log(args)
 		}
 }

@@ -65,11 +65,12 @@ const Profil = ({ socket }: { socket: any }) => {
 
 	const navigate = useNavigate()
 	const onPlay = () => {
-		navigate("")
+		navigate("/mainpage")
+		window.location.reload()
 	}
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
-		window.location.reload()//Necessaire
+		window.location.reload()
 	}
 	const onMainPage = () => {
 		navigate("/mainpage")
