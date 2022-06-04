@@ -30,6 +30,7 @@ interface userFormat {
 	username: string;
 	pseudo: string;
 	avatardId?: number;
+	avatar: string;
 }
 
 interface restrictedFormat {
@@ -37,6 +38,7 @@ interface restrictedFormat {
 	username: string;
 	pseudo: string;
 	avatardId?: number;
+	avatar: string;
 	bannedtype: number;
 }
 
@@ -48,7 +50,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [adminLevel, setAdminLevel] = React.useState(0);
 	const [activePass, setActivePass] = React.useState<boolean>(false);
 	const [users, setUsers] = React.useState<userFormat[]>([]);
-	const [moderators, setModeratos] = React.useState<userFormat[]>([]);
+	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
 	/*const [userPerso, setUserPerso] = React.useState<userFormat>();
 	const [userFriend, setUserFriend] = React.useState<userFormat>();
@@ -68,6 +70,8 @@ const Conversation: React.FC<Props> = (props) => {
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
 				.then(res => {
+					setModerators([])
+					setUserRestricted([])
 					const infoChannel = res.data;
 					if (infoChannel.owner.id === props.idMe)
 						setAdminLevel(adminLevel => 1)
@@ -82,21 +86,21 @@ const Conversation: React.FC<Props> = (props) => {
 						let singleModerator: userFormat;
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 							else
-								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
-							singleModerator = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId };
-							setModeratos(users => [...moderators, singleModerator]);
+								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleModerator = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar };
+							setModerators(moderators => [...moderators, singleModerator]);
 						}
 					});
 					infoChannel.restricted.forEach((list: any) => {
 						let singleRestricted: restrictedFormat;
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 							else
-								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
-							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, bannedtype: list.bannedState.type };
+								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar, bannedtype: list.bannedState.type };
 							setUserRestricted(userRestricted => [...userRestricted, singleRestricted]);
 						}
 					});
@@ -109,10 +113,10 @@ const Conversation: React.FC<Props> = (props) => {
 						let singleUser: userFormat;
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatarId = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 							else
-								list.avatarId = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
-							singleUser = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId };
+								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
+							singleUser = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar };
 							setUsers(users => [...users, singleUser]);
 						}
 					});
@@ -178,6 +182,12 @@ const Conversation: React.FC<Props> = (props) => {
 		setTmpText("");
 	}
 
+	const handleKeyPress = (event: any) => {
+		if (event.key === 'Enter') {
+			handleSubmit()
+		}
+	}
+
 	const newMessageChannel = (message: any) => {
 		let singleMessage: messagesFormat;
 		let avatartmp: string;
@@ -225,11 +235,11 @@ const Conversation: React.FC<Props> = (props) => {
 			</div>}
 			{showConv === true && <div className="sendText">
 				<div className='writingText'>
-					<input type='text' name='typemessage' onChange={handleChange} value={tmptext} />
+					<input type='text' name='typemessage' onChange={handleChange} value={tmptext} onKeyDown={handleKeyPress} />
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
 		</div>
 	);
 };

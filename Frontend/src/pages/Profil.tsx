@@ -91,13 +91,6 @@ const Profil = ({ socket }: { socket: any }) => {
 		setGetIDMe(getIDMe => true)
 	}
 
-	/*useEffect(() => {
-		const matchTri = [...matchID].sort((a, b) => {
-			return b.idMatch - a.idMatch;
-		});
-		setMatchID(matchTri)
-	}, [matchID.length])*/
-
 	return (
 		<Fragment>
 			<div id='bloc'>
