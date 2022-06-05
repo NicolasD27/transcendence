@@ -52,19 +52,6 @@ const Conversation: React.FC<Props> = (props) => {
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
-	/*const [userPerso, setUserPerso] = React.useState<userFormat>();
-	const [userFriend, setUserFriend] = React.useState<userFormat>();
-
-	useEffect(() => {
-		if (props.type === "directMessage") {
-			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${props.id}`, { withCredentials: true })
-				.then(res => {
-					const friendship = res.data;
-					setUserFriend(userFriend => friendship.following)
-					console.log("UsernameFriend: " + friendship.username)
-				})
-		}
-	}, []);*/
 
 	useEffect(() => {
 		if (props.type === "channel") {

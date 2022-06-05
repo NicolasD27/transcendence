@@ -7,7 +7,6 @@ interface Props {
 }
 
 const ShowOptionAdmin: React.FC<Props> = (props) => {
-
 	return (
 		<div>
 			{props.showConv === true && <button className="OptionAdmindButton" onClick={() => props.setShowConv(false)} />}
