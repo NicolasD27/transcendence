@@ -59,6 +59,7 @@ const Conversation: React.FC<Props> = (props) => {
 				.then(res => {
 					setModerators([])
 					setUserRestricted([])
+					setAdminLevel(0)
 					const infoChannel = res.data;
 					if (infoChannel.owner.id === props.idMe)
 						setAdminLevel(adminLevel => 1)
@@ -122,17 +123,16 @@ const Conversation: React.FC<Props> = (props) => {
 				.then(res => {
 					setMessages(messages => []);
 					const prevMessages = res.data;
+					const messagesTri = [...prevMessages].sort((a, b) => {
+						return a.id - b.id;
+					});
 					if (props.type === "channel")
-						prevMessages.forEach((list: any) => { newMessageChannel(list); });
+						messagesTri.forEach((list: any) => { newMessageChannel(list); });
 					else if (props.type === "directMessage")
-						prevMessages.forEach((list: any) => { newMessageDirect(list); });
+						messagesTri.forEach((list: any) => { newMessageDirect(list); });
 				})
-			const messagesTri = [...messages].sort((a, b) => {
-				return b.id - a.id;
-			});
-			setMessages(messagesTri);
 		}
-	}, [props.id]);//Recuperer les anciens messages
+	}, [props.id, showConv]);//Recuperer les anciens messages
 
 	useEffect(() => {
 		if (props.socket) {
@@ -213,7 +213,7 @@ const Conversation: React.FC<Props> = (props) => {
 			<div id='chatTop'>
 				<button id='chatCloseButton' />
 				<div id="chatUsername">{props.nameChat}</div>
-				{props.type === "channel" && adminLevel > 0 && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
+				{props.type === "channel" && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>
 			{showConv === true && <div className='messages'>
 				{messages.map((m, i) => (
@@ -226,7 +226,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
 		</div>
 	);
 };

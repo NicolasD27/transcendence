@@ -49,37 +49,18 @@ const AddUser: React.FC<Props> = (props) => {
 		}
 		else
 			setSearchUsers([])
-	}, [searchValue, selectedUsers]) //Change selectedUsers
-
-
-	/*useEffect(() => {
-		let searchTmp = searchUsers;
-		let idTmp: number;
-		selectedUsers.forEach((select: any) => {
-			idTmp = 0
-			searchUsers.forEach((search: any) => {
-				if (select.id === search.id) {
-					searchTmp = searchUsers
-					idTmp = search.id
-				}
-			})
-			if (idTmp != 0) {
-				setSearchUsers([])
-				searchTmp.forEach((tmp: any) => {
-					if (tmp.id !== idTmp)
-						setSearchUsers(searchUsers => [...searchUsers, tmp])
-				})
-			}
-		})
-	}, [selectedUsers])*/
+	}, [searchValue]) //Change selectedUsers
 
 	const handleChangeAfter = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(searchValue => e.target.value)
+		setSelectedUsers([])
 	}
 
 	const handleSubmitUser = () => {
-		axios.put(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, {}, { withCredentials: true })
-			.then(res => { })
+		selectedUsers.forEach((list: any) => {
+			props.socket.emit('sendInvite', { channelId: props.id, userId: list.id });
+		});
+		setSelectedUsers([])
 		setSearchValue("")
 		props.setOptionSelected(false)
 		props.setShowConv(true)
@@ -103,33 +84,17 @@ const AddUser: React.FC<Props> = (props) => {
 				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeAfter} value={searchValue} placeholder="______" />
 			</div>
 			<div className="userOptionArea">
-				{selectedUsers
-					.map((user1: userFormat, i) => {
-						return (
-							<div className='userOption' key={i}>
-								<div id='userAvatarIcon'>
-									<img src={user1.avatar} className="userAvatar" alt="defaultAvatar" />
-								</div>
-								<div className="usernameOption">{user1.pseudo}</div>
-								<div className='checkboxOption'>
-									<input type='checkbox' name="addFriendToChannelButton" checked id={user1.id.toString()} onChange={() => checkSelectionStatus(user1)} />
-									<label htmlFor={user1.id.toString()}></label>
-								</div>
-							</div>
-						)
-					})
-				}
 				{searchUsers
-					.map((user2: userFormat, i) => {
+					.map((user: userFormat, i) => {
 						return (
 							<div className='userOption' key={i}>
 								<div id='userAvatarIcon'>
-									<img src={user2.avatar} className="userAvatar" alt="defaultAvatar" />
+									<img src={user.avatar} className="userAvatar" alt="defaultAvatar" />
 								</div>
-								<div className="usernameOption">{user2.pseudo}</div>
+								<div className="usernameOption">{user.pseudo}</div>
 								<div className='checkboxOption'>
-									<input type='checkbox' name="addFriendToChannelButton" id={user2.id.toString()} onChange={() => checkSelectionStatus(user2)} />
-									<label htmlFor={user2.id.toString()}></label>
+									<input type='checkbox' name="addFriendToChannelButton" id={user.id.toString()} onChange={() => checkSelectionStatus(user)} />
+									<label htmlFor={user.id.toString()}></label>
 								</div>
 							</div>
 						)
