@@ -92,13 +92,6 @@ const Profil = ({ socket }: { socket: any }) => {
 		setGetIDMe(getIDMe => true)
 	}
 
-	/*useEffect(() => {
-		const matchTri = [...matchID].sort((a, b) => {
-			return b.idMatch - a.idMatch;
-		});
-		setMatchID(matchTri)
-	}, [matchID.length])*/
-
 	return (
 		<Fragment>
 			<div id='bloc'>
@@ -120,7 +113,7 @@ const Profil = ({ socket }: { socket: any }) => {
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					{/*idMe > 0 && <Conversation idMe={idMe} id={1} type={'channel'} nameChat={"string2"} socket={socket} />*/}
+					{/*idMe > 0 && <Conversation idMe={idMe} id={3} type={'channel'} nameChat={"string"} socket={socket} />*/}
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 			</div>
