@@ -80,11 +80,11 @@ const OptionAdmin: React.FC<Props> = (props) => {
 				{props.adminLevel === 1 && <button className="option" onClick={() => destroyChannel()}>Destroy Channel</button>}
 				{props.adminLevel !== 1 && <button className="option" onClick={() => leaveChannel()}>Leave Channel</button>}
 			</div >}
-			{optionSelected === true && mode <= 3 && <ChangePassword mode={mode} id={props.id} users={props.users} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode <= 3 && <ChangePassword mode={mode} id={props.id} users={props.users} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} activePass={props.activePass}/>}
 			{optionSelected === true && mode >= 4 && mode <= 5 && <ChangeModerators mode={mode} id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
-			{optionSelected === true && mode >= 6 && mode <= 8 && <ChangeRestricted socket={props.socket} mode={mode} id={props.id} users={props.users} userRestricted={props.userRestricted} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode >= 6 && mode <= 8 && <ChangeRestricted socket={props.socket} mode={mode} id={props.id} users={props.users} moderators={props.moderators} userRestricted={props.userRestricted} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
 			{optionSelected === true && mode === 9 && <AddUser socket={props.socket} id={props.id} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
-			{optionSelected === true && mode === 10 && <ChangeOwner id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode === 10 && <ChangeOwner id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} activePass={props.activePass}/>}
 		</Fragment>
 	);
 };

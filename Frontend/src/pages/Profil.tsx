@@ -113,7 +113,7 @@ const Profil = ({ socket }: { socket: any }) => {
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					{/*idMe > 0 && <Conversation idMe={idMe} id={3} type={'channel'} nameChat={"string"} socket={socket} />*/}
+					{idMe > 0 && <Conversation idMe={idMe} id={1} type={'channel'} nameChat={"string"} socket={socket} />}
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
 			</div>

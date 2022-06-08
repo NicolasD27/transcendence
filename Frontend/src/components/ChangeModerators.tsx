@@ -87,7 +87,8 @@ const ChangeModerators: React.FC<Props> = (props) => {
 					)
 				})
 			}
-			<button onClick={() => handleSubmitUsers(props.mode)} className="option">Valider</button>
+			{filtreUsers.length == 0 && <p  className="labelStyle">No users</p>}
+			{filtreUsers.length > 0 && <button onClick={() => handleSubmitUsers(props.mode)} className="option">Valider</button>}
 		</div>
 	);
 };

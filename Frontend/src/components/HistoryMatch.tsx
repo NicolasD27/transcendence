@@ -33,6 +33,7 @@ const HistoryMatch: React.FC<Props> = (props) => {
 						<HistoryCard key={i} winner={match.winner} namePlayer={match.nameP} nameOppenent={match.nameO} pseudoP={match.pseudoP} pseudoO={match.pseudoO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
 							scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
 					))}
+					{historys.length == 0 && <p  className="labelStyle">No match yet</p> }
 				</div>
 			</div>
 		</Fragment>

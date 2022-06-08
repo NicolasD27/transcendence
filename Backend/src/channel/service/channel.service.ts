@@ -153,7 +153,7 @@ export class ChannelService {
 			throw new NotFoundException(`Username ${username} not found`);
 		// const myUser = await this.userRepo.findOne(1);
 		const myChannel = await this.channelRepo.findOne(id);
-		if (! myChannel || myChannel.isPrivate)
+		if (! myChannel)
 			throw new NotFoundException(`Channel #${id} not found`);
 		const myParticipation = await this.participationRepo.findOne({
 			where: {
@@ -516,7 +516,7 @@ export class ChannelService {
 		const _now = new Date();
 		const tos = await this.moderationTimeOutRepo.find({
 			where: {
-				channel: myChannel,
+				channel: myChannel, 
 				user: myUser,
 				date: MoreThan(_now),
 			}
@@ -640,6 +640,7 @@ export class ChannelService {
 			}
 			myChannel.hashedPassword = await bcrypt.hash(updateChannelDto.newPassword, this.saltRounds);
 			await this.channelRepo.save(myChannel);
+			console.log(myChannel)
 		}
 		else
 		{
