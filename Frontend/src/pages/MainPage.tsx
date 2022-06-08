@@ -10,8 +10,9 @@ import NotificationList from '../components/NotificationList';
 import './MainPage.css'
 import Header from './Header'
 import Body from './Body'
+import { chatStateFormat } from '../App';
 
-const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked}: {socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>}) => {
+const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState}: {socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 
@@ -27,7 +28,7 @@ const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClick
 	return (
 		<div id='bloc'>
 			<Header idMe={idMe} socket={socket}/>
-			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
+			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>
 			{getIDMe && <NotificationList myId={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>
 	);

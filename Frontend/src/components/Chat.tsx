@@ -2,33 +2,28 @@ import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'r
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
 import user1 from "../asset/friend1.svg"
+import ChatSectionUsers from './ChatSectionUsers';
+import Conversation from './Conversation';
+import { chatStateFormat } from '../App';
 
 export interface PropsChat {
-	setChatFriendState : Dispatch<SetStateAction<boolean>>;
+	idMe : number;
+	socket : any;
+	chatParamsState : chatStateFormat;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 const Chat : React.FC<PropsChat> = (props) => {
-	const username = "Leslie Alexander"
-	//const friendName = username.replace(/ /g, "\n");
+	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "directMessage" })
+	const idMe = props.idMe;
 
 	return (
-		<div className='chatArea'>
-			<div id='chatTop'>
-				<button id='chatCloseButton' onClick={() => props.setChatFriendState(false)}/>
-				<div id='friendChatAvatarIcon'>
-					<img src={user1} className="friendchatAvatar" alt="friendAvatar"/>
-					<img src={statusIconGreen} className="friendchaStatusIcon" alt="friendchaStatusIcon"/>
-				</div>
-				<div id="chatUsername">{username}</div>
-			</div>
-			<div className='messageArea'></div>
-			<div id="sendTextArea">
-				<div id='writingTextArea'>
-					<input type='text' placeholder='Aa' name='searchFriend'  /*onChange={handleSearchRequest}*/ />
-				</div>
-				<button id="sendTextIcon"/>
-			</div>
-		</div>
+		<>
+			{!props.chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} />}
+			{ chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState}/>}
+		</>
 	)
 }
 

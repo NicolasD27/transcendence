@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import {FriendsFormat, PropsStateChannel} from './ChatSectionUsers'
-import { chatStateFormat } from '../pages/Body'
+import { chatStateFormat } from '../App'
 
 interface PropsPrintChannelsJoined {
 	channel : PropsStateChannel;

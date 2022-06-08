@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
-import { chatStateFormat } from '../pages/Body';
+import { chatStateFormat } from '../App';
 import { PropsStateUsers } from './ChatSectionUsers'
 
 interface PropsPrintNormalFriendProfile {

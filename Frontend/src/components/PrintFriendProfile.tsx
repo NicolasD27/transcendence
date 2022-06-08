@@ -5,7 +5,7 @@ import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import {FriendsFormat} from './ChatSectionUsers'
 import {PropsStateUsers} from './ChatSectionUsers'
-import { chatStateFormat } from '../pages/Body';
+import { chatStateFormat } from '../App';
 
 interface PropsPrintFriendProfile {
 	friends: FriendsFormat[];
@@ -34,10 +34,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 
 	useEffect(() => {
 		if (props.user.avatarId != null)
-		{
-			console.log("catching avatar !!")
 			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
-		}
 	}, [])
 
 

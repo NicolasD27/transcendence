@@ -11,7 +11,7 @@ import PrintFriendProfile from './PrintFriendProfile'
 import { PropsStateChannel } from './ChatSectionUsers'
 import { FriendsFormat } from './ChatSectionUsers'
 import { PropsStateUsers } from './ChatSectionUsers'
-import { chatStateFormat } from '../pages/Body'
+import { chatStateFormat } from '../App'
 
 interface  PropsUserList {
 	idMe : number;
@@ -70,10 +70,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const sendFriendshipRequest = (user:PropsStateUsers) => {
 		if (props.socket)
 		{
-			console.log("sendFriendRequest")
 			props.socket.emit('sendFriendRequest', {user_id: user.id})
 			props.setFriendRequestsSent(friendRequestsSent => [...friendRequestsSent, user.id])
-			//props.setIsButtonClicked(true)
 		}
 	}
 

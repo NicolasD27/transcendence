@@ -7,7 +7,7 @@ import Message from "./Message";
 import ShowOptionAdmin from "./ShowOptionAdmin";
 import OptionAdmin from "./OptionAdmin";
 import './Conversation.css';
-import { chatStateFormat } from "../pages/Body";
+import { chatStateFormat } from "../App";
 import statusIconGreen from "../asset/statutIconGreen.svg"
 import user1 from "../asset/friend1.svg"
 

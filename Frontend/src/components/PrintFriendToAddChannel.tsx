@@ -43,10 +43,7 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 					let statusIcon = (user.status === 1 ? statusIconGreen : statusIconRed)
 
 					if (user.avatarId != null)
-					{
-						console.log("catching avatar !!")
 						setProfileAvatar(`http://localhost:8000/api/database-files/${user.avatarId}`)
-					}
 
 					return (
 						<div className='user' key={user.id}>

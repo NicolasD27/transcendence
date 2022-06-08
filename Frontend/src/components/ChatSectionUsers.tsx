@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
 import { isConstructorDeclaration } from 'typescript';
-import { chatStateFormat } from '../pages/Body'
+import { chatStateFormat } from '../App'
 
 interface PropsSectionUsers {
 	socket : any;
@@ -58,7 +58,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 		{
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users?search=${searchValue}`, {withCredentials: true})
-				.then ((response) => {setSearchUsers(response.data); console.log("searchuser: ", searchUsers)})
+				.then ((response) => setSearchUsers(response.data))
 				.catch((error) => console.log(error))
 		}
 	}, [searchValue])
@@ -89,7 +89,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
 					let users = res.data;
-					console.log("Data00: ", users)
 					setFriends([])
 					users.map((friendship:any) => {
 						let friends_tmp : FriendsFormat;
@@ -129,7 +128,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
 					let users = res.data;
-					console.log("Data01: ", users)
 					setFriendRequestReceived([])
 					users.map((friendship:any) => {
 						let friends_tmp : FriendsFormat;
@@ -170,9 +168,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				)
 			})
 	}
-		console.log("friendRequestsSent:", friendRequestsSent)
-		console.log("friendRequestReceived: ", friendRequestReceived)
-		console.log("friends: ", friends)
 
 	return (
 		<div className='chatArea'>

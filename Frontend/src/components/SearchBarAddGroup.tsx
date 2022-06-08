@@ -59,9 +59,6 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 			.catch((err) => console.log(err.data))
 	}
 
-	/*useEffect(() => {
-		console.log('selectedFriend: ' , selectedFriend)
-	}, [selectedFriend])*/
 
 	return (
 		<>
