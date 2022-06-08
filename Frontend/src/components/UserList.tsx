@@ -23,8 +23,8 @@ interface  PropsUserList {
 	friends: FriendsFormat[];
 	friendRequestsSent : number[];
 	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
-	friendRequestReceived : FriendsFormat[];
-	setFriendRequestReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
+	friendRequestsReceived : FriendsFormat[];
+	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
 	searchValue: string;
 	setSearchValue : Dispatch<SetStateAction<string>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
@@ -41,9 +41,9 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friends = props.friends
 	const searchValue = props.searchValue
 	const searchUsers = props.searchUsers
-	const friendRequestReceived = props.friendRequestReceived;
+	const friendRequestsReceived = props.friendRequestsReceived;
 	const friendRequestsSent = props.friendRequestsSent;
-	const setFriendRequestReceived = props.setFriendRequestReceived;
+	const setFriendRequestsReceived = props.setFriendRequestsReceived;
 	//const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
 
 	const isAlreadyFriend = (id:number) => {
@@ -74,19 +74,19 @@ const UserList : React.FC<PropsUserList> = (props) => {
 
 	const isThereAFriendshipRequestReceived = (id:number) => {
 
-		for(let i = 0; i < friendRequestReceived.length; i++ )
+		for(let i = 0; i < friendRequestsReceived.length; i++ )
 		{
-			if (friendRequestReceived[i].id === id)
+			if (friendRequestsReceived[i].id === id)
 				return true
 		}
 		return false
 	}
 
 	const catchFriendshipId = (id:number) => {
-		for(let i = 0; i < friendRequestReceived.length; i++ )
+		for(let i = 0; i < friendRequestsReceived.length; i++ )
 		{
-			if (friendRequestReceived[i].id === id)
-				return friendRequestReceived[i].friendshipId
+			if (friendRequestsReceived[i].id === id)
+				return friendRequestsReceived[i].friendshipId
 		}
 	}
 
@@ -112,8 +112,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	
 			//props.socket.emit('acceptFriendRequest', { friendship_id: friendshipId })
 			console.log("acceptFriendRequest !!!!!")
-			let friendsRequest_tmp = friendRequestReceived.filter((friend) => friend.id !== id)
-			setFriendRequestReceived(friendsRequest_tmp)
+			let friendsRequest_tmp = friendRequestsReceived.filter((friend) => friend.id !== id)
+			setFriendRequestsReceived(friendsRequest_tmp)
 			//props.setIsButtonClicked(true)
 			setFriends(friends => [...friends, friendshipInfo])
 		}

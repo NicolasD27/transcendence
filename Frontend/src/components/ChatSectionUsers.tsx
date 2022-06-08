@@ -17,8 +17,8 @@ interface PropsSectionUsers {
 	friends : FriendsFormat[];
 	friendRequestsSent : number[];
 	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
-	friendRequestReceived : FriendsFormat[];
-	setFriendRequestReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
+	friendRequestsReceived : FriendsFormat[];
+	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
 	/*chatChannelState : boolean;
 	setChatChannelState : Dispatch<SetStateAction<boolean>>;*/
 }
@@ -92,8 +92,8 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 					friends={props.friends}
 					friendRequestsSent={props.friendRequestsSent}
 					setFriendRequestsSent={props.setFriendRequestsSent}
-					friendRequestReceived={props.friendRequestReceived}
-					setFriendRequestReceived={props.setFriendRequestReceived}
+					friendRequestsReceived={props.friendRequestsReceived}
+					setFriendRequestsReceived={props.setFriendRequestsReceived}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
 					setChatParamsState={props.setChatParamsState}
