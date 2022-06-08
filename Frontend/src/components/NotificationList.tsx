@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Fragment, Component, useState, useEffect } from "react";
+import React, { Fragment, Component, useState, useEffect, Dispatch, SetStateAction } from "react";
 import Notification, { User } from "./Notification";
 import './NotificationList.css';
 import bell from '../asset/notification.svg';
@@ -17,11 +17,11 @@ export interface INotification {
 	name: string,
 	senderId: number,
 	awaitingAction: boolean,
-	secondName?: string
+	secondName?: string,
 }
 
 
-const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>}) => {
+const NotificationList = ({myId, socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>> }) => {
     const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
@@ -74,7 +74,7 @@ const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultE
 				<div className="notifications-list-container">
 
 					{notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification}/>
+						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
 						))}
 				</div>
 			</div>

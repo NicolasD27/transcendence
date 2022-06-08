@@ -30,8 +30,8 @@ interface  PropsUserList {
 	setSearchValue : Dispatch<SetStateAction<string>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
-	isButtonClicked : boolean;
-	setIsButtonClicked : Dispatch<SetStateAction<boolean>>;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 	/*chatChannelState : boolean;
 	setChatChannelState : Dispatch<SetStateAction<boolean>>;*/
 }
@@ -183,7 +183,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						else if (Boolean(isAlreadyFriend(user_.id)) === true)
 						{
 							return (
-								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setFriends={props.setFriends} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} isFriendshipButtonClicked={props.isFriendshipButtonClicked}/>
 							)
 						}
 						else
@@ -211,7 +211,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						.map((friend) => {
 							let statusIcon = (friend.status === 1 ? statusIconGreen : statusIconRed);
 							return (
-								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setFriends={props.setFriends} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} isFriendshipButtonClicked={props.isFriendshipButtonClicked}/>
 							)
 						})
 			}

@@ -11,7 +11,7 @@ import './MainPage.css'
 import Header from './Header'
 import Body from './Body'
 
-const MainPage = ({socket}: {socket: any}) => {
+const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked}: {socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 
@@ -27,8 +27,8 @@ const MainPage = ({socket}: {socket: any}) => {
 	return (
 		<div id='bloc'>
 			<Header idMe={idMe} socket={socket}/>
-			<Body idMe={idMe} socket={socket}/>
-			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
+			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
+			{getIDMe && <NotificationList myId={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>
 	);
 };

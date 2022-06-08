@@ -12,6 +12,8 @@ interface PropsSectionUsers {
 	//setUsers : Dispatch<SetStateAction<PropsStateUsers[]>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 	/*chatChannelState : boolean;
 	setChatChannelState : Dispatch<SetStateAction<boolean>>;*/
 }
@@ -46,7 +48,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	const [ joinedChannels, setJoinedChannels ] = useState<PropsStateChannel[]>([])
 	const [ joiningChannel, setJoiningChannel ] = useState(false)
 	const [ existingChannels, setExistingChannels ] = useState<PropsStateChannel[]>([])
-	const [ isButtonClicked, setIsButtonClicked ] = useState<boolean>(true)
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
 	const [ friendRequestReceived, setFriendRequestReceived ] = useState<FriendsFormat[]>([])
 	const [ searchValue, setSearchValue ] = useState("")
@@ -80,6 +81,46 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				console.log(err)
 			)
 	}, [])	
+
+	useEffect(() => {
+		if (props.idMe && props.isFriendshipButtonClicked === true)
+		{
+			axios
+				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
+				.then (res => {
+					let users = res.data;
+					console.log("Data00: ", users)
+					setFriends([])
+					users.map((friendship:any) => {
+						let friends_tmp : FriendsFormat;
+						if (friendship.following.id === props.idMe)
+						{
+							friends_tmp = { 
+								friendshipId : friendship.id,
+								id : friendship.follower.id ,
+								username : friendship.follower.username ,
+								pseudo : friendship.follower.pseudo ,
+								avatarId : friendship.follower.avatarId ,
+								status : friendship.follower.status
+							}
+						}
+						else {
+							friends_tmp = { 
+								friendshipId : friendship.id,
+								id : friendship.following.id ,
+								username : friendship.following.username ,
+								pseudo : friendship.following.pseudo ,
+								avatarId : friendship.following.avatarId ,
+								status : friendship.following.status
+							}
+						}
+						if (friendship.status === 1) 
+							setFriends(friends => [...friends, friends_tmp])
+					})
+			})
+			props.setIsFriendshipButtonClicked(false)
+		}
+	}, [props.idMe, props.isFriendshipButtonClicked])
 		
 	if (props.idMe)
 	{
@@ -88,7 +129,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
 					let users = res.data;
-					console.log("Data: ", users)
+					console.log("Data01: ", users)
 					setFriendRequestReceived([])
 					users.map((friendship:any) => {
 						let friends_tmp : FriendsFormat;
@@ -127,7 +168,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				.catch (err =>
 					console.log(err)
 				)
-				//setIsButtonClicked(false)
 			})
 	}
 		console.log("friendRequestsSent:", friendRequestsSent)
@@ -157,8 +197,8 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 					setSearchValue={setSearchValue}
 					setChatParamsState={props.setChatParamsState}
 					chatParamsState={props.chatParamsState}
-					isButtonClicked={isButtonClicked}
-					setIsButtonClicked={setIsButtonClicked}
+					isFriendshipButtonClicked={props.isFriendshipButtonClicked}
+					setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
 					/*chatChannelState={props.chatChannelState}
 					setChatChannelState={props.setChatChannelState}*/
 				/>

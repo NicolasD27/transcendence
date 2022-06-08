@@ -15,6 +15,8 @@ interface PropsPrintFriendProfile {
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
@@ -47,8 +49,9 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 				axios
 					.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
 					.then(() => {
-						const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
-						props.setFriends(newFriendsList)
+						/*const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
+						props.setFriends(newFriendsList)*/
+						props.setIsFriendshipButtonClicked(true)
 					})
 					.catch((err) =>
 						console.log(err))

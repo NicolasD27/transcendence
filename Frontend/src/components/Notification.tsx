@@ -19,13 +19,15 @@ interface Props {
 	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
-	socket: Socket
+	socket: Socket;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 
 
 
-const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket}) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
 	const navigate = useNavigate()
@@ -48,6 +50,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			.then(res => {
 				setAwaitingAction(false)
 				setNewNotifsLength(newNotifsLength - 1)
+				setIsFriendshipButtonClicked(true)
 			})
 		}
 		else if (notification.entityType == "Match")

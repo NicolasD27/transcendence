@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
@@ -15,7 +15,7 @@ import './MainPage.css'
 import Message from '../components/Message';//!TEST!
 import Conversation from '../components/Conversation';//!TEST!
 
-const Profil = ({ socket }: { socket: any }) => {
+const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked }: { socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>> }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -115,7 +115,7 @@ const Profil = ({ socket }: { socket: any }) => {
 					</div>
 					{/*idMe > 0 && <Conversation idMe={idMe} id={3} type={'channel'} nameChat={"string"} socket={socket} />*/}
 				</section>
-				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
+				{getIDMe && <NotificationList myId={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
 			</div>
 		</Fragment>
 	);

@@ -7,7 +7,9 @@ import Conversation from '../components/Conversation'
 
 interface PropsBody {
 	idMe: number;
-	socket: any
+	socket: any;
+	isFriendshipButtonClicked : boolean;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 export interface chatStateFormat {
@@ -23,13 +25,14 @@ const Body : React.FC<PropsBody> = (props) => {
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
 	const  [ userstate, setUserState ] = useState(false);
 	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "directMessage" })
+	//const [ isFriendshipButtonClicked, setIsFriendshipButtonClicked ] = useState<boolean>(true)
 	//const [ chatChannelState, setChatChannelState ] = useState(false)
 
 	return (
 		<section id="gameAndChatSection">
-			<div className='gameArea' id='gameArea'></div>
-			<Match socket={props.socket}/>
-			{(!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} /*users={users} setUsers={setUsers}*/ setChatParamsState={setChatParamsState} chatParamsState={chatParamsState}/*chatChannelState={chatState} setChatChannelState={setChatChannelState}*//>)}
+			{/*<div className='gameArea' id='gameArea'></div>
+			<Match socket={props.socket}/>*/}
+			{(!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} /*users={users} setUsers={setUsers}*/ setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/*chatChannelState={chatState} setChatChannelState={setChatChannelState}*//>)}
 			{ chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState}/>}
 		</section>
 	)
