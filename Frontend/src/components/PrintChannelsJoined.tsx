@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
-import {FriendsFormat, PropsStateChannel} from './ChatSectionUsers'
+import {FriendsFormat }  from './Chat'
+import { PropsStateChannel } from './ChatSectionUsers';
 import { chatStateFormat } from '../App'
 
 interface PropsPrintChannelsJoined {
 	channel : PropsStateChannel;
-	/*chatChannelState : boolean;*/
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 }

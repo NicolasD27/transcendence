@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
-import { FriendsFormat } from '../components/ChatSectionUsers'
+import { FriendsFormat } from '../components/Chat'
 
 interface PropsPrintUserFriendRequestReceived {
 	user :  PropsStateUsers;

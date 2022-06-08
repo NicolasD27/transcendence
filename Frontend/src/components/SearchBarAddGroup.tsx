@@ -3,7 +3,7 @@ import axios from 'axios'
 import PrintChannelCreationSettings from './PrintChannelCreationSettings'
 import PrintFriendToAddChannel from './PrintFriendToAddChannel'
 import searchIcon from '../asset/searchIcon.svg'
-import { FriendsFormat } from './ChatSectionUsers'
+import { FriendsFormat } from './Chat'
 
 interface PropsSearchBarAddGroup {
 	idMe : number;
@@ -33,7 +33,7 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 		props.setCreateChannelButtonState(!props.createChannelButtonState)
 	}
 
-	const createChannel = (/*channelName : () => void*/) => {
+	const createChannel = () => {
 		if (channelVisibilitySelected === "private")
 			setIsPrivate(true)
 		else if (channelVisibilitySelected === "protected")

@@ -117,7 +117,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 					</div>
 					<Chat idMe={idMe} socket={socket} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
 				</section>
-				{getIDMe && <NotificationList myId={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
+				{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
 			</div>
 		</Fragment>
 	);

@@ -21,7 +21,7 @@ export interface INotification {
 }
 
 
-const NotificationList = ({myId, socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>> }) => {
+const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>> }) => {
     const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
@@ -74,7 +74,7 @@ const NotificationList = ({myId, socket, isFriendshipButtonClicked, setIsFriends
 				<div className="notifications-list-container">
 
 					{notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
+						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
 						))}
 				</div>
 			</div>

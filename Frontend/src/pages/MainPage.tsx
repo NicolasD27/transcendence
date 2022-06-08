@@ -29,7 +29,7 @@ const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClick
 		<div id='bloc'>
 			<Header idMe={idMe} socket={socket}/>
 			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>
-			{getIDMe && <NotificationList myId={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
+			{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>
 	);
 };

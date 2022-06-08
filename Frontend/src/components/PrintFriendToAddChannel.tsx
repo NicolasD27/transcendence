@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'r
 import { useNavigate } from 'react-router-dom'
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
-import {FriendsFormat} from './ChatSectionUsers'
+import {FriendsFormat} from './Chat'
 
 interface PropsPrintFriendToAddChannel {
 	idMe : number;
