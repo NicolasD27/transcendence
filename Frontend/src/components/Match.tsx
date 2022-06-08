@@ -1,10 +1,14 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import Sketch from "react-p5";
-import { io, Socket } from "socket.io-client"
+import { Socket } from "socket.io-client"
 
 
 let playerWidth = 15;
-let finalScore = 10;
+let finalScore = 3;
+let buttonAdder = 15;
+let ballSpeed = 20;
+let magicBallSpeed = ballSpeed;
+let accelerator = 2;
 
 function PlayerInput(this: any)
 {
@@ -12,6 +16,8 @@ function PlayerInput(this: any)
 	this.masterZ = false;
 	this.slaveA = false;
 	this.slaveZ = false;
+	this.masterAcc = 0;
+	this.slaveAcc = 0;
 }
 
 function Player(this: any, x: number, y: number, w: number, h: number, score: number)
@@ -33,17 +39,13 @@ function Ball(this: any, x: number, y: number, xv: number, yv: number, xr: numbe
 	this.yr = yr;
 }
 
-function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number)
+function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number, mode: string)
 {
 	this.playerOne = playerOne;
 	this.playerTwo = playerTwo;
 	this.ball = ball;
 	this.countdown = cd;
-}
-
-function rand(min: number, max: number)
-{
-	return Math.random() * (max - min) + min;
+	this.mode = mode;
 }
 
 function negRand()
@@ -56,37 +58,55 @@ function negRand()
 
 function gameEngine(game: any, socket: Socket, match_id: number, width: number, height: number)
 {
-	game.playerTwo.x = width - playerWidth
 	if(game.ball.x + game.ball.xv > width - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr )
 	{
 		if (game.ball.x + game.ball.xv > width - game.ball.xr)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
-				game.ball.xv = -game.ball.xv;
+			{
+				if (game.mode === "HARDCORE")
+					magicBallSpeed += 5;	//for special mode
+
+				var relativeIntersectY = (game.playerTwo.y + 50) - game.ball.y;
+				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
+				var bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
+				game.ball.xv = -(magicBallSpeed * Math.cos(bounceAngle));
+				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
+			}
 			else
 			{
 				game.playerOne.score++;
+				magicBallSpeed = ballSpeed;
 				socket.emit('masterScored', {match_id: match_id});
 				delete game.ball;
 
-				var a2 = rand(80, 120);
-				var b2 = 200 - a2;
-				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20);
+
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
 		else if (game.ball.x + game.ball.xv < game.ball.xr)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
-				game.ball.xv = -game.ball.xv;
+			{
+				if (game.mode === "HARDCORE")
+					magicBallSpeed += 5;	//for special mode
+
+				relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
+				normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
+				bounceAngle = normalizedRelativeIntersectionY * (5 * Math.PI / 12);
+				game.ball.xv = magicBallSpeed * Math.cos(bounceAngle);
+				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
+			}
 			else
 			{
 				game.playerTwo.score++;
+				magicBallSpeed = ballSpeed;
 				socket.emit('slaveScored', {match_id: match_id});
 				delete game.ball;
 
-				var a22 = rand(80, 120);
-				var b22 = 200 - a22;
-				game.ball = new Ball(width / 2, height / 2, Math.sqrt(a22) * negRand(), Math.sqrt(b22) * negRand(), 20, 20);
+				game.ball = new Ball(width / 2, height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
 	}
@@ -99,43 +119,55 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 
 function playerMove(started: number, game: any, playerInput: any, width: number, height: number)
 {
-	if (playerInput.masterA === true && game.playerOne.y >= 0 && started === 1)
+	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1)
 	{
 		if (game.playerOne.y !== 0)
-			game.playerOne.y -= 5;
+			game.playerOne.y -= (buttonAdder + (playerInput.masterAcc += accelerator));
 	}
-	if (playerInput.masterZ === true && game.playerOne.y < height - 100 && started === 1)
-		game.playerOne.y += 5;
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1)
+		game.playerOne.y += (buttonAdder + (playerInput.masterAcc += accelerator));
 
-	if (playerInput.slaveA === true && game.playerTwo.y >= 0 && started === 1)
+	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1)
 	{
 		if (game.playerTwo.y !== 0)
-			game.playerTwo.y -= 5;
+			game.playerTwo.y -= (buttonAdder + (playerInput.slaveAcc += accelerator));
 	}
-	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 && started === 1)
-		game.playerTwo.y += 5;
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1)
+		game.playerTwo.y += (buttonAdder + (playerInput.slaveAcc += accelerator));
+
+	if (playerInput.masterA === false && playerInput.masterZ === false)
+		playerInput.masterAcc = 0;
+
+	if (playerInput.slaveA === false && playerInput.slaveZ === false)
+		playerInput.slaveAcc = 0;
 }
 
-function printer(p5: any, data: any, width: number, height: number)
+function printer(p5: any, data: any, width: number, height: number, type: string)
 {
+	if (type === "master")
+		p5.fill(p5.color(255, 0, 0));
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
+	p5.fill(p5.color(255, 255, 255));
+	if (type === "slave")
+		p5.fill(p5.color(255, 0, 0));
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
+	p5.fill(p5.color(255, 255, 255));
 
-	//ajouter une ligne verticale ?
-
-	if (data.countdown != 0)
+	if (data.countdown !== 0)
 	{
 		p5.textSize(200);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text(data.countdown, width / 2 - 50, height / 2 + 50);
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(data.countdown, width / 2, height / 2);
+		p5.textSize(50);
 	}
 	else
 	{
+		p5.rect(width / 2, 0, 2, height);
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
-		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text(data.playerOne.score, 440, 50);
-		p5.text(data.playerTwo.score, 540, 50);
+		p5.textAlign(p5.CENTER, p5.TOP);
+		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
 	}
 
 }
@@ -144,69 +176,46 @@ interface Props {
 	socket: any
 }
 
-export class Match extends React.Component<Props> 
+export class Match extends React.Component<Props>
 {
 	state = {
-		width: 954,
-		height: 532
+		width: 1200 - 8,
+		height: 750  - 8
 	}
 	type = "";
 	started = 0;
 	countdown = 3;
 	fq = 30;
 	match_id: number;
-	match_size: number;
 	slaveId: string;
 	masterId: string;
 	myId: string;
-	spacePressed = false;
+	leftClick = false;
+	modeSelected = false;
+	mode = "";
 
-	componentDidMount() {
-
-		const gameArea = document.getElementById("gameArea")
-		this.setState({
-			width: gameArea ? gameArea.offsetWidth - 8 : 954,
-			height: gameArea ? gameArea.offsetHeight - 8 : 532
-		})
-		window.addEventListener('resize', () => {
-			console.log("resized")
-			const gameArea = document.getElementById("gameArea")
-			const width = gameArea ? gameArea.offsetWidth : 954
-			const height = gameArea ? gameArea.offsetHeight : 532
-			this.setState({
-				width: width - 8,
-				height: height - 8
-			})
-			
-		})
-		
-	}
-
-	windowResized = (p5: any) => {
-		const gameArea = document.getElementById("gameArea")
-		const width = gameArea ? gameArea.offsetWidth : 954
-		const height = gameArea ? gameArea.offsetHeight : 532
-		p5.resizeCanvas(width - 8, height - 8, true)
-	}
-	
-
-	
 	setup = (p5: any) =>
 	{
 
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
-		p5.background(0);
+		p5.textFont('Tourney');
+		p5.clear()
+		p5.fill(p5.color(141, 141, 141));
+		p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
-		p5.text('Press SPACE to find a match', 220, this.state.height / 2);
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+		p5.fill(p5.color(255, 255, 255));
+		p5.textAlign(p5.CENTER, p5.CENTER);
+		p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
 
 		this.props.socket.on('launch_match', (data) =>
 		{
 			console.log("launching match...")
 			this.match_id = data.id;
-			this.match_size = data.room_size;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
 
@@ -219,27 +228,25 @@ export class Match extends React.Component<Props>
 				{
 					console.log("IM A MASTER")
 					this.type = "master";
-					var a2 = rand(80, 120);
-					var b2 = 200 - a2;
 
 					var game = new Game(
 						new Player(0, this.state.height / 2 - 50, playerWidth, 100, 0),
 						new Player(this.state.width - playerWidth, this.state.height / 2 - 50, playerWidth, 100, 0),
-						new Ball(this.state.width / 2, this.state.height / 2, Math.sqrt(a2) * negRand(), Math.sqrt(b2) * negRand(), 20, 20),
-						this.countdown);
+						new Ball(this.state.width / 2, this.state.height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+						(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
 
 					var playerInput = new PlayerInput();
 
 					p5.background(0);
-					p5.textSize(50);
 					p5.fill(p5.color(255, 255, 255));
-					p5.text('Waiting for other player...', 120, this.state.height / 2);
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text('Waiting for other player...', this.state.width / 2, this.state.height / 2);
 
 					this.props.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						printer(p5, data, this.state.width, this.state.height, this.type);
 					});
 
 					this.props.socket.on('masterToMasterKeyPressed', data =>
@@ -306,23 +313,21 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
+						this.started = -1;
+						this.props.socket.off('serverTick');
+						let winner: string = data;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.slaveId)
+						if (data === this.slaveId && this.started != -1)
 						{
 							this.props.socket.off('serverTick');
-							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score});
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0});
 						}
 					});
 
@@ -338,26 +343,24 @@ export class Match extends React.Component<Props>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						if (data)
+							printer(p5, data, this.state.width, this.state.height, this.type);
 					});
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
+						this.started = -1;
+						let winner: string = data;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.masterId)
-							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score});
+						if (data === this.masterId && this.started != -1)
+							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0});
 					});
 
 				}
@@ -373,16 +376,16 @@ export class Match extends React.Component<Props>
 						else
 							winner = this.slaveId;
 						p5.background(0);
-						p5.textSize(50);
 						p5.fill(p5.color(255, 255, 255));
-						p5.text(`The winner is : ${winner}`, 120, this.state.height / 2);
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('updateMatch', (data) =>
 					{
 						p5.clear();
 						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height);
+						printer(p5, data, this.state.width, this.state.height, "");
 					});
 				}
 			});
@@ -390,7 +393,56 @@ export class Match extends React.Component<Props>
 	}
 
 	draw = (p5: any) =>
-	{}
+	{
+		if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+			p5.mouseY > 0 && p5.mouseY < this.state.height)
+		{
+			p5.clear()
+			p5.fill(p5.color(141, 141, 141));
+			p5.rect(0, 0, this.state.width / 2, this.state.height);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+			if (this.leftClick === true)
+			{
+				this.mode = "NORMAL";
+				this.props.socket.emit('find_match');
+				this.modeSelected = true;
+				p5.background(0);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
+			}
+		}
+		else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+		p5.mouseY > 0 && p5.mouseY < this.state.height)
+		{
+			p5.clear()
+			p5.fill(p5.color(141, 141, 141));
+			p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+			if (this.leftClick === true)
+			{
+				this.mode = "HARDCORE";
+				this.props.socket.emit('find_match');
+				this.modeSelected = true;
+				p5.background(0);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
+			}
+		}
+		if (this.leftClick === true)
+			this.leftClick = false;
+	}
 
 	keyTyped = (p5: any) =>
 	{
@@ -399,16 +451,6 @@ export class Match extends React.Component<Props>
 
 		if ((p5.key === 'a' || p5.key === 'z') && this.type === "slave" && this.started === 1)
 			this.props.socket.emit('slaveKeyPressed', {match_id: this.match_id, command: p5.key});
-
-		if ((p5.key === " ") && this.spacePressed === false)		//remove this to test with only one account
-		{
-			this.spacePressed = true;
-			this.props.socket.emit('find_match');
-			p5.background(0);
-			p5.textSize(50);
-			p5.fill(p5.color(255, 255, 255));
-			p5.text(`Creating / Finding match...`, 120, this.state.height / 2);
-		}
 	}
 
 	keyReleased = (p5: any) =>
@@ -420,11 +462,18 @@ export class Match extends React.Component<Props>
 			this.props.socket.emit('slaveKeyReleased', {match_id: this.match_id, command: p5.key});
 	}
 
+	mouseClicked = (p5: any) =>
+	{
+		if(p5.mouseButton === p5.LEFT && this.started === 0)
+			this.leftClick = true;
+	}
+
 	render()
 	{
 		return (
 			<Fragment>
-				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased} windowResized={this.windowResized}/>}
+				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
+				mouseClicked={this.mouseClicked}/>}
 			</Fragment>
 		)
 	}

@@ -164,7 +164,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					props.joinedChannels
 						.map((channel) => {
 							return (
-								<PrintChannelsJoined channel={channel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState}/*setChatChannelState={props.setChatChannelState}*/ key={channel.id}/>
+								<PrintChannelsJoined channel={channel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} key={channel.id}/>
 							)
 						})
 			}
@@ -178,7 +178,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						.map((friend) => {
 							let statusIcon = (friend.status === 1 ? statusIconGreen : statusIconRed);
 							return (
-								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState}  chatParamsState={props.chatParamsState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setFriends={props.setFriends}/>
 							)
 						})
 			}

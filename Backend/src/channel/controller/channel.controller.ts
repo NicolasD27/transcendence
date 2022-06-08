@@ -32,7 +32,6 @@ export class ChannelController {
 
 	constructor(
 		private readonly channelService: ChannelService,
-		// private readonly chatGateway: ChatGateway,
 	) {}
 
 	@Get()
@@ -59,9 +58,12 @@ export class ChannelController {
 
 	@Get(':id/')
 	@UseGuards(TwoFactorGuard)
-	async findOne(@Param('id', ParseIntPipe) id: number)
+	async findOne(
+		@Param('id', ParseIntPipe) id: number,
+		@Req() request: Request
+	)
 	{
-		return this.channelService.findOneNotPrivate(id);
+		return this.channelService.findOneWithModeration(request.cookies.username, id);
 	}
 
 	@Put(':id/')
@@ -187,4 +189,11 @@ export class ChannelController {
 
 	// todo : getBannedUsers && getMutedUsers
 	// todo : getModerators
+
+	// @Get(':channelID/restricted/:userID')
+	// @UseGuards(TwoFactorGuard)
+	// async getRestrictedUsers()
+	// {
+	// 	return await this.channelService.getRestrictedUsers();
+	// }
 }

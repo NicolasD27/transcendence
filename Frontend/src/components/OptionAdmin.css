@@ -1,0 +1,134 @@
+.optionArea {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 75%;
+	height: 100%;
+	gap: 10%;
+}
+
+.option {
+	width: 45%;
+	display: inline-block;
+	cursor: pointer;
+	color: #C0F4FE;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	font-size: 12px;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+	border-radius: 10px;
+}
+
+.option:hover {
+	color: #255784;
+	background: #C0F4FE;
+	-webkit-box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
+	box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
+}
+
+.passwordArea {
+	display: flex;
+	height: 80%;
+	width: 90%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+}
+
+.textpasswordArea {
+	display: flex;
+	flex-direction: row;
+	margin-top: 5px;
+	gap: 1vw;
+}
+
+.labelStyle {
+	padding: 5;
+	color: white;
+	font-weight: bold;
+	font-family: 'Open Sans';
+	font-size: 16px;
+}
+
+.passwordInput {
+	width: 70%;
+	height: 48px;
+	padding: 5px 10px 5px 30px;
+	border: 3px solid #C0F4FE;
+	border-radius: 100vh;
+	font-size: 20px;
+	letter-spacing: 12px;
+	color: #C0F4FE;
+	box-shadow: 0px 0px 10px #c0f4fe, 0px 0px 10px #c0f4fe inset;
+}
+
+.userOptionArea {
+	display: flex;
+	height: 80%;
+	width: 90%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	overflow-y: auto;
+}
+
+.userOption {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border: 2px solid #C0F4FE;
+	color: #C0F4FE;
+	border-radius: 20px;
+	height: 54px;
+	width: 100%;
+	gap: 12px;
+}
+
+.checkboxOption {
+	position: relative;
+	margin-top: 9px;
+	margin-right: 3%;
+	/*margin-left: 0%;*/
+	margin-bottom: 9px;
+	height: 20px;
+	width: 20px;
+}
+
+.checkboxOption label {
+	position: absolute;
+	top: 0px;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	border: 1px solid #C0F4FE;
+	cursor: pointer;
+}
+
+.checkboxOption label:hover {
+	border: 1px solid #E11515;
+}
+
+.checkboxOption input[type="checkbox"] {
+	visibility: hidden;
+}
+
+.checkboxOption input[type="checkbox"]:checked+label {
+	background-color: #E11515;
+	border-color: #E11515;
+}
+
+.usernameOption {
+	font-size: 15px;
+	width: 80%;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow-x: hidden;
+	margin-left: 15px;
+}

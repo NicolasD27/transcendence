@@ -20,7 +20,7 @@ const PrintChannelsJoined : React.FC<PropsPrintChannelsJoined> = (props) => {
 					!isMute && <button id="muteChannel" onClick={() => setIsMute(true)}/> ||
 					<button id="unmuteChannel" onClick={() => setIsMute(false)}/>
 				}
-				<button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState.chatState, 'id' : props.channel.id, 'chatName' : props.channel.name, type :'channel'})}/>
+				<button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
 			</div>
 		</div>
 	)

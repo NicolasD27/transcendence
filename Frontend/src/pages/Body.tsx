@@ -17,6 +17,7 @@ export interface chatStateFormat {
 	type : string;
 }
 
+
 const Body : React.FC<PropsBody> = (props) => {
 	const idMe = props.idMe;
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])

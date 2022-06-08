@@ -6,6 +6,7 @@ interface PropsPrintNormalFriendProfile {
 	user : PropsStateUsers;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
 	setChatParamsState :  Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
 }
@@ -19,7 +20,7 @@ const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (prop
 						{(!props.isBlocked &&
 							<>
 								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': true, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
+								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
 							</>
 						) ||
 							<div id='profileBlocked'>
