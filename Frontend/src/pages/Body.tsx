@@ -24,7 +24,7 @@ const Body : React.FC<PropsBody> = (props) => {
 	const  [ userstate, setUserState ] = useState(false);
 	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "directMessage" })
 	//const [ chatChannelState, setChatChannelState ] = useState(false)
- 
+
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>

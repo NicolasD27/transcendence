@@ -46,10 +46,9 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	const [ joinedChannels, setJoinedChannels ] = useState<PropsStateChannel[]>([])
 	const [ joiningChannel, setJoiningChannel ] = useState(false)
 	const [ existingChannels, setExistingChannels ] = useState<PropsStateChannel[]>([])
-	const [ friendsState, setFriendsState ] = useState(false)
-
+	const [ isButtonClicked, setIsButtonClicked ] = useState<boolean>(true)
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
-	const [ friendRequestReceived, setFriendRequestReceived ] = useState<number[]>([])
+	const [ friendRequestReceived, setFriendRequestReceived ] = useState<FriendsFormat[]>([])
 	const [ searchValue, setSearchValue ] = useState("")
 	const [ createChannelButtonState, setCreateChannelButtonState ] = useState(false)
 
@@ -58,7 +57,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 		{
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users?search=${searchValue}`, {withCredentials: true})
-				.then ((response) => setSearchUsers(response.data))
+				.then ((response) => {setSearchUsers(response.data); console.log("searchuser: ", searchUsers)})
 				.catch((error) => console.log(error))
 		}
 	}, [searchValue])
@@ -80,53 +79,67 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			.catch (err =>
 				console.log(err)
 			)
-	}, [])
-
-
-	useEffect(() => {
-		if (props.idMe)
-		{
+	}, [])	
+		
+	if (props.idMe)
+	{
+			props.socket.on("notifyFriendRequest", data => { 
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then (res => {
-				 	let friend = res.data;
-					friend.map((list:any) => {
+					let users = res.data;
+					console.log("Data: ", users)
+					setFriendRequestReceived([])
+					users.map((friendship:any) => {
 						let friends_tmp : FriendsFormat;
-						friends_tmp = { friendshipId: list.id , id : list.following.id ,  username : list.following.username, pseudo : list.following.pseudo, avatarId : list.following.avatarId, status : list.following.status }
-						setFriends(friends => [...friends, friends_tmp])
+						if (friendship.following.id === props.idMe)
+						{
+							friends_tmp = { 
+								friendshipId : friendship.id,
+								id : friendship.follower.id ,
+								username : friendship.follower.username ,
+								pseudo : friendship.follower.pseudo ,
+								avatarId : friendship.follower.avatarId ,
+								status : friendship.follower.status
+							}
+						}
+						else {
+							friends_tmp = { 
+								friendshipId : friendship.id,
+								id : friendship.following.id ,
+								username : friendship.following.username ,
+								pseudo : friendship.following.pseudo ,
+								avatarId : friendship.following.avatarId ,
+								status : friendship.following.status
+							}
+						}
+						/*if (friendship.status === 1) 
+							setFriends(friends => [...friends, friends_tmp])*/
+						/*else*/ if (friendship.status === 0) {
+							if (friendRequestsSent.find((friend) => friend === friendship.following.id) === undefined)
+							{
+								if (friendRequestReceived.find((friend) => friend === friendship.following.id) == undefined)
+									setFriendRequestReceived(friendRequestReceived => [...friendRequestReceived, friends_tmp])
+							}
+						}
 					})
 				})
 				.catch (err =>
 					console.log(err)
 				)
-
-		}}, [props.idMe])
-
-	/*useEffect(() => {
-		props.socket.on()
-		/*axios
-		.get(dataUrlFriendRequestsSent, { withCredentials: true })
-		.then (res => {
-			const request = res.data;
-			setFriendRequestsSent(request)
-		})
-		.catch (err => {
-			console.log(err)
-		})
-	}, [friendRequestsSent])*/
-
-	/*interface PropsuserList {
-		existingChannels : PropsStateChannel[];
-		//joinedChannels : ;
-	}*/
-
+				//setIsButtonClicked(false)
+			})
+	}
+		console.log("friendRequestsSent:", friendRequestsSent)
+		console.log("friendRequestReceived: ", friendRequestReceived)
+		console.log("friends: ", friends)
 
 	return (
 		<div className='chatArea'>
 			<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
 			{
 				!createChannelButtonState && 
-				<UserList 
+				<UserList
 					socket = {props.socket}
 					idMe={props.idMe}
 					existingChannels={existingChannels}
@@ -144,6 +157,8 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 					setSearchValue={setSearchValue}
 					setChatParamsState={props.setChatParamsState}
 					chatParamsState={props.chatParamsState}
+					isButtonClicked={isButtonClicked}
+					setIsButtonClicked={setIsButtonClicked}
 					/*chatChannelState={props.chatChannelState}
 					setChatChannelState={props.setChatChannelState}*/
 				/>

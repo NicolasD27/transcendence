@@ -25,7 +25,7 @@ const PrintChannelsToJoin : React.FC<PropsPrintChannelsToJoin> = (props) => {
 	}
 
 	const handleClick = () => {
-		setIsButtonClicked(true)
+		//setIsButtonClicked(true)
 		if (props.channel.isProtected === false)
 			sendPassword("")
 	}

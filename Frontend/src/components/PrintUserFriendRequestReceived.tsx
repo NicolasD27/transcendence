@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
+import { FriendsFormat } from '../components/ChatSectionUsers'
 
 interface PropsPrintUserFriendRequestReceived {
 	user :  PropsStateUsers;
 	statusIcon : string;
-	acceptFriendshipRequest : Function;
-	declineFriendshipRequest: Function;
+	/*acceptFriendshipRequest : Function;
+	declineFriendshipRequest: Function;*/
+	friendshipInfo : FriendsFormat;
 	key : number;
 }
 
@@ -41,8 +43,9 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 				</div>
 				<div id="username">{props.user.pseudo}</div>
 				<div id='friendRequest_buttons'>
-					<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user.id)} /> 
-					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user.id)} /> 
+					<p>Pending ...</p>
+					{/*<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user.id, props.friendshipInfo)} /> 
+					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user.id, props.friendshipInfo)} />*/} 
 				</div>
 			</div>
 	)
