@@ -99,26 +99,33 @@ export class FriendshipService {
     }
 
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
-        
+        const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
         if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWING || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWING)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWER || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWER)))
             throw new UnauthorizedException("you can't do that !");
         friendship.status = newStatus;
-        this.notificationService.actionPerformedFriendship(friendship)
+        this.notificationService.actionPerformedFriendship(friendship, user)
+        if (newStatus == FriendshipStatus.ACTIVE)
+        {
+            const otherUser = friendship.follower.username == username ? friendship.following : friendship.follower
+            const notification = await this.notificationService.create(friendship, otherUser);
+            this.notificationService.actionPerformedFriendship(friendship, otherUser)
+        }
         return Friendship.toDto(await  this.friendshipsRepository.save(friendship));
 
     }
 
     
     async destroy(username: string, id: string): Promise<FriendshipDto> {
+        const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);
         if (!friendship)
             throw new NotFoundException(`Friendship #${id} not found`);
         if ((username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
-        this.notificationService.actionPerformedFriendship(friendship)
+        this.notificationService.actionPerformedFriendship(friendship, user)
         return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
 
     }
