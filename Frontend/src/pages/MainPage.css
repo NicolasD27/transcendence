@@ -64,8 +64,8 @@
 }
 
 .gameArea {
-	width: 1200;
-	height: 750;
+	width: 50%;
+	height: 100%;
 	background:
 		linear-gradient(black, black) padding-box,
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;

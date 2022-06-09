@@ -179,8 +179,9 @@ interface Props {
 export class Match extends React.Component<Props>
 {
 	state = {
-		width: 1200 - 8,
-		height: 750  - 8
+		width: 1200,
+		height: 700,
+		divider: 1
 	}
 	type = "";
 	started = 0;
@@ -194,9 +195,18 @@ export class Match extends React.Component<Props>
 	modeSelected = false;
 	mode = "";
 
+	windowResized = (p5: any) =>
+	{
+		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
+		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
+		//this.state.divider = this.state.width / 16;				//voir comment implementer ca
+		p5.resizeCanvas(this.state.width, this.state.height);
+	}
+
 	setup = (p5: any) =>
 	{
-
+		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
+		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
@@ -364,21 +374,16 @@ export class Match extends React.Component<Props>
 					});
 
 				}
-				else					//Spect
+				else					//A modif, ne peut pas etre dans le socket.on "launch_match"
 				{
 					this.type = "spect";
 
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
 						p5.background(0);
 						p5.fill(p5.color(255, 255, 255));
 						p5.textAlign(p5.CENTER, p5.CENTER);
-						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
+						p5.text(`The winner is : ${data}`, this.state.width / 2, this.state.height / 2);
 					});
 
 					this.props.socket.on('updateMatch', (data) =>
@@ -440,6 +445,18 @@ export class Match extends React.Component<Props>
 				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
 			}
 		}
+		else if (this.modeSelected === false)
+		{
+			p5.clear()
+			p5.fill(p5.color(141, 141, 141));
+			p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+			p5.fill(p5.color(255, 255, 255));
+			p5.textAlign(p5.CENTER, p5.CENTER);
+			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+		}
 		if (this.leftClick === true)
 			this.leftClick = false;
 	}
@@ -473,7 +490,7 @@ export class Match extends React.Component<Props>
 		return (
 			<Fragment>
 				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
-				mouseClicked={this.mouseClicked}/>}
+				mouseClicked={this.mouseClicked} windowResized={this.windowResized}/>}
 			</Fragment>
 		)
 	}
