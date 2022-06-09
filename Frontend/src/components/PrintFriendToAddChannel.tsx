@@ -2,9 +2,10 @@ import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'r
 import { useNavigate } from 'react-router-dom'
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
-import {FriendsFormat} from './ChatSectionUsers'
+import {FriendsFormat} from './Chat'
 
 interface PropsPrintFriendToAddChannel {
+	idMe : number;
 	friends : FriendsFormat[];
 	selectedFriend : FriendsFormat[];
 	setSelectedFriend : Dispatch<SetStateAction<FriendsFormat[]>>;
@@ -34,14 +35,15 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 	return (
 		<>
 			{props.friends
+				.filter(friend => {
+					if (friend.id !== props.idMe)
+						return friend;
+				})
 				.map((user:FriendsFormat) => {
 					let statusIcon = (user.status === 1 ? statusIconGreen : statusIconRed)
 
 					if (user.avatarId != null)
-					{
-						console.log("catching avatar !!")
 						setProfileAvatar(`http://localhost:8000/api/database-files/${user.avatarId}`)
-					}
 
 					return (
 						<div className='user' key={user.id}>

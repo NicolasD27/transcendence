@@ -24,7 +24,7 @@ services:
       - POSTGRES_DB=${POSTGRES_NAME}
       - POSTGRES_SYNC=false
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - APP_HOST=${APP_HOST}
+      - APP_HOST=${HOSTNAME}
       - APP_PORT=${APP_PORT}
       - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
@@ -32,9 +32,8 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
       - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID}
       - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET}
-      - POST=${POST}
     ports: 
-      - "8000:8000" # expose-to-the-world : only-in-the-docker
+      - "8000:8000"
     container_name: backend-transcendence
     depends_on: 
       - db

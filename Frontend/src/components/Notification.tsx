@@ -19,13 +19,14 @@ interface Props {
 	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
-	socket: Socket
+	socket: Socket;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 
 
 
-const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket}) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket, setIsFriendshipButtonClicked}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
 	const navigate = useNavigate()
