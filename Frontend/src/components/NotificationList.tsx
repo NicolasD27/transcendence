@@ -28,31 +28,29 @@ const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: n
 
 	useEffect(() => {
 		if (myId != 0) {
-			
 			socket.on("new_channel_invite_received", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
+				refreshNotificationList()
 			})
-			});
 			socket.on("match_invite_to_client", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());
+				refreshNotificationList()
 			})
-			});
 			socket.on("notifyFriendRequest", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
+				refreshNotificationList()
 			})
-			});			
-			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-			.then(res => {
-				setNotifications(notifications => res.data.reverse());	
+			socket.on("notifyFriendRequestAccepted", data => {
+				refreshNotificationList()
 			})
+			refreshNotificationList()
+			
 		}
 	}, [myId])
+
+	const refreshNotificationList = () => {
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+		.then(res => {
+			setNotifications(notifications => res.data.reverse());	
+		})
+	}
 
 	useEffect(() => {
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)

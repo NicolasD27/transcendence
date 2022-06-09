@@ -3,7 +3,7 @@
     display: block;
     width: calc(22% + 42px);
     color: white;
-    height: calc(80vh - 154px);
+    height: 75vh;
     top: 154px;
     padding: 20px 0;
     overflow: scroll;

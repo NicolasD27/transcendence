@@ -42,11 +42,11 @@
 	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #FF0777);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
-	transition: opacity 1s, box-shadow 2s;
+	transition: opacity 500ms, box-shadow 500ms;
 }
 
 .navButton:hover::before {
@@ -59,7 +59,7 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: calc(80vh - 154px);
+	height: 75vh;
 	margin-top: 60px;
 }
 
@@ -442,12 +442,10 @@ button {
 }
 
 #chatTop {
-	position: relative;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
+	width: 100%;
 	height: 54px;
-	margin-top: 16px;
-	margin-left: 18px;
 }
 
 #chatCloseButton {
@@ -494,16 +492,17 @@ button {
 
 #chatUsername {
 	color: #C0F4FE;
-	width: 189px;
+	flex-grow: 1;
 	height: 30px;
 	font-size: 22px;
 	margin-left: 10px;
 	white-space: nowrap;
 	font-weight: normal;
 	text-align: left;
-	line-height: 30px;
+	line-height: 24px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
 }
 
 .messageArea {

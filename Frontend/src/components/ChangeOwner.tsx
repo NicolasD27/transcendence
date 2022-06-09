@@ -8,6 +8,7 @@ interface Props {
 	moderators: userFormat[];
 	setShowConv: Dispatch<SetStateAction<boolean>>;
 	setOptionSelected: Dispatch<SetStateAction<boolean>>;
+	activePass: boolean
 }
 
 interface userFormat {
@@ -58,10 +59,10 @@ const ChangeOwner: React.FC<Props> = (props) => {
 
 	return (
 		<div className="passwordArea">
-			<div className="textpasswordArea">
+			{props.activePass && <div className="textpasswordArea">
 				<p className="labelStyle">Password: </p>
 				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangePassword} value={passwordValue} placeholder="______" />
-			</div>
+			</div>}
 			<div className="userOptionArea">
 				{props.users
 					.map((user: userFormat, i) => {
@@ -79,7 +80,8 @@ const ChangeOwner: React.FC<Props> = (props) => {
 					})
 				}
 			</div>
-			<button onClick={() => handleSubmitUsers()} className="option">Valider</button>
+			{props.users.length == 0 && <p  className="labelStyle">No users</p>}
+			{props.users.length > 0 && <button onClick={() => handleSubmitUsers()} className="option">Valider</button>}
 		</div>
 	);
 };

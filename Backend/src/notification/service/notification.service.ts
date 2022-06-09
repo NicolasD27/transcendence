@@ -78,11 +78,13 @@ export class NotificationService {
     }
 
     async create(parent: Friendship | Match | ChannelInvite, receiver: User): Promise<Notification> {
+        console.log("creating notif **************")
         const notification = await this.notificationsRepository.create({
             receiver: receiver,
             parent: parent
         })
         await this.notificationsRepository.save(notification)
+        console.log(notification)
         return notification
     }
 
@@ -113,15 +115,15 @@ export class NotificationService {
         }
     }
 
-    async actionPerformedFriendship(parent: Friendship) {
+    async actionPerformedFriendship(parent: Friendship, receiver: User) {
         let notification = await this.notificationsRepository.findOne({
             where: {
                 entityId: parent.id,
-                entityType: "Friendship"
+                entityType: "Friendship",
+                receiver: receiver
             }
         })
         if (notification) {
-
             notification.awaitingAction = false
             notification = await this.notificationsRepository.save(notification)
             console.log(notification)
@@ -132,7 +134,7 @@ export class NotificationService {
         let notification = await this.notificationsRepository.findOne({
             where: {
                 entityId: parent.id,
-                entityType: "ChannelInvite"
+                entityType: "ChannelInvite",
             }
         })
         if (notification) {

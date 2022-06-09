@@ -20,7 +20,6 @@ import { MatchDto } from '../dto/match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
-// import * as session from 'express-session';
 
 @Controller('matchs')
 export class MatchController {
@@ -31,6 +30,12 @@ export class MatchController {
     @Get()
     findAll(@Query() paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
         return this.matchService.findAll(paginationQuery);
+    }
+
+    @UseGuards(TwoFactorGuard)
+    @Get('active')
+    findAllActive(@Query() paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
+        return this.matchService.findAllActive(paginationQuery);
     }
 
     @UseGuards(TwoFactorGuard)

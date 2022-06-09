@@ -32,11 +32,12 @@ export class Notification implements PolymorphicChildInterface {
     awaitingAction: boolean
 
     static toFriendshipDto(notification: Notification, parent: Friendship): NotificationDto {
-        
+        const name = parent.follower.id == notification.receiver.id ? parent.following.pseudo : parent.follower.pseudo
+        const senderId = parent.follower.id == notification.receiver.id ? parent.following.id : parent.follower.id
         const dto: NotificationDto = {
             id: notification.id,
             receiver: User.toDto(notification.receiver),
-            name: parent.follower.pseudo,
+            name: name,
             senderId: parent.follower.id,
             entityId: parent.id,
             entityType: "Friendship",
