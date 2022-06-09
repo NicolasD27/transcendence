@@ -34,7 +34,7 @@ const Header : React.FC<PropsHeader> = (props) => {
 			<div className='boxNav'>
 				<img src={mainTitle} className='titleNav' alt="mainTitle" />
 				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
+				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profile</button></div>
 				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 			</div >
 		)

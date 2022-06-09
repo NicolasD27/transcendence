@@ -7,7 +7,7 @@ import './Avatar.css';
 export interface Props {
 	id: number;
 	idMe: number;
-	setGetMatch: Dispatch<SetStateAction<boolean>>;
+	setGetMatch?: Dispatch<SetStateAction<boolean>>;
 }
 
 export class Avatar extends React.Component<Props> {
@@ -30,7 +30,8 @@ export class Avatar extends React.Component<Props> {
 						const user = res.data;
 						if (user.avatarId != null)
 							this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
-						this.props.setGetMatch(false)
+						if (this.props.setGetMatch)
+							this.props.setGetMatch(false)
 					})
 			})
 	};

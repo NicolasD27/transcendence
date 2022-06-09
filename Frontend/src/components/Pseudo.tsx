@@ -6,7 +6,7 @@ import edit from '../asset/edit-button.svg';
 export interface Props {
 	id: number;
 	idMe: number;
-	setGetMatch: Dispatch<SetStateAction<boolean>>;
+	setGetMatch?: Dispatch<SetStateAction<boolean>>;
 }
 
 const Pseudo: React.FC<Props> = (props) => {
@@ -39,7 +39,8 @@ const Pseudo: React.FC<Props> = (props) => {
 				axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/pseudo`, bodyFormData, { withCredentials: true })
 					.then(res => {
 						setGetPseudo(false)
-						props.setGetMatch(false)
+						if (props.setGetMatch)
+							props.setGetMatch(false)
 						if (res.data === false) {//Si le pseudo est deja prit
 							username.classList.add('error');
 							setTimeout(function () {
