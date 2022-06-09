@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { SetStateAction } from "react";
+import { Dispatch } from "react";
 import axios from "axios";
 import { Socket } from "socket.io";
 import Message from "./Message";
 import ShowOptionAdmin from "./ShowOptionAdmin";
 import OptionAdmin from "./OptionAdmin";
 import './Conversation.css';
-
+import { chatStateFormat } from "../App";
 import statusIconGreen from "../asset/statutIconGreen.svg"
 import user1 from "../asset/friend1.svg"
 
@@ -15,6 +17,7 @@ interface Props {
 	type: string;
 	nameChat: string;
 	socket: any;
+	setChatState : Dispatch<SetStateAction<chatStateFormat>>;
 }
 
 interface messagesFormat {
@@ -211,7 +214,7 @@ const Conversation: React.FC<Props> = (props) => {
 	return (
 		<div className='convArea'>
 			<div id='chatTop'>
-				<button id='chatCloseButton' />
+				<button id='chatCloseButton' onClick={() => props.setChatState({'chatState' : false, id : 0, chatName : "" , type : "directM" })} />
 				<div id="chatUsername">{props.nameChat}</div>
 				{props.type === "channel" && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>

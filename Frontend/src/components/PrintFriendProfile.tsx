@@ -3,16 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
-import {FriendsFormat} from './ChatSectionUsers'
+import {FriendsFormat} from './Chat'
 import {PropsStateUsers} from './ChatSectionUsers'
+import { chatStateFormat } from '../App';
 
 interface PropsPrintFriendProfile {
 	friends: FriendsFormat[];
 	user:  PropsStateUsers;
 	statusIcon: string;
 	key: number;
-	setChatFriendState : Dispatch<SetStateAction<boolean>>;
-	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
@@ -30,10 +32,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 
 	useEffect(() => {
 		if (props.user.avatarId != null)
-		{
-			console.log("catching avatar !!")
 			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
-		}
 	}, [])
 
 
@@ -45,8 +44,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 				axios
 					.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
 					.then(() => {
-						const newFriendsList = props.friends.filter((friend) => friend.id != props.user.id)
-						props.setFriends(newFriendsList)
+						props.setIsFriendshipButtonClicked(true)
 					})
 					.catch((err) =>
 						console.log(err))
@@ -60,7 +58,7 @@ const PrintFriendProfile : React.FC<PropsPrintFriendProfile> = (props) => {
 					<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
 					<img src={props.statusIcon} className="userStatusIcon" alt="StatusIcon"/>
 				</div>
-			{!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatFriendState={props.setChatFriendState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
+			{!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 			{friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>}
 		</div>
 	)
