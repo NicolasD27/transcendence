@@ -1,7 +1,6 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import Match from '../components/Match'
 import Chat from '../components/Chat'
-import { PropsStateUsers } from '../components/ChatSectionUsers'
 import { chatStateFormat } from '../App'
 
 interface PropsBody {
