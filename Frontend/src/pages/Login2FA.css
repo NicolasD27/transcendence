@@ -19,7 +19,7 @@
 }
 
 .login-title {
-    color: #649be5;
+    color: #3772FF;
 }
 
 #login-container {
@@ -35,11 +35,11 @@
     width: 190px;
     height: 48px;
     padding: 5px 10px 5px 30px;
-    border: 3px solid #649be5;
+    border: 3px solid #3772FF;
     border-radius: 100vh;
     font-size: 20px;
     letter-spacing: 12px;
-    color: #649be5;
-    box-shadow: 0px 0px 10px #649be5, 0px 0px 10px #649be5 inset;
+    color: #3772FF;
+    box-shadow: 0px 0px 10px #3772FF, 0px 0px 10px #3772FF inset;
 
 } 

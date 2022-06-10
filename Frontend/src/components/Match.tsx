@@ -4,9 +4,9 @@ import { Socket } from "socket.io-client"
 
 
 let playerWidth = 15;
-let finalScore = 5;
+let finalScore = 10;
 let buttonAdder = 15;
-let ballSpeed = 20;
+let ballSpeed = 5;
 let magicBallSpeed = ballSpeed;
 let accelerator = 2;
 let basicW = 1000;
@@ -60,9 +60,9 @@ function negRand()
 
 function gameEngine(game: any, socket: Socket, match_id: number, width: number, height: number)
 {
-	if(game.ball.x + game.ball.xv > width - game.ball.xr || game.ball.x + game.ball.xv < game.ball.xr )
+	if(game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth + 4 || game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth - 4)
 	{
-		if (game.ball.x + game.ball.xv > width - game.ball.xr)
+		if (game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 			{
@@ -87,7 +87,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
-		else if (game.ball.x + game.ball.xv < game.ball.xr)
+		else if (game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 			{
@@ -112,7 +112,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			}
 		}
 	}
-	if (game.ball.y + game.ball.yv > height - game.ball.yr || game.ball.y + game.ball.yv < game.ball.yr)
+	if (game.ball.y + game.ball.yv > height - game.ball.yr / 2 || game.ball.y  < game.ball.yr / 2)
 		game.ball.yv = - game.ball.yv;
 
 	game.ball.x += game.ball.xv;
@@ -147,13 +147,13 @@ function playerMove(started: number, game: any, playerInput: any, width: number,
 function printer(p5: any, data: any, width: number, height: number, type: string)
 {
 	if (type === "master")
-		p5.fill(p5.color(255, 0, 0));
+		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
-	p5.fill(p5.color(255, 255, 255));
+	p5.fill(p5.color("#3772FF"));
 	if (type === "slave")
-		p5.fill(p5.color(255, 0, 0));
+		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
-	p5.fill(p5.color(255, 255, 255));
+	p5.fill(p5.color("#3772FF"));
 
 	if (data.countdown !== 0)
 	{
@@ -165,9 +165,9 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 	}
 	else
 	{
+		p5.fill(p5.color(255, 255, 255));
 		p5.rect(width / 2, 0, 2, height);
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
-		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.TOP);
 		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
 	}

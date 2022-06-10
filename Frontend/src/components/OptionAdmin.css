@@ -13,7 +13,7 @@
 	width: 45%;
 	display: inline-block;
 	cursor: pointer;
-	color: #649be5;
+	color: #3772FF;
 	text-transform: uppercase;
 	letter-spacing: 4px;
 	font-size: 12px;
@@ -24,7 +24,7 @@
 
 .option:hover {
 	color: #255784;
-	background: #649be5;
+	background: #3772FF;
 	-webkit-box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
 	box-shadow: 0 0 10px #2196f3, 0 0 30px #2196f3, 0 0 60px #2196f3;
 }
@@ -58,12 +58,12 @@
 	width: 70%;
 	height: 48px;
 	padding: 5px 10px 5px 30px;
-	border: 3px solid #649be5;
+	border: 3px solid #3772FF;
 	border-radius: 100vh;
 	font-size: 20px;
 	letter-spacing: 12px;
-	color: #649be5;
-	box-shadow: 0px 0px 10px #649be5, 0px 0px 10px #649be5 inset;
+	color: #3772FF;
+	box-shadow: 0px 0px 10px #3772FF, 0px 0px 10px #3772FF inset;
 }
 
 .userOptionArea {
@@ -82,8 +82,8 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	border: 2px solid #649be5;
-	color: #649be5;
+	border: 2px solid #3772FF;
+	color: #3772FF;
 	border-radius: 20px;
 	height: 54px;
 	width: 100%;
@@ -107,7 +107,7 @@
 	height: 20px;
 	width: 20px;
 	border-radius: 50%;
-	border: 1px solid #649be5;
+	border: 1px solid #3772FF;
 	cursor: pointer;
 }
 

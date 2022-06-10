@@ -17,7 +17,7 @@
 
 .switch {
 	--inactive-bg: #cfd8dc;
-	--active-bg: #649be5;
+	--active-bg: #3772FF;
 	--size: 2rem;
 	appearance: none;
 	width: calc(var(--size) * 2.2);

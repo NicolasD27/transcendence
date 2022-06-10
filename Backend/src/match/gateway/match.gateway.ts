@@ -164,7 +164,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			var id = gameloop.setGameLoop(function()
 			{
 				server.emit('serverTick');
-			}, 1000 / 30);
+			}, 1000 / 60);
 		}
 
 		handleDisconnect(client: CustomSocket, ...args) {
