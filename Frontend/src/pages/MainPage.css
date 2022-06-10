@@ -59,7 +59,7 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: 200;
+	height: 44vw;
 	margin-top: 60px;
 }
 
@@ -89,7 +89,6 @@
 	display: flex;
 	flex-direction: column;
 	width: 30%;
-	height: 600;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;

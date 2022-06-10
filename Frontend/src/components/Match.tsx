@@ -198,7 +198,7 @@ export class Match extends React.Component<Props>
 	mode = "";
 	tooSmall = false;
 	winner = "";
-
+	
 	windowResized = (p5: any) =>
 	{
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
@@ -208,6 +208,7 @@ export class Match extends React.Component<Props>
 
 	setup = (p5: any) =>
 	{
+		
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
 		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
@@ -391,6 +392,7 @@ export class Match extends React.Component<Props>
 		}
 		else
 		{
+			
 			this.tooSmall = false;
 			if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
 				p5.mouseY > 0 && p5.mouseY < this.state.height)
