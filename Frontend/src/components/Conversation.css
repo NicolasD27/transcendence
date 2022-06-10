@@ -1,37 +1,38 @@
 .convArea {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	width: 22%;
 	height: 100%;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;
-	padding: 0;
+	padding: 1%;
+	gap: 2%;
 }
 
 .messages {
-	width: 95%;
-	height: 478px;
-	margin-top: 16px;
-	margin-left: 2.5%;
+	width: 100%;
+	flex-grow: 1;
 	border-radius: 20px;
 	box-sizing: border-box;
 	border: 2px solid #C0F4FE;
 	overflow-y: auto;
+	padding: 10px;
 }
 
 .sendText {
-	position: relative;
-	margin-top: 14px;
-	margin-left: 18px;
-	width: 297px;
+	width: 100%;
 	height: 54px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 2%;
 }
 
 .writingText {
-	position: relative;
-	width: 227px;
-	height: 27px;
+	flex-grow: 1;
+	padding: 5px 10px;
 	border-radius: 20px;
 	box-sizing: border-box;
 	border: 2px solid #C0F4FE;
@@ -39,24 +40,35 @@
 }
 
 .writingText input {
-	position: absolute;
+	/* position: absolute;
 	left: 0px;
 	top: 0px;
-	width: 187px;
+	width: 187px; */
 	color: #C0F4FE;
 }
 
 .sendIcon {
-	position: absolute;
+	/* position: absolute;
 	top: 0px;
-	right: 27px;
+	right: 27px; */
 	background-image: url('../asset/SendTextIcon_blue.svg');
-	background-size: 27px;
+	background-size: 40px;
 	background-repeat: cover;
-	width: 27px;
-	height: 27px;
+	width: 40px;
+	height: 40px;
 }
 
 .sendIcon:hover {
 	background-image: url('../asset/SendTextIcon_red.svg');
+}
+
+.leaveChannelButton {
+	background-image: url('../asset/leaveIcon.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 37px;
+	width: 37px;
+	margin-right: 7px;
+	margin-left: 7px;
+	padding: 0px;
 }

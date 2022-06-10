@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
@@ -14,8 +14,10 @@ import { Socket } from 'socket.io-client';
 import './MainPage.css'
 import Message from '../components/Message';//!TEST!
 import Conversation from '../components/Conversation';//!TEST!
+import { chatStateFormat } from '../App';
+import Chat from '../components/Chat';
 
-const Profil = ({ socket }: { socket: any }) => {
+const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState }: { socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -92,13 +94,6 @@ const Profil = ({ socket }: { socket: any }) => {
 		setGetIDMe(getIDMe => true)
 	}
 
-	/*useEffect(() => {
-		const matchTri = [...matchID].sort((a, b) => {
-			return b.idMatch - a.idMatch;
-		});
-		setMatchID(matchTri)
-	}, [matchID.length])*/
-
 	return (
 		<Fragment>
 			<div id='bloc'>
@@ -120,9 +115,9 @@ const Profil = ({ socket }: { socket: any }) => {
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					{/*idMe > 0 && <Conversation idMe={idMe} id={1} type={'channel'} nameChat={"string2"} socket={socket} />*/}
+					<Chat idMe={idMe} socket={socket} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
 				</section>
-				{getIDMe && <NotificationList myId={idMe} socket={socket} />}
+				{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
 			</div>
 		</Fragment>
 	);

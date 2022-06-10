@@ -5,7 +5,7 @@ import { PropsStateUsers } from './ChatSectionUsers'
 interface PropsPrintSendFriendRequestProfile {
 	user:  PropsStateUsers;
 	statusIcon: string;
-	//sendFriendshipRequest : Function;
+	sendFriendshipRequest : Function;
 	key: number;
 }
 
@@ -42,7 +42,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 					</div>
 					<div id="username">{props.user.pseudo}</div>
 				</div>
-				<button id="SendFriendRequest_buttons" onClick={() => console.log("SendFriendRequest_buttons clicked")/*props.sendFriendshipRequest(props.user)*/}/>
+				<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>
 			</div>
 		</>
 	)

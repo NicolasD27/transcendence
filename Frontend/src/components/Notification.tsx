@@ -19,13 +19,14 @@ interface Props {
 	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
-	socket: Socket
+	socket: Socket;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 
 
 
-const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket}) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket, setIsFriendshipButtonClicked}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
 	const navigate = useNavigate()
@@ -33,7 +34,12 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 	useEffect(() => {
 		setAwaitingAction(notification.awaitingAction)
 		if (notification.entityType == "Friendship")
-			setContent(` wants to be your friend`)
+		{
+			if (notification.awaitingAction)
+				setContent(` wants to be your friend`)
+			else 
+				setContent(" and you are now friends !")
+		}
 		else if (notification.entityType == "Match")
 			setContent(` challenged you`)
 		else if (notification.entityType == "ChannelInvite")
@@ -44,11 +50,9 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 	const handleAccept = () => {
 		if (notification.entityType == "Friendship")
 		{
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${notification.entityId}`, {status: 1}, { withCredentials: true })
-			.then(res => {
-				setAwaitingAction(false)
-				setNewNotifsLength(newNotifsLength - 1)
-			})
+			setAwaitingAction(false)
+			setNewNotifsLength(newNotifsLength - 1)
+			socket.emit("acceptFriendRequest", {friendship_id: notification.entityId})
 		}
 		else if (notification.entityType == "Match")
 		{

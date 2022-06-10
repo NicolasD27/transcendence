@@ -3,9 +3,10 @@ import axios from 'axios'
 import PrintChannelCreationSettings from './PrintChannelCreationSettings'
 import PrintFriendToAddChannel from './PrintFriendToAddChannel'
 import searchIcon from '../asset/searchIcon.svg'
-import { FriendsFormat } from './ChatSectionUsers'
+import { FriendsFormat } from './Chat'
 
 interface PropsSearchBarAddGroup {
+	idMe : number;
 	setSearchValue : Dispatch<SetStateAction<string>>
 	friends: FriendsFormat[];
 	createChannelButtonState : boolean;
@@ -32,7 +33,7 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 		props.setCreateChannelButtonState(!props.createChannelButtonState)
 	}
 
-	const createChannel = (/*channelName : () => void*/) => {
+	const createChannel = () => {
 		if (channelVisibilitySelected === "private")
 			setIsPrivate(true)
 		else if (channelVisibilitySelected === "protected")
@@ -58,9 +59,6 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 			.catch((err) => console.log(err.data))
 	}
 
-	/*useEffect(() => {
-		console.log('selectedFriend: ' , selectedFriend)
-	}, [selectedFriend])*/
 
 	return (
 		<>
@@ -86,7 +84,7 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 						||
 						<>
 							<div className='usersList'>
-								<PrintFriendToAddChannel friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
+								<PrintFriendToAddChannel idMe={props.idMe} friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
 							</div>
 							<button id="checkbox_nextChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Next</button>
 						</>
