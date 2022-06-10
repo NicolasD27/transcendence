@@ -4,11 +4,13 @@ import { Socket } from "socket.io-client"
 
 
 let playerWidth = 15;
-let finalScore = 3;
+let finalScore = 5;
 let buttonAdder = 15;
 let ballSpeed = 20;
 let magicBallSpeed = ballSpeed;
 let accelerator = 2;
+let basicW = 1000;
+let basicH = 590;
 
 function PlayerInput(this: any)
 {
@@ -179,8 +181,9 @@ interface Props {
 export class Match extends React.Component<Props>
 {
 	state = {
-		width: 1200 - 8,
-		height: 750  - 8
+		width: basicW,
+		height: basicH,
+		divider: 1
 	}
 	type = "";
 	started = 0;
@@ -193,24 +196,45 @@ export class Match extends React.Component<Props>
 	leftClick = false;
 	modeSelected = false;
 	mode = "";
+	tooSmall = false;
+	winner = "";
+
+	windowResized = (p5: any) =>
+	{
+		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
+		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
+		p5.resizeCanvas(this.state.width, this.state.height);
+	}
 
 	setup = (p5: any) =>
 	{
-
+		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
+		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
 
 		p5.textFont('Tourney');
 		p5.clear()
 		p5.fill(p5.color(141, 141, 141));
-		p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
+		p5.rect(basicW / 2, 0, basicW / 2, basicH);
 		p5.textSize(50);
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.CENTER);
-		p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
+		p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
 		p5.fill(p5.color(255, 255, 255));
 		p5.textAlign(p5.CENTER, p5.CENTER);
-		p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
+		p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+
+		this.props.socket.on('updateMatch', (data) =>
+		{
+			p5.clear();
+			p5.background(0);
+			if (data && this.tooSmall !== true)
+				printer(p5, data, basicW, basicH, this.type);
+		});
+
+		if (this.type == "")	//a voir si ca fonctionne ici, peut etre a mettre dans draw
+			this.props.socket.on('serverGameFinished', (data) => { this.winner = data; });
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -230,9 +254,9 @@ export class Match extends React.Component<Props>
 					this.type = "master";
 
 					var game = new Game(
-						new Player(0, this.state.height / 2 - 50, playerWidth, 100, 0),
-						new Player(this.state.width - playerWidth, this.state.height / 2 - 50, playerWidth, 100, 0),
-						new Ball(this.state.width / 2, this.state.height / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+						new Player(0, basicH / 2 - 50, playerWidth, 100, 0),
+						new Player(basicW - playerWidth, basicH / 2 - 50, playerWidth, 100, 0),
+						new Ball(basicW / 2, basicH / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
 						(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
 
 					var playerInput = new PlayerInput();
@@ -240,14 +264,7 @@ export class Match extends React.Component<Props>
 					p5.background(0);
 					p5.fill(p5.color(255, 255, 255));
 					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text('Waiting for other player...', this.state.width / 2, this.state.height / 2);
-
-					this.props.socket.on('updateMatch', (data) =>
-					{
-						p5.clear();
-						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height, this.type);
-					});
+					p5.text('Waiting for other player...', basicW / 2, basicH / 2);
 
 					this.props.socket.on('masterToMasterKeyPressed', data =>
 					{
@@ -295,8 +312,8 @@ export class Match extends React.Component<Props>
 						if (counter > this.fq * this.countdown)
 						{
 							this.started = 1;
-							playerMove(this.started, game, playerInput, this.state.width, this.state.height);
-							gameEngine(game, this.props.socket, this.match_id, this.state.width, this.state.height);
+							playerMove(this.started, game, playerInput, basicW, basicH);
+							gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
 							this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
 						if (game.playerOne.score >= finalScore)
@@ -315,11 +332,7 @@ export class Match extends React.Component<Props>
 					{
 						this.started = -1;
 						this.props.socket.off('serverTick');
-						let winner: string = data;
-						p5.background(0);
-						p5.fill(p5.color(255, 255, 255));
-						p5.textAlign(p5.CENTER, p5.CENTER);
-						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
+						this.winner = data;
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -339,22 +352,10 @@ export class Match extends React.Component<Props>
 
 					this.started = 1;
 
-					this.props.socket.on('updateMatch', (data) =>
-					{
-						p5.clear();
-						p5.background(0);
-						if (data)
-							printer(p5, data, this.state.width, this.state.height, this.type);
-					});
-
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
 						this.started = -1;
-						let winner: string = data;
-						p5.background(0);
-						p5.fill(p5.color(255, 255, 255));
-						p5.textAlign(p5.CENTER, p5.CENTER);
-						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
+						this.winner = data;
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -364,80 +365,90 @@ export class Match extends React.Component<Props>
 					});
 
 				}
-				else					//Spect
-				{
-					this.type = "spect";
-
-					this.props.socket.on('serverGameFinished', (data) =>
-					{
-						let winner: string;
-						if (data === 1)
-							winner = this.masterId;
-						else
-							winner = this.slaveId;
-						p5.background(0);
-						p5.fill(p5.color(255, 255, 255));
-						p5.textAlign(p5.CENTER, p5.CENTER);
-						p5.text(`The winner is : ${winner}`, this.state.width / 2, this.state.height / 2);
-					});
-
-					this.props.socket.on('updateMatch', (data) =>
-					{
-						p5.clear();
-						p5.background(0);
-						printer(p5, data, this.state.width, this.state.height, "");
-					});
-				}
 			});
 		});
 	}
 
 	draw = (p5: any) =>
 	{
-		if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
-			p5.mouseY > 0 && p5.mouseY < this.state.height)
+		p5.scale(this.state.width / basicW)
+		if (this.winner !== "")
 		{
-			p5.clear()
-			p5.fill(p5.color(141, 141, 141));
-			p5.rect(0, 0, this.state.width / 2, this.state.height);
+			p5.background(0);
 			p5.fill(p5.color(255, 255, 255));
 			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
-			p5.fill(p5.color(255, 255, 255));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
-			if (this.leftClick === true)
-			{
-				this.mode = "NORMAL";
-				this.props.socket.emit('find_match');
-				this.modeSelected = true;
-				p5.background(0);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
-			}
+			p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
 		}
-		else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
-		p5.mouseY > 0 && p5.mouseY < this.state.height)
+		if (this.state.width < 400)	//change values here
 		{
+			this.tooSmall = true;
 			p5.clear()
-			p5.fill(p5.color(141, 141, 141));
-			p5.rect(this.state.width / 2, 0, this.state.width / 2, this.state.height);
-			p5.fill(p5.color(255, 255, 255));
+			p5.fill(p5.color(255, 0, 0));
 			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Normal mode`, this.state.width * 0.25, this.state.height / 2);
-			p5.fill(p5.color(255, 255, 255));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`Hardcore mode`, this.state.width * 0.75, this.state.height / 2);
-			if (this.leftClick === true)
+			p5.textSize(100)
+			p5.text(`TOO SMALL`, basicW / 2, basicH / 2);
+			p5.textSize(50)
+		}
+		else
+		{
+			this.tooSmall = false;
+			if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+				p5.mouseY > 0 && p5.mouseY < this.state.height)
 			{
-				this.mode = "HARDCORE";
-				this.props.socket.emit('find_match');
-				this.modeSelected = true;
-				p5.background(0);
+				p5.clear()
+				p5.fill(p5.color(141, 141, 141));
+				p5.rect(0, 0, basicW / 2, basicH);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Creating / Finding match...`, this.state.width / 2, this.state.height / 2);
+				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				if (this.leftClick === true)
+				{
+					this.mode = "NORMAL";
+					this.props.socket.emit('find_match');
+					this.modeSelected = true;
+					p5.background(0);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+				}
+			}
+			else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+			p5.mouseY > 0 && p5.mouseY < this.state.height)
+			{
+				p5.clear()
+				p5.fill(p5.color(141, 141, 141));
+				p5.rect(basicW / 2, 0, basicW / 2, basicH);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				if (this.leftClick === true)
+				{
+					this.mode = "HARDCORE";
+					this.props.socket.emit('find_match');
+					this.modeSelected = true;
+					p5.background(0);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+				}
+			}
+			else if (this.modeSelected === false)
+			{
+				p5.clear()
+				p5.fill(p5.color(141, 141, 141));
+				p5.rect(basicW / 2, 0, basicW / 2, basicH);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
 			}
 		}
 		if (this.leftClick === true)
@@ -473,7 +484,7 @@ export class Match extends React.Component<Props>
 		return (
 			<Fragment>
 				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
-				mouseClicked={this.mouseClicked}/>}
+				mouseClicked={this.mouseClicked} windowResized={this.windowResized}/>}
 			</Fragment>
 		)
 	}
