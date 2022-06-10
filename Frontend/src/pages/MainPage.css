@@ -59,13 +59,14 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: 75vh;
 	margin-top: 60px;
+	height: 70vh;
 }
 
 .gameArea {
-	width: 1200;
-	height: 750;
+	width: 70%;
+	height: 0;
+	padding-bottom: 40% !important;
 	background:
 		linear-gradient(black, black) padding-box,
 		linear-gradient(to right, #C0F4FE, #E11515) border-box;
@@ -88,8 +89,7 @@
 .chatArea {
 	display: flex;
 	flex-direction: column;
-	width: 22%;
-	height: 750;
+	width: 30%;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;
