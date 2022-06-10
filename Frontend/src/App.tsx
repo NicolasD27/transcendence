@@ -19,6 +19,7 @@ import Loader from './components/Loader';
 import socketIOClient, { io } from 'socket.io-client';
 import { Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import RegisterForm from './pages/RegisterForm';
 
 function getAccessTokenFromCookies() {
 	try {
@@ -82,6 +83,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
+          <Route path="/register" element={<RegisterForm />}/>
+
           <Route path="/mainpage" element={<MainPage  socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>} />
           <Route path="/profil/:id" element={<Profil socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>} />
         </Route>

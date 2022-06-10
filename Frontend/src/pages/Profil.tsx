@@ -100,7 +100,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 				<div className='boxNav'>
 					<img src={mainTitle} className='titleNav' onClick={() => onMainPage()} />
 					<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profil</button></div>
+					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profile</button></div>
 					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
 				</div >
 				<section id="gameAndChatSection">

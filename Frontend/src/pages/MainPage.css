@@ -23,7 +23,7 @@
 .navButton {
 	font-family: 'Tourney', cursive;
 	font-weight: 200;
-	width: 115px;
+	width: 130px;
 	height: 48px;
 	text-align: center;
 }
@@ -33,7 +33,7 @@
 	content: "";
 	z-index: -1;
 	opacity: 0;
-	width: 115px;
+	width: 130px;
 	height: 48px;
 	left: -3px;
 	top: -3px;
