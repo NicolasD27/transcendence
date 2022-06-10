@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import mainTitle from '../asset/mainTitle.svg'
 

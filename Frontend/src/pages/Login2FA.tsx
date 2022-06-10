@@ -1,4 +1,4 @@
-import React, { Component, Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Login2FA.css';
 import { useNavigate } from 'react-router-dom';
