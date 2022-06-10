@@ -1,26 +1,19 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import Match from '../components/Match'
-import ChatSectionUsers from '../components/ChatSectionUsers'
 import Chat from '../components/Chat'
-import { PropsStateUsers } from '../components/ChatSectionUsers'
-import Conversation from '../components/Conversation'
 import { chatStateFormat } from '../App'
 
 interface PropsBody {
 	idMe: number;
 	socket: any;
-	isFriendshipButtonClicked : boolean;
-	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
-	chatParamsState : chatStateFormat;
-	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	isFriendshipButtonClicked: boolean;
+	setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>;
+	chatParamsState: chatStateFormat;
+	setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>;
 }
 
 
-const Body : React.FC<PropsBody> = (props) => {
-	const idMe = props.idMe;
-	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
-	const  [ userstate, setUserState ] = useState(false);
-
+const Body: React.FC<PropsBody> = (props) => {
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>
