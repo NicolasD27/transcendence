@@ -102,6 +102,26 @@ const Chat : React.FC<PropsChat> = (props) => {
 			})
 	}
 
+	const handleResize = () => {
+		
+		const gameArea = document.getElementById("gameArea")
+		const chatArea = document.querySelector(".chatArea")
+		if (chatArea && gameArea)
+		{
+			console.log("hello")
+			chatArea.setAttribute("style",`height:${gameArea.offsetHeight}px`);
+		}
+
+	}
+
+	useEffect(() => {
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		
+	})
+	
+		
+
 	return (
 		<>
 			{!props.chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={friends} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived}/>}

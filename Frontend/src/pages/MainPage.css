@@ -59,12 +59,13 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: 44vw;
 	margin-top: 60px;
+	height: 70vh;
 }
 
 .gameArea {
 	width: 70%;
+	height: 0;
 	padding-bottom: 40% !important;
 	background:
 		linear-gradient(black, black) padding-box,
