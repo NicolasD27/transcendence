@@ -20,13 +20,11 @@ const Body : React.FC<PropsBody> = (props) => {
 	const idMe = props.idMe;
 	const [ users, setUsers ] = useState<PropsStateUsers[]>([])
 	const  [ userstate, setUserState ] = useState(false);
-	//const [ isFriendshipButtonClicked, setIsFriendshipButtonClicked ] = useState<boolean>(true)
-	//const [ chatChannelState, setChatChannelState ] = useState(false)
 
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>
-			<Match socket={props.socket}/>
+			{<Match socket={props.socket}/>}
 			<Chat idMe={props.idMe} socket={props.socket} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/>
 		</section>
 	)

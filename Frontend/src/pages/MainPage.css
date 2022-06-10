@@ -96,9 +96,9 @@
 
 .searchAndAdd {
 	display: flex;
-	margin: 18px;
+	margin: 0px 18px 18px 18px;
 	height: 54px;
-	border: none;
+	border: 0.1px solid red;;
 }
 
 #searchBar {
@@ -875,3 +875,30 @@ button {
 	width: 60%;
 }
 
+.switchMode {
+	display: flex;
+	border: 2px solid #C0F4FE;
+	justify-content: space-around;
+	margin: 18px;
+	height: 54px;
+	color: #C0F4FE;
+	border-radius: 25px;
+}
+
+.switchMode button {
+	color: #C0F4FE;
+}
+
+.switchMode button:hover {
+	background-color: #E11515;
+}
+
+.switchMode span{
+	/*border: 1px solid #C0F4FE;*/
+	background-color: #C0F4FE;
+	height: 100%;
+}
+
+.switchMode * {
+	border: 0.1px solid red;
+}
