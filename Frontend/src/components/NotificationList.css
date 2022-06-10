@@ -1,13 +1,14 @@
 .notifications-list-wrapper {
+    z-index: 1000;
     position: absolute;
     display: block;
-    width: calc(22% + 42px);
+    width: calc(30% + 13px);
     color: white;
-    height: 75vh;
+    height: calc(100vh - 308px);
     top: 154px;
     padding: 20px 0;
     overflow: scroll;
-    background: linear-gradient(black, black) padding-box, linear-gradient(to right, #C0F4FE, #E11515) border-box;
+    background: linear-gradient(black, black) padding-box, linear-gradient(to right, #649be5, #E11515) border-box;
     border-radius: 25px 0 0 25px;
     border: 4px solid transparent;
 } 
@@ -25,7 +26,7 @@
 
 .notifications-close {
     transition: right 600ms;
-    right: calc(-22% - 42px);
+    right: calc(-30% - 13px);
 }
 
 
@@ -33,20 +34,20 @@
 
 
 .notifications-opener {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     position: absolute;
-    top: 27px;
-    right: 180px;
+    top: 25px;
+    right: 147px;
     cursor: pointer;
 }
 
 .notifications-indicator {
     position: absolute;
-    right: 35px;
-    color: #C0F4FE;
+    top: 25px;
+    right: 147px;
+    color: white;
     background: #E11515;
-    top: 115px;
     width: 18px;
     height: 18px;
     border-radius: 50%;

@@ -17,11 +17,7 @@ const Header : React.FC<PropsHeader> = (props) => {
 
 	const navigate = useNavigate()
 
-	const onPlay = () => {
-		navigate("/mainpage")
-		window.location.reload()
-
-	}
+	
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 		window.location.reload()
@@ -34,11 +30,16 @@ const Header : React.FC<PropsHeader> = (props) => {
 		navigate("/")
 	}
 
+	const goToMainPage = () => { 
+		navigate("/mainpage")
+		window.location.reload()
+	}
+
 	return (
 			<div className='boxNav'>
 				<div>
 
-					<img src={mainTitle} className='titleNav' alt="mainTitle" />
+					<img src={mainTitle} className='titleNav' alt="mainTitle" onClick={goToMainPage} />
 				</div>
 				<div className='header-right'>
 					<img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />

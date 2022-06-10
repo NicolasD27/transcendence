@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Fragment, useEffect, Dispatch, SetStateAction } from "react";
 import Notification, { User } from "./Notification";
 import './NotificationList.css';
-import bell from '../asset/notification.svg';
+import bell from '../asset/notificationIcon.svg';
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
@@ -56,6 +56,21 @@ const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: n
 	useEffect(() => {
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
 	}, [notifications])
+
+	const handleResize = () => {
+		
+		const gameArea = document.getElementById("gameArea")
+		const notifContainer = document.querySelector(".notifications-list-wrapper")
+		if (notifContainer && gameArea)
+			notifContainer.setAttribute("style",`height:${gameArea.offsetHeight}px`);
+
+	}
+
+	useEffect(() => {
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		
+	})
 		
 
 	const handleOpen = () => {

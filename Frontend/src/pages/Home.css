@@ -27,7 +27,7 @@ a {
 	font-family: 'Open Sans';
 	text-align: center;
 	font-size: 36px;
-	color: #C0F4FE;
+	color: #649be5;
 }
 
 .ButtonStyle {
@@ -40,7 +40,7 @@ a {
 	font-size: 28px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, rgba(44, 72, 222, 0) 21.35%, rgba(214, 16, 94, 0) 75.52%, #E11515);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #649be5, rgba(44, 72, 222, 0) 21.35%, rgba(214, 16, 94, 0) 75.52%, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
@@ -65,7 +65,7 @@ a {
 	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, #E11515);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #649be5, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
