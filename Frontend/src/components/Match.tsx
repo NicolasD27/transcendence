@@ -5,10 +5,10 @@ import { Socket } from "socket.io-client"
 
 let playerWidth = 15;
 let finalScore = 10;
-let buttonAdder = 15;
+let buttonAdder = 8;
 let ballSpeed = 5;
 let magicBallSpeed = ballSpeed;
-let accelerator = 2;
+let accelerator = 1;
 let basicW = 1000;
 let basicH = 590;
 
@@ -60,9 +60,10 @@ function negRand()
 
 function gameEngine(game: any, socket: Socket, match_id: number, width: number, height: number)
 {
-	if(game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth + 4 || game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth - 4)
+	const ballElasticity = 4
+	if(game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth + ballElasticity || game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth - ballElasticity)
 	{
-		if (game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth)
+		if (game.ball.x + game.ball.xv > width -  game.ball.xr / 2 - playerWidth + ballElasticity)
 		{
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 			{
@@ -87,7 +88,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20)
 			}
 		}
-		else if (game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth)
+		else if (game.ball.x + game.ball.xv <  game.ball.xr / 2 + playerWidth - ballElasticity)
 		{
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 			{
@@ -112,7 +113,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			}
 		}
 	}
-	if (game.ball.y + game.ball.yv > height - game.ball.yr / 2 || game.ball.y  < game.ball.yr / 2)
+	if (game.ball.y + game.ball.yv + ballElasticity > height - game.ball.yr / 2 || game.ball.y + game.ball.yv  < game.ball.yr / 2 - ballElasticity)
 		game.ball.yv = - game.ball.yv;
 
 	game.ball.x += game.ball.xv;
@@ -398,7 +399,7 @@ export class Match extends React.Component<Props>
 				p5.mouseY > 0 && p5.mouseY < this.state.height)
 			{
 				p5.clear()
-				p5.fill(p5.color(141, 141, 141));
+				p5.fill(p5.color("#3772FF"));
 				p5.rect(0, 0, basicW / 2, basicH);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
@@ -421,7 +422,7 @@ export class Match extends React.Component<Props>
 			p5.mouseY > 0 && p5.mouseY < this.state.height)
 			{
 				p5.clear()
-				p5.fill(p5.color(141, 141, 141));
+				p5.fill(p5.color("#E11515"));
 				p5.rect(basicW / 2, 0, basicW / 2, basicH);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
@@ -443,8 +444,10 @@ export class Match extends React.Component<Props>
 			else if (this.modeSelected === false)
 			{
 				p5.clear()
-				p5.fill(p5.color(141, 141, 141));
-				p5.rect(basicW / 2, 0, basicW / 2, basicH);
+				// p5.fill(p5.color("#E11515"));
+				// p5.rect(basicW / 2, 0, basicW / 2, basicH);
+				p5.fill(p5.color(255, 255, 255));
+				p5.rect(basicW / 2, 0, 2, basicH);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
