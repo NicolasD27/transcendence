@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
@@ -10,10 +10,7 @@ import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
 import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
-import { Socket } from 'socket.io-client';
 import './MainPage.css'
-import Message from '../components/Message';//!TEST!
-import Conversation from '../components/Conversation';//!TEST!
 import { chatStateFormat } from '../App';
 import Chat from '../components/Chat';
 import Header from './Header';
