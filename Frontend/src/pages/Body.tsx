@@ -16,7 +16,7 @@ const Body : React.FC<PropsBody> = (props) => {
 	const [ chatFriendState, setChatFriendState ] = useState(false)
 	const [ chatChannelState, setChatChannelState ] = useState(false)
 
- 
+
 	return (
 		<section id="gameAndChatSection">
 			<div className='gameArea' id='gameArea'></div>
