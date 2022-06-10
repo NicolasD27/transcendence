@@ -39,7 +39,9 @@ const PrintChannelCreationSettings : React.FC<propsPrintChannelCreationSettings>
 					<input type='radio' name="modeChannel" id="isProtectedChannel" onChange={() => { props.setChannelVisibilitySelected("protected"); setIsProtectedClicked(true)}}/>
 					{
 						isProtectedCLicked && 
-						<input type="password" name="password" placeholder='Password' id='createChannelPasswordInput' onChange={handlePasswordEntered} required/>
+						<div className='createChannelPassword'>
+							<input type="password" name="password" placeholder='Password' onChange={handlePasswordEntered} required/>
+						</div>
 					}
 					{	
 						passwordNotSecure !== "" &&

@@ -1,11 +1,5 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Socket } from 'socket.io';
+import { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
-import { cp } from 'fs/promises';
-import { Channel, channel } from 'diagnostics_channel';
-import { collapseTextChangeRangesAcrossMultipleVersions, createEmitAndSemanticDiagnosticsBuilderProgram, isPropertySignature } from 'typescript';
-import { join } from 'path';
 import NotificationList from '../components/NotificationList';
 import './MainPage.css'
 import Header from './Header'

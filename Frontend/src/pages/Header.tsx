@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import mainTitle from '../asset/Pong-Legacy.svg';
@@ -9,15 +9,14 @@ import './Header.css'
 
 
 interface PropsHeader {
-	idMe : number;
+	idMe: number;
 }
 
-const Header : React.FC<PropsHeader> = (props) => {
+const Header: React.FC<PropsHeader> = (props) => {
 	const idMe = props.idMe;
 
 	const navigate = useNavigate()
 
-	
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 		window.location.reload()
