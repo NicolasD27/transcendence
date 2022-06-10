@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { Fragment, Component, useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, { Fragment, useEffect, Dispatch, SetStateAction } from "react";
 import Notification, { User } from "./Notification";
 import './NotificationList.css';
 import bell from '../asset/notification.svg';
-import socketIOClient from "socket.io-client";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
@@ -25,9 +24,17 @@ const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: n
     const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
+	
+	
 
 	useEffect(() => {
-		if (myId != 0) {
+		const refreshNotificationList = () => {
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());	
+			})
+		}
+		if (myId !== 0) {
 			socket.on("new_channel_invite_received", data => {
 				refreshNotificationList()
 			})
@@ -43,18 +50,12 @@ const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: n
 			refreshNotificationList()
 			
 		}
-	}, [myId])
+	}, [myId, socket])
 
-	const refreshNotificationList = () => {
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-		.then(res => {
-			setNotifications(notifications => res.data.reverse());	
-		})
-	}
 
 	useEffect(() => {
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
-	}, [notifications.length])
+	}, [notifications])
 		
 
 	const handleOpen = () => {

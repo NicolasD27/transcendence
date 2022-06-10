@@ -1,4 +1,4 @@
-import React, { Fragment, Dispatch, SetStateAction, useEffect } from "react";
+import React, {  Dispatch, SetStateAction, useEffect } from "react";
 import axios from 'axios';
 import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
@@ -24,7 +24,7 @@ const Pseudo: React.FC<Props> = (props) => {
 				setPseudo(pseudo => profil.pseudo)
 			})
 		setGetPseudo(true);
-	}, [getpseudo])
+	}, [getpseudo, id])
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		settmpPseudo(tmpPseudo => e.target.value)

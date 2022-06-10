@@ -4,18 +4,16 @@
 
 .boxNav {
 	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
 	align-items: center;
-	justify-content: flex-end;
-	gap: 20px;
+	justify-content: space-between;
+	/* gap: 20px; */
 	width: 100%;
 	height: 94px;
 }
 
 .titleNav {
 	width: 247px;
-	height: 28px;
+	height: 30px;
 	margin-right: auto;
 	cursor: pointer;
 }
@@ -42,7 +40,7 @@
 	font-size: 24px;
 	color: white;
 	border: solid 3px transparent;
-	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #DBF9FF, #E11515);
+	background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(101deg, #C0F4FE, #E11515);
 	background-origin: border-box;
 	background-clip: content-box, border-box;
 	box-shadow: 2px 1000px 1px black inset;
@@ -59,12 +57,13 @@
 	flex-direction: row;
 	margin-top: 0px;
 	width: 100%;
-	height: 200;
 	margin-top: 60px;
+	height: 70vh;
 }
 
 .gameArea {
 	width: 70%;
+	height: 0;
 	padding-bottom: 40% !important;
 	background:
 		linear-gradient(black, black) padding-box,
@@ -89,7 +88,6 @@
 	display: flex;
 	flex-direction: column;
 	width: 30%;
-	height: 600;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;

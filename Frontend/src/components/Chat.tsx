@@ -1,8 +1,5 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, {  useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
-import statusIconGreen from "../asset/statusIconGreen.svg"
-import statusIconRed from "../asset/statusIconRed.svg"
-import user1 from "../asset/friend1.svg"
 import ChatSectionUsers from './ChatSectionUsers';
 import Conversation from './Conversation';
 import { chatStateFormat } from '../App';
@@ -31,17 +28,17 @@ const Chat : React.FC<PropsChat> = (props) => {
 	const [ friendRequestsSent, setFriendRequestsSent ] = useState<number[]>([])
 	const [ friendRequestsReceived, setFriendRequestsReceived ] = useState<FriendsFormat[]>([])
 
-	const idMe = props.idMe;
+	const { idMe, setIsFriendshipButtonClicked } = props;
 
 	useEffect(() => {
 		if (props.idMe && props.isFriendshipButtonClicked === true)
 		{
 			axios
-				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
+				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
 				.then (res => {
 					let users = res.data;
 					setFriends([])
-					users.map((friendship:any) => {
+					users.forEach((friendship:any) => {
 						let friends_tmp : FriendsFormat;
 						if (friendship.following.id === props.idMe)
 						{
@@ -72,9 +69,9 @@ const Chat : React.FC<PropsChat> = (props) => {
 						}
 					})
 			})
-			props.setIsFriendshipButtonClicked(false)
+			setIsFriendshipButtonClicked(false)
 		}
-	}, [props.idMe, props.isFriendshipButtonClicked])
+	}, [props.idMe, props.isFriendshipButtonClicked, friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe)
 	{
@@ -84,7 +81,7 @@ const Chat : React.FC<PropsChat> = (props) => {
 				.then (res => {
 					let users = res.data;
 					setFriendRequestsReceived([])
-					users.map((friendship:any) => {
+					users.forEach((friendship:any) => {
 						let friends_tmp : FriendsFormat;
 						friends_tmp = { 
 							friendshipId : friendship.id,
@@ -101,6 +98,26 @@ const Chat : React.FC<PropsChat> = (props) => {
 				})
 			})
 	}
+
+	const handleResize = () => {
+		
+		const gameArea = document.getElementById("gameArea")
+		const chatArea = document.querySelector(".chatArea")
+		if (chatArea && gameArea)
+		{
+			console.log("hello")
+			chatArea.setAttribute("style",`height:${gameArea.offsetHeight}px`);
+		}
+
+	}
+
+	useEffect(() => {
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		
+	})
+	
+		
 
 	return (
 		<>

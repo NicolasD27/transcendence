@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
-import {FriendsFormat }  from './Chat'
 import { PropsStateChannel } from './ChatSectionUsers';
 import { chatStateFormat } from '../App'
 

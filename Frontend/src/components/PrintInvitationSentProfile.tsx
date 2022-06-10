@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, {  useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
 
@@ -22,7 +22,7 @@ const PrintInvitationSentProfile : React.FC<PropsPrintInvitationSentProfile> = (
 	useEffect(() => {
 		if (props.user.avatarId != null)
 			setProfileAvatar(`http://localhost:8000/api/database-files/${props.user.avatarId}`)
-	}, [])
+	}, [props.user.avatarId])
 
 	return (
 		<>

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, { useState, Dispatch, SetStateAction} from 'react';
 
 interface propsPrintChannelCreationSettings {
 	setIsNextButtonClicked : Dispatch<SetStateAction<boolean>>;

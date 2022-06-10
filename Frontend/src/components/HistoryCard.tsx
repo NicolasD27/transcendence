@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import './HistoryCard.css';
 
 interface Props {
@@ -35,14 +35,14 @@ const HistoryCard: React.FC<Props> = (props) => {
 		<div className="boxCard">
 			<div>
 				<img src={avatarPlayer} alt="" id="img" className="imgCard" />
-				{winner == props.namePlayer && <div className="nameStyle glowingText">{props.pseudoP}</div>}
-				{winner != props.namePlayer && <div className="nameStyle ">{props.pseudoP}</div>}
+				{winner === props.namePlayer && <div className="nameStyle glowingText">{props.pseudoP}</div>}
+				{winner !== props.namePlayer && <div className="nameStyle ">{props.pseudoP}</div>}
 			</div>
 			<div className="scoreStyle">{scorePlayer}  -  {scoreOppenent}</div>
 			<div>
 				<img src={avatarOppenent} alt="" id="img" className="imgCard" />
-				{winner == props.nameOppenent && <div className="nameStyle glowingText">{props.pseudoO}</div>}
-				{winner != props.nameOppenent && <div className="nameStyle">{props.pseudoO}</div>}
+				{winner === props.nameOppenent && <div className="nameStyle glowingText">{props.pseudoO}</div>}
+				{winner !== props.nameOppenent && <div className="nameStyle">{props.pseudoO}</div>}
 			</div>
 		</div >
 	);

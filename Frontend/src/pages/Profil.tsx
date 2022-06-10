@@ -16,6 +16,7 @@ import Message from '../components/Message';//!TEST!
 import Conversation from '../components/Conversation';//!TEST!
 import { chatStateFormat } from '../App';
 import Chat from '../components/Chat';
+import Header from './Header';
 
 const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState }: { socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
 	interface matchFormat {
@@ -97,12 +98,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 	return (
 		<Fragment>
 			<div id='bloc'>
-				<div className='boxNav'>
-					<img src={mainTitle} className='titleNav' onClick={() => onMainPage()} />
-					<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-					<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profile</button></div>
-					<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
-				</div >
+				<Header idMe={idMe} />
 				<section id="gameAndChatSection">
 					<div className='boxProfil'>
 						<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />

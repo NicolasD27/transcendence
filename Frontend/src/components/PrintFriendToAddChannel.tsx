@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react'
+import React, { useState, Dispatch, SetStateAction} from 'react'
 import { useNavigate } from 'react-router-dom'
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
@@ -38,6 +38,7 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 				.filter(friend => {
 					if (friend.id !== props.idMe)
 						return friend;
+					return false
 				})
 				.map((user:FriendsFormat) => {
 					let statusIcon = (user.status === 1 ? statusIconGreen : statusIconRed)

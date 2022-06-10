@@ -1,8 +1,6 @@
-import React, { Component, Dispatch, SetStateAction } from 'react';
+import React, {  Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Avatar.css';
-//import FormData from 'form-data';//
-//import { request } from 'http';//
 
 export interface Props {
 	id: number;
@@ -48,7 +46,7 @@ export class Avatar extends React.Component<Props> {
 	}
 
 	componentDidUpdate(prevProps: Props) {
-		if (prevProps.id != this.props.id) {
+		if (prevProps.id !== this.props.id) {
 			console.log("here")
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
