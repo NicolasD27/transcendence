@@ -4,6 +4,7 @@ import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
 import { chatStateFormat } from '../App'
 import { FriendsFormat } from '../components/Chat'
+import OngoingMatch from '../components/OngoingMatch'
 
 interface PropsSectionUsers {
 	socket : any;
@@ -41,6 +42,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	const [ existingChannels, setExistingChannels ] = useState<PropsStateChannel[]>([])
 	const [ searchValue, setSearchValue ] = useState("")
 	const [ createChannelButtonState, setCreateChannelButtonState ] = useState(false)
+	const [ chatGamesState, setChatGameState ] = useState(true)
 
 	useEffect(() => {
 		if (searchValue !== "")
@@ -73,30 +75,44 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 
 	return (
 		<div className='chatArea'>
-			<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
+			<div className='switchMode'>
+				<button onClick={() => setChatGameState(true)} className="switchButton">Chat</button>
+				<span></span>
+				<button onClick={() => setChatGameState(false)} className="switchButton">Ongoing Match</button>
+			</div>
+			{ 
+			 	chatGamesState &&
+				<>
+					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
+					{
+						!createChannelButtonState && 
+						<UserList
+							socket = {props.socket}
+							idMe={props.idMe}
+							existingChannels={existingChannels}
+							joinedChannels={joinedChannels}
+							setJoiningChannel={setJoiningChannel}
+							//setJoinedChannels={setJoinedChannels}
+							searchUsers={searchUsers}
+							friends={props.friends}
+							friendRequestsSent={props.friendRequestsSent}
+							setFriendRequestsSent={props.setFriendRequestsSent}
+							friendRequestsReceived={props.friendRequestsReceived}
+							setFriendRequestsReceived={props.setFriendRequestsReceived}
+							searchValue={searchValue}
+							setSearchValue={setSearchValue}
+							setChatParamsState={props.setChatParamsState}
+							chatParamsState={props.chatParamsState}
+							setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
+							/*chatChannelState={props.chatChannelState}
+							setChatChannelState={props.setChatChannelState}*/
+						/>
+					} 
+				</>
+			}
 			{
-				!createChannelButtonState && 
-				<UserList
-					socket = {props.socket}
-					idMe={props.idMe}
-					existingChannels={existingChannels}
-					joinedChannels={joinedChannels}
-					setJoiningChannel={setJoiningChannel}
-					//setJoinedChannels={setJoinedChannels}
-					searchUsers={searchUsers}
-					friends={props.friends}
-					friendRequestsSent={props.friendRequestsSent}
-					setFriendRequestsSent={props.setFriendRequestsSent}
-					friendRequestsReceived={props.friendRequestsReceived}
-					setFriendRequestsReceived={props.setFriendRequestsReceived}
-					searchValue={searchValue}
-					setSearchValue={setSearchValue}
-					setChatParamsState={props.setChatParamsState}
-					chatParamsState={props.chatParamsState}
-					setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
-					/*chatChannelState={props.chatChannelState}
-					setChatChannelState={props.setChatChannelState}*/
-				/>
+				!chatGamesState &&
+				<OngoingMatch/>
 			}
 		</div>
 	)
