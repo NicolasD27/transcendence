@@ -49,7 +49,7 @@ const AddUser: React.FC<Props> = (props) => {
 		}
 		else
 			setSearchUsers([])
-	}, [searchValue]) //Change selectedUsers
+	}, [searchValue, selectedUsers]) //Change selectedUsers
 
 	const handleChangeAfter = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(searchValue => e.target.value)

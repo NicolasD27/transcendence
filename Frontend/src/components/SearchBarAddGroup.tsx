@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, {  useState, Dispatch, SetStateAction} from 'react';
 import axios from 'axios'
 import PrintChannelCreationSettings from './PrintChannelCreationSettings'
 import PrintFriendToAddChannel from './PrintFriendToAddChannel'
@@ -81,7 +81,9 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 							<button id="checkbox_previousChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Previous</button>
 							<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
 						</>
-						||
+					}
+					{
+						!isNextButtonClicked &&
 						<>
 							<div className='usersList'>
 								<PrintFriendToAddChannel idMe={props.idMe} friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>

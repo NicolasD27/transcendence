@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, { Dispatch, SetStateAction} from 'react';
 import { PropsStateUsers } from './ChatSectionUsers'
 
 interface PropsPrintUnfriendBlockProfile {

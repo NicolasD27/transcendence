@@ -27,7 +27,7 @@ const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClick
 
 	return (
 		<div id='bloc'>
-			<Header idMe={idMe} socket={socket}/>
+			<Header idMe={idMe} />
 			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>
 			{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>

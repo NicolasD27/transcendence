@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import  {  useEffect, useState } from "react";
 import axios from 'axios';
 import './ToggleQRcode.css';
 import qrCode from '../asset/qr-code.svg';
@@ -27,7 +27,7 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 
 	return (
 		<div className="boxQR">
-			<img src={qrCode} className="imgQR" />
+			<img src={qrCode} className="imgQR" alt="QRcodeIcon"/>
 			<input className="switch" type="checkbox" checked={ischecked} onChange={handleChange} />
 		</div>
 	);

@@ -2,10 +2,14 @@ import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'r
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import mainTitle from '../asset/Pong-Legacy.svg';
+import profileIcon from '../asset/profileIcon.svg';
+import logoutIcon from '../asset/logoutIcon.svg';
+import './Header.css'
+
+
 
 interface PropsHeader {
 	idMe : number;
-	socket: any
 }
 
 const Header : React.FC<PropsHeader> = (props) => {
@@ -32,10 +36,14 @@ const Header : React.FC<PropsHeader> = (props) => {
 
 	return (
 			<div className='boxNav'>
-				<img src={mainTitle} className='titleNav' alt="mainTitle" />
-				<div><button onClick={() => onPlay()} className='ButtonStyle navButton'>Play</button></div>
-				<div><button onClick={() => onProfil(idMe.toString())} className='ButtonStyle navButton'>Profile</button></div>
-				<div><button onClick={() => onLogout()} className='ButtonStyle navButton'>Logout</button></div>
+				<div>
+
+					<img src={mainTitle} className='titleNav' alt="mainTitle" />
+				</div>
+				<div className='header-right'>
+					<img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />
+					<img onClick={() => onLogout()} src={logoutIcon} className='logoutIcon' alt="logoutIcon" />
+				</div>
 			</div >
 		)
 }

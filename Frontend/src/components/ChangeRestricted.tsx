@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import axios from "axios";
 import './OptionAdmin.css';
 
 interface Props {
@@ -70,7 +69,7 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 		}
 		else if (props.mode === 8)
 			setFiltreUsers(props.userRestricted)
-	}, []);
+	}, [props.mode, props.moderators, props.userRestricted, props.users]);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers.filter((friend: any) => friend.id === user.id).length === 0) {
@@ -131,7 +130,7 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 					)
 				})
 			}
-			{filtreUsers.length == 0 && <p  className="labelStyle">No users</p>}
+			{filtreUsers.length === 0 && <p  className="labelStyle">No users</p>}
 			{
 				filtreUsers.length > 0 && props.mode !== 8 && <div className="textpasswordArea">
 				 <p className="labelStyle">Time: </p>

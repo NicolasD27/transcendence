@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
 
@@ -23,7 +23,7 @@ const PrintSendFriendRequestProfile : React.FC<PropsPrintSendFriendRequestProfil
 	useEffect(() => {
 		if (props.user.avatarId != null)
 			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
-	}, [])
+	}, [props.user.avatarId])
 
 	return (
 		<>

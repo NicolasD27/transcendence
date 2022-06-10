@@ -2,15 +2,12 @@ import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
-import { isConstructorDeclaration } from 'typescript';
 import { chatStateFormat } from '../App'
 import { FriendsFormat } from '../components/Chat'
 
 interface PropsSectionUsers {
 	socket : any;
 	idMe : number;
-	//users : PropsStateUsers[];
-	//setUsers : Dispatch<SetStateAction<PropsStateUsers[]>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
@@ -19,8 +16,6 @@ interface PropsSectionUsers {
 	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
 	friendRequestsReceived : FriendsFormat[];
 	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
-	/*chatChannelState : boolean;
-	setChatChannelState : Dispatch<SetStateAction<boolean>>;*/
 }
 
 export interface  PropsStateUsers {
@@ -74,7 +69,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			.catch (err =>
 				console.log(err)
 			)
-	}, [])
+	}, [searchValue])
 
 	return (
 		<div className='chatArea'>

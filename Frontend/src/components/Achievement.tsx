@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import './Achievement.css';
 import iconAchi from '../asset/iconAchi.svg';
 
@@ -21,7 +21,6 @@ const Achievement: React.FC<Props> = (props) => {
 	const [succes1, setSucces1] = useState(false);
 	const [succes2, setSucces2] = useState(false);
 	const [succes3, setSucces3] = useState(true);
-	const [getSucces, setGetSucces] = useState(false);
 	//Ca marche pas
 	useEffect(() => {
 		if (historys.length > 0)
@@ -40,9 +39,9 @@ const Achievement: React.FC<Props> = (props) => {
 		<div className="boxA">
 			<div className="labelAchievement">Achievements:</div>
 			<div className="boxAchievement">
-				<div className={'iconAchievement ' + (succes1 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
-				<div className={'iconAchievement ' + (succes2 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
-				<div className={'iconAchievement ' + (succes3 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} /></div>
+				<div className={'iconAchievement ' + (succes1 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} alt="achievementIcon"/></div>
+				<div className={'iconAchievement ' + (succes2 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} alt="achievementIcon"/></div>
+				<div className={'iconAchievement ' + (succes3 ? "iconOpa" : "iconNoOpa")} ><img src={iconAchi} alt="achievementIcon"/></div>
 			</div>
 		</div>
 	);
