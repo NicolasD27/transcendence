@@ -10,7 +10,7 @@ let ballSpeed = 20;
 let magicBallSpeed = ballSpeed;
 let accelerator = 2;
 let basicW = 1000;
-let basicH = 588;
+let basicH = 590;
 
 function PlayerInput(this: any)
 {
@@ -181,8 +181,8 @@ interface Props {
 export class Match extends React.Component<Props>
 {
 	state = {
-		width: 1200,
-		height: 700,
+		width: basicW,
+		height: basicH,
 		divider: 1
 	}
 	type = "";
@@ -254,9 +254,9 @@ export class Match extends React.Component<Props>
 					this.type = "master";
 
 					var game = new Game(
-						new Player(0, 588 / 2 - 50, playerWidth, 100, 0),
-						new Player(1000 - playerWidth, 588 / 2 - 50, playerWidth, 100, 0),
-						new Ball(1000 / 2, 588 / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+						new Player(0, basicH / 2 - 50, playerWidth, 100, 0),
+						new Player(basicW - playerWidth, basicH / 2 - 50, playerWidth, 100, 0),
+						new Ball(basicW / 2, basicH / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
 						(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
 
 					var playerInput = new PlayerInput();
@@ -392,8 +392,8 @@ export class Match extends React.Component<Props>
 		else
 		{
 			this.tooSmall = false;
-			if	(p5.mouseX < basicW / 2 && p5.mouseX > 0 && this.modeSelected === false &&
-				p5.mouseY > 0 && p5.mouseY < basicH)
+			if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+				p5.mouseY > 0 && p5.mouseY < this.state.height)
 			{
 				p5.clear()
 				p5.fill(p5.color(141, 141, 141));
@@ -415,8 +415,8 @@ export class Match extends React.Component<Props>
 					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
 				}
 			}
-			else if (p5.mouseX >= basicW / 2 && p5.mouseX < basicW && this.modeSelected === false &&
-			p5.mouseY > 0 && p5.mouseY < basicH)
+			else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+			p5.mouseY > 0 && p5.mouseY < this.state.height)
 			{
 				p5.clear()
 				p5.fill(p5.color(141, 141, 141));
