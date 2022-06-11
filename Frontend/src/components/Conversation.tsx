@@ -67,7 +67,7 @@ const Conversation: React.FC<Props> = (props) => {
 
 		if (message.channel.id === props.id) {
 			if (message.user.avatarId === null)
-				avatartmp = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+				avatartmp = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.user.avatarId}`;
 			if (props.idMe === message.user.id)
@@ -83,7 +83,7 @@ const Conversation: React.FC<Props> = (props) => {
 		let avatartmp: string;
 		if ((message.sender.username === props.nameChat) || (message.receiver.username === props.nameChat)) {
 			if (message.sender.avatarId === null)
-				avatartmp = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+				avatartmp = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.sender.avatarId}`;
 			if (props.idMe === message.sender.id)
@@ -116,7 +116,7 @@ const Conversation: React.FC<Props> = (props) => {
 						let singleModerator: userFormat;
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 							else
 								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
 							singleModerator = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar };
@@ -129,7 +129,7 @@ const Conversation: React.FC<Props> = (props) => {
 						
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 							else
 								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
 							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar, bannedtype: list.bannedState.type };
@@ -155,7 +155,7 @@ const Conversation: React.FC<Props> = (props) => {
 						let singleUser: userFormat;
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
-								list.avatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+								list.avatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 							else
 								list.avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`;
 							singleUser = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar };

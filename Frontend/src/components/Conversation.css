@@ -16,7 +16,7 @@
 	flex-grow: 1;
 	border-radius: 20px;
 	box-sizing: border-box;
-	border: 2px solid #C0F4FE;
+	border: 2px solid #3772FF;
 	overflow-y: auto;
 	padding: 10px;
 }
@@ -35,7 +35,7 @@
 	padding: 5px 10px;
 	border-radius: 20px;
 	box-sizing: border-box;
-	border: 2px solid #C0F4FE;
+	border: 2px solid #3772FF;
 
 }
 
@@ -44,7 +44,7 @@
 	left: 0px;
 	top: 0px;
 	width: 187px; */
-	color: #C0F4FE;
+	color: #3772FF;
 }
 
 .sendIcon {
@@ -63,7 +63,7 @@
 }
 
 .leaveChannelButton {
-	background-image: url('../asset/leaveIcon.svg');
+	background-image: url('../asset/logoutIcon.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
 	height: 37px;

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
-import close from '../asset/close.svg';
+// import close from '../asset/close.svg';
 import HistoryMatch from '../components/HistoryMatch';
 import Achievement from '../components/Achievement';
 import Pseudo from '../components/Pseudo';
@@ -64,9 +64,9 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 
 
 	const navigate = useNavigate()
-	const onMainPage = () => {
-		navigate("/mainpage")
-	}
+	// const onMainPage = () => {
+	// 	navigate("/mainpage")
+	// }
 
 	if (getIDMe === false) {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -84,7 +84,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 				<Header idMe={idMe} />
 				<section id="gameAndChatSection">
 					<div className='boxProfil'>
-						<button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" />
+						{/* <button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" /> */}
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
 						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />

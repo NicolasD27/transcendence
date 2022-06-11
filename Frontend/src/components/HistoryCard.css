@@ -10,10 +10,11 @@
 	height: 108px;
 	background:
 		linear-gradient(black, black) padding-box,
-		linear-gradient(to right, #C0F4FE, #E11515) border-box;
+		linear-gradient(to right, #3772FF, #E11515) border-box;
 	border-radius: 24px;
 	border: 2px solid transparent;
 	gap: 60px;
+	padding: 4px 0;
 }
 
 .imgCard {
@@ -27,20 +28,18 @@
 .scoreStyle {
 	color: white;
 	font-weight: bold;
-	font-family: 'Open Sans';
 	font-size: 16px;
 }
 
 .nameStyle {
 	color: white;
 	font-weight: bold;
-	font-family: 'Open Sans';
 	font-size: 12px;
 	text-align: center;
 }
 
 .glowingText {
-	animation: glowanimate 5s linear infinite;
+	animation: glowanimate 5s ease infinite;
 }
 
 @keyframes glowanimate {

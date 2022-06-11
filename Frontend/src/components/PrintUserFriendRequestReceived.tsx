@@ -21,7 +21,7 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 		navigate("/profil/" + idstring)
 	}
 
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 	
 	useEffect(() => {
 		if (props.user.avatarId != null)

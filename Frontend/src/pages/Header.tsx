@@ -2,8 +2,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import mainTitle from '../asset/Pong-Legacy.svg';
-import profileIcon from '../asset/profileIcon.svg';
-import logoutIcon from '../asset/logoutIcon.svg';
+import profileIcon from '../asset/profileIcon2.svg';
+import logoutIcon from '../asset/logoutIcon4.svg';
 import './Header.css'
 
 
@@ -16,6 +16,7 @@ const Header: React.FC<PropsHeader> = (props) => {
 	const idMe = props.idMe;
 
 	const navigate = useNavigate()
+
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 		window.location.reload()
@@ -28,18 +29,23 @@ const Header: React.FC<PropsHeader> = (props) => {
 		navigate("/")
 	}
 
-	return (
-		<div className='boxNav'>
-			<div>
+	const goToMainPage = () => { 
+		navigate("/mainpage")
+		window.location.reload()
+	}
 
-				<img src={mainTitle} className='titleNav' alt="mainTitle" />
-			</div>
-			<div className='header-right'>
-				<img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />
-				<img onClick={() => onLogout()} src={logoutIcon} className='logoutIcon' alt="logoutIcon" />
-			</div>
-		</div >
-	)
+	return (
+			<div className='boxNav'>
+				<div>
+
+					<img src={mainTitle} className='titleNav' alt="mainTitle" onClick={goToMainPage} />
+				</div>
+				<div className='header-right'>
+					<img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />
+					<img onClick={() => onLogout()} src={logoutIcon} className='logoutIcon' alt="logoutIcon" />
+				</div>
+			</div >
+		)
 }
 
 export default Header;
