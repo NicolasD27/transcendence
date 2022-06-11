@@ -2,8 +2,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import mainTitle from '../asset/Pong-Legacy.svg';
-import profileIcon from '../asset/profileIcon.svg';
-import logoutIcon from '../asset/logoutIcon.svg';
+import profileIcon from '../asset/profileIcon2.svg';
+import logoutIcon from '../asset/logoutIcon4.svg';
 import './Header.css'
 
 

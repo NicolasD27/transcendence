@@ -5,7 +5,7 @@
     width: calc(29% + 21px);
     color: white;
     height: calc(100vh - 308px);
-    top: 154px;
+    top: 124px;
     padding: 20px 0;
     overflow: scroll;
     background: linear-gradient(black, black) padding-box, linear-gradient(to right, #3772FF, #E11515) border-box;

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Fragment, useEffect, Dispatch, SetStateAction } from "react";
 import Notification, { User } from "./Notification";
 import './NotificationList.css';
-import bell from '../asset/notificationIcon.svg';
+import bell from '../asset/notificationIcon2.svg';
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 

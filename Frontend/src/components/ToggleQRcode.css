@@ -3,6 +3,7 @@
 	align-self: start;
 	margin-left: 15px;
 	display: flex;
+	align-items: center;
 	flex-direction: column;
 	gap: 10px;
 }
@@ -10,15 +11,14 @@
 .imgQR {
 	height: 48px;
 	width: 48px;
-	margin-left: 10px;
 	background-size: 48px;
 	background-position: center;
 }
 
 .switch {
-	--inactive-bg: #cfd8dc;
+	--inactive-bg: #E11515;
 	--active-bg: #3772FF;
-	--size: 2rem;
+	--size: 1.6rem;
 	appearance: none;
 	width: calc(var(--size) * 2.2);
 	height: var(--size);
