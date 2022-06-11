@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
 import Sketch from "react-p5";
 import { Socket } from "socket.io-client"
-
+import './Match.css'
 
 let playerWidth = 15;
 let finalScore = 10;
 let buttonAdder = 8;
-let ballSpeed = 5;
+let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
 let accelerator = 1;
 let basicW = 1000;
@@ -184,7 +184,8 @@ export class Match extends React.Component<Props>
 	state = {
 		width: basicW,
 		height: basicH,
-		divider: 1
+		divider: 1,
+		winner: ""
 	}
 	type = "";
 	started = 0;
@@ -198,7 +199,6 @@ export class Match extends React.Component<Props>
 	modeSelected = false;
 	mode = "";
 	tooSmall = false;
-	winner = "";
 	
 	windowResized = (p5: any) =>
 	{
@@ -236,7 +236,7 @@ export class Match extends React.Component<Props>
 		});
 
 		if (this.type == "")	//a voir si ca fonctionne ici, peut etre a mettre dans draw
-			this.props.socket.on('serverGameFinished', (data) => { this.winner = data; });
+			this.props.socket.on('serverGameFinished', (data) => { this.setState({winner: data}) });
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -334,7 +334,7 @@ export class Match extends React.Component<Props>
 					{
 						this.started = -1;
 						this.props.socket.off('serverTick');
-						this.winner = data;
+						this.setState({winner: data})
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -357,7 +357,7 @@ export class Match extends React.Component<Props>
 					this.props.socket.on('serverGameFinished', (data) =>
 					{
 						this.started = -1;
-						this.winner = data;
+						this.setState({winner: data})
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -374,12 +374,12 @@ export class Match extends React.Component<Props>
 	draw = (p5: any) =>
 	{
 		p5.scale(this.state.width / basicW)
-		if (this.winner !== "")
+		if (this.state.winner !== "")
 		{
 			p5.background(0);
 			p5.fill(p5.color(255, 255, 255));
 			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
+			p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
 		}
 		if (this.state.width < 400)	//change values here
 		{
@@ -410,7 +410,7 @@ export class Match extends React.Component<Props>
 				if (this.leftClick === true)
 				{
 					this.mode = "NORMAL";
-					this.props.socket.emit('find_match');
+					this.props.socket.emit('find_match', {mode: 0});
 					this.modeSelected = true;
 					p5.background(0);
 					p5.fill(p5.color(255, 255, 255));
@@ -433,7 +433,7 @@ export class Match extends React.Component<Props>
 				if (this.leftClick === true)
 				{
 					this.mode = "HARDCORE";
-					this.props.socket.emit('find_match');
+					this.props.socket.emit('find_match', {mode: 1});
 					this.modeSelected = true;
 					p5.background(0);
 					p5.fill(p5.color(255, 255, 255));
@@ -488,6 +488,10 @@ export class Match extends React.Component<Props>
 	{
 		return (
 			<Fragment>
+				{this.state.winner && <div className="pyro">
+					<div className="before"></div>
+					<div className="after"></div>
+				</div>}
 				{this.props.socket && <Sketch setup={this.setup} draw={this.draw} keyTyped={this.keyTyped} keyReleased={this.keyReleased}
 				mouseClicked={this.mouseClicked} windowResized={this.windowResized}/>}
 			</Fragment>

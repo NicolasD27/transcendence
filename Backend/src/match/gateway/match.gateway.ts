@@ -32,10 +32,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		// @UseGuards(WsGuard)
 		@SubscribeMessage('find_match')
-		async findMatch(socket: CustomSocket) {	
+		async findMatch(socket: CustomSocket, data: {mode: number}) {	
 			console.log("finding matchs")		//add checks if slave & master != username
 			const username = getUsernameFromSocket(socket)
-			let match = await this.matchService.matchmaking(username, CustomModes.NORMAL );
+			let match = await this.matchService.matchmaking(username, data.mode );
 			socket.join("match#" + match.id);
 			match.room_size++;
 			this.matchService.updateMatch(username, match.id.toString(), match)

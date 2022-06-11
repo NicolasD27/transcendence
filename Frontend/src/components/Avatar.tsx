@@ -10,7 +10,7 @@ export interface Props {
 
 export class Avatar extends React.Component<Props> {
 	state = {
-		imgDefault: 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg',
+		imgDefault: 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false',
 		profileImg: '',
 		selectfile: null
 	}

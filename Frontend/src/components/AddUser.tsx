@@ -35,7 +35,7 @@ const AddUser: React.FC<Props> = (props) => {
 						if (list.avatarId != null)
 							tmpavatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${list.avatarId}`
 						else
-							tmpavatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg'
+							tmpavatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
 						singleUser = { id: list.id, username: list.username, pseudo: list.pseudo, avatar: tmpavatar };
 						selectedUsers.forEach((select: any) => {
 							if (singleUser.id === select.id)
