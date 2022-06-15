@@ -50,6 +50,13 @@ export class MatchService {
         return Match.toDto(match);
     }
 
+	async isActive(id: string): Promise<boolean> {
+        const match = await this.matchsRepository.findOne(id);
+        if (!match)
+            throw new NotFoundException(`Match #${id} not found`);
+		return match.status == MatchStatus.ACTIVE
+    }
+
 	async findAllMatchsByUser(id: string,paginationQueryDto: PaginationQueryDto): Promise<MatchDto[]>
     {
         return this.matchsRepository.find({
