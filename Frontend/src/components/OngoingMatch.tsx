@@ -1,6 +1,7 @@
 import React, { useState, Fragment, Dispatch, SetStateAction, useEffect } from "react";
 import axios from "axios";
 import './OngoingMatch.css';
+import { useNavigate } from "react-router-dom";
 
 interface propsMatchs {
     idMatch: number,
@@ -14,6 +15,7 @@ interface propsMatchs {
 
 const OngoingMatch = () => {
     const [matchs, setMatchs] = useState<propsMatchs[]>([])
+	const navigate = useNavigate()
 
 	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 
@@ -32,7 +34,7 @@ const OngoingMatch = () => {
                         pseudo1_avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${match.user1.avatarId}`
                     if (match.user2.avatarId != null)
                         pseudo2_avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${match.user2.avatarId}`
-            
+
                     match_tmp = {idMatch: match.id, pseudo1: match.user1.pseudo, pseudo1Avatar: pseudo1_avatar, pseudo2: match.user2.pseudo, pseudo2Avatar: pseudo2_avatar, score1: match.score1, score2: match.score2 }
                     console.log("match_tmp:", match_tmp)
                     setMatchs(matchs => [...matchs, match_tmp])
@@ -41,18 +43,23 @@ const OngoingMatch = () => {
             .catch((err) => console.log( err))
     }, [])
 
+    const goToMatch = (id: number) => {
+        navigate("/mainpage?id=" + id)
+		window.location.reload()
+    }
+
 	return (
         <div className='usersList'>
         {
             matchs.map((match) => {
                 return (
-                    <div className='user'>
+                    <div className='user' onClick={() => goToMatch(match.idMatch)}>
                         <div id='user1'>
                             <img src={match.pseudo1Avatar} className="user1Avatar" alt="Avatar"/>
                             {match.pseudo1}
                         </div>
                         {match.score1}
-                        <> - </> 
+                        <> - </>
                         {match.score2}
                         <div id='user2'>
                             {match.pseudo2}

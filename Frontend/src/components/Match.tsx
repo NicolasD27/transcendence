@@ -6,7 +6,7 @@ import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 3;
+let finalScore = 10;
 let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
@@ -149,6 +149,7 @@ function playerMove(started: number, game: any, playerInput: any, width: number,
 
 function printer(p5: any, data: any, width: number, height: number, type: string)
 {
+	p5.fill(p5.color("#3772FF"));
 	if (type === "master")
 		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
@@ -156,7 +157,6 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 	if (type === "slave")
 		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
-	p5.fill(p5.color("#3772FF"));
 
 	if (data.countdown !== 0)
 	{
