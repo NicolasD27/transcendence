@@ -1,4 +1,4 @@
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 import { SetStateAction } from "react";
 import { Dispatch } from "react";
 import axios from "axios";
@@ -20,7 +20,7 @@ interface Props {
 	type: string;
 	nameChat: string;
 	socket: any;
-	setChatState : Dispatch<SetStateAction<chatStateFormat>>;
+	setChatState: Dispatch<SetStateAction<chatStateFormat>>;
 }
 
 interface messagesFormat {
@@ -98,7 +98,7 @@ const Conversation: React.FC<Props> = (props) => {
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
 				.then(res => {
-					
+
 					setModerators([])
 					setUserRestricted([])
 					setAdminLevel(0)
@@ -126,7 +126,7 @@ const Conversation: React.FC<Props> = (props) => {
 					setMuted(false)
 					infoChannel.restricted.forEach((list: any) => {
 						let singleRestricted: restrictedFormat;
-						
+
 						if (list.id !== props.idMe) {
 							if (list.avatarId === null)
 								list.avatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
@@ -135,16 +135,14 @@ const Conversation: React.FC<Props> = (props) => {
 							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar, bannedtype: list.bannedState.type };
 							setUserRestricted(userRestricted => [...userRestricted, singleRestricted]);
 						}
-						else
-						{
-							if (list.bannedState.type === BannedState.muted)
-							{
+						else {
+							if (list.bannedState.type === BannedState.muted) {
 								console.log("muted +++")
 								setMuted(true);
 							}
-							
+
 						}
-	
+
 					});
 				})
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
@@ -164,7 +162,7 @@ const Conversation: React.FC<Props> = (props) => {
 					});
 				})
 		}
-		
+
 	}, [showConv, status, props.id, props.idMe, props.type]);//Recuperer les infos du channels
 
 	useEffect(() => {
@@ -182,11 +180,10 @@ const Conversation: React.FC<Props> = (props) => {
 					const messagesTri = [...prevMessages].sort((a, b) => {
 						return a.id - b.id;
 					});
-					if (props.type === "channel")
-					{
+					if (props.type === "channel") {
 						messagesTri.forEach((list: any) => { newMessageChannel(list); });
 						if (muted)
-							newMessageChannel({id: 0, channel: {id: props.id}, user: {id: 0, avatarId: null},  content: "You are muted !", name: "moderator", avatar: null, own: false})
+							newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are muted !", name: "moderator", avatar: null, own: false })
 					}
 					else if (props.type === "directMessage")
 						messagesTri.forEach((list: any) => { newMessageDirect(list); });
@@ -195,18 +192,18 @@ const Conversation: React.FC<Props> = (props) => {
 				})
 				.catch((err) => {
 					setMessages(messages => []);
-					newMessageChannel({id: 0, channel: {id: props.id}, user: {id: 0, avatarId: null},  content: "You are banned !", name: "moderator", avatar: null, own: false})
+					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
-	}, [props.id, showConv, status, muted, newMessageChannel, newMessageDirect, props.type]);//Recuperer les anciens messages
+	}, [props.id, showConv, status, muted]);//Recuperer les anciens messages
 
 	useEffect(() => {
 		if (props.socket) {
 			if (props.type === "channel") {
 				props.socket.emit('connect_to_channel', { channelId: props.id.toString() });
-				props.socket.on('msg_to_client', (message) => { 
+				props.socket.on('msg_to_client', (message) => {
 					setStatus(status => !status)
-				  });
+				});
 				props.socket.on('error_msg', () => { setStatus(status => !status) })
 			}
 			else if (props.type === "directMessage") {
@@ -215,10 +212,10 @@ const Conversation: React.FC<Props> = (props) => {
 				});
 			}
 		}
-	}, [props.socket, newMessageChannel, newMessageDirect, props.type]);//Ecouter les sockets
+	}, [props.socket]);//Ecouter les sockets
 
 
-	
+
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTmpText(tmpText => e.target.value)
@@ -247,12 +244,12 @@ const Conversation: React.FC<Props> = (props) => {
 		}
 	}
 
-	
+
 
 	return (
 		<div className='convArea'>
 			<div id='chatTop'>
-				<button id='chatCloseButton' onClick={() => props.setChatState({'chatState' : false, id : 0, chatName : "" , type : "directM" })} />
+				<button id='chatCloseButton' onClick={() => props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })} />
 				<div id="chatUsername">{props.nameChat}</div>
 				{props.type === "channel" && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>
