@@ -1,10 +1,11 @@
 import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
-import {PropsStateChannel} from './ChatSectionUsers'
+import { PropsStateChannel } from './ChatSectionUsers';
+import { chatStateFormat } from '../App'
 
 interface PropsPrintChannelsJoined {
 	channel : PropsStateChannel;
-	chatChannelState : boolean;
-	setChatChannelState : Dispatch<SetStateAction<boolean>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
 }
 
 const PrintChannelsJoined : React.FC<PropsPrintChannelsJoined> = (props) => {
@@ -18,7 +19,7 @@ const PrintChannelsJoined : React.FC<PropsPrintChannelsJoined> = (props) => {
 					!isMute && <button id="muteChannel" onClick={() => setIsMute(true)}/> ||
 					<button id="unmuteChannel" onClick={() => setIsMute(false)}/>
 				}
-				<button id="channelChat_button" onClick={() => props.setChatChannelState(!props.chatChannelState)}/>
+				<button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
 			</div>
 		</div>
 	)

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Dispatch, Fragment, SetStateAction, useEffect } from "react";
+import React, { Dispatch,  SetStateAction, useEffect } from "react";
 import './Progress-bar.css';
 import accept from '../asset/accept.svg';
 import refuse from '../asset/refuse.svg';
@@ -19,38 +19,43 @@ interface Props {
 	notification: INotification
 	newNotifsLength: number,
 	setNewNotifsLength: Dispatch<SetStateAction<number>>;
-	socket: Socket
+	socket: Socket;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 
 
 
-const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket}) => {
+const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNotifsLength, socket, setIsFriendshipButtonClicked}) => {
     const [content, setContent] = React.useState("");
 	const [awaitingAction, setAwaitingAction] = React.useState(true);
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		setAwaitingAction(notification.awaitingAction)
-		if (notification.entityType == "Friendship")
-			setContent(` wants to be your friend`)
-		else if (notification.entityType == "Match")
+		if (notification.entityType === "Friendship")
+		{
+			if (notification.awaitingAction)
+				setContent(` wants to be your friend`)
+			else 
+				setContent(" and you are now friends !")
+		}
+		else if (notification.entityType === "Match")
 			setContent(` challenged you`)
-		else if (notification.entityType == "ChannelInvite")
+		else if (notification.entityType === "ChannelInvite")
 			setContent(` invited you to join `)
 	}, [notification])
 	
 
 	const handleAccept = () => {
-		if (notification.entityType == "Friendship")
+		if (notification.entityType === "Friendship")
 		{
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${notification.entityId}`, {status: 1}, { withCredentials: true })
-			.then(res => {
-				setAwaitingAction(false)
-				setNewNotifsLength(newNotifsLength - 1)
-			})
+			setAwaitingAction(false)
+			setContent(" and you are now friends !")
+			setNewNotifsLength(newNotifsLength - 1)
+			socket.emit("acceptFriendRequest", {friendship_id: notification.entityId})
 		}
-		else if (notification.entityType == "Match")
+		else if (notification.entityType === "Match")
 		{
 			setAwaitingAction(false)
 			setNewNotifsLength(newNotifsLength - 1)
@@ -58,7 +63,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			socket.emit("accept_challenge", {match_id: notification.entityId})
 			console.log("sending accept event")
 		}
-		else if (notification.entityType == "ChannelInvite") 
+		else if (notification.entityType === "ChannelInvite") 
 		{
 			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, {}, { withCredentials: true })
 			.then(res => {
@@ -70,7 +75,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 	}
 
 	const handleRefuse = () => {
-		if (notification.entityType == "Friendship")
+		if (notification.entityType === "Friendship")
 		{
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${notification.entityId}`, { withCredentials: true })
 			.then(res => {
@@ -78,7 +83,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 				setNewNotifsLength(newNotifsLength - 1)
 			})
 		}
-		else if (notification.entityType == "Match")
+		else if (notification.entityType === "Match")
 		{
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/${notification.entityId}`, { withCredentials: true })
 			.then(res => {
@@ -86,7 +91,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 				setNewNotifsLength(newNotifsLength - 1)
 			})
 		}
-		else if (notification.entityType == "ChannelInvite")
+		else if (notification.entityType === "ChannelInvite")
 		{
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, { withCredentials: true })
 			.then(res => {

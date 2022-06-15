@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, { Dispatch, SetStateAction} from 'react';
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
 import PrintChannelsJoined from './PrintChannelsJoined';
@@ -8,24 +8,27 @@ import PrintUserFriendRequestReceived from './PrintUserFriendRequestReceived'
 import PrintSendFriendRequestProfile from './PrintSendFriendRequestProfile'
 import PrintFriendProfile from './PrintFriendProfile'
 import { PropsStateChannel } from './ChatSectionUsers'
-import { FriendsFormat } from './ChatSectionUsers'
+import { FriendsFormat } from './Chat'
 import { PropsStateUsers } from './ChatSectionUsers'
+import { chatStateFormat } from '../App'
 
 interface  PropsUserList {
 	idMe : number;
+	socket : any;
 	existingChannels: PropsStateChannel[];
 	joinedChannels : PropsStateChannel[]
 	setJoiningChannel: Dispatch<SetStateAction<boolean>>;
 	searchUsers : PropsStateUsers[];
 	friends: FriendsFormat[];
-	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
-	/*friendRequestReceived : number;
-	setFriendRequestReceived :  Dispatch<SetStateAction<number>>;*/
+	friendRequestsSent : number[];
+	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
+	friendRequestsReceived : FriendsFormat[];
+	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
 	searchValue: string;
 	setSearchValue : Dispatch<SetStateAction<string>>;
-	setChatFriendState : Dispatch<SetStateAction<boolean>>;
-	chatChannelState : boolean;
-	setChatChannelState : Dispatch<SetStateAction<boolean>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
+	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 }
 
 const UserList : React.FC<PropsUserList> = (props) => {
@@ -35,10 +38,11 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friends = props.friends
 	const searchValue = props.searchValue
 	const searchUsers = props.searchUsers
-	//const friendRequestReceived = props.friendRequestReceived;
+	const friendRequestsReceived = props.friendRequestsReceived;
+	const friendRequestsSent = props.friendRequestsSent;
 
 	const isAlreadyFriend = (id:number) => {
-		for(var i = 0; i < friends.length; i++ )
+		for(let i = 0; i < friends.length; i++ )
 		{
 			if (friends[i].id === id)
 				return true
@@ -55,61 +59,55 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		return false;
 	}
 
-	/*const sendFriendshipRequest = (user:PropsStateUsers) => {
-		axios
-			.post(dataUrlFriendRequestsSent, user)
-			.then((response) => {
-				setFriendRequestsSent(response.data)
-			})
-	}*/
-
-	/*const isThereAFriendshipRequest = (id:number) => {
-		for (const userId of friendRequestReceived) {
-			if (userId === id)
-				return true
-		}
-		return false
-	}
-*/
-	/*const isThereAFriendshipRequestSent = (id:number) => {
-		for (var i = 0; i < friendRequestsSent.length; i++)
+	const sendFriendshipRequest = (user:PropsStateUsers) => {
+		if (props.socket)
 		{
-			if (friendRequestsSent[i].id === id)
+			props.socket.emit('sendFriendRequest', {user_id: user.id})
+			props.setFriendRequestsSent(friendRequestsSent => [...friendRequestsSent, user.id])
+		}
+	}
+
+	const isThereAFriendshipRequestReceived = (id:number) => {
+
+		for(let i = 0; i < friendRequestsReceived.length; i++ )
+		{
+			if (friendRequestsReceived[i].id === id)
 				return true
 		}
 		return false
-	}*/
-
-	/*const acceptFriendshipRequest = (user:PropsStateUsers) => {
-		axios
-			.post(dataUrlFriends, user)
-			.then((res) => {
-				setFriends(res.data)
-				axios.delete(`${dataUrlFriendRequestsReceived}/${res.data.id}`)
-			})
-			.catch((err) =>
-				console.log(err)
-			)
 	}
 
-	const declineFriendshipRequest = (user:PropsStateUsers) => {
-		axios
-			.delete(`${dataUrlFriendRequestsReceived}/${user.id}`)
-			.catch((err) =>
-				console.log(err)
-			)
-	}*/
+	const catchFriendshipId = (id:number) => {
+		for(let i = 0; i < friendRequestsReceived.length; i++ )
+		{
+			if (friendRequestsReceived[i].id === id)
+				return friendRequestsReceived[i].friendshipId
+		}
+	}
+
+	const isThereAFriendshipRequestSent = (id:number) => {
+		for (let i = 0; i < friendRequestsSent.length; i++)
+		{
+			if (friendRequestsSent[i] === id)
+				return true
+		}
+		return false
+	}
+
+
 	return (
 			<div className='usersList'>
 			{
 				searchValue !== ""
 				&& existingChannels
 					.filter((channel) => {
-						return channel.name.toLowerCase().includes(searchValue.toLowerCase())
+						if (channel)
+							return channel.name.toLowerCase().includes(searchValue.toLowerCase())
+						return false
 					})
 					.map((channel:any) => {
 						if (Boolean(isAlreadyMember(channel.id)) === true)
-							return <PrintChannelsJoined channel={channel} chatChannelState={props.chatChannelState} setChatChannelState={props.setChatChannelState} key={channel.id}/>
+							return <PrintChannelsJoined channel={channel} /*chatChannelState={props.chatChannelState} */setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} key={channel.id}/>
 						else
 							return <PrintChannelsToJoin channel={channel} joinedChannels={joinedChannels} setJoiningChannel={setJoiningChannel} key={channel.id}/>
 					})
@@ -120,30 +118,40 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					.filter((user_) => {
 						if (user_.id !== props.idMe)
 							return user_.pseudo.toLowerCase().includes(searchValue.toLowerCase())
+						return false
 					})
 					.map((user_) => {
 						let statusIcon = (user_.status === 1 ? statusIconGreen : statusIconRed);
-						if (Boolean(isAlreadyFriend(user_.id)) === true)
+						if (Boolean(isThereAFriendshipRequestSent(user_.id)) === true)
 						{
 							return (
-								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
+								<PrintInvitationSentProfile user={user_} statusIcon={statusIcon} key={user_.id}/>
 							)
 						}
-						/*else if (Boolean(isThereAFriendshipRequest(user_.id)) === true)
+						else if (Boolean(isThereAFriendshipRequestReceived(user_.id)) === true)
+						{
+							let friendshipId = Number(catchFriendshipId(user_.id))
+							let friendshipInfo = {
+								friendshipId : friendshipId,
+								id : user_.id,
+								username : user_.username ,
+								pseudo : user_.pseudo ,
+								avatarId : user_.avatarId ,
+								status : user_.status }
+							
+							return (
+								<PrintUserFriendRequestReceived user={user_} statusIcon={statusIcon} /*acceptFriendshipRequest={acceptFriendshipRequest} declineFriendshipRequest={declineFriendshipRequest}*/ friendshipInfo={friendshipInfo} key={user_.id}/>
+							)
+						}
+						else if (Boolean(isAlreadyFriend(user_.id)) === true)
 						{
 							return (
-								<PrintUserFriendRequestReceived user={user_} statusIcon={statusIcon} acceptFriendshipRequest={acceptFriendshipRequest} declineFriendshipRequest={declineFriendshipRequest} key={user_.id}/>
+								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/>
 							)
-						}*/
-						/*else if (Boolean(isThereAFriendshipRequestSent(user.id)) === true)
-						{
-							return (
-								<PrintInvitationSentProfile user={user} statusIcon={status} key={user.id}/>
-							)
-						}*/
+						}
 						else
 							return (
-								<PrintSendFriendRequestProfile user={user_} statusIcon={statusIcon} /*sendFriendshipRequest={sendFriendshipRequest}*/ key={user_.id}/>
+								<PrintSendFriendRequestProfile user={user_} statusIcon={statusIcon} sendFriendshipRequest={sendFriendshipRequest} key={user_.id}/>
 							)
 					})
 			}
@@ -152,17 +160,22 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					props.joinedChannels
 						.map((channel) => {
 							return (
-								<PrintChannelsJoined channel={channel} chatChannelState={props.chatChannelState} setChatChannelState={props.setChatChannelState} key={channel.id}/>
+								<PrintChannelsJoined channel={channel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} key={channel.id}/>
 							)
 						})
 			}
 			{
 					!searchValue &&
 					friends
+						.filter(friend => {
+							if (friend.id !== props.idMe)
+								return friend;
+							return false
+						})
 						.map((friend) => {
 							let statusIcon = (friend.status === 1 ? statusIconGreen : statusIconRed);
 							return (
-								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatFriendState={props.setChatFriendState} setFriends={props.setFriends}/>
+								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/>
 							)
 						})
 			}

@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { Fragment, Component, useState, useEffect } from "react";
+import React, { Fragment, useEffect, Dispatch, SetStateAction } from "react";
 import Notification, { User } from "./Notification";
 import './NotificationList.css';
-import bell from '../asset/notification.svg';
-import socketIOClient from "socket.io-client";
+import bell from '../asset/notificationIcon2.svg';
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
@@ -17,51 +16,61 @@ export interface INotification {
 	name: string,
 	senderId: number,
 	awaitingAction: boolean,
-	secondName?: string
+	secondName?: string,
 }
 
 
-const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>}) => {
+const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: number, socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>> }) => {
     const [notifications, setNotifications] = React.useState<INotification[]>([])
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
+	
+	
 
 	useEffect(() => {
-		if (myId != 0) {
-			
-			socket.on("new_channel_invite_received", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
-
-			})
-			});
-			socket.on("match_invite_to_client", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
-
-			})
-			});
-			socket.on("notifyFriendRequest", data => {
-				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
-				.then(res => {
-					setNotifications(notifications => res.data.reverse());	
-
-			})
-			});			
+		const refreshNotificationList = () => {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());	
-				
-
 			})
 		}
-	}, [myId])
+		if (myId !== 0) {
+			socket.on("new_channel_invite_received", data => {
+				refreshNotificationList()
+			})
+			socket.on("match_invite_to_client", data => {
+				refreshNotificationList()
+			})
+			socket.on("notifyFriendRequest", data => {
+				refreshNotificationList()
+			})
+			socket.on("notifyFriendRequestAccepted", data => {
+				refreshNotificationList()
+			})
+			refreshNotificationList()
+			
+		}
+	}, [myId, socket])
+
 
 	useEffect(() => {
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif  => notif.awaitingAction).length)
-	}, [notifications.length])
+	}, [notifications])
+
+	const handleResize = () => {
+		
+		const gameArea = document.getElementById("gameArea")
+		const notifContainer = document.querySelector(".notifications-list-wrapper")
+		if (notifContainer && gameArea)
+			notifContainer.setAttribute("style",`height:${gameArea.offsetHeight}px`);
+
+	}
+
+	useEffect(() => {
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		
+	})
 		
 
 	const handleOpen = () => {
@@ -79,7 +88,7 @@ const NotificationList = ({myId, socket}: {myId: number, socket: Socket<DefaultE
 				<div className="notifications-list-container">
 
 					{notifications.map((notification: INotification, i) => (
-						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification}/>
+						<Notification key={notification.id} socket={socket} newNotifsLength={newNotifsLength} setNewNotifsLength={setNewNotifsLength} notification={notification} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>
 						))}
 				</div>
 			</div>

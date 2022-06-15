@@ -19,6 +19,7 @@ import Loader from './components/Loader';
 import socketIOClient, { io } from 'socket.io-client';
 import { Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import RegisterForm from './pages/RegisterForm';
 
 function getAccessTokenFromCookies() {
 	try {
@@ -40,11 +41,19 @@ interface ClientToServerEvents {
   hello: () => void;
 }
 
+export interface chatStateFormat {
+	chatState : boolean;
+	id : number;
+	chatName : string;
+	type : string;
+}
 
 const App = () => {
   const [isAuth, setIsAuth] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [socket, setSocket] = React.useState<any>();
+	const [ isFriendshipButtonClicked, setIsFriendshipButtonClicked ] = useState<boolean>(true)
+	const [ chatParamsState, setChatParamsState ] = useState<chatStateFormat>({'chatState' : false, id : 0, chatName : "" , type : "directMessage" })
 
   if (!isAuth) {
     axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -52,17 +61,17 @@ const App = () => {
 				setIsAuth(true)
         setIsLoading(false)
         setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
-				reconnection: true,
-				transports : ['websocket', 'polling', 'flashsocket'],
-				transportOptions: {
-					polling: {
-						extraHeaders: {
-							Authorization: getAccessTokenFromCookies()
-						}
-					}
-				}
-			}))
-			})
+          reconnection: true,
+          transports : ['websocket', 'polling', 'flashsocket'],
+          transportOptions: {
+            polling: {
+              extraHeaders: {
+                Authorization: getAccessTokenFromCookies()
+              }
+            }
+          }
+        }))
+      })
       .catch(err => {
         setIsAuth(false)
         setIsLoading(false)
@@ -74,8 +83,10 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth}/>}/>
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
-          <Route path="/mainpage" element={<MainPage  socket={socket} />} />
-          <Route path="/profil/:id" element={<Profil socket={socket}/>} />
+          <Route path="/register" element={<RegisterForm />}/>
+
+          <Route path="/mainpage" element={<MainPage  socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>} />
+          <Route path="/profil/:id" element={<Profil socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

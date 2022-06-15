@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, {  useEffect, Dispatch, SetStateAction } from "react";
 import axios from "axios";
 import './OptionAdmin.css';
 
@@ -8,6 +8,7 @@ interface Props {
 	users: userFormat[];
 	setShowConv: Dispatch<SetStateAction<boolean>>;
 	setOptionSelected: Dispatch<SetStateAction<boolean>>;
+	activePass: boolean
 }
 
 interface userFormat {
@@ -53,10 +54,10 @@ const ChangePassword: React.FC<Props> = (props) => {
 
 	return (
 		<div className="passwordArea">
-			<div className="textpasswordArea">
+			{props.activePass && <div className="textpasswordArea">
 				<p className="labelStyle">Old password: </p>
 				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangePrevious} value={previousText} placeholder="______" />
-			</div>
+			</div>}
 			<div className="textpasswordArea">
 				<p className="labelStyle">New password: </p>
 				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeAfter} value={afterText} placeholder="______" />

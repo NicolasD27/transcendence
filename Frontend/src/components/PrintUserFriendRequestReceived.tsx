@@ -1,12 +1,14 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, {  useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
+import { FriendsFormat } from '../components/Chat'
 
 interface PropsPrintUserFriendRequestReceived {
 	user :  PropsStateUsers;
 	statusIcon : string;
 	/*acceptFriendshipRequest : Function;
 	declineFriendshipRequest: Function;*/
+	friendshipInfo : FriendsFormat;
 	key : number;
 }
 
@@ -19,7 +21,7 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 		navigate("/profil/" + idstring)
 	}
 
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
+	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 	
 	useEffect(() => {
 		if (props.user.avatarId != null)
@@ -41,8 +43,9 @@ const PrintUserFriendRequestReceived : React.FC<PropsPrintUserFriendRequestRecei
 				</div>
 				<div id="username">{props.user.pseudo}</div>
 				<div id='friendRequest_buttons'>
-					<button id="AcceptFriendButton" /*onClick={() => props.acceptFriendshipRequest(props.user)} *//> 
-					<button id="DeclineFriendButton" /*onClick={() => props.declineFriendshipRequest(props.user)}*/ /> 
+					<p>Pending ...</p>
+					{/*<button id="AcceptFriendButton" onClick={() => props.acceptFriendshipRequest(props.user.id, props.friendshipInfo)} /> 
+					<button id="DeclineFriendButton" onClick={() => props.declineFriendshipRequest(props.user.id, props.friendshipInfo)} />*/} 
 				</div>
 			</div>
 	)

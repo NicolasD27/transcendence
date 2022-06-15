@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
+import React, { useState, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import {PropsStateChannel} from './ChatSectionUsers'
 
@@ -17,7 +17,6 @@ const PrintChannelsToJoin : React.FC<PropsPrintChannelsToJoin> = (props) => {
 	}
 
 	const sendPassword = (e: React.KeyboardEvent<HTMLInputElement> | any) => {
-		console.log("enteredPassword", enteredPassword)
 		axios
 			.post(`http://localhost:8000/api/channels/${props.channel.id}/join`, {"password" : enteredPassword}, { withCredentials: true })
 			.then(() => props.setJoiningChannel(true))
@@ -25,7 +24,7 @@ const PrintChannelsToJoin : React.FC<PropsPrintChannelsToJoin> = (props) => {
 	}
 
 	const handleClick = () => {
-		setIsButtonClicked(true)
+		//setIsButtonClicked(true)
 		if (props.channel.isProtected === false)
 			sendPassword("")
 	}

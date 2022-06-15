@@ -1,0 +1,31 @@
+.user {
+    display: flex;
+}
+
+#user1  {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 30%;
+    margin-left: 18px;
+}
+
+#user2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 30%;
+    margin-right: 18px;
+}
+
+.user1Avatar{
+    width: 40px;
+	height: 40px;
+	border-radius: 100%;
+}
+
+.user2Avatar{
+    width: 40px;
+	height: 40px;
+	border-radius: 100%;
+}

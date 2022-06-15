@@ -5,15 +5,11 @@
 	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: flex-start;
-	/*margin: 0px auto;
-	width: 90vw;*/
-	height: 75vh;
 	margin-right: 26px;
-	width: calc(78% - 40px);
-	/*height: 100%;*/
+	width: 70%;
 	background:
 		linear-gradient(black, black) padding-box,
-		linear-gradient(to right, #C0F4FE, #E11515) border-box;
+		linear-gradient(to right, #3772FF, #E11515) border-box;
 	border-radius: 24px;
 	border: 4px solid transparent;
 	padding-top: 10px;

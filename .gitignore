@@ -1,9 +1,12 @@
+.env
+
 # compiled output
 Backend/dist
 Backend/node_modules
 Frontend/node_modules
 Backend/package-lock.json
 Frontend/package-lock.json
+
 
 # postgres storage
 /pgadmin-data
@@ -50,3 +53,6 @@ lerna-debug.log*
 
 # temp dataBase
 ./Frontend/db.json
+
+#ENV
+.env

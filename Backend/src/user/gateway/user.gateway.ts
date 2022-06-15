@@ -58,7 +58,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("accepting friend request")
 		const username = getUsernameFromSocket(socket);
 		const friendship = await this.friendshipService.update(username, data.friendship_id, 1)
-		this.server.to("user#" + friendship.following.id).emit('notifyFriendRequestAccepted', friendship);
+		this.server.to("user#" + friendship.follower.id).emit('notifyFriendRequestAccepted', friendship);
 	}
 
 

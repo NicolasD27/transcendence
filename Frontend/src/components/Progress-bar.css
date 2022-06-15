@@ -4,6 +4,7 @@
 	background-color: #e0e0de;
 	border-radius: 50px;
 	margin-top: 20px;
+
 }
 
 .fillerStyle {
@@ -17,6 +18,6 @@
 	padding: 5;
 	color: white;
 	font-weight: bold;
-	font-family: 'Open Sans';
 	font-size: 16px;
+	line-height: 20px;
 }

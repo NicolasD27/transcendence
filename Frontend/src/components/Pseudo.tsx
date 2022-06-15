@@ -1,4 +1,4 @@
-import React, { Fragment, Dispatch, SetStateAction, useEffect } from "react";
+import React, {  Dispatch, SetStateAction, useEffect } from "react";
 import axios from 'axios';
 import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
@@ -6,7 +6,7 @@ import edit from '../asset/edit-button.svg';
 export interface Props {
 	id: number;
 	idMe: number;
-	setGetMatch: Dispatch<SetStateAction<boolean>>;
+	setGetMatch?: Dispatch<SetStateAction<boolean>>;
 }
 
 const Pseudo: React.FC<Props> = (props) => {
@@ -24,7 +24,7 @@ const Pseudo: React.FC<Props> = (props) => {
 				setPseudo(pseudo => profil.pseudo)
 			})
 		setGetPseudo(true);
-	}, [getpseudo])
+	}, [getpseudo, id])
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		settmpPseudo(tmpPseudo => e.target.value)
@@ -39,7 +39,8 @@ const Pseudo: React.FC<Props> = (props) => {
 				axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/pseudo`, bodyFormData, { withCredentials: true })
 					.then(res => {
 						setGetPseudo(false)
-						props.setGetMatch(false)
+						if (props.setGetMatch)
+							props.setGetMatch(false)
 						if (res.data === false) {//Si le pseudo est deja prit
 							username.classList.add('error');
 							setTimeout(function () {

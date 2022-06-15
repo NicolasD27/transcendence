@@ -1,18 +1,16 @@
-import React, { Component, Dispatch, SetStateAction } from 'react';
+import React, {  Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Avatar.css';
-//import FormData from 'form-data';//
-//import { request } from 'http';//
 
 export interface Props {
 	id: number;
 	idMe: number;
-	setGetMatch: Dispatch<SetStateAction<boolean>>;
+	setGetMatch?: Dispatch<SetStateAction<boolean>>;
 }
 
 export class Avatar extends React.Component<Props> {
 	state = {
-		imgDefault: 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg',
+		imgDefault: 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false',
 		profileImg: '',
 		selectfile: null
 	}
@@ -30,7 +28,8 @@ export class Avatar extends React.Component<Props> {
 						const user = res.data;
 						if (user.avatarId != null)
 							this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
-						this.props.setGetMatch(false)
+						if (this.props.setGetMatch)
+							this.props.setGetMatch(false)
 					})
 			})
 	};
@@ -47,7 +46,7 @@ export class Avatar extends React.Component<Props> {
 	}
 
 	componentDidUpdate(prevProps: Props) {
-		if (prevProps.id != this.props.id) {
+		if (prevProps.id !== this.props.id) {
 			console.log("here")
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {

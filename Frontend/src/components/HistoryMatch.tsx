@@ -1,5 +1,4 @@
-import React, { Fragment, Component, useState, useEffect } from "react";
-import { createAdd } from "typescript";
+import React, { Fragment} from "react";
 import HistoryCard from "./HistoryCard";
 import './HistoryMatch.css';
 
@@ -21,7 +20,6 @@ interface Card {
 
 const HistoryMatch: React.FC<Props> = (props) => {
 	const { historys } = props;
-	const defaultAvatar = 'https://images.assetsdelivery.com/compings_v2/anatolir/anatolir2011/anatolir201105528.jpg';
 
 
 	return (
@@ -33,6 +31,7 @@ const HistoryMatch: React.FC<Props> = (props) => {
 						<HistoryCard key={i} winner={match.winner} namePlayer={match.nameP} nameOppenent={match.nameO} pseudoP={match.pseudoP} pseudoO={match.pseudoO} avatarPlayer={match.avatarP} avatarOppenent={match.avatarO}
 							scorePlayer={match.scoreP} scoreOppenent={match.scoreO} />
 					))}
+					{historys.length === 0 && <p  className="labelStyle">No match yet</p> }
 				</div>
 			</div>
 		</Fragment>

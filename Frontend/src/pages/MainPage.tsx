@@ -1,17 +1,12 @@
-import React, { Fragment, useState, useEffect, Dispatch, SetStateAction} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Socket } from 'socket.io';
+import { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
-import { cp } from 'fs/promises';
-import { Channel, channel } from 'diagnostics_channel';
-import { collapseTextChangeRangesAcrossMultipleVersions, createEmitAndSemanticDiagnosticsBuilderProgram, isPropertySignature } from 'typescript';
-import { join } from 'path';
 import NotificationList from '../components/NotificationList';
 import './MainPage.css'
 import Header from './Header'
 import Body from './Body'
+import { chatStateFormat } from '../App';
 
-const MainPage = ({socket}: {socket: any}) => {
+const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState}: {socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 
@@ -26,9 +21,9 @@ const MainPage = ({socket}: {socket: any}) => {
 
 	return (
 		<div id='bloc'>
-			<Header idMe={idMe} socket={socket}/>
-			<Body idMe={idMe} socket={socket}/>
-			{getIDMe && <NotificationList myId={idMe} socket={socket}/>}
+			<Header idMe={idMe} />
+			<Body idMe={idMe} socket={socket} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState}/>
+			{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>
 	);
 };

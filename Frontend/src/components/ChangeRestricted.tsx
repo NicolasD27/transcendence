@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import axios from "axios";
 import './OptionAdmin.css';
 
 interface Props {
@@ -10,6 +9,7 @@ interface Props {
 	userRestricted: restrictedFormat[];
 	setShowConv: Dispatch<SetStateAction<boolean>>;
 	setOptionSelected: Dispatch<SetStateAction<boolean>>;
+	moderators: userFormat[];
 }
 
 interface restrictedFormat {
@@ -36,12 +36,16 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 
 
 	useEffect(() => {
-		setFiltreUsers([])
+		setFiltreUsers([]) 
 		if (props.mode === 6) {
 			props.users.forEach((list: any) => {
 				let addUser = true
 				props.userRestricted.forEach((restricted: any) => {
 					if (restricted.bannedtype === 2 && list.id === restricted.id)
+						addUser = false
+				})
+				props.moderators.forEach((mod: any) => {
+					if (list.id === mod.id)
 						addUser = false
 				})
 				if (addUser === true)
@@ -55,13 +59,17 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 					if (restricted.bannedtype === 1 && list.id === restricted.id)
 						addUser = false
 				})
+				props.moderators.forEach((mod: any) => {
+					if (list.id === mod.id)
+						addUser = false
+				})
 				if (addUser === true)
 					setFiltreUsers(filtreUsers => [...filtreUsers, list])
 			});
 		}
 		else if (props.mode === 8)
 			setFiltreUsers(props.userRestricted)
-	}, []);
+	}, [props.mode, props.moderators, props.userRestricted, props.users]);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers.filter((friend: any) => friend.id === user.id).length === 0) {
@@ -76,7 +84,7 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 
 	const handleSubmitUsers = (value: number) => {
 		if (props.mode === 6) {
-			filtreUsers.forEach((list: any) => {
+			selectedUsers.forEach((list: any) => {
 				props.socket.emit('ban', { userId: list.id, timeout: timeRestricted, channelId: props.id })
 			});
 		}
@@ -90,6 +98,7 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 				props.socket.emit('rescue', { userId: list.id, channelId: props.id })
 			});
 		}
+		setSelectedUsers([])
 		props.setOptionSelected(false)
 		props.setShowConv(true)
 	}
@@ -121,11 +130,15 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 					)
 				})
 			}
-			<div className="textpasswordArea">
-				<p className="labelStyle">Time: </p>
-				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeTime} value={timeRestricted} placeholder="______" onKeyDown={handleKeyPress} />
-			</div>
-			<button onClick={() => handleSubmitUsers(props.mode)} className="option">Valider</button>
+			{filtreUsers.length === 0 && <p  className="labelStyle">No users</p>}
+			{
+				filtreUsers.length > 0 && props.mode !== 8 && <div className="textpasswordArea">
+				 <p className="labelStyle">Time: </p>
+				 <input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeTime} value={timeRestricted} placeholder="______" onKeyDown={handleKeyPress} />
+			 </div>
+			}
+			{}
+			{filtreUsers.length > 0 && <button onClick={() => handleSubmitUsers(props.mode)} className="option">Valider</button>}
 		</div>
 	);
 };

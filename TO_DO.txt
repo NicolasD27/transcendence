@@ -1,1 +1,2 @@
-_   ajouter verif si match started avec le meme username -> faire finir l'autre match
+_ modifier MainPage pour que le div soit d'un constant aspect ratio
+_ recuperer la taille actuelle, et faire des mult pour concerver le meme jeu a des res diff

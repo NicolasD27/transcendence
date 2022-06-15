@@ -41,17 +41,23 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log("// msg_to_server " + data.activeChannelId);
 
 		const username = getUsernameFromSocket(socket);
+		const user = await this.userService.findByUsername(username);
 		try{
 			await this.channelService.checkUserJoinedChannel(username, data.activeChannelId);
-			console.log("user joined the channel");
+			console.log("user joined the channel", data.content);
 			await this.channelService.checkUserRestricted(username, data.activeChannelId);
-			console.log("registering message");
+			console.log("registering message", data.content);
 			const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
 			console.log(message);
+			if (activeUsers.isActiveUser(+user.id) == true)
+			{
+				socket.join("channel#" + data.activeChannelId)
+			}
 			this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
 		}
 		catch(e){
 			console.log(e.message); // could be nice to emit an error
+			this.server.to("user#" + user.id).emit("error_msg");
 		}
 		return ;
 	}

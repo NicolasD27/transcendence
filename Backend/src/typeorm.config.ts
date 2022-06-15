@@ -14,7 +14,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
     database: process.env.POSTGRES_NAME || dbConfig.database,
     entities: [join(__dirname, '**', '*.entity.{ts,js}')],
     migrationsRun: false,
-    logging: true,
+    logging: false,
     migrationsTableName: "migration",
     migrations: [join(__dirname, '**', '*.entity.{ts,js}')],
     synchronize: true,

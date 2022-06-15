@@ -32,6 +32,17 @@ export class MatchService {
 			.then(items => items.map(e=> Match.toDto(e)));
     }
 
+	async findAllActive(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
+        return this.matchsRepository.find({
+			where:{
+				status: MatchStatus.ACTIVE
+			},
+			take: paginationQuery.limit,
+			skip: paginationQuery.offset,
+			})
+			.then(items => items.map(e=> Match.toDto(e)));
+    }
+
     async findOne(id: string): Promise<MatchDto> {
         const match = await this.matchsRepository.findOne(id);
         if (!match)
