@@ -73,7 +73,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 			{
 				if (game.mode === "HARDCORE")
-					magicBallSpeed += 5;	//for special mode
+					magicBallSpeed += 2;	//for special mode
 
 				var relativeIntersectY = (game.playerTwo.y + 50) - game.ball.y;
 				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -99,7 +99,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 			{
 				if (game.mode === "HARDCORE")
-					magicBallSpeed += 5;	//for special mode
+					magicBallSpeed += 2;	//for special mode
 
 				relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
 				normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -129,27 +129,22 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 
 function playerMove(started: number, game: any, playerInput: any, width: number, height: number)
 {
-	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1)
+	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1 && playerInput.masterZ === false)
 	{
 		if (game.playerOne.y !== 0)
 			game.playerOne.y -= (buttonAdder + (playerInput.masterAcc += accelerator));
 	}
-	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1)
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1 && playerInput.masterA === false)
 		game.playerOne.y += (buttonAdder + (playerInput.masterAcc += accelerator));
 
-	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1)
+	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1 && playerInput.slaveZ === false)
 	{
 		if (game.playerTwo.y !== 0)
 			game.playerTwo.y -= (buttonAdder + (playerInput.slaveAcc += accelerator));
 	}
-	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1)
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1 && playerInput.slaveA === false)
 		game.playerTwo.y += (buttonAdder + (playerInput.slaveAcc += accelerator));
 
-	if (playerInput.masterA === false && playerInput.masterZ === false)
-		playerInput.masterAcc = 0;
-
-	if (playerInput.slaveA === false && playerInput.slaveZ === false)
-		playerInput.slaveAcc = 0;
 }
 
 function printer(p5: any, data: any, width: number, height: number, type: string)
@@ -306,6 +301,7 @@ export class Match extends React.Component<Props>
 							playerInput.masterA = false;
 						else if (data === 'z')
 							playerInput.masterZ = false;
+						playerInput.masterAcc = 0;
 					});
 
 					this.props.socket.on('slaveToMasterKeyReleased', data =>
@@ -314,6 +310,7 @@ export class Match extends React.Component<Props>
 							playerInput.slaveA = false;
 						else if (data === 'z')
 							playerInput.slaveZ = false;
+						playerInput.slaveAcc = 0;
 					});
 
 					var counter = 0;
@@ -407,7 +404,7 @@ export class Match extends React.Component<Props>
 			p5.textAlign(p5.CENTER, p5.CENTER);
 			p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
 			p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-			if (this.leftClick === true)
+			if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
 				window.location.reload();
 		}
 		if (this.state.width < 400)	//change values here
