@@ -61,6 +61,6 @@ export class AuthController {
             throw new NotFoundException("user not found")
         res.clearCookie('accessToken', payload.accessToken)
         res.clearCookie('username', payload.user.username)
-        req.logout();
+        req.logout(null);
     }
 }

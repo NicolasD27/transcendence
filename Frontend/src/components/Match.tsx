@@ -219,7 +219,8 @@ export class Match extends React.Component<Props>
 
 	setup = (p5: any) =>
 	{
-		this.props.socket.emit('connect_to_match', {match_id: this.props.idMatch})
+		if (this.props.idMatch)
+			this.props.socket.emit('connect_to_match', {match_id: this.props.idMatch})
 
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
 		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
