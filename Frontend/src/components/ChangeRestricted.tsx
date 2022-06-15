@@ -36,36 +36,12 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 
 
 	useEffect(() => {
-		setFiltreUsers([]) 
+		setFiltreUsers([])
 		if (props.mode === 6) {
-			props.users.forEach((list: any) => {
-				let addUser = true
-				props.userRestricted.forEach((restricted: any) => {
-					if (restricted.bannedtype === 2 && list.id === restricted.id)
-						addUser = false
-				})
-				props.moderators.forEach((mod: any) => {
-					if (list.id === mod.id)
-						addUser = false
-				})
-				if (addUser === true)
-					setFiltreUsers(filtreUsers => [...filtreUsers, list])
-			});
+			setFiltreUsers(props.users)
 		}
 		else if (props.mode === 7) {
-			props.users.forEach((list: any) => {
-				let addUser = true
-				props.userRestricted.forEach((restricted: any) => {
-					if (restricted.bannedtype === 1 && list.id === restricted.id)
-						addUser = false
-				})
-				props.moderators.forEach((mod: any) => {
-					if (list.id === mod.id)
-						addUser = false
-				})
-				if (addUser === true)
-					setFiltreUsers(filtreUsers => [...filtreUsers, list])
-			});
+			setFiltreUsers(props.users)
 		}
 		else if (props.mode === 8)
 			setFiltreUsers(props.userRestricted)
@@ -130,14 +106,14 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 					)
 				})
 			}
-			{filtreUsers.length === 0 && <p  className="labelStyle">No users</p>}
+			{filtreUsers.length === 0 && <p className="labelStyle">No users</p>}
 			{
 				filtreUsers.length > 0 && props.mode !== 8 && <div className="textpasswordArea">
-				 <p className="labelStyle">Time: </p>
-				 <input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeTime} value={timeRestricted} placeholder="______" onKeyDown={handleKeyPress} />
-			 </div>
+					<p className="labelStyle">Time: </p>
+					<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeTime} value={timeRestricted} placeholder="______" onKeyDown={handleKeyPress} />
+				</div>
 			}
-			{}
+			{ }
 			{filtreUsers.length > 0 && <button onClick={() => handleSubmitUsers(props.mode)} className="option">Valider</button>}
 		</div>
 	);
