@@ -33,6 +33,7 @@ const Chat : React.FC<PropsChat> = (props) => {
 	useEffect(() => {
 		if (props.idMe && props.isFriendshipButtonClicked === true)
 		{
+			setTimeout(()=> {
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
 				.then (res => {
@@ -69,12 +70,51 @@ const Chat : React.FC<PropsChat> = (props) => {
 						}
 					})
 			})
-			setIsFriendshipButtonClicked(false)
+			setIsFriendshipButtonClicked(false)}, 1000)
 		}
 	}, [props.idMe, props.isFriendshipButtonClicked, friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe)
 	{
+			props.socket.on('notifyFriendRequestAccepted', data => {
+				axios
+					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
+					.then (res => {
+						let users = res.data;
+						setFriends([])
+						users.forEach((friendship:any) => {
+							let friends_tmp : FriendsFormat;
+							if (friendship.following.id === props.idMe)
+							{
+								friends_tmp = { 
+									friendshipId : friendship.id,
+									id : friendship.follower.id ,
+									username : friendship.follower.username ,
+									pseudo : friendship.follower.pseudo ,
+									avatarId : friendship.follower.avatarId ,
+									status : friendship.follower.status
+								}
+							}
+							else {
+								friends_tmp = { 
+									friendshipId : friendship.id,
+									id : friendship.following.id ,
+									username : friendship.following.username ,
+									pseudo : friendship.following.pseudo ,
+									avatarId : friendship.following.avatarId ,
+									status : friendship.following.status
+								}
+							}
+							if (friendship.status === 1)
+							{
+								setFriends(friends => [...friends, friends_tmp])
+								let friendRequestsReceived_tmp = friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
+								setFriendRequestsReceived(friendRequestsReceived_tmp)
+							}
+						})
+					})
+			})
+
 			props.socket.on('notifyFriendRequest', data => { 
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
