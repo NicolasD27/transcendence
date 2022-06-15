@@ -20,7 +20,7 @@ export class CreateChannelDto {
 	@ApiProperty()
 	@IsOptional()
 	@IsString()
-	@MinLength(1)
+	//@MinLength(1)
 	@MaxLength(32)
 	@Matches(/[\x20-\x7E]/, { message: 'You can only use ASCII characters' })
 	readonly password?: string;
