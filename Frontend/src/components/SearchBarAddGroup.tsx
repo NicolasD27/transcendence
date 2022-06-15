@@ -38,25 +38,36 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 			setIsPrivate(true)
 		else if (channelVisibilitySelected === "protected")
 			setIsProtected(true)
-		
+
 		console.log("password entered:", passwordEntered)
-		axios
-			.post(`http://localhost:8000/api/channels`, {
-				"name": channelNameEntered,
-				"isPrivate": isPrivate,
-				"isProtected": isProtected,
-				"password": passwordEntered
-			  }, { withCredentials: true })
-			.then((response) => {
-				/*if (response.data.message === "This channel name is already taken.")
-				{
-					channelName.classList.add('error');
-					setTimeout(function () {
-						channelName.classList.remove('error');
-					}, 300);
-				}*/
-			})
-			.catch((err) => console.log(err.data))
+		if (channelVisibilitySelected === "protected")
+			axios
+				.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels`, {
+					"name": channelNameEntered,
+					"isPrivate": isPrivate,
+					"isProtected": isProtected,
+					"password": passwordEntered
+				}, { withCredentials: true })
+				.then((response) => {
+					/*if (response.data.message === "This channel name is already taken.")
+					{
+						channelName.classList.add('error');
+						setTimeout(function () {
+							channelName.classList.remove('error');
+						}, 300);
+					}*/
+				})
+				.catch((err) => console.log(err.data))
+		else
+			axios
+				.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels`, {
+					"name": channelNameEntered,
+					"isPrivate": isPrivate,
+					"isProtected": isProtected
+				}, { withCredentials: true })
+				.then((response) => {
+				})
+				.catch((err) => console.log(err.data))
 	}
 
 
@@ -70,13 +81,13 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 				<button id='addGroup' onClick={handleClick}/>
 			</div>
 			{
-				props.createChannelButtonState && 
+				props.createChannelButtonState &&
 				<>
 					{
-						isNextButtonClicked && 
+						isNextButtonClicked &&
 						<>
 							<div className='channelCreationSettings'>
-								<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked} setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered}/> 
+								<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked} setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered}/>
 							</div>
 							<button id="checkbox_previousChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Previous</button>
 							<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
@@ -98,9 +109,9 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 	)
 	/*<div className='usersList'>
 	{
-		isNextButtonClicked && 
+		isNextButtonClicked &&
 		<>
-			<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked}/> 
+			<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked}/>
 		</>
 		||
 		<>
@@ -114,15 +125,15 @@ const SearchBarAddGroup : React.FC<PropsSearchBarAddGroup> = (props) => {
 		||
 		<button id="checkbox_createChannelButton" type="button" onClick={() => setIsNextButtonClicked(true)}>Next</button>
 	}*/
-			/*{console.log("isNextButtonClicked: ", isNextButtonClicked)}
-			{
-				isNextButtonClicked && 
-				<>
-					<div className='userList'>
-					</div>
-					<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
-				</>
-			}*/
+	/*{console.log("isNextButtonClicked: ", isNextButtonClicked)}
+	{
+		isNextButtonClicked &&
+		<>
+			<div className='userList'>
+			</div>
+			<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
+		</>
+	}*/
 	//<input type="button" id="createChannelButton" value="Create Channel" onClick={handleClick1}/>
 }
 

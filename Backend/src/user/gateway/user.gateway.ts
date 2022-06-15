@@ -8,7 +8,7 @@ import {
 	WebSocketServer,
 	} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { CustomSocket } from 'src/auth-socket.adapter';
+import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
 import { FriendshipService } from 'src/friendship/service/friendship.service';
 import { UserStatus } from '../entity/user.entity';
 import { getUsernameFromSocket } from '../get-user-ws.function';
@@ -26,8 +26,6 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		private readonly userService: UserService,
 		private readonly friendshipService: FriendshipService,
 	) {}
-
-
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('sendStatusUpdate')						// this runs the function when the event msg_to_server is triggered
@@ -94,5 +92,6 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(client);
 		this.userService.updateStatusByUsername(UserStatus.OFFLINE, username)
 		// this.socket.to("match#" + data.match_id).emit('playerDisconnect');
+		activeUsers.remove(+client.id);
 	}
 }

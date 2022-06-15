@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { Notification } from 'src/notification/entity/notification.entity';
 import { NotificationService } from 'src/notification/service/notification.service';
 import { UserDto } from 'src/user/dto/user.dto';
@@ -25,6 +26,8 @@ export class FriendshipService {
         }
 
     async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
+		console.log("activeUsers");
+		console.log(activeUsers);
         const user = await this.usersRepository.findOne(user_id);
         if (!user)
             throw new NotFoundException(`user #${user_id} not found`)
@@ -88,7 +91,7 @@ export class FriendshipService {
         })
         if (friendship)
             throw new BadRequestException("Frienship already exist");
-        
+
         friendship = await this.friendshipsRepository.create({
             follower: follower,
             following: following,
@@ -117,7 +120,7 @@ export class FriendshipService {
 
     }
 
-    
+
     async destroy(username: string, id: string): Promise<FriendshipDto> {
         const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);
