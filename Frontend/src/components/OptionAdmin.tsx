@@ -9,7 +9,8 @@ import './OptionAdmin.css';
 
 interface Props {
 	idMe: number;
-	adminLevel: number
+	nameChat: string;
+	adminLevel: number;
 	socket: any;
 	id: number;
 	activePass: boolean;

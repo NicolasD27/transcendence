@@ -264,7 +264,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
 		</div>
 	);
 };

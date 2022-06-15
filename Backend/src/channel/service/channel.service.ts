@@ -827,7 +827,7 @@ export class ChannelService {
 		return (true);
 	}
 
-	async remove(id: string, username: string, deleteChannelDto: DeleteChannelDto) {
+	async remove(id: string, username: string) {
 		const myUser = await this.userRepo.findOne({ username });
 
 		const myChannel = await this.channelRepo.findOne(id);
@@ -848,9 +848,6 @@ export class ChannelService {
 		// ? this checks the password but private channels aren't supposed to have passwords
 		// if (! await bcrypt.compare(deleteChannelDto.password, myChannel.hashedPassword))
 		// 	throw new UnauthorizedException("wrong password");
-
-		if (myChannel.name !== deleteChannelDto.name)
-			throw new UnauthorizedException("Channel name is wrong.");
 
 		//? delete the channel in CASCADE
 		await getConnection()
