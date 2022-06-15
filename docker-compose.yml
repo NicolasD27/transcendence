@@ -1,9 +1,9 @@
 version: '3'
-services: 
+services:
   db:
     image: postgres
     restart: always
-    environment: 
+    environment:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_NAME}
@@ -11,12 +11,12 @@ services:
     volumes:
       - ./pgdata:/postgresql/data
   backend:
-    build: 
+    build:
       context: ./Backend
       dockerfile: ./Dockerfile
     image: backend:latest
     restart: always
-    environment: 
+    environment:
       - DB_TYPE=${DB_TYPE}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
@@ -24,7 +24,7 @@ services:
       - POSTGRES_DB=${POSTGRES_NAME}
       - POSTGRES_SYNC=false
       - POSTGRES_PORT=${POSTGRES_PORT}
-      - APP_HOST=${HOSTNAME}
+      - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
       - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
@@ -32,12 +32,12 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME}
       - FORTYTWO_CLIENT_ID=${FORTYTWO_CLIENT_ID}
       - FORTYTWO_CLIENT_SECRET=${FORTYTWO_CLIENT_SECRET}
-    ports: 
+    ports:
       - "8000:8000"
     container_name: backend-transcendence
-    depends_on: 
+    depends_on:
       - db
-    volumes: 
+    volumes:
       - './Backend:/app'
       - /app/node_modules/
   frontend:
@@ -58,15 +58,15 @@ services:
     image: dpage/pgadmin4
     restart: always
     container_name: nest-pgadmin4
-    environment: 
+    environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
       - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
-    ports: 
+    ports:
       - "8080:80"
-    volumes: 
+    volumes:
       - ./pgadmin-data:/pgadmin
-    depends_on: 
+    depends_on:
       - db
 volumes:
   pgdata:

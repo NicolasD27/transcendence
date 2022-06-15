@@ -14,7 +14,6 @@ let accelerator = 0.5;
 let basicW = 1000;
 let basicH = 590;
 let scored = false;
-let scoredCt = 0;
 let fq = 60;
 
 function PlayerInput(this: any)
@@ -53,6 +52,7 @@ function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number, 
 	this.ball = ball;
 	this.countdown = cd;
 	this.mode = mode;
+	this.scoredCt = 0;
 }
 
 function negRand()
@@ -173,12 +173,12 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
 		p5.textAlign(p5.CENTER, p5.TOP);
 		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
-		if (scoredCt !== 0)
+		if (data.scoredCt !== 0)
 		{
 			p5.ellipse(width * 0.4, height * 0.2, 50, 50);
-			if (scoredCt >= 1 * fq)
+			if (data.scoredCt >= 1 * fq)
 				p5.ellipse(width * 0.5, height * 0.2, 50, 50);
-			if (scoredCt >= 2 * fq)
+			if (data.scoredCt >= 2 * fq)
 				p5.ellipse(width * 0.6, height * 0.2, 50, 50);
 		}
 	}
@@ -186,15 +186,16 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 }
 
 interface Props {
-	socket: any
+	socket: any,
+	idMatch: any
 }
 
 export class Match extends React.Component<Props>
 {
+
 	state = {
 		width: basicW,
 		height: basicH,
-		divider: 1,
 		winner: ""
 	}
 	type = "";
@@ -218,6 +219,7 @@ export class Match extends React.Component<Props>
 
 	setup = (p5: any) =>
 	{
+		this.props.socket.emit('connect_to_match', {match_id: this.props.idMatch})
 
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
 		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
@@ -240,14 +242,19 @@ export class Match extends React.Component<Props>
 
 		this.props.socket.on('updateMatch', (data) =>
 		{
+			if (this.type === "")
+				this.type = "spect";
 			p5.clear();
 			p5.background(0);
 			if (data && this.tooSmall !== true)
 				printer(p5, data, basicW, basicH, this.type);
 		});
 
-		if (this.type == "")	//a voir si ca fonctionne ici, peut etre a mettre dans draw
-			this.props.socket.on('serverGameFinished', (data) => { this.setState({winner: data}) });
+		this.props.socket.on('serverGameFinished', (data) =>
+		{
+			if (this.type !== "master" && this.type !== "slave")
+				this.setState({winner: data})
+		});
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -332,10 +339,10 @@ export class Match extends React.Component<Props>
 								gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
 							else
 							{
-								scoredCt++;
-								if (scoredCt >= 3 * fq)
+								game.scoredCt++;
+								if (game.scoredCt >= 3 * fq)
 								{
-									scoredCt = 0;
+									game.scoredCt = 0;
 									scored = false;
 								}
 							}
@@ -397,91 +404,107 @@ export class Match extends React.Component<Props>
 	draw = (p5: any) =>
 	{
 		p5.scale(this.state.width / basicW)
-		if (this.state.winner !== "")
+		if (this.type !== "spect")
 		{
-			p5.background(0);
-			p5.fill(p5.color(255, 255, 255));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
-			p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-			if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
-				window.location.reload();
-		}
-		if (this.state.width < 400)	//change values here
-		{
-			this.tooSmall = true;
-			p5.clear()
-			p5.fill(p5.color(255, 0, 0));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.textSize(100)
-			p5.text(`TOO SMALL`, basicW / 2, basicH / 2);
-			p5.textSize(50)
+			if (this.state.winner !== "")
+			{
+				p5.background(0);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
+				p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
+				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
+					window.location.reload();
+			}
+			if (this.state.width < 400)	//change values here
+			{
+				this.tooSmall = true;
+				p5.clear()
+				p5.fill(p5.color(255, 0, 0));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.textSize(100)
+				p5.text(`TOO SMALL`, basicW / 2, basicH / 2);
+				p5.textSize(50)
+			}
+			else
+			{
+
+				this.tooSmall = false;
+				if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+					p5.mouseY > 0 && p5.mouseY < this.state.height)
+				{
+					p5.clear()
+					p5.fill(p5.color("#3772FF"));
+					p5.rect(0, 0, basicW / 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+					if (this.leftClick === true)
+					{
+						this.mode = "NORMAL";
+						this.props.socket.emit('find_match', {mode: 0});
+						this.modeSelected = true;
+						p5.background(0);
+						p5.fill(p5.color(255, 255, 255));
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+					}
+				}
+				else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+				p5.mouseY > 0 && p5.mouseY < this.state.height)
+				{
+					p5.clear()
+					p5.fill(p5.color("#E11515"));
+					p5.rect(basicW / 2, 0, basicW / 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+					if (this.leftClick === true)
+					{
+						this.mode = "HARDCORE";
+						this.props.socket.emit('find_match', {mode: 1});
+						this.modeSelected = true;
+						p5.background(0);
+						p5.fill(p5.color(255, 255, 255));
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+					}
+				}
+				else if (this.modeSelected === false)
+				{
+					p5.clear()
+					p5.fill(p5.color(255, 255, 255));
+					p5.rect(basicW / 2, 0, 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				}
+			}
+			if (this.leftClick === true)
+				this.leftClick = false;
 		}
 		else
 		{
-
-			this.tooSmall = false;
-			if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
-				p5.mouseY > 0 && p5.mouseY < this.state.height)
+			if (this.state.winner !== "")
 			{
-				p5.clear()
-				p5.fill(p5.color("#3772FF"));
-				p5.rect(0, 0, basicW / 2, basicH);
+				p5.background(0);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
-				if (this.leftClick === true)
-				{
-					this.mode = "NORMAL";
-					this.props.socket.emit('find_match', {mode: 0});
-					this.modeSelected = true;
-					p5.background(0);
-					p5.fill(p5.color(255, 255, 255));
-					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
-				}
-			}
-			else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
-			p5.mouseY > 0 && p5.mouseY < this.state.height)
-			{
-				p5.clear()
-				p5.fill(p5.color("#E11515"));
-				p5.rect(basicW / 2, 0, basicW / 2, basicH);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
-				if (this.leftClick === true)
-				{
-					this.mode = "HARDCORE";
-					this.props.socket.emit('find_match', {mode: 1});
-					this.modeSelected = true;
-					p5.background(0);
-					p5.fill(p5.color(255, 255, 255));
-					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
-				}
-			}
-			else if (this.modeSelected === false)
-			{
-				p5.clear()
-				p5.fill(p5.color(255, 255, 255));
-				p5.rect(basicW / 2, 0, 2, basicH);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
+				p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
+				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
+					window.location.reload();
 			}
 		}
-		if (this.leftClick === true)
-			this.leftClick = false;
 	}
 
 	keyTyped = (p5: any) =>
