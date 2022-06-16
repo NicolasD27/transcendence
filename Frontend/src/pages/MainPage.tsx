@@ -5,10 +5,12 @@ import './MainPage.css'
 import Header from './Header'
 import Body from './Body'
 import { chatStateFormat } from '../App';
+import { useSearchParams } from 'react-router-dom';
 
 const MainPage = ({socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState}: {socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
+
 
 	useEffect(() => {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })

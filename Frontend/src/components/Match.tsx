@@ -1,16 +1,20 @@
+import { wait } from "@testing-library/user-event/dist/utils";
+import p5 from "p5";
 import React, { Fragment } from "react";
 import Sketch from "react-p5";
 import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 10;
-let buttonAdder = 8;
+let finalScore = 3;
+let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
-let accelerator = 1;
+let accelerator = 0.5;
 let basicW = 1000;
 let basicH = 590;
+let scored = false;
+let fq = 60;
 
 function PlayerInput(this: any)
 {
@@ -48,6 +52,7 @@ function Game(this: any, playerOne: any, playerTwo: any, ball: any, cd: number, 
 	this.ball = ball;
 	this.countdown = cd;
 	this.mode = mode;
+	this.scoredCt = 0;
 }
 
 function negRand()
@@ -68,7 +73,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			if (game.ball.y >= game.playerTwo.y && game.ball.y <= game.playerTwo.y + game.playerTwo.h)
 			{
 				if (game.mode === "HARDCORE")
-					magicBallSpeed += 5;	//for special mode
+					magicBallSpeed += 2;	//for special mode
 
 				var relativeIntersectY = (game.playerTwo.y + 50) - game.ball.y;
 				var normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -76,8 +81,9 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				game.ball.xv = -(magicBallSpeed * Math.cos(bounceAngle));
 				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
 			}
-			else
+			else if (game.ball.x >= width)
 			{
+				scored = true;
 				game.playerOne.score++;
 				magicBallSpeed = ballSpeed;
 				socket.emit('masterScored', {match_id: match_id});
@@ -93,7 +99,7 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 			if (game.ball.y >= game.playerOne.y && game.ball.y <= game.playerOne.y + game.playerOne.h)
 			{
 				if (game.mode === "HARDCORE")
-					magicBallSpeed += 5;	//for special mode
+					magicBallSpeed += 2;	//for special mode
 
 				relativeIntersectY = (game.playerOne.y + 50) - game.ball.y;
 				normalizedRelativeIntersectionY = (relativeIntersectY/(100 / 2));
@@ -101,8 +107,9 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 				game.ball.xv = magicBallSpeed * Math.cos(bounceAngle);
 				game.ball.yv = magicBallSpeed * -Math.sin(bounceAngle);
 			}
-			else
+			else if (game.ball.x <= 0)
 			{
+				scored = true;
 				game.playerTwo.score++;
 				magicBallSpeed = ballSpeed;
 				socket.emit('slaveScored', {match_id: match_id});
@@ -122,27 +129,22 @@ function gameEngine(game: any, socket: Socket, match_id: number, width: number, 
 
 function playerMove(started: number, game: any, playerInput: any, width: number, height: number)
 {
-	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1)
+	if (playerInput.masterA === true && game.playerOne.y >= accelerator && started === 1 && playerInput.masterZ === false)
 	{
 		if (game.playerOne.y !== 0)
 			game.playerOne.y -= (buttonAdder + (playerInput.masterAcc += accelerator));
 	}
-	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1)
+	if (playerInput.masterZ === true && game.playerOne.y < height - 100 - accelerator && started === 1 && playerInput.masterA === false)
 		game.playerOne.y += (buttonAdder + (playerInput.masterAcc += accelerator));
 
-	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1)
+	if (playerInput.slaveA === true && game.playerTwo.y >= accelerator && started === 1 && playerInput.slaveZ === false)
 	{
 		if (game.playerTwo.y !== 0)
 			game.playerTwo.y -= (buttonAdder + (playerInput.slaveAcc += accelerator));
 	}
-	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1)
+	else if (playerInput.slaveZ === true && game.playerTwo.y < height - 100 - accelerator && started === 1 && playerInput.slaveA === false)
 		game.playerTwo.y += (buttonAdder + (playerInput.slaveAcc += accelerator));
 
-	if (playerInput.masterA === false && playerInput.masterZ === false)
-		playerInput.masterAcc = 0;
-
-	if (playerInput.slaveA === false && playerInput.slaveZ === false)
-		playerInput.slaveAcc = 0;
 }
 
 function printer(p5: any, data: any, width: number, height: number, type: string)
@@ -167,30 +169,38 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 	else
 	{
 		p5.fill(p5.color(255, 255, 255));
-		p5.rect(width / 2, 0, 2, height);
+		p5.rect((width / 2) - 1, 0, 2, height);
 		p5.ellipse(data.ball.x, data.ball.y, data.ball.xr, data.ball.yr);
 		p5.textAlign(p5.CENTER, p5.TOP);
 		p5.text(`${data.playerOne.score}      ${data.playerTwo.score}`, width / 2, 10);
+		if (data.scoredCt !== 0)
+		{
+			p5.ellipse(width * 0.4, height * 0.2, 50, 50);
+			if (data.scoredCt >= 1 * fq)
+				p5.ellipse(width * 0.5, height * 0.2, 50, 50);
+			if (data.scoredCt >= 2 * fq)
+				p5.ellipse(width * 0.6, height * 0.2, 50, 50);
+		}
 	}
 
 }
 
 interface Props {
-	socket: any
+	socket: any,
+	idMatch: any
 }
 
 export class Match extends React.Component<Props>
 {
+
 	state = {
 		width: basicW,
 		height: basicH,
-		divider: 1,
 		winner: ""
 	}
 	type = "";
 	started = 0;
 	countdown = 3;
-	fq = 30;
 	match_id: number;
 	slaveId: string;
 	masterId: string;
@@ -199,7 +209,7 @@ export class Match extends React.Component<Props>
 	modeSelected = false;
 	mode = "";
 	tooSmall = false;
-	
+
 	windowResized = (p5: any) =>
 	{
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
@@ -209,11 +219,15 @@ export class Match extends React.Component<Props>
 
 	setup = (p5: any) =>
 	{
-		
+		if (this.props.idMatch)
+			this.props.socket.emit('connect_to_match', {match_id: this.props.idMatch})
+
 		this.state.width = document.getElementById("gameArea")!.offsetWidth - 8;
 		this.state.height = document.getElementById("gameArea")!.offsetHeight - 8;
 		let cvn = p5.createCanvas(this.state.width, this.state.height);
 		cvn.parent("gameArea");
+
+		p5.frameRate(60);
 
 		p5.textFont('Tourney');
 		p5.clear()
@@ -229,14 +243,19 @@ export class Match extends React.Component<Props>
 
 		this.props.socket.on('updateMatch', (data) =>
 		{
+			if (this.type === "")
+				this.type = "spect";
 			p5.clear();
 			p5.background(0);
 			if (data && this.tooSmall !== true)
 				printer(p5, data, basicW, basicH, this.type);
 		});
 
-		if (this.type == "")	//a voir si ca fonctionne ici, peut etre a mettre dans draw
-			this.props.socket.on('serverGameFinished', (data) => { this.setState({winner: data}) });
+		this.props.socket.on('serverGameFinished', (data) =>
+		{
+			if (this.type !== "master" && this.type !== "slave")
+				this.setState({winner: data})
+		});
 
 		this.props.socket.on('launch_match', (data) =>
 		{
@@ -290,6 +309,7 @@ export class Match extends React.Component<Props>
 							playerInput.masterA = false;
 						else if (data === 'z')
 							playerInput.masterZ = false;
+						playerInput.masterAcc = 0;
 					});
 
 					this.props.socket.on('slaveToMasterKeyReleased', data =>
@@ -298,24 +318,35 @@ export class Match extends React.Component<Props>
 							playerInput.slaveA = false;
 						else if (data === 'z')
 							playerInput.slaveZ = false;
+						playerInput.slaveAcc = 0;
 					});
 
 					var counter = 0;
 					this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 					this.props.socket.on('serverTick', () =>
 					{
-						if (counter <= this.fq * this.countdown)
+						if (counter <= fq * this.countdown)
 							counter++;
-						if (counter % this.fq === 0 && counter > 0)
+						if (counter % fq === 0 && counter > 0)
 						{
 							game.countdown--;
 							this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
-						if (counter > this.fq * this.countdown)
+						if (counter > fq * this.countdown)
 						{
 							this.started = 1;
 							playerMove(this.started, game, playerInput, basicW, basicH);
-							gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
+							if (scored === false)
+								gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
+							else
+							{
+								game.scoredCt++;
+								if (game.scoredCt >= 3 * fq)
+								{
+									game.scoredCt = 0;
+									scored = false;
+								}
+							}
 							this.props.socket.emit('sendUpdateMatch', {match_id: this.match_id, game: game});
 						}
 						if (game.playerOne.score >= finalScore)
@@ -334,7 +365,7 @@ export class Match extends React.Component<Props>
 					{
 						this.started = -1;
 						this.props.socket.off('serverTick');
-						this.setState({winner: data})
+						this.setState({winner: data});
 					});
 
 					this.props.socket.on('clientDisconnect', (data) =>
@@ -374,90 +405,107 @@ export class Match extends React.Component<Props>
 	draw = (p5: any) =>
 	{
 		p5.scale(this.state.width / basicW)
-		if (this.state.winner !== "")
+		if (this.type !== "spect")
 		{
-			p5.background(0);
-			p5.fill(p5.color(255, 255, 255));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
-		}
-		if (this.state.width < 400)	//change values here
-		{
-			this.tooSmall = true;
-			p5.clear()
-			p5.fill(p5.color(255, 0, 0));
-			p5.textAlign(p5.CENTER, p5.CENTER);
-			p5.textSize(100)
-			p5.text(`TOO SMALL`, basicW / 2, basicH / 2);
-			p5.textSize(50)
+			if (this.state.winner !== "")
+			{
+				p5.background(0);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
+				p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
+				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
+					window.location.reload();
+			}
+			if (this.state.width < 400)	//change values here
+			{
+				this.tooSmall = true;
+				p5.clear()
+				p5.fill(p5.color(255, 0, 0));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.textSize(100)
+				p5.text(`TOO SMALL`, basicW / 2, basicH / 2);
+				p5.textSize(50)
+			}
+			else
+			{
+
+				this.tooSmall = false;
+				if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
+					p5.mouseY > 0 && p5.mouseY < this.state.height)
+				{
+					p5.clear()
+					p5.fill(p5.color("#3772FF"));
+					p5.rect(0, 0, basicW / 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+					if (this.leftClick === true)
+					{
+						this.mode = "NORMAL";
+						this.props.socket.emit('find_match', {mode: 0});
+						this.modeSelected = true;
+						p5.background(0);
+						p5.fill(p5.color(255, 255, 255));
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+					}
+				}
+				else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
+				p5.mouseY > 0 && p5.mouseY < this.state.height)
+				{
+					p5.clear()
+					p5.fill(p5.color("#E11515"));
+					p5.rect(basicW / 2, 0, basicW / 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+					if (this.leftClick === true)
+					{
+						this.mode = "HARDCORE";
+						this.props.socket.emit('find_match', {mode: 1});
+						this.modeSelected = true;
+						p5.background(0);
+						p5.fill(p5.color(255, 255, 255));
+						p5.textAlign(p5.CENTER, p5.CENTER);
+						p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
+					}
+				}
+				else if (this.modeSelected === false)
+				{
+					p5.clear()
+					p5.fill(p5.color(255, 255, 255));
+					p5.rect(basicW / 2, 0, 2, basicH);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
+					p5.fill(p5.color(255, 255, 255));
+					p5.textAlign(p5.CENTER, p5.CENTER);
+					p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				}
+			}
+			if (this.leftClick === true)
+				this.leftClick = false;
 		}
 		else
 		{
-			
-			this.tooSmall = false;
-			if	(p5.mouseX < this.state.width / 2 && p5.mouseX > 0 && this.modeSelected === false &&
-				p5.mouseY > 0 && p5.mouseY < this.state.height)
+			if (this.state.winner !== "")
 			{
-				p5.clear()
-				p5.fill(p5.color("#3772FF"));
-				p5.rect(0, 0, basicW / 2, basicH);
+				p5.background(0);
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
-				if (this.leftClick === true)
-				{
-					this.mode = "NORMAL";
-					this.props.socket.emit('find_match', {mode: 0});
-					this.modeSelected = true;
-					p5.background(0);
-					p5.fill(p5.color(255, 255, 255));
-					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
-				}
-			}
-			else if (p5.mouseX >= this.state.width / 2 && p5.mouseX < this.state.width && this.modeSelected === false &&
-			p5.mouseY > 0 && p5.mouseY < this.state.height)
-			{
-				p5.clear()
-				p5.fill(p5.color("#E11515"));
-				p5.rect(basicW / 2, 0, basicW / 2, basicH);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
-				if (this.leftClick === true)
-				{
-					this.mode = "HARDCORE";
-					this.props.socket.emit('find_match', {mode: 1});
-					this.modeSelected = true;
-					p5.background(0);
-					p5.fill(p5.color(255, 255, 255));
-					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text(`Creating / Finding match...`, basicW / 2, basicH / 2);
-				}
-			}
-			else if (this.modeSelected === false)
-			{
-				p5.clear()
-				// p5.fill(p5.color("#E11515"));
-				// p5.rect(basicW / 2, 0, basicW / 2, basicH);
-				p5.fill(p5.color(255, 255, 255));
-				p5.rect(basicW / 2, 0, 2, basicH);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Normal mode`, basicW * 0.25, basicH / 2);
-				p5.fill(p5.color(255, 255, 255));
-				p5.textAlign(p5.CENTER, p5.CENTER);
-				p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
+				p5.text(`The winner is : ${this.state.winner}`, basicW / 2, basicH / 2);
+				p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
+				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.state.width && p5.mouseY > 0 && p5.mouseY < this.state.height)
+					window.location.reload();
 			}
 		}
-		if (this.leftClick === true)
-			this.leftClick = false;
 	}
 
 	keyTyped = (p5: any) =>
@@ -480,7 +528,7 @@ export class Match extends React.Component<Props>
 
 	mouseClicked = (p5: any) =>
 	{
-		if(p5.mouseButton === p5.LEFT && this.started === 0)
+		if(p5.mouseButton === p5.LEFT)
 			this.leftClick = true;
 	}
 

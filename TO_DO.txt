@@ -1,2 +1,0 @@
-_ modifier MainPage pour que le div soit d'un constant aspect ratio
-_ recuperer la taille actuelle, et faire des mult pour concerver le meme jeu a des res diff

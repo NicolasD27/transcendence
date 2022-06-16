@@ -1,10 +1,12 @@
+import { UserStatus } from "./user.entity";
+
 export class ActiveUsers {
 
 	private users = new Map();
 
 	add(userId: number, socketId: string) {
 		console.log(`// ${userId} added to activeUsers by ${socketId}`);
-		this.users.set(Number(userId), {socketId: socketId, state: "online"});
+		this.users.set(Number(userId), { socketId: socketId, state: UserStatus.ONLINE });
 	}
 
 	remove(userId: number) {
@@ -18,27 +20,27 @@ export class ActiveUsers {
 	get() {
 		return this.users;
 	}
-	
+
 	isActiveUser(userId: number) {
 		return (this.users.has(Number(userId)));
 	}
 
-	updateState(userId: number, state: string) {
+	updateState(userId: number, state: UserStatus) {
+		// need to optimise this
 		this.users.forEach((val, key) => {
 			if (key === Number(userId))
 				val.state = state;
 		});
 	}
 
-	getUserStatus(userId: number): string {
+	getUserStatus(userId: number): UserStatus {
 		const found = this.users.get(Number(userId));
 		if (!found)
-			return "offline";
+			return UserStatus.OFFLINE;
 		return found.state;
 	}
 
-	display()
-	{
+	display() {
 		console.log(this.users);
 	}
 }

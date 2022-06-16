@@ -4,20 +4,19 @@ import { Msg } from "../../message/entity/msg.entity";
 import { Match } from "../../match/entity/match.entity";
 import { Channel } from "../../channel/entity/channel.entity";
 import { UserDto } from "../dto/user.dto";
-import { instanceToPlain, plainToInstance } from "class-transformer";
 import { Participation } from "src/channel/entity/participation.entity";
 import { ModerationTimeOut } from "src/channel/entity/moderationTimeOut.entity";
 import DatabaseFile from "./database-file.entity";
 import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 import { Notification } from "src/notification/entity/notification.entity";
 import { ChannelInvite } from "src/channel/entity/channelInvite.entity";
+import { activeUsers } from "src/auth-socket.adapter";
 
 export enum UserStatus {
 	OFFLINE,
 	ONLINE,
 	SEARCHING,
 	PLAYING
-
 }
 
 @Entity()
@@ -29,12 +28,12 @@ export class User extends BaseEntity {
 	username: string
 
 	@Column({ type: "varchar", nullable: false, unique: true})
-	pseudo: string 
+	pseudo: string
 
-	
+
 	@Column({ nullable: true })
 	twoFactorAuthSecret?: string
-	
+
 	@Column({ default: false })
 	public isTwoFactorEnable: boolean
 
@@ -52,13 +51,13 @@ export class User extends BaseEntity {
 
 	@Column({ default: UserStatus.ONLINE })
 	status: number
-	
+
 	@OneToMany(() => Friendship, friendship => friendship.follower)
 	followers: Friendship[];
-	
+
 	@OneToMany(() => Friendship, friendship => friendship.following)
 	followings: Friendship[];
-	
+
 	@OneToMany(() => Channel, channel => channel.owner)
 	channels: Channel[];
 
@@ -81,7 +80,7 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => DirectMessage, directMessage => directMessage.receiver)
 	directMessagesReceived: DirectMessage[];
-	
+
 	@OneToMany(() => Match, match => match.user1)
 	matchs1: Match[];
 
@@ -92,20 +91,16 @@ export class User extends BaseEntity {
 	notifications: Notification[];
 
 	static toDto(user: User) {
-		return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+		// return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+		const dto: UserDto = {
+			id : user.id,
+			username: user.username,
+			pseudo: user.pseudo,
+			avatarId: user.avatarId,
+			status: 1, //activeUsers.getUserStatus(user.id),
+			isTwoFactorEnable: user.isTwoFactorEnable
+		};
+		return dto;
 	}
-	// @Column({ type: "varchar" })
-	// password: string
-	
-	// @Column()
-	// salt: string
-	
-	// @Column({ nullable: true })
-	// @Exclude()
-	// public hashedRefreshToken?: string
-
-	// async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
-	//	 return await bcrypt.compare(password, hashedPassword).then(result => result)
-	// }
 
 }
