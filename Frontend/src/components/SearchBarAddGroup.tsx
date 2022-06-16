@@ -4,6 +4,7 @@ import PrintChannelCreationSettings from './PrintChannelCreationSettings'
 import PrintFriendToAddChannel from './PrintFriendToAddChannel'
 import searchIcon from '../asset/searchIcon.svg'
 import { FriendsFormat } from './Chat'
+import { chatStateFormat } from '../App'
 
 interface PropsSearchBarAddGroup {
 	idMe: number;
@@ -11,6 +12,8 @@ interface PropsSearchBarAddGroup {
 	friends: FriendsFormat[];
 	createChannelButtonState: boolean;
 	setCreateChannelButtonState: Dispatch<SetStateAction<boolean>>;
+	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
+	chatParamsState : chatStateFormat;
 }
 
 const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
@@ -51,6 +54,8 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					"password": passwordEntered
 				}, { withCredentials: true })
 				.then((response) => {
+					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
+
 					/*if (response.data.message === "This channel name is already taken.")
 					{
 						channelName.classList.add('error');
@@ -68,6 +73,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					"isProtected": tmpProtected
 				}, { withCredentials: true })
 				.then((response) => {
+					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
 				})
 				.catch((err) => console.log(err.data))
 	}

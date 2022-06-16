@@ -53,6 +53,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			setAwaitingAction(false)
 			setContent(" and you are now friends !")
 			setNewNotifsLength(newNotifsLength - 1)
+			setIsFriendshipButtonClicked(true)
 			socket.emit("acceptFriendRequest", {friendship_id: notification.entityId})
 		}
 		else if (notification.entityType === "Match")
