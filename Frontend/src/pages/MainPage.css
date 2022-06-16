@@ -97,7 +97,7 @@
 	display: flex;
 	margin: 0px 18px 18px 18px;
 	height: 54px;
-	border: 0.1px solid red;;
+	border: none;
 }
 
 #searchBar {
@@ -876,16 +876,16 @@ button {
 
 .switchMode {
 	display: flex;
-	border: 2px solid #C0F4FE;
+	border: 2px solid #3772FF;
 	justify-content: space-around;
 	margin: 18px;
 	height: 54px;
-	color: #C0F4FE;
+	color: #3772FF;
 	border-radius: 25px;
 }
 
 .switchMode button {
-	color: #C0F4FE;
+	color: #3772FF;
 }
 
 .switchMode button:hover {
@@ -893,11 +893,7 @@ button {
 }
 
 .switchMode span{
-	/*border: 1px solid #C0F4FE;*/
+	border: none;
 	background-color: #C0F4FE;
 	height: 100%;
-}
-
-.switchMode * {
-	border: 0.1px solid red;
 }
