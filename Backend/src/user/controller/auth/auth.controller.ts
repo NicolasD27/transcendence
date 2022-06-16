@@ -1,8 +1,6 @@
-import { Post, Body, Controller, Get, UseGuards, Redirect, Res, Req, NotFoundException } from "@nestjs/common"
+import { Post, Controller, Get, UseGuards, Redirect, Res, Req, NotFoundException } from "@nestjs/common"
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger"
 import { GetUsername } from "../../decorator/get-username.decorator"
-import { User } from "../../entity/user.entity"
-import { JwtPayload } from "../../interface/jwt-payload.interface"
 import { AuthService } from "../../service/auth.service"
 import { FtOauthGuard } from '../../../guards/ft-oauth.guard';
 import { Profile } from "passport-42"
@@ -61,6 +59,6 @@ export class AuthController {
             throw new NotFoundException("user not found")
         res.clearCookie('accessToken', payload.accessToken)
         res.clearCookie('username', payload.user.username)
-        req.logout(null);
+        req.logout();
     }
 }

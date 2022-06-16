@@ -1,4 +1,4 @@
-import { UserStatus } from "./user.entity";
+import { UserStatus } from "../utils/user-status";
 
 export class ActiveUsers {
 
