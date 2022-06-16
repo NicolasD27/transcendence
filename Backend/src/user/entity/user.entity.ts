@@ -11,13 +11,7 @@ import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 import { Notification } from "src/notification/entity/notification.entity";
 import { ChannelInvite } from "src/channel/entity/channelInvite.entity";
 import { activeUsers } from "src/auth-socket.adapter";
-
-export enum UserStatus {
-	OFFLINE,
-	ONLINE,
-	SEARCHING,
-	PLAYING
-}
+import { UserStatus } from "../utils/user-status";
 
 @Entity()
 export class User extends BaseEntity {
@@ -97,7 +91,7 @@ export class User extends BaseEntity {
 			username: user.username,
 			pseudo: user.pseudo,
 			avatarId: user.avatarId,
-			status: 1, //activeUsers.getUserStatus(user.id),
+			status: activeUsers.getUserStatus(user.id),
 			isTwoFactorEnable: user.isTwoFactorEnable
 		};
 		return dto;
