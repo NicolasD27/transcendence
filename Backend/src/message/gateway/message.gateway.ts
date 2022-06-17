@@ -36,8 +36,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	{}
 
 	@SubscribeMessage('msg_to_server')
-	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string })
-	{
+	async handleMessage(
+		socket: CustomSocket,
+		data: { activeChannelId: string, content: string }
+	) {
 		console.log("// msg_to_server " + data.activeChannelId);
 
 		const username = getUsernameFromSocket(socket);
@@ -63,21 +65,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	}
 
 	@SubscribeMessage('connect_to_channel')
-	async connectToChannel(socket: CustomSocket, data: { channelId: string })
-	{
-
-		// console.log(socket.request.headers.cookie);
-
+	async connectToChannel(
+		socket: CustomSocket,
+		data: { channelId: string }
+	) {
 		const username = getUsernameFromSocket(socket);
 		console.log(`// connectToChannel ${username} on ${data.channelId}`);
-
-		// this.channelService.checkUserJoinedChannelWS(username, data.channelId)
-		// .catch(()=>{
-		// 	console.log("can not join the channel");
-		// })
-		// .then(()=>{
-		// 	socket.join("channel#" + data.channelId);
-		// });
 
 		await this.channelService.checkUserJoinedChannel(username, data.channelId);
 		socket.join("channel#" + data.channelId);
@@ -89,8 +82,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async banUser(
 		socket: CustomSocket,
 		banUserFromChannelDto: BanUserFromChannelDto
-	)
-	{
+	) {
 		try
 		{
 			const username = getUsernameFromSocket(socket);
@@ -140,8 +132,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('mute')
 	async muteUser(
 		socket: CustomSocket,
-		banUserFromChannelDto: BanUserFromChannelDto)
-	{
+		banUserFromChannelDto: BanUserFromChannelDto
+	) {
 		const username = getUsernameFromSocket(socket);
 		try {
 			const bannedUser = await this.channelService.changeBanStatus(
@@ -179,8 +171,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('rescue')	// unrestrict ?
 	async unbanUser(
 		socket: CustomSocket,
-		data: { userId: number, channelId: number })
-	{
+		data: { userId: number, channelId: number }
+	) {
 		try {
 			const recuedUser = await this.channelService.revertBanStatus(
 				data.channelId.toString(),
@@ -193,7 +185,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					user: recuedUser,
 				}
 			);
-			// ? emit something on the unbanned room
+			// ? emit something on the unrestricted's room
 			if (activeUsers.isActiveUser(+data.userId) == true)
 			{
 				this.server.to("user#" + recuedUser.id)
@@ -209,14 +201,16 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		catch(e)
 		{
 			console.log(e.message);
-			return ; // an emit could be done to the client room of this socket
+			return ;
 		}
 		return ;
 	}
 
 	@SubscribeMessage('sendInvite')
-	async createChannelInvite(socket: CustomSocket, createChannelInviteDto: CreateChannelInviteDto)
-	{
+	async createChannelInvite(
+		socket: CustomSocket,
+		createChannelInviteDto: CreateChannelInviteDto
+	) {
 		try
 		{
 			const newInviteDto = await this.channelService.saveInvite(getUsernameFromSocket(socket), createChannelInviteDto);
@@ -235,6 +229,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			console.log("error: " + e.message);
 			return { error: e.message };	// todo : an emit could be done to the client room of this socket
 		}
+	}
+
+	@SubscribeMessage('delete_channel')
+	async deleteChannel(
+		client: CustomSocket,
+		data: { channelId: number }
+	) {
+		await this.channelService.remove(data.channelId, client.user.id);
+		// ? closes the channel's room
+		this.server.in("channel#" + data.channelId)
+			.socketsLeave("channel#" + data.channelId);
+		return;
 	}
 
 	afterInit(server: Server)

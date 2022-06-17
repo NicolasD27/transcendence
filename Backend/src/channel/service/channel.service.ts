@@ -11,7 +11,6 @@ import * as bcrypt from 'bcrypt';
 import { MsgDto } from 'src/message/dto/message.dto';
 import { UserDto } from 'src/user/dto/user.dto';
 import { BanUserFromChannelDto } from '../dto/ban-user-from-channel.dto';
-import { DeleteChannelDto } from '../dto/delete-channel.dto';
 import { ChangeChannelOwnerDto } from '../dto/change-owner.dto';
 import { ModerationTimeOut } from '../entity/moderationTimeOut.entity';
 import { ChannelInvite } from '../entity/channelInvite.entity';
@@ -22,7 +21,6 @@ import { NotificationService } from '../../notification/service/notification.ser
 import { PaginationQueryDto } from '../dto/pagination-query.dto';
 import { ChannelDtoWithModeration } from '../dto/channel-with-moderation.dto';
 import { UpdateChannelDto } from '../dto/update-channel-visibility.dto';
-import { number } from 'joi';
 
 @Injectable()
 export class ChannelService {
@@ -827,12 +825,12 @@ export class ChannelService {
 		return (true);
 	}
 
-	async remove(id: string, username: string) {
-		const myUser = await this.userRepo.findOne({ username });
+	async remove(channelId: number, userId: number) {
+		const myUser = await this.userRepo.findOne(userId);
 
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel)
-			throw new NotFoundException(`Channel #${id} not found.`);
+			throw new NotFoundException(`Channel #${channelId} not found.`);
 
 		const participation = await this.participationRepo.findOne({
 			where: {

@@ -89,15 +89,15 @@ export class ChannelController {
 		return;
 	}
 
-	@Delete(':id/')
-	@UseGuards(TwoFactorGuard)
-	async remove(
-		@Param('id', ParseIntPipe) id: number,
-		@Req() request: Request
-	) {
-		await this.channelService.remove(id.toString(), request.cookies.username);
-		return;
-	}
+	// @Delete(':id/')
+	// @UseGuards(TwoFactorGuard)
+	// async remove(
+	// 	@Param('id', ParseIntPipe) id: number,
+	// 	@Req() request: Request
+	// ) {
+	// 	await this.channelService.remove(id.toString(), request.cookies.username);
+	// 	return;
+	// }
 
 	// ? Not channel directly
 
