@@ -78,7 +78,6 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 				.catch((err) => console.log(err.data))
 	}
 
-
 	return (
 		<>
 			<div className="searchAndAdd">
@@ -112,7 +111,6 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					}
 				</>
 			}
-
 		</>
 	)
 	/*<div className='usersList'>
