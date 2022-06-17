@@ -238,6 +238,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	) {
 		await this.channelService.remove(data.channelId, client.user.id);
 		// ? closes the channel's room
+		this.server.to("channel#" + data.channelId).emit('channel_deleted', { channelId: data.channelId });
 		this.server.in("channel#" + data.channelId)
 			.socketsLeave("channel#" + data.channelId);
 		return;

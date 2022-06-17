@@ -854,8 +854,5 @@ export class ChannelService {
 			.from("channel")
 			.where("id = :channelId", { channelId: myChannel.id })
 			.execute();
-
-		// todo: maybe close the room for active users
-		// todo: send users a ping ?
 	}
 }
