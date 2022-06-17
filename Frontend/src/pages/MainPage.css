@@ -499,7 +499,6 @@ button {
 	line-height: 24px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-
 }
 
 .messageArea {
@@ -736,9 +735,9 @@ button {
 	border-color: #E11515;
 }
 
-#checkbox_nextChannelButton {
+#checkbox_firstChannelButton {
 	min-height: 48px;
-	margin: 14px 18px 20px 18px;
+	margin: 3px 18px 3px 18px;
 	border: 2px solid #3772FF;
 	border-radius: 20px;
 	font-size: 14px;
@@ -746,27 +745,27 @@ button {
 	color: #3772FF;
 }
 
-#checkbox_nextChannelButton:hover {
+#checkbox_firstChannelButton:hover {
 	border: 2px solid #E11515;
 	cursor: pointer;
 }
 
-#checkbox_nextChannelButton:active {
+#checkbox_firstChannelButton:active {
 	background-color: #E11515;
 }
 
 .channelCreationSettings {
-	min-height: 215px;
+	/*min-height: 215px;*/
 	margin-right: 18px;
 	margin-left: 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	border: none;
+	border: 0.1px solid red;
 }
 
-#checkbox_previousChannelButton {
+#checkbox_secondChannelButton {
 	min-height: 48px;
-	margin: 30px 18px 12px 18px;
+	margin: 3px 18px 10px 18px;
 	border: 2px solid #3772FF;
 	border-radius: 20px;
 	font-size: 14px;
@@ -774,12 +773,12 @@ button {
 	color: #3772FF;
 }
 
-#checkbox_previousChannelButton:hover {
+#checkbox_secondChannelButton:hover {
 	border: 2px solid #E11515;
 	cursor: pointer;
 }
 
-#checkbox_previousChannelButton:active {
+#checkbox_secondChannelButton:active {
 	background-color: #E11515;
 }
 

@@ -14,18 +14,21 @@ interface PropsSearchBarAddGroup {
 	setCreateChannelButtonState: Dispatch<SetStateAction<boolean>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
+	printSearchBar : boolean;
+	setPrintSearchBar : Dispatch<SetStateAction<boolean>>
 }
 
 const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
 	const [selectedFriend, setSelectedFriend] = useState<FriendsFormat[]>([])
-	const [isNextButtonClicked, setIsNextButtonClicked] = useState(false)
+	//const [isNextButtonClicked, setIsNextButtonClicked] = useState(false)
 	const [channelVisibilitySelected, setChannelVisibilitySelected] = useState("public")
 	const [channelNameEntered, setChannelNameEntered] = useState("")
 	const [passwordEntered, setPasswordEntered] = useState("")
 	const [isPrivate, setIsPrivate] = useState(false)
 	const [isProtected, setIsProtected] = useState(false)
-
+	const [ isNextPageSelected, setIsNextPageSelected ] = useState(Boolean)
+	
 	const handleSearchRequest = (e: any) => {
 		props.setSearchValue("")
 		let value = e.target.value
@@ -34,6 +37,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
 	const handleClick = () => {
 		props.setCreateChannelButtonState(!props.createChannelButtonState)
+		props.setPrintSearchBar(!props.printSearchBar)
 	}
 
 	const createChannel = () => {
@@ -80,33 +84,37 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
 	return (
 		<>
-			<div className="searchAndAdd">
-				<div id="searchBar">
-					<img src={searchIcon} alt="searchIcon" id='searchIcon' />
-					<input type='text' placeholder='Search...' name='searchFriend' id='searchFriend' onChange={handleSearchRequest} />
+			{
+				props.printSearchBar && 
+				<div className="searchAndAdd">
+					<div id="searchBar">
+						<img src={searchIcon} alt="searchIcon" id='searchIcon' />
+						<input type='text' placeholder='Search...' name='searchFriend' id='searchFriend' onChange={handleSearchRequest} />
+					</div>
+					<button id='addGroup' onClick={handleClick}/>
 				</div>
-				<button id='addGroup' onClick={handleClick} />
-			</div>
+			}
 			{
 				props.createChannelButtonState &&
 				<>
 					{
-						isNextButtonClicked &&
+						isNextPageSelected &&
 						<>
 							<div className='channelCreationSettings'>
-								<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked} setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered} />
+								<PrintChannelCreationSettings setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered} />
 							</div>
-							<button id="checkbox_previousChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Previous</button>
-							<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
+							<button id="checkbox_firstChannelButton" type="button" onClick={() => setIsNextPageSelected(false)}>Previous</button>
+							<button id="checkbox_secondChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
 						</>
 					}
 					{
-						!isNextButtonClicked &&
+						!isNextPageSelected &&
 						<>
 							<div className='usersList'>
 								<PrintFriendToAddChannel idMe={props.idMe} friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend} />
 							</div>
-							<button id="checkbox_nextChannelButton" type="button" onClick={() => setIsNextButtonClicked(!isNextButtonClicked)}>Next</button>
+							<button id="checkbox_firstChannelButton" type="button" onClick={() => {props.setCreateChannelButtonState(false); props.setPrintSearchBar(true)}}>Previous</button>
+							<button id="checkbox_secondChannelButton" type="button" onClick={() => setIsNextPageSelected(true)}>Next</button>
 						</>
 					}
 				</>

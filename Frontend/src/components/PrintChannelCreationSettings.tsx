@@ -1,7 +1,6 @@
 import React, { useState, Dispatch, SetStateAction} from 'react';
 
 interface propsPrintChannelCreationSettings {
-	setIsNextButtonClicked : Dispatch<SetStateAction<boolean>>;
 	setChannelVisibilitySelected : Dispatch<SetStateAction<string>>;
 	setChannelNameEntered : Dispatch<SetStateAction<string>>;
 	passwordEntered : string;

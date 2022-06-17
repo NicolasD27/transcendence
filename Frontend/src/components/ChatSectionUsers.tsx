@@ -43,6 +43,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	const [ searchValue, setSearchValue ] = useState("")
 	const [ createChannelButtonState, setCreateChannelButtonState ] = useState(false)
 	const [ chatGamesState, setChatGameState ] = useState(true)
+	const [ printSearchBar, setPrintSearchBar ] = useState(true)
 
 	useEffect(() => {
 		if (searchValue !== "")
@@ -75,15 +76,18 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 
 	return (
 		<div className='chatArea'>
-			<div className='switchMode'>
-				<button onClick={() => setChatGameState(true)} className="switchButton">Chat</button>
-				<span></span>
-				<button onClick={() => setChatGameState(false)} className="switchButton">Ongoing Match</button>
-			</div>
+			{
+				printSearchBar &&
+					<div className='switchMode'>
+						<button onClick={() => setChatGameState(true)} className="switchButton">Chat</button>
+						<span></span>
+						<button onClick={() => setChatGameState(false)} className="switchButton">Ongoing Match</button>
+					</div>
+			}
 			{ 
 			 	chatGamesState &&
 				<>
-					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} />
+					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} printSearchBar={printSearchBar} setPrintSearchBar={setPrintSearchBar}/>
 					{
 						!createChannelButtonState && 
 						<UserList
