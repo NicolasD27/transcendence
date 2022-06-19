@@ -11,7 +11,8 @@ import DatabaseFilesService from './database-file.service';
 @Injectable()
 export class UserService {
 	constructor(
-		@Inject(forwardRef(() => User))
+		// @Inject(forwardRef(() => User))
+		@InjectRepository(User)
 		private usersRepository: Repository<User>,
 		private readonly databaseFilesService: DatabaseFilesService,
 		private connection: Connection
