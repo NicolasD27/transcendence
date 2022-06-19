@@ -62,7 +62,6 @@
 
 .gameArea {
 	width: 70%;
-	height: 0;
 	padding-bottom: 40% !important;
 	background:
 		linear-gradient(black, black) padding-box,
@@ -79,7 +78,7 @@
 .gameAreaSeparation {
 	border: 1px solid rgb(255, 255, 255);
 	width: 0;
-	height: 100%;
+	height: 50%;
 	margin-left: 50%;
 }
 
@@ -158,7 +157,7 @@ button {
 }
 
 .usersList {
-	margin: 0 18px;
+	margin: 5px 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	border: none;
@@ -737,7 +736,7 @@ button {
 
 #checkbox_firstChannelButton {
 	min-height: 48px;
-	margin: 3px 18px 3px 18px;
+	margin: 90px 18px 3px 18px;
 	border: 2px solid #3772FF;
 	border-radius: 20px;
 	font-size: 14px;

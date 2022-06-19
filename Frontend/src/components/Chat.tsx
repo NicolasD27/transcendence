@@ -138,14 +138,11 @@ const Chat: React.FC<PropsChat> = (props) => {
 	}
 
 	const handleResize = () => {
-
 		const gameArea = document.getElementById("gameArea")
 		const chatArea = document.querySelector(".chatArea")
 		if (chatArea && gameArea) {
-			console.log("hello")
 			chatArea.setAttribute("style", `height:${gameArea.offsetHeight}px`);
 		}
-
 	}
 
 	useEffect(() => {
@@ -153,8 +150,6 @@ const Chat: React.FC<PropsChat> = (props) => {
 		window.addEventListener('resize', handleResize)
 
 	})
-
-
 
 	return (
 		<>

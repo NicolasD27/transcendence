@@ -1,16 +1,12 @@
 import React, { Dispatch, SetStateAction} from 'react';
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
-import PrintChannelsJoined from './PrintChannelsJoined';
-import PrintChannelsToJoin from './PrintChannelsToJoin';
-import PrintInvitationSentProfile from './PrintInvitationSentProfile'
-import PrintUserFriendRequestReceived from './PrintUserFriendRequestReceived'
-import PrintSendFriendRequestProfile from './PrintSendFriendRequestProfile'
-import PrintFriendProfile from './PrintFriendProfile'
+import PrintChannels from './PrintChannels';
 import { PropsStateChannel } from './ChatSectionUsers'
 import { FriendsFormat } from './Chat'
 import { PropsStateUsers } from './ChatSectionUsers'
 import { chatStateFormat } from '../App'
+import PrintFriend from './PrintFriend';
 
 interface  PropsUserList {
 	idMe : number;
@@ -106,10 +102,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 						return false
 					})
 					.map((channel:any) => {
-						if (Boolean(isAlreadyMember(channel.id)) === true)
-							return <PrintChannelsJoined channel={channel} /*chatChannelState={props.chatChannelState} */setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} key={channel.id}/>
-						else
-							return <PrintChannelsToJoin channel={channel} joinedChannels={joinedChannels} setJoiningChannel={setJoiningChannel} key={channel.id}/>
+						const isMember = isAlreadyMember(channel.id);
+						return <PrintChannels channel={channel} setJoiningChannel={setJoiningChannel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isMember={isMember} key={channel.id}/>
 					})
 		  	}
 			{
@@ -122,46 +116,43 @@ const UserList : React.FC<PropsUserList> = (props) => {
 					})
 					.map((user_) => {
 						let statusIcon = (user_.status === 1 ? statusIconGreen : statusIconRed);
-						if (Boolean(isThereAFriendshipRequestSent(user_.id)) === true)
-						{
-							return (
-								<PrintInvitationSentProfile user={user_} statusIcon={statusIcon} key={user_.id}/>
-							)
-						}
+						let isFriend = false;
+						let received = false;
+						let sent = false;
+						let friendshipId = 0;
+						let friendshipInfo = {
+							friendshipId : friendshipId,
+							id : user_.id,
+							username : user_.username ,
+							pseudo : user_.pseudo ,
+							avatarId : user_.avatarId ,
+							status : user_.status 
+						};
+						if (Boolean(isAlreadyFriend(user_.id)) === true)
+							isFriend = true;
 						else if (Boolean(isThereAFriendshipRequestReceived(user_.id)) === true)
 						{
-							let friendshipId = Number(catchFriendshipId(user_.id))
-							let friendshipInfo = {
+							received = true;
+							friendshipId = Number(catchFriendshipId(user_.id))
+							friendshipInfo = {
 								friendshipId : friendshipId,
 								id : user_.id,
 								username : user_.username ,
 								pseudo : user_.pseudo ,
 								avatarId : user_.avatarId ,
-								status : user_.status }
-							
-							return (
-								<PrintUserFriendRequestReceived user={user_} statusIcon={statusIcon} /*acceptFriendshipRequest={acceptFriendshipRequest} declineFriendshipRequest={declineFriendshipRequest}*/ friendshipInfo={friendshipInfo} key={user_.id}/>
-							)
+								status : user_.status 
+							}
 						}
-						else if (Boolean(isAlreadyFriend(user_.id)) === true)
-						{
-							return (
-								<PrintFriendProfile friends={props.friends} user={user_} statusIcon={statusIcon} key={user_.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/>
-							)
-						}
-						else
-							return (
-								<PrintSendFriendRequestProfile user={user_} statusIcon={statusIcon} sendFriendshipRequest={sendFriendshipRequest} key={user_.id}/>
-							)
+						else if (Boolean(isThereAFriendshipRequestSent(user_.id)) === true)
+							sent = true;
+						return <PrintFriend user={user_} statusIcon={statusIcon} isFriend={isFriend} received={received} sent={sent} sendFriendshipRequest={sendFriendshipRequest} friends={props.friends} friendshipInfo={friendshipInfo} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} key={user_.id} />
 					})
 			}
 			{
 				!searchValue && 
 					props.joinedChannels
 						.map((channel) => {
-							return (
-								<PrintChannelsJoined channel={channel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} key={channel.id}/>
-							)
+							return <PrintChannels channel={channel} setJoiningChannel={setJoiningChannel} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isMember={true} key={channel.id}/>
 						})
 			}
 			{
@@ -173,10 +164,17 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							return false
 						})
 						.map((friend) => {
+							let friendshipId = 0;
+							let friendshipInfo = {
+								friendshipId : friendshipId,
+								id : friend.id,
+								username : friend.username ,
+								pseudo : friend.pseudo ,
+								avatarId : friend.avatarId ,
+								status : friend.status 
+							}
 							let statusIcon = (friend.status === 1 ? statusIconGreen : statusIconRed);
-							return (
-								<PrintFriendProfile friends={props.friends} user={friend} statusIcon={statusIcon} key={friend.id} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}/>
-							)
+							return <PrintFriend user={friend} statusIcon={statusIcon} isFriend={true} received={false} sent={false} sendFriendshipRequest={sendFriendshipRequest} friends={props.friends} friendshipInfo={friendshipInfo} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} key={friend.id} />
 						})
 			}
 		</div>

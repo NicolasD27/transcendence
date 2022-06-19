@@ -21,13 +21,11 @@ interface PropsSearchBarAddGroup {
 const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
 	const [selectedFriend, setSelectedFriend] = useState<FriendsFormat[]>([])
-	//const [isNextButtonClicked, setIsNextButtonClicked] = useState(false)
 	const [channelVisibilitySelected, setChannelVisibilitySelected] = useState("public")
 	const [channelNameEntered, setChannelNameEntered] = useState("")
 	const [passwordEntered, setPasswordEntered] = useState("")
 	const [isPrivate, setIsPrivate] = useState(false)
 	const [isProtected, setIsProtected] = useState(false)
-	const [ isNextPageSelected, setIsNextPageSelected ] = useState(Boolean)
 	
 	const handleSearchRequest = (e: any) => {
 		props.setSearchValue("")
@@ -48,7 +46,6 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 		else if (channelVisibilitySelected === "protected")
 			tmpProtected = true
 
-		console.log("password entered:", passwordEntered)
 		if (channelVisibilitySelected === "protected")
 			axios
 				.post(`http://localhost:8000/api/channels`, {
@@ -58,8 +55,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					"password": passwordEntered
 				}, { withCredentials: true })
 				.then((response) => {
-					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
-
+					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" }) //print the channel message window
 					/*if (response.data.message === "This channel name is already taken.")
 					{
 						channelName.classList.add('error');
@@ -98,57 +94,19 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 				props.createChannelButtonState &&
 				<>
 					{
-						isNextPageSelected &&
+						//isNextPageSelected &&
 						<>
 							<div className='channelCreationSettings'>
 								<PrintChannelCreationSettings setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered} />
 							</div>
-							<button id="checkbox_firstChannelButton" type="button" onClick={() => setIsNextPageSelected(false)}>Previous</button>
-							<button id="checkbox_secondChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
-						</>
-					}
-					{
-						!isNextPageSelected &&
-						<>
-							<div className='usersList'>
-								<PrintFriendToAddChannel idMe={props.idMe} friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend} />
-							</div>
 							<button id="checkbox_firstChannelButton" type="button" onClick={() => {props.setCreateChannelButtonState(false); props.setPrintSearchBar(true)}}>Previous</button>
-							<button id="checkbox_secondChannelButton" type="button" onClick={() => setIsNextPageSelected(true)}>Next</button>
+							<button id="checkbox_secondChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
 						</>
 					}
 				</>
 			}
 		</>
 	)
-	/*<div className='usersList'>
-	{
-		isNextButtonClicked && 
-		<>
-			<PrintChannelCreationSettings setIsNextButtonClicked={setIsNextButtonClicked}/> 
-		</>
-		||
-		<>
-			<PrintFriendToAddChannel friends={props.friends} selectedFriend={selectedFriend} setSelectedFriend={setSelectedFriend}/>
-		</>
-	}
-	</div>
-	{
-		isNextButtonClicked &&
-		<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
-		||
-		<button id="checkbox_createChannelButton" type="button" onClick={() => setIsNextButtonClicked(true)}>Next</button>
-	}*/
-	/*{console.log("isNextButtonClicked: ", isNextButtonClicked)}
-	{
-		isNextButtonClicked && 
-		<>
-			<div className='userList'>
-			</div>
-			<button id="checkbox_createChannelButton" formMethod='post' type="button" onClick={createChannel}>Create Channel</button>
-		</>
-	}*/
-	//<input type="button" id="createChannelButton" value="Create Channel" onClick={handleClick1}/>
 }
 
 export default SearchBarAddGroup;
