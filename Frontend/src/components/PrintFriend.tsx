@@ -65,7 +65,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 						<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
 						<img src={props.statusIcon} className="userStatusIcon" alt="StatutIcon"/>
 					</div>
-					<div id="username">{props.user.pseudo}</div>
+					{!friendDeleteColumnState && <div id="username">{props.user.pseudo}</div>}
 				</div>
 				{
 					props.isFriend && 
