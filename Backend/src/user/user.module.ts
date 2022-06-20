@@ -35,7 +35,7 @@ import { Participation } from '../channel/entity/participation.entity';
 import { Msg } from 'src/message/entity/msg.entity';
 import { ModerationTimeOut } from '../channel/entity/moderationTimeOut.entity';
 import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
-
+import { ActiveUsers } from './entity/active-user';
 
 @Global()
 @Module({
@@ -47,9 +47,27 @@ import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
             }
         }),
         PassportModule.register({}),
-        TypeOrmModule.forFeature([User, Channel, Participation, Msg, ModerationTimeOut, ChannelInvite, Friendship, FriendshipRepository, DatabaseFile, Match, MatchRepository, Notification, NotificationRepository])
+        TypeOrmModule.forFeature([
+			User,
+			Channel,
+			Participation,
+			Msg,
+			ModerationTimeOut,
+			ChannelInvite,
+			Friendship,
+			FriendshipRepository,
+			DatabaseFile,
+			Match,
+			MatchRepository,
+			Notification, NotificationRepository
+		]),
     ],
-    controllers: [AuthController, TwoFactorAuth, UserController, DatabaseFilesController],
+    controllers: [
+		AuthController,
+		TwoFactorAuth,
+		UserController,
+		DatabaseFilesController
+	],
     providers: [
         ConfigService,
         AuthService,
@@ -62,14 +80,15 @@ import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
         DatabaseFilesService,
         MatchService,
         NotificationService,
-        ChannelService
+        ChannelService,
+		User
     ],
     exports: [
         FtStrategy,
         PassportModule,
 		UserService,
 		TypeOrmModule,
-        AuthService
+        AuthService,
     ]
 })
 export class UserModule {}

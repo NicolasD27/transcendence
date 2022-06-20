@@ -83,7 +83,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			{ 
 			 	chatGamesState &&
 				<>
-					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState}/>
+					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} />
 					{
 						!createChannelButtonState && 
 						<UserList
@@ -107,7 +107,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							/*chatChannelState={props.chatChannelState}
 							setChatChannelState={props.setChatChannelState}*/
 						/>
-					} 
+					}
 				</>
 			}
 			{

@@ -32,15 +32,14 @@ export class ChannelController {
 
 	constructor(
 		private readonly channelService: ChannelService,
-	) {}
+	) { }
 
 	@Get()
 	@UseGuards(TwoFactorGuard)
 	async findAll(
 		@Query('search') search: string,
 		@Query() paginationQuery: PaginationQueryDto
-	)
-	{
+	) {
 		if (search && search.length)
 			return await this.channelService.searchForChannel(paginationQuery, search);
 		return await this.channelService.findAll(paginationQuery);
@@ -51,8 +50,7 @@ export class ChannelController {
 	async create(
 		@Req() request: Request,
 		@Body() createChannelDto: CreateChannelDto
-	)
-	{
+	) {
 		return await this.channelService.create(request.cookies.username, createChannelDto);
 	}
 
@@ -61,8 +59,7 @@ export class ChannelController {
 	async findOne(
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request
-	)
-	{
+	) {
 		return this.channelService.findOneWithModeration(request.cookies.username, id);
 	}
 
@@ -72,14 +69,13 @@ export class ChannelController {
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request,
 		@Body() updateChannelDto: UpdateChannelDto
-	)
-	{
+	) {
 		await this.channelService.updateChannelProtection(
 			id.toString(),
 			request.cookies.username,
 			updateChannelDto
 		);
-		return ;
+		return;
 	}
 
 	@Patch(':id/')
@@ -87,23 +83,20 @@ export class ChannelController {
 	async changeOwner(
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request,
-		@Body() changeChannelOwnerDto:ChangeChannelOwnerDto
-	)
-	{
+		@Body() changeChannelOwnerDto: ChangeChannelOwnerDto
+	) {
 		await this.channelService.changeOwner(id.toString(), request.cookies.username, changeChannelOwnerDto);
-		return ;
+		return;
 	}
 
 	@Delete(':id/')
 	@UseGuards(TwoFactorGuard)
 	async remove(
 		@Param('id', ParseIntPipe) id: number,
-		@Req() request: Request,
-		@Body() deleteChannelDto: DeleteChannelDto
-	)
-	{
-		await this.channelService.remove(id.toString(), request.cookies.username, deleteChannelDto);
-		return ;
+		@Req() request: Request
+	) {
+		await this.channelService.remove(id.toString(), request.cookies.username);
+		return;
 	}
 
 	// ? Not channel directly
@@ -113,8 +106,7 @@ export class ChannelController {
 	async getChannelUsers(
 		@Query() paginationQuery: PaginationQueryDto,
 		@Param('id', ParseIntPipe) id: number
-	)
-	{
+	) {
 		return this.channelService.getChannelUsers(id.toString(), paginationQuery);
 	}
 
@@ -124,8 +116,7 @@ export class ChannelController {
 		@Query() paginationQuery: PaginationQueryDto,
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request
-	) : Promise<MsgDto[]>
-	{
+	): Promise<MsgDto[]> {
 		if (! await this.channelService.checkUserJoinedChannel(request.cookies.username, id.toString()))
 			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
 		return this.channelService.getChannelMessages(id.toString(), paginationQuery);
@@ -139,10 +130,9 @@ export class ChannelController {
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request,
 		@Body() body: JoinChannelDto
-	)
-	{
+	) {
 		await this.channelService.join(request.cookies.username, id.toString(), body.password);
-		return ;
+		return;
 	}
 
 	@Delete(':id/leave')
@@ -150,10 +140,9 @@ export class ChannelController {
 	async leave(
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request
-	)
-	{
+	) {
 		await this.channelService.leave(request.cookies.username, id.toString());
-		return ;
+		return;
 	}
 
 	// ? moderators
@@ -164,10 +153,9 @@ export class ChannelController {
 		@Param('channelID', ParseIntPipe) channelID: string,
 		@Param('userID', ParseIntPipe) userID: string,
 		@Req() request: Request,
-	)
-	{
+	) {
 		await this.channelService.giveModerationRights(channelID, request.cookies.username, userID, true);
-		return ;
+		return;
 	}
 
 	@Delete(':channelID/moderators/:userID')
@@ -176,15 +164,14 @@ export class ChannelController {
 		@Param('channelID', ParseIntPipe) channelID: number,
 		@Param('userID', ParseIntPipe) userID: number,
 		@Req() request: Request,
-	)
-	{
+	) {
 		await this.channelService.giveModerationRights(
 			channelID.toString(),
 			request.cookies.username,
 			userID.toString(),
 			false
 		);
-		return ;
+		return;
 	}
 
 	// todo : getBannedUsers && getMutedUsers

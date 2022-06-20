@@ -15,8 +15,7 @@ interface propsMatchs {
 
 const OngoingMatch = () => {
     const [matchs, setMatchs] = useState<propsMatchs[]>([])
-	const navigate = useNavigate()
-
+    const navigate = useNavigate()
 	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 
     useEffect(() => {
@@ -44,8 +43,7 @@ const OngoingMatch = () => {
     }, [])
 
     const goToMatch = (id: number) => {
-        navigate("/mainpage?id=" + id)
-		window.location.reload()
+        navigate("mainpage?id=" + id)
     }
 
 	return (
@@ -53,7 +51,7 @@ const OngoingMatch = () => {
         {
             matchs.map((match) => {
                 return (
-                    <div className='user' onClick={() => goToMatch(match.idMatch)}>
+                    <div className='user' key={match.idMatch} onClick={() => goToMatch(match.idMatch)}>
                         <div id='user1'>
                             <img src={match.pseudo1Avatar} className="user1Avatar" alt="Avatar"/>
                             {match.pseudo1}

@@ -1,24 +1,22 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { classToPlain, classToPlainFromExist, instanceToPlain, plainToInstance } from 'class-transformer';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
-import { MatchDto } from 'src/match/dto/match.dto';
-import { Match } from 'src/match/entity/match.entity';
-import { Connection, Like, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { UpdatePseudoDto } from '../dto/update-pseudo.dto';
 import { UserDto } from '../dto/user.dto';
-import { User, UserStatus } from '../entity/user.entity';
+import { User } from '../entity/user.entity';
+import { UserStatus } from '../utils/user-status';
 import DatabaseFilesService from './database-file.service';
 
 @Injectable()
 export class UserService {
 	constructor(
+		// @Inject(forwardRef(() => User))
 		@InjectRepository(User)
 		private usersRepository: Repository<User>,
 		private readonly databaseFilesService: DatabaseFilesService,
 		private connection: Connection
 	) {}
-
 
     async findAll(paginationQuery: PaginationQueryDto): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;

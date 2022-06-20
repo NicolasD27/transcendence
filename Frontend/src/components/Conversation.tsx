@@ -1,4 +1,4 @@
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 import { SetStateAction } from "react";
 import { Dispatch } from "react";
 import axios from "axios";
@@ -20,7 +20,7 @@ interface Props {
 	type: string;
 	nameChat: string;
 	socket: any;
-	setChatState : Dispatch<SetStateAction<chatStateFormat>>;
+	setChatState: Dispatch<SetStateAction<chatStateFormat>>;
 }
 
 interface messagesFormat {
@@ -135,10 +135,8 @@ const Conversation: React.FC<Props> = (props) => {
 							singleRestricted = { id: list.id, username: list.username, pseudo: list.pseudo, avatardId: list.avatardId, avatar: list.avatar, bannedtype: list.bannedState.type };
 							setUserRestricted(userRestricted => [...userRestricted, singleRestricted]);
 						}
-						else
-						{
-							if (list.bannedState.type === BannedState.muted)
-							{
+						else {
+							if (list.bannedState.type === BannedState.muted) {
 								console.log("muted +++")
 								setMuted(true);
 							}
@@ -182,11 +180,10 @@ const Conversation: React.FC<Props> = (props) => {
 					const messagesTri = [...prevMessages].sort((a, b) => {
 						return a.id - b.id;
 					});
-					if (props.type === "channel")
-					{
+					if (props.type === "channel") {
 						messagesTri.forEach((list: any) => { newMessageChannel(list); });
 						if (muted)
-							newMessageChannel({id: 0, channel: {id: props.id}, user: {id: 0, avatarId: null},  content: "You are muted !", name: "moderator", avatar: null, own: false})
+							newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are muted !", name: "moderator", avatar: null, own: false })
 					}
 					else if (props.type === "directMessage")
 						messagesTri.forEach((list: any) => { newMessageDirect(list); });
@@ -195,7 +192,7 @@ const Conversation: React.FC<Props> = (props) => {
 				})
 				.catch((err) => {
 					setMessages(messages => []);
-					newMessageChannel({id: 0, channel: {id: props.id}, user: {id: 0, avatarId: null},  content: "You are banned !", name: "moderator", avatar: null, own: false})
+					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
 	}, [props.id, showConv, status, muted]);//Recuperer les anciens messages
@@ -206,7 +203,7 @@ const Conversation: React.FC<Props> = (props) => {
 				props.socket.emit('connect_to_channel', { channelId: props.id.toString() });
 				props.socket.on('msg_to_client', (message) => {
 					setStatus(status => !status)
-				  });
+				});
 				props.socket.on('error_msg', () => { setStatus(status => !status) })
 			}
 			else if (props.type === "directMessage") {
@@ -252,7 +249,7 @@ const Conversation: React.FC<Props> = (props) => {
 	return (
 		<div className='convArea'>
 			<div id='chatTop'>
-				<button id='chatCloseButton' onClick={() => props.setChatState({'chatState' : false, id : 0, chatName : "" , type : "directM" })} />
+				<button id='chatCloseButton' onClick={() => props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })} />
 				<div id="chatUsername">{props.nameChat}</div>
 				{props.type === "channel" && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>
@@ -267,7 +264,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
 		</div>
 	);
 };
