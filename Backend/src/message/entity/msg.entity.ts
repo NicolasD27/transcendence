@@ -1,4 +1,5 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
+import { ActiveUsers } from "src/user/entity/active-user";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Channel } from "../../channel/entity/channel.entity";
 import { User } from "../../user/entity/user.entity";
@@ -25,11 +26,11 @@ export class Msg {
 	@ManyToOne(() => User, user => user.messages, { eager: true })	// when real users will be used
 	user: User;
 
-	static toDto(msg: Msg) {
+	static toDto(msg: Msg, _activeUsers: ActiveUsers) : MsgDto {
 		const dto: MsgDto = {
 			id: msg.id,
-			channel: Channel.toDto(msg.channel),
-			user: User.toDto(msg.user),
+			channel: Channel.toDto(msg.channel, _activeUsers),
+			user: User.toDto(msg.user, _activeUsers),
 			content: msg.content,
 			date: msg.date
 		}

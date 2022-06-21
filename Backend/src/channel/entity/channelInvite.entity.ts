@@ -1,4 +1,5 @@
 import { Notification } from "src/notification/entity/notification.entity";
+import { ActiveUsers } from "src/user/entity/active-user";
 import { User } from "src/user/entity/user.entity";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PolymorphicChildren } from "typeorm-polymorphic";
@@ -30,12 +31,12 @@ export class ChannelInvite {
 	})
 	public date: Date;
 
-	static toDto(channelInvite: ChannelInvite) {
+	static toDto(channelInvite: ChannelInvite, _activeUsers: ActiveUsers) : ChannelInviteDto {
 		const myDto: ChannelInviteDto = {
 			id: channelInvite.id,
-			channel: Channel.toDto(channelInvite.channel),
-			sender: User.toDto(channelInvite.sender),
-			receiver: User.toDto(channelInvite.receiver),
+			channel: Channel.toDto(channelInvite.channel, _activeUsers),
+			sender: User.toDto(channelInvite.sender, _activeUsers),
+			receiver: User.toDto(channelInvite.receiver, _activeUsers),
 		}
 		return myDto;
 	}

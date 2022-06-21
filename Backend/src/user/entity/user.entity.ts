@@ -10,8 +10,8 @@ import DatabaseFile from "./database-file.entity";
 import { DirectMessage } from "src/direct-message/entity/direct-message.entity";
 import { Notification } from "src/notification/entity/notification.entity";
 import { ChannelInvite } from "src/channel/entity/channelInvite.entity";
-import { activeUsers } from "src/auth-socket.adapter";
 import { UserStatus } from "../utils/user-status";
+import { ActiveUsers } from "./active-user";
 
 @Entity()
 export class User extends BaseEntity {
@@ -84,14 +84,14 @@ export class User extends BaseEntity {
 	@OneToMany(() => Notification, notification => notification.receiver)
 	notifications: Notification[];
 
-	static toDto(user: User) {
+	static toDto(user: User, _activeUsers: ActiveUsers): UserDto {
 		// return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
 		const dto: UserDto = {
 			id : user.id,
 			username: user.username,
 			pseudo: user.pseudo,
 			avatarId: user.avatarId,
-			status: 1, //activeUsers.getUserStatus(user.id),
+			status: _activeUsers.getUserStatus(user.id),
 			isTwoFactorEnable: user.isTwoFactorEnable
 		};
 		return dto;
