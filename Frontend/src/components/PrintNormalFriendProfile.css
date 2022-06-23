@@ -1,0 +1,68 @@
+#friend_buttons {
+	position: relative;
+	width: 84px;
+	height: 40px;
+	margin: 7px 10px 7px 6px;
+}
+
+#friend_buttons > button {
+	padding: 0;
+	border: none;
+}
+
+#friendPlay_button {
+	position: absolute;
+	background-image: url('../asset/PlayIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 40px;
+	width: 40px;
+	left: 0px;
+	bottom: 2px;
+}
+
+#friendPlay_button:hover {
+	background-image: url('../asset/PlayIcon_red.svg');
+}
+
+#friendChat_button {
+	position: absolute;
+	background-image: url('../asset/ChatIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 36px;
+	width: 36px;
+	left: 40px;
+	right: 2px;
+	bottom: 2px;
+	/*border: 0.1px solid red;*/
+}
+
+#friendChat_button:hover {
+	background-image: url('../asset/ChatIcon_red.svg');
+}
+
+#friendColumn_button {
+	position: absolute;
+	background-image: url('../asset/ColumnIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 20px;
+	width: 5px;
+	top: 10px;
+	right: 0px;
+}
+
+#friendColumn_button:hover {
+	background-image: url('../asset/ColumnIcon_red.svg');
+}
+
+#profileBlocked {
+	position: absolute;
+	width: 46px;
+	top: 11px;
+	right: 18px;
+	font-size: 12px;
+	text-align: center;
+	font-weight: normal;
+}

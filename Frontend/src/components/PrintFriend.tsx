@@ -2,21 +2,20 @@ import React, {  useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PropsStateUsers } from './ChatSectionUsers'
-import { FriendsFormat } from '../components/Chat'
+import { FriendsFormat } from '../App'
 import { chatStateFormat } from '../App';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 
 interface PropsPrintFriend {
+	idMe : number;
+	socket : any;
 	user :  PropsStateUsers;
 	statusIcon : string;
 	isFriend: boolean;
 	received : boolean;
 	sent : boolean;
 	sendFriendshipRequest : Function;
-	/*acceptFriendshipRequest : Function;
-	declineFriendshipRequest: Function;*/
-	friends : FriendsFormat[];
 	friendshipInfo : FriendsFormat;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
@@ -24,40 +23,61 @@ interface PropsPrintFriend {
 	key : number;
 }
 
+interface MyInfo {
+	"username": string,
+	"pseudo": string,
+}
+
 const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 	const [ profileAvatar, setProfileAvatar ] = useState("")
 	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)
 	const [ isBlocked, setIsBlocked ]= useState(false)
-
+	const [ myInfo, setMyInfo ] = useState<MyInfo>({username : "", pseudo : ""})
 	const navigate = useNavigate()
+
+	useEffect(() => {
+		if(props.idMe)
+		{
+			axios
+				.get(`http://localhost:8000/api/users/${props.idMe}`, {withCredentials: true})
+				.then((resp) => setMyInfo({
+					username : resp.data.username,
+					pseudo : resp.data.pseudo
+				}))
+				.catch((err) => console.log(err))
+		}
+	}, [props.idMe])
 	
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
 	}
-
+	
 	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 	
 	useEffect(() => {
 		if (props.user.avatarId != null)
 			setProfileAvatar(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${props.user.avatarId}`)
-	}, [])
+	}, [props.user.avatarId])
 
-	const deleteFriend = (user : PropsStateUsers) => {
-		for (let i = 0; i < props.friends.length; i++)
-		{
-			if (props.friends[i].id === props.user.id)
-			{
-				axios
-					.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friends[i].friendshipId}`, { withCredentials: true })
-					.then(() => {
-						props.setIsFriendshipButtonClicked(true)
-					})
-					.catch((err) =>
-						console.log(err))
-			}
-		}
+	const deleteFriend = () => {
+		axios
+			.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipInfo.friendshipId}`, { withCredentials: true })
+			.then(() => {
+				props.setIsFriendshipButtonClicked(true)
+			})
+			.catch((err) =>
+				console.log(err))
 	}
 
+	const sendMatchInvit = () => {
+		if (props.socket)
+		{
+			console.log("opponent_id: ", props.user.id.toString(), " author: ", myInfo.username)
+			props.socket.emit('challenge_user', { opponent_id: props.user.id.toString(), author: myInfo.username})
+			console.log("invitation sent")
+		}
+	}
+	
 	return (
 			<div className='user'>
 				<div className='flex-v-centered'>
@@ -68,20 +88,21 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 					{!friendDeleteColumnState && <div id="username">{props.user.pseudo}</div>}
 				</div>
 				{
-					props.isFriend && 
-						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>
+					(props.isFriend &&
+						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit}/>)
 					||
-					props.isFriend && 
-						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>
+					(props.isFriend &&
+						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
 					||
-					props.received && 
-					(
+					(props.received &&
+					
 						<div id='friendRequest_buttons'>
 							<p>Pending ...</p>
 						</div>
-					) ||
-					props.sent && 
-					(
+					) 
+					||
+					(props.sent && 
+					
 						<div id='invitation_sent'>
 							<p>Invitation Sent</p>
 						</div>

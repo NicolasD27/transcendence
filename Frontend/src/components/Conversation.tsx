@@ -195,7 +195,7 @@ const Conversation: React.FC<Props> = (props) => {
 					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
-	}, [props.id, showConv, status, muted]);//Recuperer les anciens messages
+	}, [props.id, showConv, status, muted,/* newMessageChannel, newMessageDirect,*/ props.type]);//Recuperer les anciens messages
 
 	useEffect(() => {
 		if (props.socket) {

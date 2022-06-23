@@ -35,6 +35,46 @@
 	gap: 9vw;
 }
 
+.profileSendFriendRequest {
+	color: white;
+	position: absolute;
+	align-self: start;
+	margin-left: 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 10px;
+	border: 2px solid #3772FF;
+	border-radius: 20px;
+	padding: 8px;
+}
+
+.profileSendFriendRequest:hover {
+	border-color: #E11515;
+}
+
+.profileFriendRequestSent {
+	color: white;
+	position: absolute;
+	align-self: start;
+	margin-left: 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.profileFriendRequestReceived {
+	color: white;
+	position: absolute;
+	align-self: start;
+	margin-left: 15px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	gap: 10px;
+}
+
 @media only screen and (max-width: 1155px) {
 	.boxStats {
 		flex-direction: column;

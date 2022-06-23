@@ -1,9 +1,8 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import axios from 'axios'
 import PrintChannelCreationSettings from './PrintChannelCreationSettings'
-import PrintFriendToAddChannel from './PrintFriendToAddChannel'
 import searchIcon from '../asset/searchIcon.svg'
-import { FriendsFormat } from './Chat'
+import { FriendsFormat } from '../App'
 import { chatStateFormat } from '../App'
 
 interface PropsSearchBarAddGroup {
@@ -20,12 +19,9 @@ interface PropsSearchBarAddGroup {
 
 const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
-	const [selectedFriend, setSelectedFriend] = useState<FriendsFormat[]>([])
 	const [channelVisibilitySelected, setChannelVisibilitySelected] = useState("public")
 	const [channelNameEntered, setChannelNameEntered] = useState("")
 	const [passwordEntered, setPasswordEntered] = useState("")
-	const [isPrivate, setIsPrivate] = useState(false)
-	const [isProtected, setIsProtected] = useState(false)
 	
 	const handleSearchRequest = (e: any) => {
 		props.setSearchValue("")
