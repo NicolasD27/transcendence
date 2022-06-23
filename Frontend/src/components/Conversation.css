@@ -2,8 +2,8 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 22%;
-	height: 100%;
+	width: 29%;
+	height: 543px;
 	box-sizing: border-box;
 	border: 4px solid #E11515;
 	border-radius: 25px;
@@ -36,6 +36,8 @@
 	border-radius: 20px;
 	box-sizing: border-box;
 	border: 2px solid #3772FF;
+	min-height: 35px;
+	max-height: 105px;
 
 }
 
@@ -44,7 +46,10 @@
 	left: 0px;
 	top: 0px;
 	width: 187px; */
+	width: 100%;
 	color: #3772FF;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 .sendIcon {
@@ -72,3 +77,5 @@
 	margin-left: 7px;
 	padding: 0px;
 }
+
+  

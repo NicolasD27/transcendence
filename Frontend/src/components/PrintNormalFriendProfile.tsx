@@ -15,20 +15,19 @@ const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (prop
 	
 	return (
 		<>
-			<div id="username">{props.user.pseudo}</div>
-					<div id='friend_buttons'>
-						{(!props.isBlocked &&
-							<>
-								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
-							</>
-						) ||
-							<div id='profileBlocked'>
-								Blocked
-							</div>
-						}
-						<button id="friendColumn_button" onClick={() => props.setFriendDeleteColumnState(true)}/>
+			<div id='friend_buttons'>
+				{(!props.isBlocked &&
+					<>
+						<button id="friendPlay_button" onClick={() => ""}/>
+						<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState.chatState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
+					</>
+				) ||
+					<div id='profileBlocked'>
+						Blocked
 					</div>
+				}
+				<button id="friendColumn_button" onClick={() => props.setFriendDeleteColumnState(true)}/>
+			</div>
 		</>
 	)
 }
