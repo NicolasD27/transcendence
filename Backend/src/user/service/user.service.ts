@@ -108,19 +108,6 @@ export class UserService {
     
     }
 
-	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
-    //     const user = await this.usersRepository.preload({
-    //         id: +id,
-    //         ...updateAvatarDto
-    //     })
-    //     if (!user)
-    //         throw new NotFoundException(`User #${id} not found`);
-    //     if (user.username != current_username)
-    //         throw new UnauthorizedException();
-    //     this.usersRepository.save(user);
-    //     return User.toDto(user)
-    // }
-
     async updateStatusByUsername(newStatus: UserStatus, username: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne({ username });
         if (!user)
@@ -129,27 +116,5 @@ export class UserService {
         this.usersRepository.save(user);
         return User.toDto(user)
     }
-
-    //just for dev
-    async create() //: Promise<UserDto> {
-    { 
-        const username = this.make_username(8)
-        const user = {
-            username: username,
-            pseudo: username
-        }
-        return this.usersRepository.save(user);
-    }
-
-    private make_username(length) {
-        var result           = '';
-        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) {
-            result += characters.charAt(Math.floor(Math.random() * 
-			charactersLength));
-        }
-        return result;
-	}
 
 }
