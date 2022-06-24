@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { not } from 'joi';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 import { Friendship } from 'src/friendship/entity/friendship.entity';
@@ -55,7 +56,7 @@ export class NotificationService {
                 await this.friendshipsRepository.findOne(notifications[i].entityId)
                 .then(parent => {
                     if (parent)
-                        notificationsDto.push(Notification.toFriendshipDto(notifications[i], parent));
+                        notificationsDto.push(Notification.toFriendshipDto(notifications[i], parent, activeUsers));
                 })
                 
             }
@@ -63,14 +64,14 @@ export class NotificationService {
                 await this.matchsRepository.findOne(notifications[i].entityId)
                 .then(parent => {
                     if (parent)
-                        notificationsDto.push(Notification.toMatchDto(notifications[i], parent));
+                        notificationsDto.push(Notification.toMatchDto(notifications[i], parent, activeUsers));
                 })
             }     
             else if (notifications[i].entityType == "ChannelInvite") {
                 await this.channelInvitesRepository.findOne(notifications[i].entityId)
                 .then(parent => {
                     if (parent)
-                        notificationsDto.push(Notification.toChannelInviteDto(notifications[i], parent));
+                        notificationsDto.push(Notification.toChannelInviteDto(notifications[i], parent, activeUsers));
                 })
             }              
         };

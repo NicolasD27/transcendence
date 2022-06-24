@@ -11,6 +11,7 @@ import { Match, MatchStatus } from '../entity/match.entity';
 import { MatchRepository } from '../repository/match.repository';
 import { NotificationRepository } from '../../notification/repository/notification.repository';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
+import { activeUsers } from 'src/auth-socket.adapter';
 
 @Injectable()
 export class MatchService {
@@ -29,7 +30,7 @@ export class MatchService {
 			take: paginationQuery.limit,
 			skip: paginationQuery.offset,
 			})
-			.then(items => items.map(e=> Match.toDto(e)));
+			.then(items => items.map(e=> Match.toDto(e, activeUsers)));
     }
 
 	async findAllActive(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
@@ -40,14 +41,14 @@ export class MatchService {
 			take: paginationQuery.limit,
 			skip: paginationQuery.offset,
 			})
-			.then(items => items.map(e=> Match.toDto(e)));
+			.then(items => items.map(e=> Match.toDto(e, activeUsers)));
     }
 
     async findOne(id: string): Promise<MatchDto> {
         const match = await this.matchsRepository.findOne(id);
         if (!match)
             throw new NotFoundException(`Match #${id} not found`);
-        return Match.toDto(match);
+        return Match.toDto(match, activeUsers);
     }
 
 	async isActive(id: string): Promise<boolean> {
@@ -68,11 +69,12 @@ export class MatchService {
 			take: paginationQueryDto.limit,
 			skip: paginationQueryDto.offset,
 		})
-		.then(items => items.map(e=> Match.toDto(e)));
+		.then(items => items.map(e=> Match.toDto(e, activeUsers)));
     }
 
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
+		// console.log(updateMatchDto);
         const match = await this.matchsRepository.preload({
 			id: +id,
 			...updateMatchDto
@@ -82,8 +84,10 @@ export class MatchService {
         if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
             throw new UnauthorizedException();
 		await this.notificationService.actionPerformedMatch(match)
-        this.matchsRepository.save(match);
-		return Match.toDto(match)
+        await this.matchsRepository.save(match);
+		activeUsers.display();
+		console.log("match : ", match);
+		return Match.toDto(match, activeUsers)
     }
 
 	async destroyMatch(current_username: string, id: string): Promise<MatchDto> {
@@ -95,7 +99,7 @@ export class MatchService {
             throw new UnauthorizedException();
 		this.notificationService.actionPerformedMatch(match)
         this.matchsRepository.remove(match);
-		return Match.toDto(match)
+		return Match.toDto(match, activeUsers)
     }
 
     async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
@@ -129,7 +133,7 @@ export class MatchService {
 			match = await this.matchsRepository.save(match)
 			await this.notificationService.create(match, match.user2)
 		}
-		return Match.toDto(match)
+		return Match.toDto(match, activeUsers)
     }
 
 	async matchmaking(username: string, mode: number): Promise<Match> {
