@@ -91,7 +91,7 @@ export class User extends BaseEntity {
 			username: user.username,
 			pseudo: user.pseudo,
 			avatarId: user.avatarId,
-			status: activeUsers.getUserStatus(user.id),
+			status: 1, //activeUsers.getUserStatus(user.id),
 			isTwoFactorEnable: user.isTwoFactorEnable
 		};
 		return dto;
