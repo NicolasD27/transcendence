@@ -110,12 +110,14 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		}
 	}
 
-	console.log("id:", id)
-	console.log("idMe:", idMe)
-	console.log("isFriend:", isFriend(id))
-	console.log("friends:", friends)
-	console.log("Send:", friendRequestsSent)
-	console.log("Received:", friendRequestsReceived)
+	const checkStatus = (id : number) => {
+		if (isThereAFriendshipRequestReceived(id))
+			return (<p className='profileFriendRequestReceived'>Pending...</p>)
+		else if (isThereAFriendshipRequestSent(id))
+			return (<p className='profileFriendRequestSent'>Friend Request Sent</p>)
+		else if (!isThereAFriendshipRequestReceived(id) && !isThereAFriendshipRequestSent(id))
+			return (<button className='profileSendFriendRequest' onClick={() => sendFriendshipRequest(id)}>Add Friend</button>)
+	}
 
 	return (
 		<Fragment>
@@ -124,15 +126,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 				<section id="gameAndChatSection">
 					<div className='boxProfil'>
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
-						{
-							id !== idMe && isFriend(id) === false && isThereAFriendshipRequestReceived(id) && <p className='profileFriendRequestReceived'>Pending...</p> 
-						}
-						{
-							id !== idMe && isFriend(id) === false && isThereAFriendshipRequestSent(id) && <p className='profileFriendRequestSent'>Friend Request Sent</p>
-						}
-						{
-							id !== idMe && isFriend(id) === false && !isThereAFriendshipRequestReceived(id) && !isThereAFriendshipRequestSent(id) && <button className='profileSendFriendRequest' onClick={() => sendFriendshipRequest(id)}>Add Friend</button>
-						}
+						{id !== idMe && isFriend(id) === false && checkStatus(id)}
 						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<ProgressBar matchs={matchID} />

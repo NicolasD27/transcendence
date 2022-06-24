@@ -142,7 +142,6 @@ const Chat: React.FC<PropsChat> = (props) => {
 	useEffect(() => {
 		handleResize()
 		window.addEventListener('resize', handleResize)
-
 	})
 
 	return (

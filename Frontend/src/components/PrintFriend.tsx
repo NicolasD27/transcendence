@@ -71,11 +71,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 
 	const sendMatchInvit = () => {
 		if (props.socket)
-		{
-			console.log("opponent_id: ", props.user.id.toString(), " author: ", myInfo.username)
 			props.socket.emit('challenge_user', { opponent_id: props.user.id.toString(), author: myInfo.username})
-			console.log("invitation sent")
-		}
 	}
 	
 	return (
