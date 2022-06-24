@@ -87,6 +87,6 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(client);
 		this.userService.updateStatusByUsername(UserStatus.OFFLINE, username)
 		// this.socket.to("match#" + data.match_id).emit('playerDisconnect');
-		activeUsers.remove(+client.id);
+		activeUsers.remove(client.id);
 	}
 }
