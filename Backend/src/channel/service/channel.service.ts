@@ -23,6 +23,7 @@ import { PaginationQueryDto } from '../dto/pagination-query.dto';
 import { ChannelDtoWithModeration } from '../dto/channel-with-moderation.dto';
 import { UpdateChannelDto } from '../dto/update-channel-visibility.dto';
 import { number } from 'joi';
+import { activeUsers } from 'src/auth-socket.adapter';
 
 @Injectable()
 export class ChannelService {
@@ -66,7 +67,7 @@ export class ChannelService {
 			take: limit,
 			skip: offset,
 		})
-			.then(items => items.map(e => Channel.toDto(e)));
+			.then(items => items.map(e => Channel.toDto(e, activeUsers)));
 	}
 
 	async searchForChannel(
@@ -83,7 +84,7 @@ export class ChannelService {
 			take: limit,
 			skip: offset,
 		})
-			.then(items => items.map(e => Channel.toDto(e)));
+			.then(items => items.map(e => Channel.toDto(e, activeUsers)));
 	}
 
 	async getJoinedChannels(username: string): Promise<ChannelDto[]> {
@@ -118,15 +119,16 @@ export class ChannelService {
 			});
 			let restricted = [];
 			for (let j: number = 0; j < tos.length; ++j) {
-				restricted.push(User.toDto(tos[j].user));
+				restricted.push(User.toDto(tos[j].user, activeUsers));
 				restricted[j].bannedState = { type: tos[j].bannedState, until: tos[j].date };
 			}
 
 			// ? pushing the channel with moderation data
 			myChannels.push(Channel.toDtoWithModeration(
 				myParticipations[i].channel,
-				channelModerators.map(e => User.toDto(e)),
-				restricted
+				channelModerators.map(e => User.toDto(e, activeUsers)),
+				restricted,
+				activeUsers,
 			));
 		}
 		return myChannels;
@@ -136,7 +138,7 @@ export class ChannelService {
 		const myChannel = await this.channelRepo.findOne(channelId);
 		if (!myChannel || myChannel.isPrivate)
 			throw new NotFoundException();
-		return Channel.toDto(myChannel);
+		return Channel.toDto(myChannel, activeUsers);
 	}
 
 	async findOneWithModeration(username: string, id: number) {
@@ -154,7 +156,7 @@ export class ChannelService {
 			},
 		});
 		if (!myParticipation)
-			return Channel.toDtoWithModeration(myChannel, [], []);
+			return Channel.toDtoWithModeration(myChannel, [], [], activeUsers);
 
 		// ? getting moderators
 		const moderatorsParticipation = await this.participationRepo.find({
@@ -178,13 +180,14 @@ export class ChannelService {
 		});
 		let restricted = [];
 		for (let j: number = 0; j < tos.length; ++j) {
-			restricted.push(User.toDto(tos[j].user));
+			restricted.push(User.toDto(tos[j].user, activeUsers));
 			restricted[j].bannedState = { type: tos[j].bannedState, until: tos[j].date };
 		}
 		return Channel.toDtoWithModeration(
 			myChannel,
-			channelModerators.map(e => User.toDto(e)),
-			restricted
+			channelModerators.map(e => User.toDto(e, activeUsers)),
+			restricted,
+			activeUsers
 		);
 	}
 
@@ -230,7 +233,7 @@ export class ChannelService {
 		});
 		await this.participationRepo.save(newParticipation);
 
-		return Channel.toDto(newChannel);
+		return Channel.toDto(newChannel, activeUsers);
 	}
 
 	async join(username: string, channelId: string, notHashedPassword: string) {
@@ -311,7 +314,7 @@ export class ChannelService {
 		myParticipations.forEach((participation) => {
 			users.push(participation.user)
 		})
-		return users.map(e => User.toDto(e));
+		return users.map(e => User.toDto(e, activeUsers));
 	}
 
 	async getChannelMessages(
@@ -329,7 +332,7 @@ export class ChannelService {
 			take: limit,
 			skip: offset,
 		})
-			.then(items => items.map(e => Msg.toDto(e)));
+			.then(items => items.map(e => Msg.toDto(e, activeUsers)));
 
 		return msgs;
 	}
@@ -388,7 +391,7 @@ export class ChannelService {
 		});
 		const myinvite = await this.channelInviteRepo.save(newInvite);
 		await this.notificationService.create(newInvite, newInvite.receiver)
-		return ChannelInvite.toDto(myinvite);
+		return ChannelInvite.toDto(myinvite, activeUsers);
 	}
 
 	async getChannelInvites(username: string, userId: number, paginationQueryDto: PaginationQueryDto) {
@@ -405,7 +408,7 @@ export class ChannelService {
 			take: paginationQueryDto.limit,
 			skip: paginationQueryDto.offset
 		})
-			.then(inv => inv.map(e => ChannelInvite.toDto(e)));
+			.then(inv => inv.map(e => ChannelInvite.toDto(e, activeUsers)));
 		return (invites);
 	}
 

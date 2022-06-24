@@ -3,6 +3,7 @@ import { User } from "../../user/entity/user.entity";
 import { MatchDto } from "../dto/match.dto";
 import { Notification } from "src/notification/entity/notification.entity";
 import { PolymorphicChildren } from "typeorm-polymorphic"
+import { ActiveUsers } from "src/user/entity/active-user";
 
 export enum MatchStatus {
     INVITE_SEND,
@@ -57,12 +58,15 @@ export class Match {
     public winner: string;
 
 
-    static toDto(match: Match): MatchDto {
+    static toDto(match: Match, _activeUsers: ActiveUsers): MatchDto {
+		let u2 = null;
+		if (match.user2)
+			u2 = User.toDto(match.user2, _activeUsers);
 		const dto: MatchDto = {
             id: match.id,
             status: match.status,
-            user1: User.toDto(match.user1),
-            user2: User.toDto(match.user2),
+            user1: User.toDto(match.user1, _activeUsers),
+            user2: u2, //User.toDto(match.user2, _activeUsers),
             score1: match.score1,
             score2: match.score2,
             mode: match.mode,

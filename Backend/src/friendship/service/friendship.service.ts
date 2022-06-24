@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { Notification } from 'src/notification/entity/notification.entity';
 import { NotificationService } from 'src/notification/service/notification.service';
 import { UserDto } from 'src/user/dto/user.dto';
@@ -34,7 +35,7 @@ export class FriendshipService {
                 { following: user },
             ],
         })
-        .then(items => items.map(e=> Friendship.toDto(e)));
+        .then(items => items.map(e=> Friendship.toDto(e, activeUsers)));
     }
 
     async findAllActiveFriendsByUser(user_id: number): Promise<UserDto[]> {
@@ -49,9 +50,9 @@ export class FriendshipService {
         })
         .then(friendships => friendships.map((frienship) =>  {
             if (frienship.follower.id == user_id)
-                return User.toDto(frienship.following)
+                return User.toDto(frienship.following, activeUsers)
             else
-                return User.toDto(frienship.follower)
+                return User.toDto(frienship.follower, activeUsers)
         }));
     }
 
@@ -95,7 +96,7 @@ export class FriendshipService {
         });
         await this.friendshipsRepository.save(friendship)
         this.notificationService.create(friendship, following);
-        return Friendship.toDto(friendship)
+        return Friendship.toDto(friendship, activeUsers)
     }
 
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
@@ -113,11 +114,9 @@ export class FriendshipService {
             const notification = await this.notificationService.create(friendship, otherUser);
             this.notificationService.actionPerformedFriendship(friendship, otherUser)
         }
-        return Friendship.toDto(await  this.friendshipsRepository.save(friendship));
-
+        return Friendship.toDto(await this.friendshipsRepository.save(friendship), activeUsers);
     }
 
-    
     async destroy(username: string, id: string): Promise<FriendshipDto> {
         const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);
@@ -126,8 +125,7 @@ export class FriendshipService {
         if ((username != friendship.follower.username && username != friendship.following.username))
             throw new UnauthorizedException();
         this.notificationService.actionPerformedFriendship(friendship, user)
-        return Friendship.toDto(await this.friendshipsRepository.remove(friendship));
-
+        return Friendship.toDto(await this.friendshipsRepository.remove(friendship), activeUsers);
     }
 
 }

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
 import { IsString, IsEnum, IsNumber, IsBoolean, IsOptional } from "class-validator";
-import { UserStatus } from "../entity/user.entity";
+import { UserStatus } from "../utils/user-status";
 
 @Exclude()
 export class UserDto {

@@ -15,7 +15,7 @@ import { MatchDto } from '../dto/match.dto';
 import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { UserService } from 'src/user/service/user.service';
 import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
-import { UserStatus } from 'src/user/entity/user.entity';
+import { UserStatus } from 'src/user/utils/user-status';
 
 @WebSocketGateway()
 export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
