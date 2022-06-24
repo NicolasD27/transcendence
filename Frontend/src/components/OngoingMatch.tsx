@@ -43,7 +43,8 @@ const OngoingMatch = () => {
     }, [])
 
     const goToMatch = (id: number) => {
-        navigate("mainpage?id=" + id)
+        navigate("/mainpage?id=" + id)
+        window.location.reload()
     }
 
 	return (

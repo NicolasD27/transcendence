@@ -15,10 +15,10 @@
 	background-image: url('../asset/PlayIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 40px;
-	width: 40px;
-	left: 0px;
-	bottom: 2px;
+	height: 100%;
+	min-width: 48%;
+	left: 0%;
+	bottom: 2%;
 }
 
 #friendPlay_button:hover {
@@ -30,11 +30,11 @@
 	background-image: url('../asset/ChatIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 36px;
-	width: 36px;
-	left: 40px;
-	right: 2px;
-	bottom: 2px;
+	height: 90%;
+	min-width: 43%;
+	left: 48%;
+	right: 2%;
+	bottom: 2%;
 	/*border: 0.1px solid red;*/
 }
 
@@ -47,10 +47,10 @@
 	background-image: url('../asset/ColumnIcon_blue.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	height: 20px;
-	width: 5px;
+	height: 50%;
+	width: 6%;
 	top: 10px;
-	right: 0px;
+	right: 0%;
 }
 
 #friendColumn_button:hover {

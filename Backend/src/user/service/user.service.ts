@@ -109,6 +109,19 @@ export class UserService {
     
     }
 
+	/*async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
+         const user = await this.usersRepository.preload({
+             id: +id,
+             ...updateAvatarDto
+         })
+         if (!user)
+             throw new NotFoundException(`User #${id} not found`);
+         if (user.username != current_username)
+             throw new UnauthorizedException();
+         this.usersRepository.save(user);
+         return User.toDto(user)
+     }*/
+
     async updateStatusByUsername(newStatus: UserStatus, username: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne({ username });
         if (!user)

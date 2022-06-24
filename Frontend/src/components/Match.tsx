@@ -1,12 +1,10 @@
-import { wait } from "@testing-library/user-event/dist/utils";
-import p5 from "p5";
 import React, { Fragment } from "react";
 import Sketch from "react-p5";
 import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 3;
+let finalScore = 10;
 let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
@@ -149,6 +147,7 @@ function playerMove(started: number, game: any, playerInput: any, width: number,
 
 function printer(p5: any, data: any, width: number, height: number, type: string)
 {
+	p5.fill(p5.color("#3772FF"));
 	if (type === "master")
 		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerOne.x, data.playerOne.y, data.playerOne.w, data.playerOne.h);
@@ -156,7 +155,6 @@ function printer(p5: any, data: any, width: number, height: number, type: string
 	if (type === "slave")
 		p5.fill(p5.color("#E11515"));
 	p5.rect(data.playerTwo.x, data.playerTwo.y, data.playerTwo.w, data.playerTwo.h);
-	p5.fill(p5.color("#3772FF"));
 
 	if (data.countdown !== 0)
 	{
@@ -272,6 +270,7 @@ export class Match extends React.Component<Props>
 				if (this.myId === this.masterId && this.masterId)		//Master
 				{
 					console.log("IM A MASTER")
+					this.modeSelected = true;
 					this.type = "master";
 
 					var game = new Game(
@@ -370,7 +369,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.slaveId && this.started != -1)
+						if (data === this.slaveId && this.started !== -1)
 						{
 							this.props.socket.off('serverTick');
 							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0});
@@ -381,6 +380,7 @@ export class Match extends React.Component<Props>
 				else if (this.myId === this.slaveId && this.slaveId)	//Slave
 				{
 					console.log("IM A SLAVE")
+					this.modeSelected = true;
 					this.type = "slave";
 
 					this.started = 1;
@@ -393,7 +393,7 @@ export class Match extends React.Component<Props>
 
 					this.props.socket.on('clientDisconnect', (data) =>
 					{
-						if (data === this.masterId && this.started != -1)
+						if (data === this.masterId && this.started !== -1)
 							this.props.socket.emit('gameFinished', {match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0});
 					});
 
