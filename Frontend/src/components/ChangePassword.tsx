@@ -1,4 +1,4 @@
-import React, {  useEffect, Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import axios from "axios";
 import './OptionAdmin.css';
 
@@ -22,12 +22,6 @@ interface userFormat {
 const ChangePassword: React.FC<Props> = (props) => {
 	const [previousText, setPreviousText] = React.useState("");
 	const [afterText, setAfterText] = React.useState("");
-
-	const handleKeyPress = (event: any) => {
-		if (event.key === 'Enter') {
-			handleSubmitPassword(props.mode)
-		}
-	}
 
 	const handleChangePrevious = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setPreviousText(previousText => e.target.value)

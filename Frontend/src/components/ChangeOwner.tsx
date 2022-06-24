@@ -80,7 +80,7 @@ const ChangeOwner: React.FC<Props> = (props) => {
 					})
 				}
 			</div>
-			{props.users.length == 0 && <p  className="labelStyle">No users</p>}
+			{props.users.length === 0 && <p className="labelStyle">No users</p>}
 			{props.users.length > 0 && <button onClick={() => handleSubmitUsers()} className="option">Valider</button>}
 		</div>
 	);
