@@ -157,8 +157,8 @@ export class UserController {
     // }
 
     //seulement pour tester
-    @Post()
+    /*@Post()
     create(): Promise<User> {
         return this.userService.create();
-    }
+    }*/
 }

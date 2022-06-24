@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
 import { chatStateFormat } from '../App'
-import { FriendsFormat } from '../components/Chat'
+import { FriendsFormat } from '../App'
 import OngoingMatch from '../components/OngoingMatch'
 
 interface PropsSectionUsers {
@@ -96,7 +96,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							existingChannels={existingChannels}
 							joinedChannels={joinedChannels}
 							setJoiningChannel={setJoiningChannel}
-							//setJoinedChannels={setJoinedChannels}
 							searchUsers={searchUsers}
 							friends={props.friends}
 							friendRequestsSent={props.friendRequestsSent}
@@ -108,8 +107,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							setChatParamsState={props.setChatParamsState}
 							chatParamsState={props.chatParamsState}
 							setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
-							/*chatChannelState={props.chatChannelState}
-							setChatChannelState={props.setChatChannelState}*/
 						/>
 					}
 				</>

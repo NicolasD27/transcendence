@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
@@ -11,10 +11,11 @@ import ToggleQRcode from '../components/ToggleQRcode';
 import NotificationList from '../components/NotificationList';
 import './MainPage.css'
 import { chatStateFormat } from '../App';
+import { FriendsFormat } from '../App';
 import Chat from '../components/Chat';
 import Header from './Header';
 
-const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState }: { socket: any, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>> }) => {
+const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequestsSent, setFriendRequestsSent, friendRequestsReceived, setFriendRequestsReceived }: { socket: any,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequestsSent : number[], setFriendRequestsSent : Dispatch<SetStateAction<number[]>>, friendRequestsReceived : FriendsFormat[], setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>> }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -62,11 +63,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 		setGetMatch(true);
 	}, [getmatch, id])
 
-
-	const navigate = useNavigate()
-	// const onMainPage = () => {
-	// 	navigate("/mainpage")
-	// }
+	
 
 	if (getIDMe === false) {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -78,14 +75,58 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 		setGetIDMe(getIDMe => true)
 	}
 
+	const isFriend = (id : number) => {
+		for(let i = 0; i < friends.length; i++ )
+		{
+			if (friends[i].id === id)
+				return true;
+		}
+		return false;
+	}
+
+	const isThereAFriendshipRequestReceived = (id:number) => {
+		for(let i = 0; i < friendRequestsReceived.length; i++ )
+		{
+			if (friendRequestsReceived[i].id === id)
+				return true;
+		}
+		return false;
+	}
+
+	const isThereAFriendshipRequestSent = (id:number) => {
+		for (let i = 0; i < friendRequestsSent.length; i++)
+		{
+			if (friendRequestsSent[i] === id)
+				return true
+		}
+		return false;
+	}
+
+	const sendFriendshipRequest = (user_id: number) => {
+		if (socket)
+		{
+			socket.emit('sendFriendRequest', {user_id: user_id})
+			setFriendRequestsSent(friendRequestsSent => [...friendRequestsSent, user_id])
+		}
+	}
+
+	const checkStatus = (id : number) => {
+		if (isThereAFriendshipRequestReceived(id))
+			return (<p className='profileFriendRequestReceived'>Pending...</p>)
+		else if (isThereAFriendshipRequestSent(id))
+			return (<p className='profileFriendRequestSent'>Friend Request Sent</p>)
+		else if (!isThereAFriendshipRequestReceived(id) && !isThereAFriendshipRequestSent(id))
+			return (<button className='profileSendFriendRequest' onClick={() => sendFriendshipRequest(id)}>Add Friend</button>)
+	}
+
 	return (
 		<Fragment>
 			<div id='bloc'>
 				<Header idMe={idMe} />
 				<section id="gameAndChatSection">
 					<div className='boxProfil'>
-						{/* <button type='submit' style={{ backgroundImage: `url(${close})` }} onClick={() => onMainPage()} className="offProfil" /> */}
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
+						{id !== idMe && isFriend(id) === false && checkStatus(id)}
 						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<ProgressBar matchs={matchID} />
@@ -94,7 +135,7 @@ const Profil = ({ socket, isFriendshipButtonClicked, setIsFriendshipButtonClicke
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					<Chat idMe={idMe} socket={socket} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />
+					<Chat idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} />
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
 			</div>
