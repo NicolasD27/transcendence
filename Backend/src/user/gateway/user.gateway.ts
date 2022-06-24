@@ -66,6 +66,13 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	// }
 
 
+	@SubscribeMessage('disconnect')
+	disconnect_me(socket:CustomSocket)
+	{
+		this.logger.log(`${socket.user.username} left the page`);
+		activeUsers.remove(socket.user.id);
+	}
+
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
