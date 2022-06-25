@@ -5,6 +5,7 @@ import ChangeModerators from "./ChangeModerators";
 import ChangeRestricted from "./ChangeRestricted";
 import AddUser from "./AddUser";
 import ChangeOwner from "./ChangeOwner";
+import { chatStateFormat } from '../App';
 import './OptionAdmin.css';
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 	moderators: userFormat[];
 	userRestricted: restrictedFormat[];
 	setShowConv: Dispatch<SetStateAction<boolean>>;
+	setChatState: Dispatch<SetStateAction<chatStateFormat>>;
 }
 
 interface userFormat {
@@ -38,7 +40,6 @@ interface restrictedFormat {
 }
 
 const OptionAdmin: React.FC<Props> = (props) => {
-	//const [targets, setTargets] = React.useState(false); ARRAY PAS BOOLEAN
 	const [optionSelected, setOptionSelected] = React.useState(false);
 	const [mode, setMode] = React.useState(0);
 
@@ -55,6 +56,7 @@ const OptionAdmin: React.FC<Props> = (props) => {
 					axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/leave`, { withCredentials: true })
 						.then(res => { })
 			})
+		props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })
 		props.setShowConv(true)
 	}
 
@@ -62,6 +64,7 @@ const OptionAdmin: React.FC<Props> = (props) => {
 		axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
 			.then(res => {
 			})
+		props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })
 		//Reload la page
 	}
 
@@ -84,7 +87,7 @@ const OptionAdmin: React.FC<Props> = (props) => {
 			{optionSelected === true && mode <= 3 && <ChangePassword mode={mode} id={props.id} users={props.users} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} activePass={props.activePass} />}
 			{optionSelected === true && mode >= 4 && mode <= 5 && <ChangeModerators mode={mode} id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
 			{optionSelected === true && mode >= 6 && mode <= 8 && <ChangeRestricted socket={props.socket} mode={mode} id={props.id} users={props.users} moderators={props.moderators} userRestricted={props.userRestricted} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
-			{optionSelected === true && mode === 9 && <AddUser socket={props.socket} id={props.id} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}
+			{optionSelected === true && mode === 9 && <AddUser socket={props.socket} id={props.id} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} users={props.users} />}
 			{optionSelected === true && mode === 10 && <ChangeOwner id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} activePass={props.activePass} />}
 		</Fragment>
 	);
