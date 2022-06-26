@@ -20,6 +20,8 @@ interface PropsPrintFriend {
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
+	matchId : number;
+	goToMatch : Function;
 	key : number;
 }
 
@@ -75,7 +77,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 	}
 	
 	return (
-			<div className='user'>
+			<div className='user' onClick={() => props.goToMatch(props.matchId)}>
 				<div className='flex-v-centered'>
 					<div id='userAvatarIcon'>
 						<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
