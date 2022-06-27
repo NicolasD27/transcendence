@@ -41,7 +41,6 @@ async function bootstrap() {
 	app.use(sessionMiddleware);
 	app.use(passport.initialize());
 	app.use(passport.session());
-	app.useStaticAssets(join(__dirname, '..', 'views'));
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 	app.useWebSocketAdapter(new AuthSocketAdapter(app));
 
