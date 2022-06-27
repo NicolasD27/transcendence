@@ -32,6 +32,9 @@ export class Avatar extends React.Component<Props> {
 							this.props.setGetMatch(false)
 					})
 			})
+			.catch(err => {
+				console.log("upload error")
+			})
 	};
 
 	componentDidMount() {

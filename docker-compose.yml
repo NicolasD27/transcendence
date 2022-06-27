@@ -54,20 +54,20 @@ services:
     volumes:
       - './Frontend:/app'
       - /app/node_modules/
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    container_name: nest-pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-      - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
-    ports:
-      - "8080:80"
-    volumes:
-      - ./pgadmin-data:/pgadmin
-    depends_on:
-      - db
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   container_name: nest-pgadmin4
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+  #     - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+  #     - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./pgadmin-data:/pgadmin
+  #   depends_on:
+  #     - db
 volumes:
   pgdata:
   pgadmin-data:
