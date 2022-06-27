@@ -7,6 +7,7 @@ interface Props {
 	id: number;
 	setShowConv: Dispatch<SetStateAction<boolean>>;
 	setOptionSelected: Dispatch<SetStateAction<boolean>>;
+	users: userFormat[];
 }
 
 interface userFormat {
@@ -41,6 +42,10 @@ const AddUser: React.FC<Props> = (props) => {
 							if (singleUser.id === select.id)
 								userTaken = true
 						})
+						props.users.forEach((select: any) => {
+							if (singleUser.id === select.id)
+								userTaken = true
+						})
 						if (userTaken === false)
 							setSearchUsers(searchUsers => [...searchUsers, singleUser]);
 					});
@@ -69,6 +74,7 @@ const AddUser: React.FC<Props> = (props) => {
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers.filter((friend: any) => friend.id === user.id).length === 0) {
 			var newArrayAdding = [...selectedUsers, user]
+			setSearchUsers([])
 			setSelectedUsers(newArrayAdding)
 		}
 		else {
@@ -84,6 +90,22 @@ const AddUser: React.FC<Props> = (props) => {
 				<input autoComplete='off' type="text" className="passwordInput" onChange={handleChangeAfter} value={searchValue} placeholder="______" />
 			</div>
 			<div className="userOptionArea">
+				{selectedUsers
+					.map((user: userFormat, i) => {
+						return (
+							<div className='userOption' key={i}>
+								<div id='userAvatarIcon'>
+									<img src={user.avatar} className="userAvatar" alt="defaultAvatar" />
+								</div>
+								<div className="usernameOption">{user.pseudo}</div>
+								<div className='checkboxOption'>
+									<input type='checkbox' name="addFriendToChannelButton" checked id={user.id.toString()} onChange={() => checkSelectionStatus(user)} />
+									<label htmlFor={user.id.toString()}></label>
+								</div>
+							</div>
+						)
+					})
+				}
 				{searchUsers
 					.map((user: userFormat, i) => {
 						return (
