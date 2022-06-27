@@ -66,3 +66,4 @@ export class TwoFactorGuard implements CanActivate {
 			return false;
 		}	
 	}
+}
