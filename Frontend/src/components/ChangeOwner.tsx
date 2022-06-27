@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 import axios from "axios";
 import './OptionAdmin.css';
 
@@ -22,6 +22,11 @@ interface userFormat {
 const ChangeOwner: React.FC<Props> = (props) => {
 	const [selectedUsers, setSelectedUsers] = useState<userFormat>()
 	const [passwordValue, setPasswordValue] = React.useState("");
+
+	useEffect(() => {
+		if (!props.activePass)
+			setPasswordValue("string")
+	}, []);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers !== undefined) {
@@ -80,7 +85,7 @@ const ChangeOwner: React.FC<Props> = (props) => {
 					})
 				}
 			</div>
-			{props.users.length == 0 && <p  className="labelStyle">No users</p>}
+			{props.users.length === 0 && <p className="labelStyle">No users</p>}
 			{props.users.length > 0 && <button onClick={() => handleSubmitUsers()} className="option">Valider</button>}
 		</div>
 	);
