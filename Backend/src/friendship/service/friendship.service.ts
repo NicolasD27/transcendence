@@ -26,8 +26,6 @@ export class FriendshipService {
         }
 
     async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
-		console.log("activeUsers");
-		console.log(activeUsers);
         const user = await this.usersRepository.findOne(user_id);
         if (!user)
             throw new NotFoundException(`user #${user_id} not found`)
@@ -91,7 +89,7 @@ export class FriendshipService {
         })
         if (friendship)
             throw new BadRequestException("Frienship already exist");
-
+        
         friendship = await this.friendshipsRepository.create({
             follower: follower,
             following: following,
