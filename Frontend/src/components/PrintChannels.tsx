@@ -43,8 +43,8 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
                     <div className='flex-v-centered'>
 			            <div id='channelAvatar'></div>
                         <div id="channelName">{props.channel.name}</div>
-                        <button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
                     </div>
+                    <button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
                 </>
             }
             {

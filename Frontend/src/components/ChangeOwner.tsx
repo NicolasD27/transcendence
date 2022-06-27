@@ -26,7 +26,7 @@ const ChangeOwner: React.FC<Props> = (props) => {
 	useEffect(() => {
 		if (!props.activePass)
 			setPasswordValue("string")
-	}, []);
+	}, [props.activePass]);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers !== undefined) {

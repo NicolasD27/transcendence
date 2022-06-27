@@ -65,7 +65,6 @@ const OptionAdmin: React.FC<Props> = (props) => {
 			.then(res => {
 			})
 		props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })
-		//Reload la page
 	}
 
 	return (

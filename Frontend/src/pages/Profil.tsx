@@ -123,7 +123,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		<Fragment>
 			<div id='bloc'>
 				<Header idMe={idMe} />
-				<section id="gameAndChatSection">
+				<section className="gameAndChatSection">
 					<div className='boxProfil'>
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
 						{id !== idMe && isFriend(id) === false && checkStatus(id)}

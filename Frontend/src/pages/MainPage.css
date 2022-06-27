@@ -51,7 +51,7 @@
 	box-shadow: 2px 1000px 1px transparent inset;
 }
 
-#gameAndChatSection {
+.gameAndChatSection {
 	display: flex;
 	flex-direction: row;
 	margin-top: 0px;
@@ -162,7 +162,7 @@ button {
 	margin: 5px 18px;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	border: 0.1px solid red;
+	border: none;
 	height: 83.8%;
 }
 
@@ -221,7 +221,7 @@ button {
 #username {
 	font-size: 15px;
 	font-weight: normal;
-	min-width: 120px;
+	min-width: 80%;
 	white-space: nowrap;
 	overflow-x: hidden;
 	margin-left: 15px;
@@ -229,9 +229,9 @@ button {
 
 #friend_buttons {
 	position: relative;
-	width: 84px;
+	min-width: 84px;
 	height: 40px;
-	margin: 7px 10px 7px 6px;
+	margin: 7px 0px 7px 0px;
 }
 
 #friend_buttons>button {
@@ -280,6 +280,7 @@ button {
 	width: 5px;
 	top: 10px;
 	right: 0px;
+	border: 0.1px solid red;
 }
 
 #friendColumn_button:hover {
@@ -298,21 +299,21 @@ button {
 
 .optionButtons {
 	position: relative;
-	width: 190px;
-	height: 40px;
+	min-width: 55%;
+	height: 75%;
 	border-radius: 20px;
-	margin-left: 15px;
-	margin-right: 15px;
-	margin-top: 7px;
-	margin-bottom: 7px;
+	margin-left: 8%;
+	margin-right: 7%;
+	margin-top: 2%;
+	margin-bottom: 2%;
 }
 
 #unfriend_button {
 	position: absolute;
 	left: 0px;
 	margin-right: 10px;
-	width: 90px;
-	height: 100%;
+	min-width: 45%;
+	min-height: 100%;
 	border: 1px solid #E11515;
 	box-sizing: border-box;
 	border-radius: 20px;
@@ -336,8 +337,8 @@ button {
 	position: absolute;
 	right: 0px;
 	margin-left: 10px;
-	width: 90px;
-	height: 100%;
+	min-width: 45%;
+	min-height: 100%;
 	border: 1px solid #E11515;
 	box-sizing: border-box;
 	border-radius: 20px;
@@ -577,55 +578,17 @@ button {
 	background-image: url('../asset/ChannelIcon.svg');
 	background-repeat: no-repeat;
 	background-position: 50%;
-	border-radius: 100%;
 	margin-left: 18px;
-
+	margin-right: 15px;
 }
 
 #channelName {
 	font-size: 15px;
 	font-weight: normal;
-	min-width: 120px;
+	min-width: 20%;
 	white-space: nowrap;
 	overflow-x: hidden;
-	margin-left: 15px;
 }
-
-
-/*.channel {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	border: 2px solid #3772FF;
-	color: #3772FF;
-	border-radius: 20px;
-	height: 54px;
-	margin: 14px 0;
-}
-
-.channel:hover {
-	border: 2px solid #E11515;
-}
-
-#channelAvatar {
-	position: relative;
-	width: 40px;
-	height: 40px;
-	margin: 7px 15px 7px 18px;
-	background-image: url('../asset/ChannelIcon.svg');
-	background-repeat: no-repeat;
-	background-position: 50%;
-	border-radius: 100%;
-}*/
-
-/*#channelName {
-	color: #3772FF;
-	min-width: 120px;
-	font-size: 15px;
-	font-weight: normal;
-	white-space: nowrap;
-	overflow-x: hidden;
-}*/
 
 #channelChat_button {
 	margin: 7px 18px 7px 81px;
@@ -932,7 +895,7 @@ button {
 }
 
 @media only screen and (max-width: 1155px) {
-	#gameAndChatSection {
+	.gameAndChatSection {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
