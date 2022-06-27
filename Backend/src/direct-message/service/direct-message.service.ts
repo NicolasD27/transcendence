@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
@@ -43,7 +44,7 @@ export class DirectMessageService {
 			take: limit,
 			skip: offset,
 			})
-			.then(items => items.map(e=> DirectMessage.toDto(e)));
+			.then(items => items.map(e=> DirectMessage.toDto(e, activeUsers)));
 
 		return msgs;
 	}
@@ -56,14 +57,14 @@ export class DirectMessageService {
 			content, sender, receiver
 		})
 		await this.directMessageRepository.save(newMsg);
-		return DirectMessage.toDto(newMsg);
+		return DirectMessage.toDto(newMsg, activeUsers);
 	}
 
 	// async 
 	async getAllMessages(): Promise<DirectMessageDto[]> {
 		// return this.directMessageRepository.find({ relations: ['user'],});
 		return this.directMessageRepository.find()
-			.then(items => items.map(e=> DirectMessage.toDto(e)));;
+			.then(items => items.map(e=> DirectMessage.toDto(e, activeUsers)));;
 		// return this.directMessageRepository.query("SELECT id, content, userId FROM");
 	}
 

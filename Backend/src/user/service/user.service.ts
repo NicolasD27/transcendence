@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { Connection, Repository } from 'typeorm';
 import { UpdatePseudoDto } from '../dto/update-pseudo.dto';
@@ -26,7 +27,7 @@ export class UserService {
 				take: limit,
 				skip: offset
 			})
-            .then(items => items.map(e=> User.toDto(e)));
+            .then(items => items.map(e=> User.toDto(e, activeUsers)));
     }
 
 	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
@@ -37,21 +38,21 @@ export class UserService {
 				take: limit,
 				skip: offset
 			})
-            .then(items => items.map(e=> User.toDto(e)));
+            .then(items => items.map(e=> User.toDto(e, activeUsers)));
     }
 
     async findOne(id: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne(id);
         if (!user)
             throw new NotFoundException(`User #${id} not found`);
-        return User.toDto(user);
+        return User.toDto(user, activeUsers);
     }
 
     async findMe(username: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne({username});
         if (!user)
             throw new NotFoundException(`User ${username} not found`);
-        return User.toDto(user);
+        return User.toDto(user, activeUsers);
     }
 
     async findByUsername(username: string): Promise<User>
@@ -108,18 +109,18 @@ export class UserService {
     
     }
 
-	// async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
-    //     const user = await this.usersRepository.preload({
-    //         id: +id,
-    //         ...updateAvatarDto
-    //     })
-    //     if (!user)
-    //         throw new NotFoundException(`User #${id} not found`);
-    //     if (user.username != current_username)
-    //         throw new UnauthorizedException();
-    //     this.usersRepository.save(user);
-    //     return User.toDto(user)
-    // }
+	/*async updateAvatar(current_username: string, id: string, updateAvatarDto: UpdateAvatarDto): Promise<UserDto> {
+         const user = await this.usersRepository.preload({
+             id: +id,
+             ...updateAvatarDto
+         })
+         if (!user)
+             throw new NotFoundException(`User #${id} not found`);
+         if (user.username != current_username)
+             throw new UnauthorizedException();
+         this.usersRepository.save(user);
+         return User.toDto(user)
+     }*/
 
     async updateStatusByUsername(newStatus: UserStatus, username: string): Promise<UserDto> {
         const user = await this.usersRepository.findOne({ username });
@@ -127,29 +128,7 @@ export class UserService {
             throw new NotFoundException(`User ${username} not found`);
         user.status = newStatus
         this.usersRepository.save(user);
-        return User.toDto(user)
+        return User.toDto(user, activeUsers)
     }
-
-    //just for dev
-    async create() //: Promise<UserDto> {
-    { 
-        const username = this.make_username(8)
-        const user = {
-            username: username,
-            pseudo: username
-        }
-        return this.usersRepository.save(user);
-    }
-
-    private make_username(length) {
-        var result           = '';
-        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) {
-            result += characters.charAt(Math.floor(Math.random() * 
-			charactersLength));
-        }
-        return result;
-	}
 
 }

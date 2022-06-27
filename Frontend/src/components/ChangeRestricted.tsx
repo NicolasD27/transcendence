@@ -38,10 +38,28 @@ const ChangeRestricted: React.FC<Props> = (props) => {
 	useEffect(() => {
 		setFiltreUsers([])
 		if (props.mode === 6) {
-			setFiltreUsers(props.users)
+			props.users.forEach((list: any) => {
+				let addUser = true
+				props.moderators.forEach((moderator: any) => {
+					if (list.id === moderator.id)
+						addUser = false
+				})
+				if (addUser === true)
+					setFiltreUsers(filtreUsers => [...filtreUsers, list])
+			});
+			//setFiltreUsers(props.users)
 		}
 		else if (props.mode === 7) {
-			setFiltreUsers(props.users)
+			props.users.forEach((list: any) => {
+				let addUser = true
+				props.moderators.forEach((moderator: any) => {
+					if (list.id === moderator.id)
+						addUser = false
+				})
+				if (addUser === true)
+					setFiltreUsers(filtreUsers => [...filtreUsers, list])
+			});
+			//setFiltreUsers(props.users)
 		}
 		else if (props.mode === 8)
 			setFiltreUsers(props.userRestricted)

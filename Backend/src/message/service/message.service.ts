@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { activeUsers } from 'src/auth-socket.adapter';
 import { Channel } from 'src/channel/entity/channel.entity';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
@@ -25,14 +26,14 @@ export class ChatService {
 			content, channel, user
 		})
 		await this.msgRepo.save(newMsg);
-		return Msg.toDto(newMsg);
+		return Msg.toDto(newMsg, activeUsers);
 	}
 
 	// async 
 	async getAllMessages(): Promise<MsgDto[]> {
 		// return this.msgRepo.find({ relations: ['user'],});
 		return this.msgRepo.find()
-			.then(items => items.map(e=> Msg.toDto(e)));;
+			.then(items => items.map(e=> Msg.toDto(e, activeUsers)));;
 		// return this.msgRepo.query("SELECT id, content, userId FROM");
 	}
 

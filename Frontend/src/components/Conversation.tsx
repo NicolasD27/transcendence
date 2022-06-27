@@ -98,7 +98,6 @@ const Conversation: React.FC<Props> = (props) => {
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
 				.then(res => {
-
 					setModerators([])
 					setUserRestricted([])
 					setAdminLevel(0)
@@ -195,7 +194,7 @@ const Conversation: React.FC<Props> = (props) => {
 					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
-	}, [props.id, showConv, status, muted]);//Recuperer les anciens messages
+	}, [props.id, showConv, status, muted, props.type]);//Recuperer les anciens messages
 
 	useEffect(() => {
 		if (props.socket) {
@@ -264,7 +263,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} />}
 		</div>
 	);
 };

@@ -3,30 +3,25 @@ import axios from 'axios';
 import ChatSectionUsers from './ChatSectionUsers';
 import Conversation from './Conversation';
 import { chatStateFormat } from '../App';
+import { FriendsFormat } from '../App';
 
 export interface PropsChat {
 	idMe: number;
 	socket: any;
+	friends : FriendsFormat[];
+	setFriends : Dispatch<SetStateAction<FriendsFormat[]>>;
 	chatParamsState: chatStateFormat;
 	setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>;
 	isFriendshipButtonClicked: boolean;
 	setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>;
-}
-
-export interface FriendsFormat {
-	friendshipId: number;
-	id: number;
-	username: string;
-	pseudo: string;
-	avatarId: string;
-	status: number;
+	friendRequestsSent : number[];
+	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
+	friendRequestsReceived : FriendsFormat[];
+	setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>>
 }
 
 const Chat: React.FC<PropsChat> = (props) => {
 	const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
-	const [friends, setFriends] = useState<FriendsFormat[]>([])
-	const [friendRequestsSent, setFriendRequestsSent] = useState<number[]>([])
-	const [friendRequestsReceived, setFriendRequestsReceived] = useState<FriendsFormat[]>([])
 
 	const { idMe, setIsFriendshipButtonClicked } = props;
 
@@ -38,7 +33,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
 				.then(res => {
 					let users = res.data;
-					setFriends([])
+					props.setFriends([])
 					users.forEach((friendship: any) => {
 						let friends_tmp: FriendsFormat;
 						if (friendship.following.id === props.idMe) {
@@ -62,15 +57,15 @@ const Chat: React.FC<PropsChat> = (props) => {
 							}
 						}
 						if (friendship.status === 1) {
-							setFriends(friends => [...friends, friends_tmp])
-							let friendRequestsReceived_tmp = friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
-							setFriendRequestsReceived(friendRequestsReceived_tmp)
+							props.setFriends(friends => [...friends, friends_tmp])
+							let friendRequestsReceived_tmp = props.friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
+							props.setFriendRequestsReceived(friendRequestsReceived_tmp)
 						}
 					})
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
-	}, [props.idMe, props.isFriendshipButtonClicked, friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
+	}, [props.idMe, props.isFriendshipButtonClicked, props.friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe)
 	{
@@ -79,7 +74,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
 					.then (res => {
 						let users = res.data;
-						setFriends([])
+						props.setFriends([])
 						users.forEach((friendship:any) => {
 							let friends_tmp : FriendsFormat;
 							if (friendship.following.id === props.idMe)
@@ -103,14 +98,13 @@ const Chat: React.FC<PropsChat> = (props) => {
 									status : friendship.following.status
 								}
 							}
-							if (friendship.status === 1)
-							{
-								setFriends(friends => [...friends, friends_tmp])
-								let friendRequestsReceived_tmp = friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
-								setFriendRequestsReceived(friendRequestsReceived_tmp)
+							if (friendship.status === 1) {
+								props.setFriends(friends => [...friends, friends_tmp])
+								let friendRequestsSent_tmp = props.friendRequestsSent.filter((requestId) => requestId !== friends_tmp.id)
+								props.setFriendRequestsSent(friendRequestsSent_tmp)
 							}
-						})
 					})
+				})
 			})
 
 			props.socket.on('notifyFriendRequest', data => { 
@@ -118,7 +112,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then(res => {
 					let users = res.data;
-					setFriendRequestsReceived([])
+					props.setFriendRequestsReceived([])
 					users.forEach((friendship: any) => {
 						let friends_tmp: FriendsFormat;
 						friends_tmp = {
@@ -130,35 +124,29 @@ const Chat: React.FC<PropsChat> = (props) => {
 							status: friendship.follower.status
 						}
 						if (friendship.status === 0) {
-							setFriendRequestsReceived(friendRequestsReceived => [...friendRequestsReceived, friends_tmp])
+							props.setFriendRequestsReceived(friendRequestsReceived => [...friendRequestsReceived, friends_tmp])
 						}
 					})
 				})
-		})
+			})
 	}
 
 	const handleResize = () => {
-
 		const gameArea = document.getElementById("gameArea")
 		const chatArea = document.querySelector(".chatArea")
 		if (chatArea && gameArea) {
-			console.log("hello")
 			chatArea.setAttribute("style", `height:${gameArea.offsetHeight}px`);
 		}
-
 	}
 
 	useEffect(() => {
 		handleResize()
 		window.addEventListener('resize', handleResize)
-
 	})
-
-
 
 	return (
 		<>
-			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={friends} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} />}
+			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequestsSent={props.friendRequestsSent} setFriendRequestsSent={props.setFriendRequestsSent} friendRequestsReceived={props.friendRequestsReceived} setFriendRequestsReceived={props.setFriendRequestsReceived} />}
 			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} />}
 		</>
 	)

@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction} from 'react';
 import { chatStateFormat } from '../App';
 import { PropsStateUsers } from './ChatSectionUsers'
+import './PrintNormalFriendProfile.css'
 
 interface PropsPrintNormalFriendProfile {
 	user : PropsStateUsers;
@@ -9,26 +10,27 @@ interface PropsPrintNormalFriendProfile {
 	chatParamsState : chatStateFormat;
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
+	sendMatchInvit  : Function;
 }
 
 const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => {
 	
 	return (
 		<>
-			<div id="username">{props.user.pseudo}</div>
-					<div id='friend_buttons'>
-						{(!props.isBlocked &&
-							<>
-								<button id="friendPlay_button" onClick={() => ""}/>
-								<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
-							</>
-						) ||
-							<div id='profileBlocked'>
-								Blocked
-							</div>
-						}
-						<button id="friendColumn_button" onClick={() => props.setFriendDeleteColumnState(true)}/>
+			<div id='friend_buttons'>
+				{
+					(!props.isBlocked &&
+						<>
+							<button id="friendPlay_button" onClick={() => props.sendMatchInvit()}/>
+							<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState.chatState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
+						</>
+					) ||
+					<div id='profileBlocked'>
+						Blocked
 					</div>
+				}
+				<button id="friendColumn_button" onClick={() => props.setFriendDeleteColumnState(true)}/>
+			</div>
 		</>
 	)
 }

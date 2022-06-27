@@ -66,6 +66,13 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	// }
 
 
+	@SubscribeMessage('disconnect')
+	disconnect_me(socket:CustomSocket)
+	{
+		this.logger.log(`${socket.user.username} left the page`);
+		activeUsers.remove(socket.user.id);
+	}
+
 	afterInit(server: Server) {
 		this.logger.log('Init');
 	}
@@ -87,6 +94,6 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const username = getUsernameFromSocket(client);
 		this.userService.updateStatusByUsername(UserStatus.OFFLINE, username)
 		// this.socket.to("match#" + data.match_id).emit('playerDisconnect');
-		activeUsers.remove(client.id);
+		activeUsers.remove(+client.id);
 	}
 }

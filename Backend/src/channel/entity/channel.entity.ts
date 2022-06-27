@@ -1,4 +1,5 @@
 import { UserDto } from "src/user/dto/user.dto";
+import { ActiveUsers } from "src/user/entity/active-user";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Msg } from "../../message/entity/msg.entity";
 import { User } from "../../user/entity/user.entity";
@@ -41,14 +42,14 @@ export class Channel extends BaseEntity
 	@OneToMany(() => ChannelInvite, channelInvite => channelInvite.channel)
 	channelInvites: ChannelInvite[];
 
-	static toDto(channel: Channel)
+	static toDto(channel: Channel, _activeUsers: ActiveUsers) : ChannelDto
 	{
 		const dto: ChannelDto = {
 			id: channel.id,
 			isPrivate: channel.isPrivate,
 			isProtected: channel.isProtected,
             name: channel.name,
-            owner: User.toDto(channel.owner),
+            owner: User.toDto(channel.owner, _activeUsers),
 		}
 		return dto;
 	}
@@ -56,16 +57,16 @@ export class Channel extends BaseEntity
 	static toDtoWithModeration(
 		channel: Channel,
 		modos: UserDto[],
-		// restricted: UserDto[]
-		restricted: any[]
-	)
+		restricted: any[],
+		_activeUsers: ActiveUsers,
+	) : ChannelDtoWithModeration
 	{
 		const dto: ChannelDtoWithModeration = {
 			id: channel.id,
 			isPrivate: channel.isPrivate,
 			isProtected: channel.isProtected,
             name: channel.name,
-            owner: User.toDto(channel.owner),
+            owner: User.toDto(channel.owner, _activeUsers),
 			moderators: modos,
 			restricted: restricted,
 		}

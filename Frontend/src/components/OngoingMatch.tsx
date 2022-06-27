@@ -1,4 +1,4 @@
-import React, { useState, Fragment, Dispatch, SetStateAction, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import './OngoingMatch.css';
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ const OngoingMatch = () => {
             .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/active?limit=0&offset=0`, { withCredentials: true })
             .then(res => {
                 console.log('DATA: ', res.data)
-                res.data.map((match) => {
+                res.data.forEach((match) => {
                     let match_tmp: propsMatchs
                     let pseudo1_avatar = defaultAvatar
                     let pseudo2_avatar = defaultAvatar
@@ -43,7 +43,8 @@ const OngoingMatch = () => {
     }, [])
 
     const goToMatch = (id: number) => {
-        navigate("mainpage?id=" + id)
+        navigate("/mainpage?id=" + id)
+        window.location.reload()
     }
 
 	return (
