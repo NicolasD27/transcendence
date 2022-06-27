@@ -34,7 +34,7 @@ const NotificationList = ({myId, socket, setIsFriendshipButtonClicked}: {myId: n
 				setNotifications(notifications => res.data.reverse());	
 			})
 		}
-		if (myId !== 0) {
+		if (myId !== 0 && socket) {
 			socket.on("new_channel_invite_received", data => {
 				refreshNotificationList()
 			})

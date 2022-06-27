@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import Home from './pages/Home';
@@ -54,28 +54,43 @@ const App = () => {
   const [friendRequestsSent, setFriendRequestsSent] = useState<number[]>([])
   const [friendRequestsReceived, setFriendRequestsReceived] = useState<FriendsFormat[]>([])
 
-  if (!isAuth) {
-    axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
-      .then(res => {
-        setIsAuth(true)
-        setIsLoading(false)
-        setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
-          reconnection: true,
-          transports: ['websocket', 'polling', 'flashsocket'],
-          transportOptions: {
-            polling: {
-              extraHeaders: {
-                Authorization: getAccessTokenFromCookies()
+
+  useEffect(() => {
+    if (!isAuth) {
+      axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
+        .then(res => {
+          setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
+            reconnection: true,
+            transports: ['websocket', 'polling', 'flashsocket'],
+            transportOptions: {
+              polling: {
+                extraHeaders: {
+                  Authorization: getAccessTokenFromCookies()
+                }
               }
             }
-          }
-        }))
+          }))
+          setIsAuth(true)
+          setIsLoading(false)
+          
+        })
+        .catch(err => {
+          setIsAuth(false)
+          setIsLoading(false)
+        })
+    }
+  }, [isAuth])
+
+  useEffect(() => {
+    if (socket) {
+      window.addEventListener('beforeunload', () => {
+        console.log('disconnecting...')
+        socket.emit('disconnect')
       })
-      .catch(err => {
-        setIsAuth(false)
-        setIsLoading(false)
-      })
-  }
+    }
+  }, [socket])
+
+  
   return (
     <Fragment>
       <Routes>

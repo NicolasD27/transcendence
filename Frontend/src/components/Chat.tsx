@@ -67,7 +67,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 		}
 	}, [props.idMe, props.isFriendshipButtonClicked, props.friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
 
-	if (props.idMe)
+	if (props.idMe && props.socket)
 	{
 			props.socket.on('notifyFriendRequestAccepted', data => {
 				axios

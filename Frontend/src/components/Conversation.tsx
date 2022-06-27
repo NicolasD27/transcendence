@@ -60,6 +60,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
+	let usersBlocked: boolean[] = []
 
 	const newMessageChannel = (message: any) => {
 		let singleMessage: messagesFormat;
@@ -70,6 +71,12 @@ const Conversation: React.FC<Props> = (props) => {
 				avatartmp = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.user.avatarId}`;
+			usersBlocked.forEach(element => {
+				if (message.user.id == element) {
+					const nbtmp = message.content.length
+					message.content = "" + "*".repeat(nbtmp)
+				}
+			});
 			if (props.idMe === message.user.id)
 				singleMessage = { id: message.id, message: message.content, name: message.user.pseudo, avatar: avatartmp, own: true };
 			else
@@ -95,6 +102,12 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	useEffect(() => {
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+			.then(res => {
+				const tmpUsersBlocked = res.data
+				tmpUsersBlocked.forEach(element => { usersBlocked.push(element.id) });
+			})
+		setTimeout(() => { }, 500)
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
 				.then(res => {

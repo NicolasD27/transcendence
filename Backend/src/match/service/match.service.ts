@@ -146,7 +146,7 @@ export class MatchService {
 				status: MatchStatus.MATCH_MAKING
 			}
 		)
-		if (match) {
+		if (match && match.user1.id != user.id) {
 			match.status = MatchStatus.ACTIVE
 			match.user2 = user;
 			return this.matchsRepository.save(match)
