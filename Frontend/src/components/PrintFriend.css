@@ -1,0 +1,87 @@
+.user {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border: 2px solid #3772FF;
+	color: #3772FF;
+	border-radius: 20px;
+	height: 54px;
+	margin: 14px 0;
+}
+
+.user:hover {
+	border: 2px solid #E11515;
+}
+
+.flex-v-centered {
+	display: flex;
+	align-items: center;
+}
+
+#userAvatarIcon {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	margin-left: 18px;
+}
+
+#userAvatarIcon:hover {
+	cursor: pointer;
+}
+
+.userAvatar {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	border-radius: 100%;
+}
+
+.userStatusIcon {
+	position: absolute;
+	top: 28px;
+	left: 28px;
+	width: 12px;
+	height: 12px;
+	z-index: 1;
+}
+
+#username {
+	font-size: 15px;
+	font-weight: normal;
+	min-width: 80%;
+	white-space: nowrap;
+	overflow-x: hidden;
+	margin-left: 15px;
+}
+
+#friendRequest_buttons {
+	display: flex;
+	flex-direction: row;
+	width: 75px;
+	height: 36px;
+	margin-right: 18px;
+	margin-left: 7px;
+	margin-top: 9px;
+	margin-bottom: 9px;
+}
+
+#invitation_sent {
+	margin-top: 17px;
+	margin-bottom: 17px;
+	font-size: 12px;
+	font-weight: normal;
+	text-align: center;
+}
+
+#SendFriendRequest_buttons {
+	width: 36px;
+	height: 36px;
+	margin-top: 9px;
+	margin-left: 46px;
+	margin-right: 18px;
+	margin-bottom: 9px;
+	background-image: url('../asset/AddFriendIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}

@@ -9,6 +9,7 @@ import { PropsStateUsers } from './ChatSectionUsers'
 import { chatStateFormat } from '../App'
 import { PropsMatchs } from './ChatSectionUsers';
 import PrintFriend from './PrintFriend';
+import './UserList.css'
 
 interface  PropsUserList {
 	socket : any;
@@ -114,7 +115,6 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		avatarId : "",
 		status : 0
 	}
-
 
 	return (
 			<div className='usersList'>

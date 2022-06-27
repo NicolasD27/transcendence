@@ -1,0 +1,81 @@
+.optionButtons {
+	position: relative;
+	min-width: 55%;
+	height: 75%;
+	border-radius: 20px;
+	margin-left: 8%;
+	margin-right: 7%;
+	margin-top: 2%;
+	margin-bottom: 2%;
+}
+
+#unfriendColumnButton {
+	background-image: url('../asset/ColumnIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 20px;
+	width: 5px;
+	margin-top: 17px;
+	margin-bottom: 17px;
+	margin-right: 10px;
+	padding: 0px;
+	border: none;
+}
+
+#unfriendColumnButton:hover {
+	background-image: url('../asset/ColumnIcon_red.svg');
+}
+
+#unblock_buttons {
+	position: absolute;
+	right: 0px;
+	margin-left: 10px;
+	width: 90px;
+	height: 100%;
+	border: 1px solid #E11515;
+	background-color: #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
+	color: #3772FF;
+}
+
+#block_buttons {
+	position: absolute;
+	right: 0px;
+	margin-left: 10px;
+	min-width: 45%;
+	min-height: 100%;
+	border: 1px solid #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
+	color: #3772FF;
+}
+
+#block_buttons:hover {
+	background-color: #E11515;
+}
+
+#unfriend_button {
+	position: absolute;
+	left: 0px;
+	margin-right: 10px;
+	min-width: 45%;
+	min-height: 100%;
+	border: 1px solid #E11515;
+	box-sizing: border-box;
+	border-radius: 20px;
+}
+
+#unfriend_button p {
+	position: absolute;
+	color: #3772FF;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+	border: none;
+}
+
+#unfriend_button:hover {
+	background-color: #E11515;
+}

@@ -1,5 +1,6 @@
 import React, { useState, Dispatch, SetStateAction} from 'react'
 import { useNavigate } from 'react-router-dom'
+import './PrintFriendToAddChannel.css'
 import statusIconBlue from "../asset/statusIconBlue.svg"
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"

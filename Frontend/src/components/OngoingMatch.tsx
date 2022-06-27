@@ -1,5 +1,6 @@
 import React from "react";
 import './OngoingMatch.css';
+import './UserList.css'
 import { PropsMatchs } from "./ChatSectionUsers";
 
 const OngoingMatch = ({matchs, goToMatch} : {matchs : PropsMatchs[], goToMatch : Function}) => {

@@ -1,4 +1,5 @@
 import React, { useState, Dispatch, SetStateAction} from 'react';
+import './PrintChannelCreationSettings.css'
 
 interface propsPrintChannelCreationSettings {
 	setChannelVisibilitySelected : Dispatch<SetStateAction<string>>;
@@ -55,8 +56,3 @@ const PrintChannelCreationSettings : React.FC<propsPrintChannelCreationSettings>
 }
 
 export default PrintChannelCreationSettings;
-
-/*<div className='checkbox_Channel'>
-	<input type='checkbox' name="addFriendToChannelButton" id={user.id.toString()} onChange={() => checkSelectionStatus(user)}/>
-	<label htmlFor={user.id.toString()}></label>
-</div>*/

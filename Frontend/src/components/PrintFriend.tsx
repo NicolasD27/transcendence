@@ -6,6 +6,7 @@ import { FriendsFormat } from '../App'
 import { chatStateFormat } from '../App';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
+import './PrintFriend.css'
 
 interface PropsPrintFriend {
 	idMe : number;
@@ -90,7 +91,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch}/>)
 					||
 					(props.isFriend &&
-						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
+						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipInfo={props.friendshipInfo} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
 					||
 					(props.received &&
 					

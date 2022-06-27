@@ -1,0 +1,70 @@
+.createChannelPassword {
+	border-radius: 15px;
+	margin-left: 4%;	
+}
+
+.enterChannelName {
+	border-radius: 20px;
+	margin-right: 16px;
+	margin-bottom: 4%;
+	width: 80%;
+	color: #3772FF;
+	font-size: 15px;
+}
+
+.enterChannelName label {
+	margin-bottom: 8px;
+}
+
+.enterChannelName input {
+	border: 2px solid #3772FF;
+	height: 48px;
+	width: 100%;
+	border-radius: 15px;
+	margin-right: 17px;
+	color: #3772FF;
+	padding: 0px 20px;
+}
+
+.enterChannelName input::placeholder {
+	color: rgb(66, 65, 65);
+}
+
+.createChannelPassword input {
+	border: 2px solid #3772FF;
+	height: 30px;
+	width: 100%;
+	border-radius: 15px;
+	color: #3772FF;
+	padding: 0px 20px;
+}
+
+.checkbox_ChannelSettings {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 5%;
+	color: #3772FF;
+}
+
+.checkbox_ChannelSettings label  {
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	border: 1px solid #3772FF;
+	cursor: pointer;
+	margin-right: 3%;
+}
+
+.checkbox_ChannelSettings label:hover {
+	border: 1px solid #E11515;
+}
+
+.checkbox_ChannelSettings input[type="radio"] {
+	visibility: hidden;
+}
+
+.checkbox_ChannelSettings input[type="radio"]:checked + label {
+	background-color: #E11515;
+	border-color: #E11515;
+}

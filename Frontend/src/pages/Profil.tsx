@@ -124,7 +124,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 			<div id='bloc'>
 				<Header idMe={idMe} />
 				<section className="gameAndChatSection">
-					<div className='boxProfil'>
+					<div className='boxProfil' id='gameArea'>
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
 						{id !== idMe && isFriend(id) === false && checkStatus(id)}
 						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />

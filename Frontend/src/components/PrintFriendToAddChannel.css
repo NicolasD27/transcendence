@@ -1,0 +1,85 @@
+.user {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border: 2px solid #3772FF;
+	color: #3772FF;
+	border-radius: 20px;
+	height: 54px;
+	margin: 14px 0;
+}
+
+.user:hover {
+	border: 2px solid #E11515;
+}
+
+#username {
+	font-size: 15px;
+	font-weight: normal;
+	min-width: 80%;
+	white-space: nowrap;
+	overflow-x: hidden;
+	margin-left: 15px;
+}
+
+#userAvatarIcon {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	margin-left: 18px;
+}
+
+#userAvatarIcon:hover {
+	cursor: pointer;
+}
+
+.userAvatar {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	border-radius: 100%;
+}
+
+.userStatusIcon {
+	position: absolute;
+	top: 28px;
+	left: 28px;
+	width: 12px;
+	height: 12px;
+	z-index: 1;
+}
+
+.checkbox_Channel {
+	position: relative;
+	margin-top: 9px;
+	margin-right: 18px;
+	margin-left: 62px;
+	margin-bottom: 9px;
+	height: 20px;
+	width: 20px;
+}
+
+.checkbox_Channel label  {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	border: 1px solid #3772FF;
+	cursor: pointer;
+}
+
+.checkbox_Channel label:hover {
+	border: 1px solid #E11515;
+}
+
+.checkbox_Channel input[type="checkbox"] {
+	visibility: hidden;
+}
+
+.checkbox_Channel input[type="checkbox"]:checked + label {
+	background-color: #E11515;
+	border-color: #E11515;
+}

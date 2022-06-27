@@ -2,6 +2,7 @@ import React, { useState, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import {PropsStateChannel} from './ChatSectionUsers'
 import { chatStateFormat } from '../App'
+import './PrintChannels.css'
 
 
 interface PropsPrintChannelsToJoin {

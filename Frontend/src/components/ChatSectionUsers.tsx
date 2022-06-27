@@ -2,6 +2,7 @@ import React, { useState, useEffect, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import UserList from './UserList';
 import SearchBarAddGroup from './SearchBarAddGroup'
+import './ChatSectionUsers.css'
 import { chatStateFormat } from '../App'
 import { FriendsFormat } from '../App'
 import OngoingMatch from '../components/OngoingMatch'
@@ -89,10 +90,10 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 	}, [searchValue])
 
 	useEffect(() => {
-        setMatchs([])
         axios
             .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/active?limit=0&offset=0`, { withCredentials: true })
             .then(res => {
+				setMatchs([])
                 console.log('DATA: ', res.data)
                 res.data.forEach((match) => {
 					if (match.status === 2)

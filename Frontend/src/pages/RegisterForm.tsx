@@ -7,8 +7,6 @@ import Pseudo from '../components/Pseudo';
 import './RegisterForm.css'
 
 const RegisterForm = () => {
-
-
 	const [idMe, setIdMe] = useState(0);
 
 	useEffect(() => {
@@ -25,7 +23,6 @@ const RegisterForm = () => {
 	const onMainPage = () => {
 		navigate("/mainpage")
 	}
-
 
 	return (
 		<Fragment>

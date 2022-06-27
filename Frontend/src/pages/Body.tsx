@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import Match from '../components/Match'
 import Chat from '../components/Chat'
+import './Body.css'
 import { chatStateFormat } from '../App'
 import { useSearchParams } from 'react-router-dom';
 import { FriendsFormat } from '../App'

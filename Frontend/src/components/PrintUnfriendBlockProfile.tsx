@@ -1,8 +1,12 @@
 import React, { Dispatch, SetStateAction} from 'react';
+import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
+import { FriendsFormat } from '../App'
+import axios from 'axios';
 
 interface PropsPrintUnfriendBlockProfile {
 	user:  PropsStateUsers;
+	friendshipInfo : FriendsFormat;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
 	deleteFriend : Function;
 	isBlocked : boolean;
@@ -10,6 +14,16 @@ interface PropsPrintUnfriendBlockProfile {
 }
 
 const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (props) => {
+	
+	const handleClick = () => {
+		props.setIsBlocked(!props.isBlocked)
+		let stat = props.isBlocked == true ? 1 : 2;  
+		axios
+			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipInfo.friendshipId}`, { status : stat} ,{ withCredentials: true })
+			.then(res => { })
+			.catch((err) => console.log(err))
+	} 
+
 	return (
 		<>
 			<div className='optionButtons'>
@@ -18,10 +32,10 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 				</button>
 				{
 						(!props.isBlocked &&
-						(<button id='block_buttons' onClick={() => props.setIsBlocked(true)}>
+						(<button id='block_buttons' onClick={handleClick}/*() => props.setIsBlocked(true)}*/>
 							Block
 						</button>)) ||
-						(<button id='unblock_buttons' onClick={() => props.setIsBlocked(false)}>
+						(<button id='unblock_buttons' onClick={handleClick}/*() => props.setIsBlocked(false)}*/>
 							Unblock
 						</button>)
 				}
