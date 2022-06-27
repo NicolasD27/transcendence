@@ -28,6 +28,8 @@ import { ApiTags } from "@nestjs/swagger";
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ParseIntPipe } from "@nestjs/common";
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
+import { ApiFile } from 'src/user/decorator/api-file.decorator';
+import { fileMimetypeFilter } from 'src/user/utils/fileFilter';
 
 @ApiTags('Users')
 @Controller('users')
@@ -134,10 +136,14 @@ export class UserController {
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post('avatar')
+    @ApiFile('avatar', true, { fileFilter: fileMimetypeFilter('image') }) 
     @UseInterceptors(FileInterceptor('file'))
     async addAvatar(@GetUsername() username, @UploadedFile() file: Express.Multer.File) {
+        console.log("uploading img**************")
         return this.userService.addAvatar(username, file.buffer, file.originalname);
     }
+
+    
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
