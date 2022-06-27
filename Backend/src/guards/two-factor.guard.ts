@@ -15,6 +15,7 @@ export class TwoFactorGuard implements CanActivate {
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<any> {
+		console.log("canActivate")
 		let accessToken;
 		let username;
 		let myUser;
@@ -33,7 +34,7 @@ export class TwoFactorGuard implements CanActivate {
 			throw new UnauthorizedException("No accessToken");
 		try {
 			const decoded = this.jwtService.verify(accessToken) as any;
-
+	
 			if (decoded.username != username)
 				throw new UnauthorizedException("User doesn't matches");
 
@@ -63,6 +64,6 @@ export class TwoFactorGuard implements CanActivate {
 		catch (ex) {
 			console.log(ex);
 			return false;
-		}
+		}	
 	}
 }
