@@ -77,7 +77,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 	}
 	
 	return (
-			<div className='user' onClick={() => props.goToMatch(props.matchId)}>
+			<div className='user'>
 				<div className='flex-v-centered'>
 					<div id='userAvatarIcon'>
 						<img src={props.user.avatarId ? profileAvatar : defaultAvatar} className="userAvatar" alt="Avatar" onClick={() => onProfil(props.user.id.toString())}/>
@@ -87,7 +87,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 				</div>
 				{
 					(props.isFriend &&
-						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit}/>)
+						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch}/>)
 					||
 					(props.isFriend &&
 						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)

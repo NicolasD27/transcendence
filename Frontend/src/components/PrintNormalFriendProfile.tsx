@@ -11,6 +11,8 @@ interface PropsPrintNormalFriendProfile {
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
 	sendMatchInvit  : Function;
+	matchId : number;
+	goToMatch : Function;
 }
 
 const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => {
@@ -21,7 +23,8 @@ const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (prop
 				{
 					(!props.isBlocked &&
 						<>
-							<button id="friendPlay_button" onClick={() => props.sendMatchInvit()}/>
+							{props.user.status !== 3 && <button id="friendPlay_button" onClick={() => props.sendMatchInvit()}/>}
+							{props.user.status === 3  && <button id="friendWatch_button" onClick={() => props.goToMatch(props.matchId)}/>}
 							<button id="friendChat_button" onClick={() => props.setChatParamsState({'chatState': !props.chatParamsState.chatState, 'id' : props.user.id, 'chatName' : props.user.pseudo , type : 'directMessage' })}/>
 						</>
 					) ||

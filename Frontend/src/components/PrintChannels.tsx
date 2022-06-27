@@ -37,12 +37,12 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
 
 	return (
 		<div className='channel'>
-			<div id='channelAvatarIcon'></div>
 			{
                 props.isMember &&
                 <>
-                    <div id="channelName">{props.channel.name}</div>
-                    <div id="channel_buttons">
+                    <div className='flex-v-centered'>
+			            <div id='channelAvatar'></div>
+                        <div id="channelName">{props.channel.name}</div>
                         <button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
                     </div>
                 </>
@@ -53,7 +53,10 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
                     (
                         !isButtonClicked &&
                             <>
-                                <div id="channelName">{props.channel.name}</div>
+                                <div className='flex-v-centered'>
+                                    <div id='channelAvatar'></div>
+                                    <div id="channelName">{props.channel.name}</div>
+                                </div>
                                 <button id="channelSendRequest_buttons" onClick={handleClick}/>
                             </>
                     ) ||
