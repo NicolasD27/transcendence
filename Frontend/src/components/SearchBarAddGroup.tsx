@@ -40,7 +40,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 		if (channelVisibilitySelected === "private")
 			tmpPrivate = true
 		else if (channelVisibilitySelected === "protected")
-			tmpProtected = true
+			tmpProtected = false;
 
 		if (channelVisibilitySelected === "protected")
 			axios
