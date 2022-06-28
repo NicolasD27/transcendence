@@ -1,5 +1,7 @@
 import React, { useState, Dispatch, SetStateAction} from 'react'
 import { useNavigate } from 'react-router-dom'
+import './PrintFriendToAddChannel.css'
+import statusIconBlue from "../asset/statusIconBlue.svg"
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
 import {FriendsFormat} from '../App'
@@ -41,7 +43,13 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 					return false
 				})
 				.map((user:FriendsFormat) => {
-					let statusIcon = (user.status === 1 ? statusIconGreen : statusIconRed)
+					let statusIcon = "";
+					if (user.status === 1)
+						statusIcon = statusIconGreen
+					else if (user.status === 0)
+						statusIcon = statusIconRed
+					else
+						statusIcon = statusIconBlue
 
 					if (user.avatarId != null)
 						setProfileAvatar(`http://localhost:8000/api/database-files/${user.avatarId}`)

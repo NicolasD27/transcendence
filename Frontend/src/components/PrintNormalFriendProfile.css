@@ -25,6 +25,21 @@
 	background-image: url('../asset/PlayIcon_red.svg');
 }
 
+#friendWatch_button {
+	position: absolute;
+	background-image: url('../asset/WatchIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+	height: 100%;
+	min-width: 48%;
+	left: 0%;
+	bottom: 2%;
+}
+
+#friendWatch_button:hover {
+	background-image: url('../asset/WatchIcon_red.svg');
+}
+
 #friendChat_button {
 	position: absolute;
 	background-image: url('../asset/ChatIcon_blue.svg');

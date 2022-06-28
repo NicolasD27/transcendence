@@ -39,7 +39,7 @@ const ChangeModerators: React.FC<Props> = (props) => {
 		}
 		else if (props.mode === 5)
 			setFiltreUsers(props.moderators)
-	}, []);
+	}, [props.mode, props.moderators, props.users]);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers.filter((friend: any) => friend.id === user.id).length === 0) {

@@ -1,3 +1,15 @@
+.usersList {
+	margin: 5px 18px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	border: none;
+	height: 83.8%;
+}
+
+.usersList::-webkit-scrollbar {
+	width: 0px;
+}
+
 .user {
     display: flex;
 }

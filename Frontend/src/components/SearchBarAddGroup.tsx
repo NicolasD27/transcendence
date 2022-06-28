@@ -4,6 +4,7 @@ import PrintChannelCreationSettings from './PrintChannelCreationSettings'
 import searchIcon from '../asset/searchIcon.svg'
 import { FriendsFormat } from '../App'
 import { chatStateFormat } from '../App'
+import './SearchBarAddGroup.css'
 
 interface PropsSearchBarAddGroup {
 	idMe: number;
@@ -18,7 +19,6 @@ interface PropsSearchBarAddGroup {
 }
 
 const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
-
 	const [channelVisibilitySelected, setChannelVisibilitySelected] = useState("public")
 	const [channelNameEntered, setChannelNameEntered] = useState("")
 	const [passwordEntered, setPasswordEntered] = useState("")
@@ -90,7 +90,6 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 				props.createChannelButtonState &&
 				<>
 					{
-						//isNextPageSelected &&
 						<>
 							<div className='channelCreationSettings'>
 								<PrintChannelCreationSettings setChannelVisibilitySelected={setChannelVisibilitySelected} setChannelNameEntered={setChannelNameEntered} passwordEntered={passwordEntered} setPasswordEntered={setPasswordEntered} />

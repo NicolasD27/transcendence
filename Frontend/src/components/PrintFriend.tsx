@@ -6,20 +6,23 @@ import { FriendsFormat } from '../App'
 import { chatStateFormat } from '../App';
 import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
+import './PrintFriend.css'
 
 interface PropsPrintFriend {
 	idMe : number;
 	socket : any;
 	user :  PropsStateUsers;
+	friendshipId : number;
 	statusIcon : string;
 	isFriend: boolean;
 	received : boolean;
 	sent : boolean;
 	sendFriendshipRequest : Function;
-	friendshipInfo : FriendsFormat;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
+	matchId : number;
+	goToMatch : Function;
 	key : number;
 }
 
@@ -33,17 +36,41 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 	const [ friendDeleteColumnState, setFriendDeleteColumnState ] = useState(false)
 	const [ isBlocked, setIsBlocked ]= useState(false)
 	const [ myInfo, setMyInfo ] = useState<MyInfo>({username : "", pseudo : ""})
+	const [ friendshipStatus, setFriendshipStatus ] = useState(0)
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		if(props.idMe)
 		{
 			axios
-				.get(`http://localhost:8000/api/users/${props.idMe}`, {withCredentials: true})
+				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${props.idMe}`, {withCredentials: true})
 				.then((resp) => setMyInfo({
 					username : resp.data.username,
 					pseudo : resp.data.pseudo
 				}))
+				.catch((err) => console.log(err))
+		}
+	}, [props.idMe])
+
+	useEffect(() => {
+		if(props.idMe)
+		{
+			axios
+				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, {withCredentials: true})
+				.then((resp) => 
+					{
+						const friends = resp.data
+						for(let i = 0; i < friends.length; i++)
+						{
+							if (friends[i].id === props.friendshipId)
+							{
+								setFriendshipStatus(friends[i].status)
+								console.log('STATUS:',friends[i].status )
+								return ;
+							}
+						}
+					}
+				)
 				.catch((err) => console.log(err))
 		}
 	}, [props.idMe])
@@ -61,7 +88,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 
 	const deleteFriend = () => {
 		axios
-			.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipInfo.friendshipId}`, { withCredentials: true })
+			.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { withCredentials: true })
 			.then(() => {
 				props.setIsFriendshipButtonClicked(true)
 			})
@@ -85,10 +112,10 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 				</div>
 				{
 					(props.isFriend &&
-						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit}/>)
+						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch}/>)
 					||
 					(props.isFriend &&
-						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
+						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
 					||
 					(props.received &&
 					

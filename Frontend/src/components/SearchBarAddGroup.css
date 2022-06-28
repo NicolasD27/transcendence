@@ -1,0 +1,91 @@
+.searchAndAdd {
+	display: flex;
+	margin: 0px 18px 18px 18px;
+	height: 54px;
+	border: none;
+}
+
+#searchBar {
+	display: flex;
+	justify-content: space-between;
+	border: 3px solid #3772FF;
+	border-radius: 20px;
+	margin-right: 16px;
+	flex-grow: 1;
+}
+
+#searchIcon {
+	width: 28px;
+	margin-left: 20px;
+	margin-right: 10px;
+	margin-top: 0px;
+}
+
+#addGroup {
+	border: 3px solid #3772FF;
+	width: 54px;
+	height: 54px;
+	border-radius: 100%;
+	background-image: url('../asset/addGroupIcon_blue.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#addGroup:hover {
+	border-color: #E11515;
+	background-image: url('../asset/AddGroupIcon_red.svg');
+	background-repeat: no-repeat;
+	background-position: 50%;
+}
+
+#searchFriend {
+	width: 100%;
+	margin-right: 17px;
+	color: #3772FF;
+	font-size: 22px;
+}
+
+.channelCreationSettings {
+	height: 100%;
+	margin-top: 10%;
+	margin-right: 4.25%;
+	margin-left: 4.25%;
+}
+
+#checkbox_firstChannelButton {
+	min-height: 48px;
+	margin: 90px 18px 3px 18px;
+	border: 2px solid #3772FF;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #3772FF;
+}
+
+#checkbox_firstChannelButton:hover {
+	border: 2px solid #E11515;
+	cursor: pointer;
+}
+
+#checkbox_firstChannelButton:active {
+	background-color: #E11515;
+}
+
+#checkbox_secondChannelButton {
+	min-height: 48px;
+	margin: 3px 18px 10px 18px;
+	border: 2px solid #3772FF;
+	border-radius: 20px;
+	font-size: 14px;
+	font-weight: normal;
+	color: #3772FF;
+}
+
+#checkbox_secondChannelButton:hover {
+	border: 2px solid #E11515;
+	cursor: pointer;
+}
+
+#checkbox_secondChannelButton:active {
+	background-color: #E11515;
+}

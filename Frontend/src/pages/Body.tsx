@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import Match from '../components/Match'
 import Chat from '../components/Chat'
+import './Body.css'
 import { chatStateFormat } from '../App'
 import { useSearchParams } from 'react-router-dom';
 import { FriendsFormat } from '../App'
@@ -24,9 +25,10 @@ const Body: React.FC<PropsBody> = (props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	return (
-		<section id="gameAndChatSection">
-			<div className='gameArea' id='gameArea'></div>
+		<section className="gameAndChatSection">
+			<div className='gameArea' id='gameArea'>
 			{<Match socket={props.socket} idMatch={searchParams.get('id')}/>}
+			</div>
 			<Chat idMe={props.idMe} socket={props.socket} friends={props.friends} setFriends={props.setFriends} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friendRequestsSent={props.friendRequestsSent} setFriendRequestsSent={props.setFriendRequestsSent} friendRequestsReceived={props.friendRequestsReceived} setFriendRequestsReceived={props.setFriendRequestsReceived}/>
 		</section>
 	)

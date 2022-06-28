@@ -2,6 +2,7 @@ import React, { useState, Dispatch, SetStateAction} from 'react';
 import axios from 'axios';
 import {PropsStateChannel} from './ChatSectionUsers'
 import { chatStateFormat } from '../App'
+import './PrintChannels.css'
 
 
 interface PropsPrintChannelsToJoin {
@@ -37,14 +38,14 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
 
 	return (
 		<div className='channel'>
-			<div id='channelAvatarIcon'></div>
 			{
                 props.isMember &&
                 <>
-                    <div id="channelName">{props.channel.name}</div>
-                    <div id="channel_buttons">
-                        <button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
+                    <div className='flex-v-centered'>
+			            <div id='channelAvatar'></div>
+                        <div id="channelName">{props.channel.name}</div>
                     </div>
+                    <button id="channelChat_button" onClick={() => props.setChatParamsState({'chatState' : !props.chatParamsState.chatState, 'id' : props.channel.id , 'chatName' : props.channel.name , type : 'channel'})}/>
                 </>
             }
             {
@@ -53,7 +54,10 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
                     (
                         !isButtonClicked &&
                             <>
-                                <div id="channelName">{props.channel.name}</div>
+                                <div className='flex-v-centered'>
+                                    <div id='channelAvatar'></div>
+                                    <div id="channelName">{props.channel.name}</div>
+                                </div>
                                 <button id="channelSendRequest_buttons" onClick={handleClick}/>
                             </>
                     ) ||

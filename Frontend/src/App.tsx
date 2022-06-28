@@ -37,6 +37,7 @@ export interface chatStateFormat {
 
 export interface FriendsFormat {
   friendshipId: number;
+  friendshipStatus: number;
   id: number;
   username: string;
   pseudo: string;

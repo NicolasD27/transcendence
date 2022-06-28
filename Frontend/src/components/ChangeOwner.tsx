@@ -26,7 +26,7 @@ const ChangeOwner: React.FC<Props> = (props) => {
 	useEffect(() => {
 		if (!props.activePass)
 			setPasswordValue("string")
-	}, []);
+	}, [props.activePass]);
 
 	const checkSelectionStatus = (user: any) => {
 		if (selectedUsers !== undefined) {
@@ -51,8 +51,8 @@ const ChangeOwner: React.FC<Props> = (props) => {
 			if (!targetmoderator)
 				axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/moderators/${selectedUsers.id}`, {}, { withCredentials: true })
 					.then(res => { })
-			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { userId: selectedUsers.id, password: passwordValue }, { withCredentials: true })
-				.then(res => { })
+				axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { userId: selectedUsers.id, password: passwordValue }, { withCredentials: true })
+					.then(res => { })
 		}
 		props.setOptionSelected(false)
 		props.setShowConv(true)
