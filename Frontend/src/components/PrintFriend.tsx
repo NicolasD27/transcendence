@@ -8,6 +8,13 @@ import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 import './PrintFriend.css'
 
+export enum FriendshipStatus {
+    PENDING,
+    ACTIVE,
+    BLOCKED_BY_FOLLOWER,
+    BLOCKED_BY_FOLLOWING
+}
+
 interface PropsPrintFriend {
 	idMe : number;
 	socket : any;
@@ -65,7 +72,6 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 							if (friends[i].id === props.friendshipId)
 							{
 								setFriendshipStatus(friends[i].status)
-								console.log('STATUS:',friends[i].status )
 								return ;
 							}
 						}

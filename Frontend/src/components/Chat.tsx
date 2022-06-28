@@ -44,7 +44,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 								username: friendship.follower.username,
 								pseudo: friendship.follower.pseudo,
 								avatarId: friendship.follower.avatarId,
-								status: friendship.follower.status
+								status: friendship.follower.status,
 							}
 						}
 						else {
@@ -55,7 +55,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 								username: friendship.following.username,
 								pseudo: friendship.following.pseudo,
 								avatarId: friendship.following.avatarId,
-								status: friendship.following.status
+								status: friendship.following.status,
 							}
 						}
 						if (friendship.status > 0) {
@@ -88,7 +88,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 									username : friendship.follower.username ,
 									pseudo : friendship.follower.pseudo ,
 									avatarId : friendship.follower.avatarId ,
-									status : friendship.follower.status
+									status : friendship.follower.status,
 								}
 							}
 							else {
@@ -99,7 +99,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 									username : friendship.following.username ,
 									pseudo : friendship.following.pseudo ,
 									avatarId : friendship.following.avatarId ,
-									status : friendship.following.status
+									status : friendship.following.status,
 								}
 							}
 							if (friendship.status === 1) {

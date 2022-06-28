@@ -84,13 +84,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 				return friends[i].friendshipId
 		}
 	}
-	/*const catchFriendshipStatus = (id:number) => {
-		for(let i = 0; i < friends.length; i++ )
-		{
-			if (friends[i].id === id)
-				return setFriendshipStatus(friends[i].friendshipStatus)
-		}
-	}*/
+
 
 	const isThereAFriendshipRequestSent = (id:number) => {
 		for (let i = 0; i < friendRequestsSent.length; i++)
@@ -113,16 +107,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	var isFriend = false;
 	var received = false;
 	var sent = false;
-	/*var friendshipId = 0;
-	var friendshipInfo = {
-		friendshipId : friendshipId,
-		friendshipStatus: friendshipStatus,
-		id : 0,
-		username : "",
-		pseudo : "",
-		avatarId : "",
-		status : 0
-	}*/
+
 
 	return (
 			<div className='usersList'>
