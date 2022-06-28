@@ -84,7 +84,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
-	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
+	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe && props.socket)
 	{
@@ -166,7 +166,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 	return (
 		<>
 			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers} recupList={recupList}/>}
-			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} />}
+			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} setRecupList={setRecupList} />}
 		</>
 	)
 }
