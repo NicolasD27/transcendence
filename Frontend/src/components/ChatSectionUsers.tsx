@@ -15,10 +15,9 @@ interface PropsSectionUsers {
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 	friends : FriendsFormat[];
-	friendRequestsSent : number[];
-	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
-	friendRequestsReceived : FriendsFormat[];
-	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
+	friendRequests : number[];
+	setFriendRequests : Dispatch<SetStateAction<number[]>>;
+	blockedByUsers : number[];
 }
 
 export interface  PropsStateUsers {
@@ -94,7 +93,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
             .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/active?limit=0&offset=0`, { withCredentials: true })
             .then(res => {
 				setMatchs([])
-                console.log('DATA: ', res.data)
                 res.data.forEach((match) => {
 					if (match.status === 2)
 					{
@@ -145,10 +143,8 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							setJoiningChannel={setJoiningChannel}
 							searchUsers={searchUsers}
 							friends={props.friends}
-							friendRequestsSent={props.friendRequestsSent}
-							setFriendRequestsSent={props.setFriendRequestsSent}
-							friendRequestsReceived={props.friendRequestsReceived}
-							setFriendRequestsReceived={props.setFriendRequestsReceived}
+							friendRequests={props.friendRequests}
+							setFriendRequests={props.setFriendRequests}
 							searchValue={searchValue}
 							setSearchValue={setSearchValue}
 							setChatParamsState={props.setChatParamsState}
@@ -156,6 +152,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
 							matchs={matchs}
 							goToMatch={goToMatch}
+							blockedByUsers={props.blockedByUsers}
 						/>
 					}
 				</>
