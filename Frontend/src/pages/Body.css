@@ -37,4 +37,8 @@
 		margin: 0 auto;
 		margin-bottom: 26px;
 	}
+	
+	.p5Canvas {
+		border-radius: 25px;
+	}
 }
