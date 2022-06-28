@@ -72,6 +72,12 @@ export class UserService {
 	}
 
 	async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
+
+		let ext: string = filename.split('.').pop();
+		if (!ext || (ext !== "png" && ext !== "jpg" && ext !== "jpeg"))
+			throw new UnauthorizedException("You need to send a png|jpg|jpeg file");
+		if (imageBuffer.length >= 1000000)	// ? 1mo
+			throw new UnauthorizedException("The image is too heavy");
 		const user = await this.findByUsername(username);
 		const queryRunner = this.connection.createQueryRunner();
 
