@@ -15,6 +15,7 @@ interface Props {
 	socket: any;
 	id: number;
 	activePass: boolean;
+	activePrivate: boolean;
 	users: userFormat[];
 	moderators: userFormat[];
 	userRestricted: restrictedFormat[];
@@ -70,7 +71,7 @@ const OptionAdmin: React.FC<Props> = (props) => {
 	return (
 		<Fragment>
 			{optionSelected === false && <div className="optionArea">
-				{props.adminLevel === 1 && props.activePass === false && <button className="option" onClick={() => changeStep(1)}>Add password</button>}
+				{props.adminLevel === 1 && props.activePass === false && props.activePrivate === false && <button className="option" onClick={() => changeStep(1)}>Add password</button>}
 				{props.adminLevel === 1 && props.activePass === true && <button className="option" onClick={() => changeStep(2)}>Remove password</button>}
 				{props.adminLevel === 1 && props.activePass === true && <button className="option" onClick={() => changeStep(3)}>Change password</button>}
 				{props.adminLevel === 1 && <button className="option" onClick={() => changeStep(4)}>Add admin</button>}
