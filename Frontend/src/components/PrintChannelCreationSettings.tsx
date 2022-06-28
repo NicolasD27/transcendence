@@ -10,12 +10,10 @@ interface propsPrintChannelCreationSettings {
 
 const PrintChannelCreationSettings : React.FC<propsPrintChannelCreationSettings> = (props) => {
 	const [ isProtectedCLicked, setIsProtectedClicked ] = useState(false)
-	const [ passwordNotSecure, setPasswordNotSecure ] = useState("")
+	const [ passwordNotSecure ] = useState("")
 
 	const handlePasswordEntered = (e: React.KeyboardEvent<HTMLInputElement> | any) => {
 		props.setPasswordEntered(e.target.value)
-		/*if (props.passwordEntered.length < 1 || props.passwordEntered.length >= 32)
-			setPasswordNotSecure("Password must contain between 1 and 31 characters")*/
 	}
 
 	const handleChannelNameEntered = (e: React.KeyboardEvent<HTMLInputElement> | any) => {
@@ -37,12 +35,12 @@ const PrintChannelCreationSettings : React.FC<propsPrintChannelCreationSettings>
 					<input type='radio' name="modeChannel" id="isProtectedChannel" onChange={() => { props.setChannelVisibilitySelected("protected"); setIsProtectedClicked(true)}}/>
 					<label htmlFor="isProtectedChannel"></label>Protected
 					{
-						isProtectedCLicked && 
+						isProtectedCLicked &&
 						<div className='createChannelPassword'>
 							<input type="password" name="password" placeholder='Password' onChange={handlePasswordEntered} required/>
 						</div>
 					}
-					{	
+					{
 						passwordNotSecure !== "" &&
 						<div className="errorPassword"> {passwordNotSecure} </div>
 					}
