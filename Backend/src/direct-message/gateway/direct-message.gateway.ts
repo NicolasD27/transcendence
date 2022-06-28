@@ -44,7 +44,7 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 			//console.log(message)
 		}
 		else
-			//console.log("failed to send msg...")
+			console.log("failed to send msg...")
 	}
 
 	

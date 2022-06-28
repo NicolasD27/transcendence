@@ -129,7 +129,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				}
 			}
 			else
-				//console.log(`${banUserFromChannelDto.userId} is not active`);
+				console.log(`${banUserFromChannelDto.userId} is not active`);
 		}
 		catch (e) {
 			//console.log(e.message);
@@ -166,7 +166,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				);
 			}
 			else
-				//console.log(`${banUserFromChannelDto.userId} is not active`);
+				console.log(`${banUserFromChannelDto.userId} is not active`);
 		}
 		catch(e)
 		{
@@ -204,7 +204,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				);
 			}
 			else
-				//console.log(`${data.userId} is not active`);
+				console.log(`${data.userId} is not active`);
 		}
 		catch(e)
 		{
@@ -228,7 +228,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					.emit('new_channel_invite_received', newInviteDto);
 			}
 			else
-				//console.log(`${newInviteDto.receiver.id} in not active`);
+				console.log(`${newInviteDto.receiver.id} in not active`);
 		}
 		catch (e)
 		{
