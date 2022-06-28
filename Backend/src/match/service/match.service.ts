@@ -146,7 +146,16 @@ export class MatchService {
 				status: MatchStatus.MATCH_MAKING
 			}
 		)
-		if (match && match.user1.id != user.id) {
+		if (match && match.user1.id == user.id)
+		{
+			this.destroyMatch(username, match.id.toString())
+			return this.matchsRepository.save({
+				user1: user,
+				mode: mode,
+				status: MatchStatus.MATCH_MAKING
+			})
+		}
+		else if (match)  {
 			match.status = MatchStatus.ACTIVE
 			match.user2 = user;
 			return this.matchsRepository.save(match)

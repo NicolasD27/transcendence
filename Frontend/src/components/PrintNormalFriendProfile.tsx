@@ -2,7 +2,6 @@ import React, { Dispatch, SetStateAction} from 'react';
 import { chatStateFormat } from '../App';
 import { PropsStateUsers } from './ChatSectionUsers'
 import './PrintNormalFriendProfile.css'
-import { FriendsFormat } from '../App'
 
 interface PropsPrintNormalFriendProfile {
 	user : PropsStateUsers;
@@ -20,7 +19,7 @@ interface PropsPrintNormalFriendProfile {
 }
 
 const PrintNormalFriendProfile : React.FC<PropsPrintNormalFriendProfile> = (props) => {
-	
+
 	return (
 		<>
 			<div id='friend_buttons'>

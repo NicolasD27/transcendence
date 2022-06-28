@@ -1,4 +1,4 @@
-import { useState, useEffect, Dispatch, SetStateAction} from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import NotificationList from '../components/NotificationList';
 import './MainPage.css'
@@ -11,6 +11,7 @@ import { FriendsFormat } from '../App';
 const MainPage = ({socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers}: {socket: any, friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[]}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
+	const [inPlay, setInPlay] = useState(false)
 
 	useEffect(() => {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -19,12 +20,12 @@ const MainPage = ({socket, friends, setFriends, isFriendshipButtonClicked, setIs
 				setIdMe(id_tmp.id)
 			})
 		setGetIDMe(getIDMe => true)
-	} , [])
+	}, [])
 
 	return (
 		<div id='bloc'>
 			<Header idMe={idMe} />
-			<Body idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers}/>
+			<Body idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} setInPlay={setInPlay}/>
 			{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>
 	);

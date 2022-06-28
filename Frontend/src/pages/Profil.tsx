@@ -63,7 +63,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		setGetMatch(true);
 	}, [getmatch, id])
 
-	
+
 
 	if (getIDMe === false) {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -75,9 +75,8 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		setGetIDMe(getIDMe => true)
 	}
 
-	const isFriend = (id : number) => {
-		for(let i = 0; i < friends.length; i++ )
-		{
+	const isFriend = (id: number) => {
+		for (let i = 0; i < friends.length; i++) {
 			if (friends[i].id === id)
 				return true;
 		}
@@ -111,7 +110,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	return (
 		<Fragment>
 			<div id='bloc'>
-				<Header idMe={idMe} />
+				<Header idMe={idMe} inPlay={false} />
 				<section className="gameAndChatSection">
 					<div className='boxProfil' id='gameArea'>
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}

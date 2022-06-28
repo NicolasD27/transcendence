@@ -18,7 +18,7 @@ interface PropsPrintUnfriendBlockProfile {
 }
 
 const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (props) => {
-	
+
 	const handleClick = () => {
 		if (!props.isBlocked){
 			axios

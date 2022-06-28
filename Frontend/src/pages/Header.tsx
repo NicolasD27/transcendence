@@ -10,6 +10,7 @@ import './Header.css'
 
 interface PropsHeader {
 	idMe: number;
+	inPlay: boolean
 }
 
 const Header: React.FC<PropsHeader> = (props) => {
@@ -19,7 +20,7 @@ const Header: React.FC<PropsHeader> = (props) => {
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
-		window.location.reload()
+		//window.location.reload()
 	}
 
 	const onLogout = () => {
@@ -29,23 +30,23 @@ const Header: React.FC<PropsHeader> = (props) => {
 		navigate("/")
 	}
 
-	const goToMainPage = () => { 
+	const goToMainPage = () => {
 		navigate("/mainpage")
-		window.location.reload()
+		//window.location.reload()
 	}
 
 	return (
-			<div className='boxNav'>
-				<div>
+		<div className='boxNav'>
+			<div>
 
-					<img src={mainTitle} className='titleNav' alt="mainTitle" onClick={goToMainPage} />
-				</div>
-				<div className='header-right'>
-					<img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />
-					<img onClick={() => onLogout()} src={logoutIcon} className='logoutIcon' alt="logoutIcon" />
-				</div>
-			</div >
-		)
+				<img src={mainTitle} className='titleNav' alt="mainTitle" onClick={goToMainPage} />
+			</div>
+			<div className='header-right'>
+				{props.inPlay === false && <img onClick={() => onProfil(idMe.toString())} src={profileIcon} className='profileIcon' alt="profileIcon" />}
+				<img onClick={() => onLogout()} src={logoutIcon} className='logoutIcon' alt="logoutIcon" />
+			</div>
+		</div >
+	)
 }
 
 export default Header;

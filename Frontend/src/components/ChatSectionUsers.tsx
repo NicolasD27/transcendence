@@ -116,7 +116,6 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 
 	const goToMatch = (id: number) => {
         navigate("/mainpage?id=" + id)
-        window.location.reload()
     }
 
 	return (
@@ -129,12 +128,12 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 						<button onClick={() => setChatGameState(false)} className="switchButton">Ongoing Match</button>
 					</div>
 			}
-			{ 
+			{
 			 	chatGamesState &&
 				<>
 					<SearchBarAddGroup idMe={props.idMe} setSearchValue={setSearchValue} friends={props.friends} createChannelButtonState={createChannelButtonState} setCreateChannelButtonState={setCreateChannelButtonState} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} printSearchBar={printSearchBar} setPrintSearchBar={setPrintSearchBar}/>
 					{
-						!createChannelButtonState && 
+						!createChannelButtonState &&
 						<UserList
 							socket = {props.socket}
 							idMe={props.idMe}

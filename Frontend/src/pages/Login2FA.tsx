@@ -10,7 +10,7 @@ import mainTitle from '../asset/Pong-Legacy.svg'
 
 const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> }) => {
 	const [code, setCode] = React.useState("");
-	
+
 	const navigate = useNavigate()
 
 
@@ -24,7 +24,6 @@ const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> 
 			.then(res => {
 				setIsAuth(true)
 				navigate("/mainpage")
-				window.location.reload()
 			})
 			.catch(err => {
 				const input = document.getElementById("input");
@@ -39,7 +38,7 @@ const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> 
 			})
 	}
 
-	
+
 
 	const handleKeyPress = (event: any) => {
 		if (event.key === 'Enter') {
@@ -53,7 +52,7 @@ const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> 
 		<div className="login-wrapper">
 			<div >
 				<img src={mainTitle} className='mainTitle' alt="mainTitle" />
-				
+
 				<div id="login-container">
 					<h3>Enter code from Google Authenticator</h3>
 					<input autoComplete='off' type="text" id="input" onChange={handleChange} value={code} placeholder="______" onKeyDown={handleKeyPress} />

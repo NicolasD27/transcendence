@@ -82,7 +82,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
-	}, [props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked])
+	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe && props.socket)
 	{
@@ -96,7 +96,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 							let friends_tmp : FriendsFormat;
 							if (friendship.following.id === props.idMe)
 							{
-								friends_tmp = { 
+								friends_tmp = {
 									friendshipId : friendship.id,
 									friendshipStatus: friendship.status,
 									id : friendship.follower.id ,
@@ -107,7 +107,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 								}
 							}
 							else {
-								friends_tmp = { 
+								friends_tmp = {
 									friendshipId : friendship.id,
 									friendshipStatus: friendship.status,
 									id : friendship.following.id ,
@@ -126,7 +126,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 				})
 			})
 
-			props.socket.on('notifyFriendRequest', data => { 
+			props.socket.on('notifyFriendRequest', data => {
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then(res => {
