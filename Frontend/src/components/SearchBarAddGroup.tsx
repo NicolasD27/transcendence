@@ -44,7 +44,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 
 		if (channelVisibilitySelected === "protected")
 			axios
-				.post(`http://localhost:8000/api/channels`, {
+				.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels`, {
 					"name": channelNameEntered,
 					"isPrivate": tmpPrivate,
 					"isProtected": tmpProtected,
@@ -60,10 +60,10 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 						}, 300);
 					}*/
 				})
-				.catch((err) => //console.log(err.data))
+				.catch((err) => console.log(err.data))
 		else
 			axios
-				.post(`http://localhost:8000/api/channels`, {
+				.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels`, {
 					"name": channelNameEntered,
 					"isPrivate": tmpPrivate,
 					"isProtected": tmpProtected
@@ -71,7 +71,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 				.then((response) => {
 					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
 				})
-				.catch((err) => //console.log(err.data))
+				.catch((err) => console.log(err.data))
 	}
 
 	return (

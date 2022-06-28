@@ -62,7 +62,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
-	let usersBlocked: boolean[] = []
+	const [ usersBlocked, setUsersBlocked ] = React.useState<boolean[]>([]);
 
 	const newMessageChannel = (message: any) => {
 		let singleMessage: messagesFormat;
@@ -114,7 +114,7 @@ const Conversation: React.FC<Props> = (props) => {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => {
 				const tmpUsersBlocked = res.data
-				tmpUsersBlocked.forEach(element => { usersBlocked.push(element.id) });
+				tmpUsersBlocked.forEach(element => setUsersBlocked([...usersBlocked, element.id]))
 			})
 		setTimeout(() => { }, 500)
 		if (props.type === "channel") {
@@ -185,7 +185,7 @@ const Conversation: React.FC<Props> = (props) => {
 				})
 		}
 
-	}, [showConv, status, props.id, props.idMe, props.type]);//Recuperer les infos du channels
+	}, [props, showConv, status, props.id, props.idMe, props.type, usersBlocked]);//Recuperer les infos du channels
 
 	useEffect(() => {
 		if (props.id > 0 && props.type) {

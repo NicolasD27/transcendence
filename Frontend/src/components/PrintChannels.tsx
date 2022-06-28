@@ -24,9 +24,9 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
 
 	const sendPassword = (e: React.KeyboardEvent<HTMLInputElement> | any) => {
 		axios
-			.post(`http://localhost:8000/api/channels/${props.channel.id}/join`, {"password" : enteredPassword}, { withCredentials: true })
+			.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.channel.id}/join`, {"password" : enteredPassword}, { withCredentials: true })
 			.then(() => props.setJoiningChannel(true))
-			.catch((error) => //console.log(error.data))
+			.catch((error) => console.log(error.data))
 	}
 
 	const handleClick = () => {

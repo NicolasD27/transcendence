@@ -66,7 +66,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users?search=${searchValue}`, {withCredentials: true})
 				.then ((response) => setSearchUsers(response.data))
-				.catch((error) => //console.log(error))
+				.catch((error) => console.log(error))
 		}
 	}, [searchValue])
 
@@ -85,7 +85,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				setExistingChannels(channel)
 			})
 			.catch (err =>
-				//console.log(err)
+				console.log(err)
 			)
 	}, [searchValue])
 

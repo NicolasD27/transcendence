@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction} from 'react';
 import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
-import { FriendsFormat } from '../App'
 import { FriendshipStatus } from './PrintFriend'
 import axios from 'axios';
 
