@@ -19,10 +19,8 @@ interface  PropsUserList {
 	setJoiningChannel: Dispatch<SetStateAction<boolean>>;
 	searchUsers : PropsStateUsers[];
 	friends: FriendsFormat[];
-	friendRequestsSent : number[];
-	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
-	friendRequestsReceived : FriendsFormat[];
-	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
+	friendRequests : number[];
+	setFriendRequests : Dispatch<SetStateAction<number[]>>;
 	searchValue: string;
 	setSearchValue : Dispatch<SetStateAction<string>>;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
@@ -39,8 +37,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friends = props.friends;
 	const searchValue = props.searchValue;
 	const searchUsers = props.searchUsers;
-	const friendRequestsReceived = props.friendRequestsReceived;
-	const friendRequestsSent = props.friendRequestsSent;
+	const friendRequests = props.friendRequests;
 
 	const isAlreadyFriend = (id:number) => {
 		for(let i = 0; i < friends.length; i++ )
@@ -64,18 +61,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		if (props.socket)
 		{
 			props.socket.emit('sendFriendRequest', {user_id: user.id})
-			props.setFriendRequestsSent(friendRequestsSent => [...friendRequestsSent, user.id])
+			props.setFriendRequests(friendRequests => [...friendRequests, user.id])
 		}
-	}
-
-	const isThereAFriendshipRequestReceived = (id:number) => {
-
-		for(let i = 0; i < friendRequestsReceived.length; i++ )
-		{
-			if (friendRequestsReceived[i].id === id)
-				return true
-		}
-		return false
 	}
 
 	const catchFriendshipId = (id:number) => {
@@ -86,11 +73,10 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		}
 	}
 
-
-	const isThereAFriendshipRequestSent = (id:number) => {
-		for (let i = 0; i < friendRequestsSent.length; i++)
+	const isThereAFriendshipRequest = (id:number) => {
+		for (let i = 0; i < friendRequests.length; i++)
 		{
-			if (friendRequestsSent[i] === id)
+			if (friendRequests[i] === id)
 				return true
 		}
 		return false;
@@ -115,8 +101,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	}
 
 	var isFriend = false;
-	var received = false;
-	var sent = false;
+	var pendingRequest = false;
 
 	return (
 			<div className='usersList'>
@@ -154,12 +139,9 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							let blockedByFriend = checkIfBlockedByFriend(user_.id)
 							if (Boolean(isAlreadyFriend(user_.id)) === true)
 								isFriend = true;
-							else if (Boolean(isThereAFriendshipRequestReceived(user_.id)) === true)
-								received = true;
-							else if (Boolean(isThereAFriendshipRequestSent(user_.id)) === true)
-								sent = true;
-							
-							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} statusIcon={statusIcon} isFriend={isFriend} received={received} sent={sent} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
+							else if (Boolean(isThereAFriendshipRequest(user_.id)) === true)
+								pendingRequest = true;
+							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} statusIcon={statusIcon} isFriend={isFriend} pendingRequest={pendingRequest} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
 						})
 				}
 				{
@@ -187,7 +169,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 									statusIcon = statusIconBlue
 								let matchId = catchUserMatch(friend.username)
 								let blockedByFriend = checkIfBlockedByFriend(friend.id)
-								return <PrintFriend idMe={props.idMe} socket={props.socket} user={friend} friendshipId={friend.friendshipId} statusIcon={statusIcon} isFriend={true} received={false} sent={false} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={friend.id} />
+								return <PrintFriend idMe={props.idMe} socket={props.socket} user={friend} friendshipId={friend.friendshipId} statusIcon={statusIcon} isFriend={true} pendingRequest={false} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={friend.id} />
 							})
 				}
 			</div>

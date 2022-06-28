@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction} from 'react';
 import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
 import { FriendsFormat } from '../App'
+import { FriendshipStatus } from './PrintFriend'
 import axios from 'axios';
 
 interface PropsPrintUnfriendBlockProfile {
@@ -19,25 +20,19 @@ interface PropsPrintUnfriendBlockProfile {
 const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (props) => {
 	
 	const handleClick = () => {
-		
-		
-		let stat = props.friendshipStatus === 1 ? 2 : 1; 
-		console.log("stat:", stat)
 		if (!props.isBlocked){
 			axios
 			.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}/block`, { } ,{ withCredentials: true })
 			.then(res => {
-				console.log('res:', res)
 				props.setFriendshipStatus(res.data.status)
 				props.setIsBlocked(!props.isBlocked)
 			})
 			.catch((err) => console.log(err))
 		}
-		else{
+		else {
 			axios
-			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status : 1 } ,{ withCredentials: true })
+			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status : FriendshipStatus.ACTIVE } ,{ withCredentials: true })
 			.then(res => {
-				console.log('res:', res)
 				props.setFriendshipStatus(res.data.status)
 				props.setIsBlocked(!props.isBlocked)
 			})

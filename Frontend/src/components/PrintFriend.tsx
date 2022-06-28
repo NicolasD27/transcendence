@@ -22,8 +22,7 @@ interface PropsPrintFriend {
 	friendshipId : number;
 	statusIcon : string;
 	isFriend: boolean;
-	received : boolean;
-	sent : boolean;
+	pendingRequest : boolean;
 	sendFriendshipRequest : Function;
 	blockedByFriend : boolean;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
@@ -124,19 +123,19 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 					(props.isFriend &&
 						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked} blockedByFriend={props.blockedByFriend}/>)
 					||
-					(props.received &&
+					(props.pendingRequest &&
 					
 						<div id='friendRequest_buttons'>
 							<p>Pending ...</p>
 						</div>
 					) 
-					||
+					/*||
 					(props.sent && 
 					
 						<div id='invitation_sent'>
 							<p>Invitation Sent</p>
 						</div>
-					) ||
+					)*/ ||
 					<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>
 				}
 			</div>

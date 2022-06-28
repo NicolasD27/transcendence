@@ -5,6 +5,13 @@ import Conversation from './Conversation';
 import { chatStateFormat } from '../App';
 import { FriendsFormat } from '../App';
 
+export enum FriendshipStatus {
+    PENDING,
+    ACTIVE,
+    BLOCKED_BY_FOLLOWER,
+    BLOCKED_BY_FOLLOWING
+}
+
 export interface PropsChat {
 	idMe: number;
 	socket: any;
@@ -14,10 +21,8 @@ export interface PropsChat {
 	setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>;
 	isFriendshipButtonClicked: boolean;
 	setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>;
-	friendRequestsSent : number[];
-	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
-	friendRequestsReceived : FriendsFormat[];
-	setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>>;
+	friendRequests : number[];
+	setFriendRequests : Dispatch<SetStateAction<number[]>>;
 	blockedByUsers : number[];
 }
 
@@ -59,16 +64,16 @@ const Chat: React.FC<PropsChat> = (props) => {
 								status: friendship.following.status,
 							}
 						}
-						if (friendship.status > 0) {
+						if (friendship.status === FriendshipStatus.ACTIVE) {
 							props.setFriends(friends => [...friends, friends_tmp])
-							let friendRequestsReceived_tmp = props.friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
-							props.setFriendRequestsReceived(friendRequestsReceived_tmp)
+							let friendRequests_tmp = props.friendRequests.filter((requestId) => requestId !== friends_tmp.id)
+							props.setFriendRequests(friendRequests_tmp)
 						}
 					})
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
-	}, [props.idMe, props.isFriendshipButtonClicked, props.friendRequestsReceived, idMe, setIsFriendshipButtonClicked])
+	}, [props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked])
 
 	if (props.idMe && props.socket)
 	{
@@ -105,8 +110,8 @@ const Chat: React.FC<PropsChat> = (props) => {
 							}
 							if (friendship.status === 1) {
 								props.setFriends(friends => [...friends, friends_tmp])
-								let friendRequestsSent_tmp = props.friendRequestsSent.filter((requestId) => requestId !== friends_tmp.id)
-								props.setFriendRequestsSent(friendRequestsSent_tmp)
+								let friendRequests_tmp = props.friendRequests.filter((requestId) => requestId !== friends_tmp.id)
+								props.setFriendRequests(friendRequests_tmp)
 							}
 					})
 				})
@@ -117,20 +122,16 @@ const Chat: React.FC<PropsChat> = (props) => {
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 				.then(res => {
 					let users = res.data;
-					props.setFriendRequestsReceived([])
+					props.setFriendRequests([])
 					users.forEach((friendship: any) => {
-						if (friendship.status === 0) {
-							let friends_tmp: FriendsFormat;
-							friends_tmp = {
-								friendshipId: friendship.id,
-								friendshipStatus: friendship.status,
-								id: friendship.follower.id,
-								username: friendship.follower.username,
-								pseudo: friendship.follower.pseudo,
-								avatarId: friendship.follower.avatarId,
-								status: friendship.follower.status
-							}
-							props.setFriendRequestsReceived(friendRequestsReceived => [...friendRequestsReceived, friends_tmp])
+						let userId : number;
+						if (friendship.status === FriendshipStatus.PENDING)
+						{
+							if (friendship.following.id === props.idMe)
+									userId = friendship.follower.id;
+							else
+								userId = friendship.following.id;
+							props.setFriendRequests(friendRequests => [...friendRequests, userId])
 						}
 					})
 				})
@@ -152,7 +153,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 
 	return (
 		<>
-			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequestsSent={props.friendRequestsSent} setFriendRequestsSent={props.setFriendRequestsSent} friendRequestsReceived={props.friendRequestsReceived} setFriendRequestsReceived={props.setFriendRequestsReceived} blockedByUsers={props.blockedByUsers}/>}
+			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers}/>}
 			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} />}
 		</>
 	)
