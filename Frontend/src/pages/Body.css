@@ -18,6 +18,10 @@
 	margin-right: 26px;
 }
 
+.p5Canvas {
+	border-radius: 25px;
+}
+
 @media only screen and (max-width: 1155px) {
 	.gameAndChatSection {
 		display: flex;
@@ -36,9 +40,5 @@
 		border: 4px solid transparent;
 		margin: 0 auto;
 		margin-bottom: 26px;
-	}
-
-	.p5Canvas {
-		border-radius: 25px;
 	}
 }
