@@ -39,6 +39,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 						if (friendship.following.id === props.idMe) {
 							friends_tmp = {
 								friendshipId: friendship.id,
+								friendshipStatus: friendship.status,
 								id: friendship.follower.id,
 								username: friendship.follower.username,
 								pseudo: friendship.follower.pseudo,
@@ -49,6 +50,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 						else {
 							friends_tmp = {
 								friendshipId: friendship.id,
+								friendshipStatus: friendship.status,
 								id: friendship.following.id,
 								username: friendship.following.username,
 								pseudo: friendship.following.pseudo,
@@ -56,7 +58,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 								status: friendship.following.status
 							}
 						}
-						if (friendship.status === 1) {
+						if (friendship.status > 0) {
 							props.setFriends(friends => [...friends, friends_tmp])
 							let friendRequestsReceived_tmp = props.friendRequestsReceived.filter((request) => request.id !== friends_tmp.id)
 							props.setFriendRequestsReceived(friendRequestsReceived_tmp)
@@ -81,6 +83,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 							{
 								friends_tmp = { 
 									friendshipId : friendship.id,
+									friendshipStatus: friendship.status,
 									id : friendship.follower.id ,
 									username : friendship.follower.username ,
 									pseudo : friendship.follower.pseudo ,
@@ -91,6 +94,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 							else {
 								friends_tmp = { 
 									friendshipId : friendship.id,
+									friendshipStatus: friendship.status,
 									id : friendship.following.id ,
 									username : friendship.following.username ,
 									pseudo : friendship.following.pseudo ,
@@ -117,6 +121,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 						let friends_tmp: FriendsFormat;
 						friends_tmp = {
 							friendshipId: friendship.id,
+							friendshipStatus: friendship.status,
 							id: friendship.follower.id,
 							username: friendship.follower.username,
 							pseudo: friendship.follower.pseudo,

@@ -6,7 +6,9 @@ import axios from 'axios';
 
 interface PropsPrintUnfriendBlockProfile {
 	user:  PropsStateUsers;
-	friendshipInfo : FriendsFormat;
+	friendshipId : number;
+	friendshipStatus : number;
+	setFriendshipStatus : Dispatch<SetStateAction<number>>;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
 	deleteFriend : Function;
 	isBlocked : boolean;
@@ -17,10 +19,14 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 	
 	const handleClick = () => {
 		props.setIsBlocked(!props.isBlocked)
-		let stat = props.isBlocked == true ? 1 : 2;  
+		let stat = props.friendshipStatus === 1 ? 2 : 1; 
+		console.log("stat:", stat)
 		axios
-			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipInfo.friendshipId}`, { status : stat} ,{ withCredentials: true })
-			.then(res => { })
+			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status : stat } ,{ withCredentials: true })
+			.then(res => {
+				console.log('res:', res)
+				props.setFriendshipStatus(res.data.status)
+			})
 			.catch((err) => console.log(err))
 	} 
 
@@ -32,10 +38,10 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 				</button>
 				{
 						(!props.isBlocked &&
-						(<button id='block_buttons' onClick={handleClick}/*() => props.setIsBlocked(true)}*/>
+						(<button id='block_buttons' onClick={handleClick}>
 							Block
 						</button>)) ||
-						(<button id='unblock_buttons' onClick={handleClick}/*() => props.setIsBlocked(false)}*/>
+						(<button id='unblock_buttons' onClick={handleClick}>
 							Unblock
 						</button>)
 				}

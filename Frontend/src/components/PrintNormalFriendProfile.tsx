@@ -2,9 +2,12 @@ import React, { Dispatch, SetStateAction} from 'react';
 import { chatStateFormat } from '../App';
 import { PropsStateUsers } from './ChatSectionUsers'
 import './PrintNormalFriendProfile.css'
+import { FriendsFormat } from '../App'
 
 interface PropsPrintNormalFriendProfile {
 	user : PropsStateUsers;
+	friendshipId : number;
+	friendshipStatus : number;
 	setFriendDeleteColumnState : Dispatch<SetStateAction<boolean>>;
 	setChatParamsState :  Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
