@@ -15,7 +15,7 @@ import { FriendsFormat } from '../App';
 import Chat from '../components/Chat';
 import Header from './Header';
 
-const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequestsSent, setFriendRequestsSent, friendRequestsReceived, setFriendRequestsReceived }: { socket: any,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequestsSent : number[], setFriendRequestsSent : Dispatch<SetStateAction<number[]>>, friendRequestsReceived : FriendsFormat[], setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>> }) => {
+const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequestsSent, setFriendRequestsSent, friendRequestsReceived, setFriendRequestsReceived }: { socket: any, friends: FriendsFormat[], setFriends: Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequestsSent: number[], setFriendRequestsSent: Dispatch<SetStateAction<number[]>>, friendRequestsReceived: FriendsFormat[], setFriendRequestsReceived: Dispatch<SetStateAction<FriendsFormat[]>> }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -63,7 +63,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		setGetMatch(true);
 	}, [getmatch, id])
 
-	
+
 
 	if (getIDMe === false) {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
@@ -75,27 +75,24 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 		setGetIDMe(getIDMe => true)
 	}
 
-	const isFriend = (id : number) => {
-		for(let i = 0; i < friends.length; i++ )
-		{
+	const isFriend = (id: number) => {
+		for (let i = 0; i < friends.length; i++) {
 			if (friends[i].id === id)
 				return true;
 		}
 		return false;
 	}
 
-	const isThereAFriendshipRequestReceived = (id:number) => {
-		for(let i = 0; i < friendRequestsReceived.length; i++ )
-		{
+	const isThereAFriendshipRequestReceived = (id: number) => {
+		for (let i = 0; i < friendRequestsReceived.length; i++) {
 			if (friendRequestsReceived[i].id === id)
 				return true;
 		}
 		return false;
 	}
 
-	const isThereAFriendshipRequestSent = (id:number) => {
-		for (let i = 0; i < friendRequestsSent.length; i++)
-		{
+	const isThereAFriendshipRequestSent = (id: number) => {
+		for (let i = 0; i < friendRequestsSent.length; i++) {
 			if (friendRequestsSent[i] === id)
 				return true
 		}
@@ -103,14 +100,13 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	}
 
 	const sendFriendshipRequest = (user_id: number) => {
-		if (socket)
-		{
-			socket.emit('sendFriendRequest', {user_id: user_id})
+		if (socket) {
+			socket.emit('sendFriendRequest', { user_id: user_id })
 			setFriendRequestsSent(friendRequestsSent => [...friendRequestsSent, user_id])
 		}
 	}
 
-	const checkStatus = (id : number) => {
+	const checkStatus = (id: number) => {
 		if (isThereAFriendshipRequestReceived(id))
 			return (<p className='profileFriendRequestReceived'>Pending...</p>)
 		else if (isThereAFriendshipRequestSent(id))
@@ -122,7 +118,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	return (
 		<Fragment>
 			<div id='bloc'>
-				<Header idMe={idMe} />
+				<Header idMe={idMe} inPlay={false} />
 				<section className="gameAndChatSection">
 					<div className='boxProfil' id='gameArea'>
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
