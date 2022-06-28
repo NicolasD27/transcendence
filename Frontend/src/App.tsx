@@ -52,9 +52,8 @@ const App = () => {
   const [isFriendshipButtonClicked, setIsFriendshipButtonClicked] = useState<boolean>(true)
   const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
   const [friends, setFriends] = useState<FriendsFormat[]>([])
-  const [friendRequestsSent, setFriendRequestsSent] = useState<number[]>([])
-  const [friendRequestsReceived, setFriendRequestsReceived] = useState<FriendsFormat[]>([])
-
+  const [blockedByUsers, setBlockedByUsers] = useState<number[]>([])
+  const [friendRequests, setFriendRequests] = useState<number[]>([])
 
   useEffect(() => {
     if (!isAuth) {
@@ -91,6 +90,16 @@ const App = () => {
     }
   }, [socket])
 
+  useEffect(() => {
+    axios
+			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
+			.then((res) => {
+        res.data.forEach((user) => 
+          setBlockedByUsers([...blockedByUsers, user.id])
+        )
+      })
+			.catch((err) => console.log(err))
+  }, [])
   
   return (
     <Fragment>
@@ -99,8 +108,8 @@ const App = () => {
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth} />} />
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/mainpage" element={<MainPage socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} />} />
-          <Route path="/profil/:id" element={<Profil socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} />} />
+          <Route path="/mainpage" element={<MainPage socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers}/>} />
+          <Route path="/profil/:id" element={<Profil socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers}/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

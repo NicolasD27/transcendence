@@ -148,6 +148,13 @@ export class UserController {
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
+    @Get('blockers')
+    async getBlockersUsers(@GetUsername() username) {
+        return this.userService.getBlockersUsers(username);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: string): Promise<UserDto> {
         //console.log('findOneUser ', id);

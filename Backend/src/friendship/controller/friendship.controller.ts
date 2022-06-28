@@ -46,6 +46,13 @@ export class FriendshipController {
     }
 
     @UseGuards(TwoFactorGuard)
+    @Post(':id/block')
+    block(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
+        console.log("*****$hello")
+        return this.friendshipService.block(username, +id);
+    }
+
+    @UseGuards(TwoFactorGuard)
     @Patch(':id')
     update(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
         //console.log('updateFriendship', id);

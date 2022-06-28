@@ -7,6 +7,13 @@ import PrintNormalFriendProfile from './PrintNormalFriendProfile';
 import PrintUnfriendBlockProfile from './PrintUnfriendBlockProfile';
 import './PrintFriend.css'
 
+export enum FriendshipStatus {
+    PENDING,
+    ACTIVE,
+    BLOCKED_BY_FOLLOWER,
+    BLOCKED_BY_FOLLOWING
+}
+
 interface PropsPrintFriend {
 	idMe : number;
 	socket : any;
@@ -14,9 +21,9 @@ interface PropsPrintFriend {
 	friendshipId : number;
 	statusIcon : string;
 	isFriend: boolean;
-	received : boolean;
-	sent : boolean;
+	pendingRequest : boolean;
 	sendFriendshipRequest : Function;
+	blockedByFriend : boolean;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
@@ -64,7 +71,6 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 							if (friends[i].id === props.friendshipId)
 							{
 								setFriendshipStatus(friends[i].status)
-								//console.log('STATUS:',friends[i].status )
 								return ;
 							}
 						}
@@ -111,24 +117,18 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 				</div>
 				{
 					(props.isFriend &&
-						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch}/>)
+						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend}/>)
 					||
 					(props.isFriend &&
-						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
+						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked} blockedByFriend={props.blockedByFriend}/>)
 					||
-					(props.received &&
+					(props.pendingRequest &&
 
 						<div id='friendRequest_buttons'>
 							<p>Pending ...</p>
 						</div>
 					)
 					||
-					(props.sent &&
-
-						<div id='invitation_sent'>
-							<p>Invitation Sent</p>
-						</div>
-					) ||
 					<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>
 				}
 			</div>

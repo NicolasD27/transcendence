@@ -21,6 +21,7 @@ interface Props {
 	nameChat: string;
 	socket: any;
 	setChatState: Dispatch<SetStateAction<chatStateFormat>>;
+	setRecupList: Dispatch<SetStateAction<boolean>>;
 }
 
 interface messagesFormat {
@@ -109,6 +110,7 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	useEffect(() => {
+		props.setRecupList(false)
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => {
 				const tmpUsersBlocked = res.data
@@ -284,7 +286,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} activePrivate={activePrivate} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} activePrivate={activePrivate} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} setRecupList={props.setRecupList}/>}
 		</div>
 	);
 };
