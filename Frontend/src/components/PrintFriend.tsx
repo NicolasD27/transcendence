@@ -129,13 +129,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 							<p>Pending ...</p>
 						</div>
 					) 
-					/*||
-					(props.sent && 
-					
-						<div id='invitation_sent'>
-							<p>Invitation Sent</p>
-						</div>
-					)*/ ||
+					||
 					<button id="SendFriendRequest_buttons" onClick={() => props.sendFriendshipRequest(props.user)}/>
 				}
 			</div>
