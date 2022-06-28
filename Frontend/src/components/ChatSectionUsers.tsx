@@ -18,6 +18,7 @@ interface PropsSectionUsers {
 	friendRequests : number[];
 	setFriendRequests : Dispatch<SetStateAction<number[]>>;
 	blockedByUsers : number[];
+  recupList:boolean;
 }
 
 export interface  PropsStateUsers {
@@ -74,7 +75,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me/channels`, {withCredentials: true})
 			.then((response) => setJoinedChannels(response.data))
 			.catch((error) => console.log(error))
-	}, [joiningChannel])
+	}, [joiningChannel, props.recupList])
 
 	useEffect(() => {
 		axios

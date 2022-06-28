@@ -31,6 +31,8 @@ const Chat: React.FC<PropsChat> = (props) => {
 
 	const { idMe, setIsFriendshipButtonClicked } = props;
 
+	const [recupList, setRecupList] = useState(false)
+
 	useEffect(() => {
 		if (props.idMe && props.isFriendshipButtonClicked === true)
 		{
@@ -150,7 +152,8 @@ const Chat: React.FC<PropsChat> = (props) => {
 	const handleResize = () => {
 		const gameArea = document.getElementById("gameArea")
 		const chatArea = document.querySelector(".chatArea")
-		if (chatArea && gameArea) {
+		const  width = document.body.clientWidth
+		if (chatArea && gameArea && width > 1155) {
 			chatArea.setAttribute("style", `height:${gameArea.offsetHeight}px`);
 		}
 	}
@@ -162,7 +165,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 
 	return (
 		<>
-			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers}/>}
+			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers} recupList={recupList}/>}
 			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} />}
 		</>
 	)
