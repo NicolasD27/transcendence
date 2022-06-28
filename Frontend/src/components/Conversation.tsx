@@ -57,6 +57,7 @@ const Conversation: React.FC<Props> = (props) => {
 
 	const [adminLevel, setAdminLevel] = React.useState(0);
 	const [activePass, setActivePass] = React.useState<boolean>(false);
+	const [activePrivate, setActivePrivate] = React.useState<boolean>(false);
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
@@ -130,6 +131,7 @@ const Conversation: React.FC<Props> = (props) => {
 						});
 					}
 					setActivePass(infoChannel.isProtected);
+					setActivePrivate(infoChannel.isPrivate);
 					infoChannel.moderators.forEach((list: any) => {
 						let singleModerator: userFormat;
 						if (list.id !== props.idMe) {
@@ -282,7 +284,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} />}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} activePrivate={activePrivate} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} />}
 		</div>
 	);
 };
