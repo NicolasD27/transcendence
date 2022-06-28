@@ -73,7 +73,7 @@ const Conversation: React.FC<Props> = (props) => {
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.user.avatarId}`;
 			usersBlocked.forEach(element => {
-				if (message.user.id == element) {
+				if (message.user.id === element) {
 					const nbtmp = message.content.length
 					message.content = "" + "*".repeat(nbtmp)
 				}
@@ -95,7 +95,7 @@ const Conversation: React.FC<Props> = (props) => {
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.sender.avatarId}`;
 			usersBlocked.forEach(element => {
-				if (message.user.id == element) {
+				if (message.user.id === element) {
 					const nbtmp = message.content.length
 					message.content = "" + "*".repeat(nbtmp)
 				}

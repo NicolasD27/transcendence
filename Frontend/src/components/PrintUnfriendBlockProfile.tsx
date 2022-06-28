@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction} from 'react';
 import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
-import { FriendsFormat } from '../App'
 import axios from 'axios';
 
 interface PropsPrintUnfriendBlockProfile {
@@ -16,10 +15,10 @@ interface PropsPrintUnfriendBlockProfile {
 }
 
 const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (props) => {
-	
+
 	const handleClick = () => {
 		props.setIsBlocked(!props.isBlocked)
-		let stat = props.friendshipStatus === 1 ? 2 : 1; 
+		let stat = props.friendshipStatus === 1 ? 2 : 1;
 		console.log("stat:", stat)
 		axios
 			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status : stat } ,{ withCredentials: true })
@@ -28,7 +27,7 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 				props.setFriendshipStatus(res.data.status)
 			})
 			.catch((err) => console.log(err))
-	} 
+	}
 
 	return (
 		<>
