@@ -99,6 +99,20 @@ export class FriendshipService {
         return Friendship.toDto(friendship, activeUsers)
     }
 
+    async block(username: string, id: number): Promise<FriendshipDto> {
+        const user = await this.usersRepository.findOne({username})
+        const friendship = await this.friendshipsRepository.findOne(id);
+        if (!friendship)
+            throw new NotFoundException(`Friendship #${id} not found`);
+        if ((username == friendship.follower.username && friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWING) || (username == friendship.following.username && friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWER))
+            throw new UnauthorizedException("you can't do that !");
+        if (username == friendship.follower.username)
+            friendship.status = FriendshipStatus.BLOCKED_BY_FOLLOWER;
+        else if (username == friendship.following.username)
+            friendship.status = FriendshipStatus.BLOCKED_BY_FOLLOWING;
+        return Friendship.toDto(await this.friendshipsRepository.save(friendship), activeUsers);
+    }
+
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
         const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);
@@ -106,9 +120,10 @@ export class FriendshipService {
             throw new NotFoundException(`Friendship #${id} not found`);
         if ((username == friendship.follower.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWING || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWING)) || (username == friendship.following.username && (newStatus == FriendshipStatus.BLOCKED_BY_FOLLOWER || friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWER)))
             throw new UnauthorizedException("you can't do that !");
+        const oldStatus = friendship.status
         friendship.status = newStatus;
         this.notificationService.actionPerformedFriendship(friendship, user)
-        if (newStatus == FriendshipStatus.ACTIVE)
+        if (oldStatus == FriendshipStatus.PENDING && newStatus == FriendshipStatus.ACTIVE)
         {
             const otherUser = friendship.follower.username == username ? friendship.following : friendship.follower
             const notification = await this.notificationService.create(friendship, otherUser);

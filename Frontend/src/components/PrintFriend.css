@@ -67,9 +67,9 @@
 }
 
 #invitation_sent {
-	margin-top: 17px;
-	margin-bottom: 17px;
-	font-size: 12px;
+	margin-top: 14px;
+	font-size: 14px;
+	margin-right: 12px;
 	font-weight: normal;
 	text-align: center;
 }
