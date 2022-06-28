@@ -114,10 +114,11 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
                 })
             })
             .catch((err) => console.log( err))
-    }, [])
+    }, [chatGamesState])
 
 	const goToMatch = (id: number) => {
         navigate("/mainpage?id=" + id)
+		window.location.reload()
     }
 
 	return (
