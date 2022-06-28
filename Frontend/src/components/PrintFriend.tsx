@@ -47,7 +47,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 					username : resp.data.username,
 					pseudo : resp.data.pseudo
 				}))
-				.catch((err) => console.log(err))
+				.catch((err) => //console.log(err))
 		}
 	}, [props.idMe])
 
@@ -64,13 +64,13 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 							if (friends[i].id === props.friendshipId)
 							{
 								setFriendshipStatus(friends[i].status)
-								console.log('STATUS:',friends[i].status )
+								//console.log('STATUS:',friends[i].status )
 								return ;
 							}
 						}
 					}
 				)
-				.catch((err) => console.log(err))
+				.catch((err) => //console.log(err))
 		}
 	}, [props.idMe, props.friendshipId])
 
@@ -92,7 +92,7 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 				props.setIsFriendshipButtonClicked(true)
 			})
 			.catch((err) =>
-				console.log(err))
+				//console.log(err))
 	}
 
 	const sendMatchInvit = () => {

@@ -19,14 +19,14 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 	const handleClick = () => {
 		props.setIsBlocked(!props.isBlocked)
 		let stat = props.friendshipStatus === 1 ? 2 : 1;
-		console.log("stat:", stat)
+		//console.log("stat:", stat)
 		axios
 			.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status : stat } ,{ withCredentials: true })
 			.then(res => {
-				console.log('res:', res)
+				//console.log('res:', res)
 				props.setFriendshipStatus(res.data.status)
 			})
-			.catch((err) => console.log(err))
+			.catch((err) => //console.log(err))
 	}
 
 	return (

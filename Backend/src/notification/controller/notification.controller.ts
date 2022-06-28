@@ -20,14 +20,14 @@ export class NotificationController {
 		@Param('user_id') user_id: string
 	): Promise<NotificationDto[]>
 	{
-        console.log('findAllNotificationsByUser', user_id);
+        //console.log('findAllNotificationsByUser', user_id);
         return  this.notificationService.findAllByUser(user_id, paginationQuery);
     }
 
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
     async destroy(@Param('id') id: string, @GetUsername() username): Promise<Notification> {
-        console.log('destroyNotification', id);
+        //console.log('destroyNotification', id);
         return this.notificationService.destroy(username,id);
     }
 

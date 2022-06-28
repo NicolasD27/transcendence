@@ -62,7 +62,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			setNewNotifsLength(newNotifsLength - 1)
 			navigate("/mainpage")
 			socket.emit("accept_challenge", {match_id: notification.entityId})
-			console.log("sending accept event")
+			//console.log("sending accept event")
 		}
 		else if (notification.entityType === "ChannelInvite") 
 		{
@@ -70,7 +70,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 			.then(res => {
 				setAwaitingAction(false)
 				setNewNotifsLength(newNotifsLength - 1)
-				console.log("to do : navigate to channel etc...")
+				//console.log("to do : navigate to channel etc...")
 			})
 		}
 	}
@@ -96,7 +96,7 @@ const Notification: React.FC<Props> = ({notification, newNotifsLength, setNewNot
 		{
 			axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, { withCredentials: true })
 			.then(res => {
-				console.log("todo refuse invite")
+				//console.log("todo refuse invite")
 				setAwaitingAction(false)
 				setNewNotifsLength(newNotifsLength - 1)
 			})

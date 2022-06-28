@@ -79,13 +79,13 @@ export class NotificationService {
     }
 
     async create(parent: Friendship | Match | ChannelInvite, receiver: User): Promise<Notification> {
-        console.log("creating notif **************")
+        //console.log("creating notif **************")
         const notification = await this.notificationsRepository.create({
             receiver: receiver,
             parent: parent
         })
         await this.notificationsRepository.save(notification)
-        console.log(notification)
+        //console.log(notification)
         return notification
     }
 
@@ -112,7 +112,7 @@ export class NotificationService {
 
             notification.awaitingAction = false
             notification = await this.notificationsRepository.save(notification)
-            console.log(notification)
+            //console.log(notification)
         }
     }
 
@@ -127,7 +127,7 @@ export class NotificationService {
         if (notification) {
             notification.awaitingAction = false
             notification = await this.notificationsRepository.save(notification)
-            console.log(notification)
+            //console.log(notification)
         }
     }
 
@@ -142,7 +142,7 @@ export class NotificationService {
 
             notification.awaitingAction = false
             notification = await this.notificationsRepository.save(notification)
-            console.log(notification)
+            //console.log(notification)
         }
     }
     

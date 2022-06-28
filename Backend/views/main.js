@@ -54,12 +54,12 @@ const app = new Vue({
 					content: this.content,
 				}
 				this.socket.emit('msg_to_server', message)
-				console.log("here", message);
+				//console.log("here", message);
 			
 			this.content = '';
 		},
 		receivedMessage(message) {
-			// console.log(message);
+			// //console.log(message);
 			this.messages.push(message);
 		},
 		validateInput() {
@@ -74,7 +74,7 @@ const app = new Vue({
 			}
 		},
 		sendInvite() {
-			console.log("sending invite ...", { channelId: this.channelId, userId: this.idToInvite})
+			//console.log("sending invite ...", { channelId: this.channelId, userId: this.idToInvite})
 			this.socket.emit('sendInvite', { channelId: this.channelId, userId: this.idToInvite});
 		},
 		// closeChannel() {
@@ -93,7 +93,7 @@ const app = new Vue({
 			// ? it could be cool to pass every messages from this user to spoilers.
 			// ? I will have to add a timer in the backend to tell every connected clients when the ban is finished
 
-			console.log(data);
+			//console.log(data);
 			let message_content;
 			if (i === 1)
 				message_content = `${data.user.username} has been banned`;
@@ -103,7 +103,7 @@ const app = new Vue({
 				message_content = `${data.user.username} has been rescued`;
 			else
 			{
-				console.log("error: moderationMessage() needs a number between 1 and 3 in second argument.");
+				//console.log("error: moderationMessage() needs a number between 1 and 3 in second argument.");
 				return ;
 			}
 			const m = {
@@ -114,33 +114,33 @@ const app = new Vue({
 			this.receivedMessage(m);
 		},
 		newChannelInviteReceived(data) {
-			console.log("newChannelInviteReceived");
-			console.log(data);
+			//console.log("newChannelInviteReceived");
+			//console.log(data);
 		},
 		connectToMatch() {
 			// this.room = 'a';
 			this.socket.emit('connect_to_match', {opponent_id: this.opponent_id});
 		},
 		findMatch() {
-			console.log("searching for a match...")
+			//console.log("searching for a match...")
 			this.socket.emit('find_match', {});
 		},
 		challengeUser() {
-			console.log("challenging user #", this.opponent_id)
+			//console.log("challenging user #", this.opponent_id)
 			this.socket.emit('challenge_user', {opponent_id: this.opponent_id});
 		},
 		acceptChallenge() {
-			console.log("accept challenge #", this.invite_choosen)
+			//console.log("accept challenge #", this.invite_choosen)
 			if (this.invite_choosen >= 0 && this.invite_choosen < this.invites.length)
 				this.socket.emit('accept_challenge', {match_id: this.invites[this.invite_choosen].id})
 		},
 		receiveMatchInvite(match) {
-			console.log("receiving invite... ", match)
+			//console.log("receiving invite... ", match)
 			this.invites.push(match);
 		},
 		launchMatch(match) {
 			this.match = match;
-			console.log("launching match : ", match);
+			//console.log("launching match : ", match);
 		},
 		sendUp() {
 			this.socket.emit('update_to_server', {match_id: this.match.id, command: 'up'});
@@ -150,18 +150,18 @@ const app = new Vue({
 		},
 		receiveUpdateMatch(match) {
 			this.match = match;
-			// console.log(this.match);
+			// //console.log(this.match);
 		},
 		updateApp() {
 			this.connectToChannel();
 			this.getPreviousMessages();
 		},
 		sendStatusUpdate() {
-			console.log("sending status Update")
+			//console.log("sending status Update")
 			this.socket.emit('sendStatusUpdate', {newStatus: this.status});
 		},
 		sendDirectMessage() {
-			console.log(this.directMessageContent);
+			//console.log(this.directMessageContent);
 			if(this.validateInput()) {
 				const message = {
 					receiver: this.receiver,
@@ -177,7 +177,7 @@ const app = new Vue({
 		},
 	},
 	created() {
-		// console.log("here", document.cookie.split('=')[1])
+		// //console.log("here", document.cookie.split('=')[1])
 		this.socket = io.connect('http://localhost:8000', this.socketOptions);
 		this.socket.on('msg_to_client', (message) => {
 			this.receivedMessage(message);

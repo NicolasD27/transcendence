@@ -33,7 +33,7 @@ export class Avatar extends React.Component<Props> {
 					})
 			})
 			.catch(err => {
-				console.log("upload error")
+				//console.log("upload error")
 			})
 	};
 
@@ -50,7 +50,7 @@ export class Avatar extends React.Component<Props> {
 
 	componentDidUpdate(prevProps: Props) {
 		if (prevProps.id !== this.props.id) {
-			console.log("here")
+			//console.log("here")
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${this.props.id}`, { withCredentials: true })
 			.then(res => {
 				const user = res.data;

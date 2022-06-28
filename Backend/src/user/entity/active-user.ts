@@ -5,7 +5,7 @@ export class ActiveUsers {
 	private users = new Map();
 
 	add(userId: number, socketId: string) {
-		console.log(`// ${userId} added to activeUsers by ${socketId}`);
+		//console.log(`// ${userId} added to activeUsers by ${socketId}`);
 		this.users.set(Number(userId), { socketId: socketId, state: UserStatus.ONLINE });
 	}
 
@@ -41,6 +41,6 @@ export class ActiveUsers {
 	}
 
 	display() {
-		console.log(this.users);
+		//console.log(this.users);
 	}
 }

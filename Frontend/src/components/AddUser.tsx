@@ -50,7 +50,7 @@ const AddUser: React.FC<Props> = (props) => {
 							setSearchUsers(searchUsers => [...searchUsers, singleUser]);
 					});
 				})
-				.catch((error) => console.log(error))
+				.catch((error) => //console.log(error))
 		}
 		else
 			setSearchUsers([])

@@ -66,7 +66,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 			axios
 				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users?search=${searchValue}`, {withCredentials: true})
 				.then ((response) => setSearchUsers(response.data))
-				.catch((error) => console.log(error))
+				.catch((error) => //console.log(error))
 		}
 	}, [searchValue])
 
@@ -74,7 +74,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me/channels`, {withCredentials: true})
 			.then((response) => setJoinedChannels(response.data))
-			.catch((error) => console.log(error))
+			.catch((error) => //console.log(error))
 	}, [joiningChannel])
 
 	useEffect(() => {
@@ -85,7 +85,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 				setExistingChannels(channel)
 			})
 			.catch (err =>
-				console.log(err)
+				//console.log(err)
 			)
 	}, [searchValue])
 
@@ -94,7 +94,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
             .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/matchs/active?limit=0&offset=0`, { withCredentials: true })
             .then(res => {
 				setMatchs([])
-                console.log('DATA: ', res.data)
+                //console.log('DATA: ', res.data)
                 res.data.forEach((match) => {
 					if (match.status === 2)
 					{
@@ -108,12 +108,12 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							pseudo2_avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${match.user2.avatarId}`
 
 						match_tmp = {idMatch: match.id, pseudo1: match.user1.pseudo, pseudo1Avatar: pseudo1_avatar, pseudo2: match.user2.pseudo, pseudo2Avatar: pseudo2_avatar, score1: match.score1, score2: match.score2 }
-						console.log("match_tmp:", match_tmp)
+						//console.log("match_tmp:", match_tmp)
 						setMatchs(matchs => [...matchs, match_tmp])
 					}
                 })
             })
-            .catch((err) => console.log( err))
+            .catch((err) => //console.log( err))
     }, [])
 
 	const goToMatch = (id: number) => {

@@ -19,7 +19,7 @@ const PrintChannelCreationSettings : React.FC<propsPrintChannelCreationSettings>
 	const handleChannelNameEntered = (e: React.KeyboardEvent<HTMLInputElement> | any) => {
 		props.setChannelNameEntered(e.target.value)
 	}
-	//console.log("passwordNotSecure: ", passwordNotSecure)
+	////console.log("passwordNotSecure: ", passwordNotSecure)
 	return (
 		<>
 			<div className='enterChannelName'>

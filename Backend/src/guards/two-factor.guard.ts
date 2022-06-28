@@ -15,12 +15,12 @@ export class TwoFactorGuard implements CanActivate {
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<any> {
-		console.log("canActivate")
+		//console.log("canActivate")
 		let accessToken;
 		let username;
 		let myUser;
 		const cookie_string = context.switchToHttp().getRequest().headers.cookie
-		//console.log(context.switchToHttp().getRequest().headers);
+		////console.log(context.switchToHttp().getRequest().headers);
 		if (!cookie_string)
 			throw new UnauthorizedException("No cookie");
 		const cookies = context.switchToHttp().getRequest().headers.cookie.split('; ')
@@ -56,13 +56,13 @@ export class TwoFactorGuard implements CanActivate {
 			// 		}
 			// 	})
 			// 	.catch(ex =>{
-			// 		console.log("panic") ;
+			// 		//console.log("panic") ;
 			// 		reject(false);
 			// 	})
 			// })
 		}
 		catch (ex) {
-			console.log(ex);
+			//console.log(ex);
 			return false;
 		}	
 	}

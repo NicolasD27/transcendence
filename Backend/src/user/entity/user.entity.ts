@@ -86,7 +86,7 @@ export class User extends BaseEntity {
 
 	static toDto(user: User, _activeUsers: ActiveUsers): UserDto {
 		// return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
-		console.log("USER:", user)
+		//console.log("USER:", user)
 		const dto: UserDto = {
 			id : user.id,
 			username: user.username,

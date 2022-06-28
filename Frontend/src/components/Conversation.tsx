@@ -157,7 +157,7 @@ const Conversation: React.FC<Props> = (props) => {
 						}
 						else {
 							if (list.bannedState.type === BannedState.muted) {
-								console.log("muted +++")
+								//console.log("muted +++")
 								setMuted(true);
 							}
 
@@ -187,7 +187,7 @@ const Conversation: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (props.id > 0 && props.type) {
-			console.log("retrieving msgs")
+			//console.log("retrieving msgs")
 			let recupMessage = "";
 			if (props.type === "channel")
 				recupMessage = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/messages`

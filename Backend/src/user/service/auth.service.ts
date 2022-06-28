@@ -82,12 +82,12 @@ export class AuthService {
     // }
 
     async getAccessToken(payload: JwtPayload) {
-        console.log('new access token')
+        //console.log('new access token')
         const accessToken = await this.jwtService.sign(payload, {
             secret: process.env.JWT_ACCESS_TOKEN_SECRET || dbConfig.secret,
             expiresIn: +process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME || dbConfig.expiresIn
         })
-        console.log('new access token', accessToken)
+        //console.log('new access token', accessToken)
         return accessToken
     }
 
