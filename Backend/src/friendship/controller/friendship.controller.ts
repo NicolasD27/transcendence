@@ -30,14 +30,14 @@ export class FriendshipController {
     @UseGuards(TwoFactorGuard)
     @Get(':user_id')
     findAllByUser(@Param('user_id') user_id: string): Promise<FriendshipDto[]> {
-        console.log('findAllFriendshipsByUser', user_id);
+        //console.log('findAllFriendshipsByUser', user_id);
         return this.friendshipService.findAllByUser(user_id);
     }
 
     @UseGuards(TwoFactorGuard)
     @Post()
     create(@Body(ValidationPipe) body: createFriendshipDto): Promise<FriendshipDto> {
-        console.log('createFriendship');
+        //console.log('createFriendship');
         if (body.user1_id == body.user2_id)
             throw new BadRequestException("One can't be friend with oneself")
         else if (+body.user1_id <= 0 || +body.user2_id <= 0)
@@ -55,7 +55,7 @@ export class FriendshipController {
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
     update(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
-        console.log('updateFriendship', id);
+        //console.log('updateFriendship', id);
         return this.friendshipService.update(username, +id, body.status);
     }
 
@@ -63,7 +63,7 @@ export class FriendshipController {
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
     async destroy(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
-        console.log('destroyFriendship', id);
+        //console.log('destroyFriendship', id);
         return this.friendshipService.destroy(username,id);
     }
 

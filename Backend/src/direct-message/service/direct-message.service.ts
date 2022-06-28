@@ -29,7 +29,7 @@ export class DirectMessageService {
 		if (!user)
 			throw new NotFoundException(`user ${id} not found`);
 		const { limit, offset } = paginationQuery;
-		console.log("pagination query ***********************:", limit, offset)
+		//console.log("pagination query ***********************:", limit, offset)
 		const msgs = await this.directMessageRepository.find({
 			where: [
 				{

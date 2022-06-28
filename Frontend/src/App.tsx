@@ -84,7 +84,7 @@ const App = () => {
   useEffect(() => {
     if (socket) {
       window.addEventListener('beforeunload', () => {
-        console.log('disconnecting...')
+        //console.log('disconnecting...')
         socket.emit('disconnect')
       })
     }

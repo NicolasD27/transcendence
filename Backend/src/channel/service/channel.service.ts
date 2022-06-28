@@ -395,7 +395,7 @@ export class ChannelService {
 	}
 
 	async getChannelInvites(username: string, userId: number, paginationQueryDto: PaginationQueryDto) {
-		console.log("getChannelInvites");
+		//console.log("getChannelInvites");
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
@@ -417,7 +417,7 @@ export class ChannelService {
 		userId: number,
 		inviteId: number
 	) {
-		console.log('accepting invite...')
+		//console.log('accepting invite...')
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
@@ -492,7 +492,7 @@ export class ChannelService {
 		if (!myChannel)
 			throw new NotFoundException(`channel ${channelId} not found`);
 
-		console.log("user and channel found");
+		//console.log("user and channel found");
 		const _now = new Date();
 		const tos = await this.moderationTimeOutRepo.find({
 			where: {
@@ -501,8 +501,8 @@ export class ChannelService {
 				date: MoreThan(_now),
 			}
 		});
-		console.log(_now);
-		console.log(tos);
+		//console.log(_now);
+		//console.log(tos);
 		if (tos.length > 0)
 			throw new UnauthorizedException("User is Restricted on this channel");
 		return false;
@@ -524,7 +524,7 @@ export class ChannelService {
 				channel: myChannel,
 			}
 		});
-		console.log(myParticipation);
+		//console.log(myParticipation);
 		if (!myParticipation)
 			throw new UnauthorizedException(`Channel not joined`);
 
@@ -548,13 +548,13 @@ export class ChannelService {
 		return new Promise((resolve, rejects) => {
 			const myChannel = this.channelRepo.findOne(channelId)
 				.catch(() => {
-					console.log("catch 1")
+					//console.log("catch 1")
 					rejects(false);
 				})
 				.then(() => {
 					const myUser = this.userRepo.findOne({ username })
 						.catch(() => {
-							console.log("catch 2")
+							//console.log("catch 2")
 							rejects(false);
 						})
 						.then(() => {
@@ -565,7 +565,7 @@ export class ChannelService {
 								}
 							})
 								.catch(() => {
-									console.log("catch 3")
+									//console.log("catch 3")
 									rejects(false);
 								})
 								.then(() => {
@@ -579,12 +579,12 @@ export class ChannelService {
 										}
 									})
 										.catch(() => {
-											console.log("checkUserJoinedChannelWS resolve true");
+											//console.log("checkUserJoinedChannelWS resolve true");
 											resolve(true);
 										})
 										.then(() => {
-											console.log(activeTOs);
-											console.log("checkUserJoinedChannelWS rejects false");
+											//console.log(activeTOs);
+											//console.log("checkUserJoinedChannelWS rejects false");
 											rejects(false);
 										});
 								});
@@ -616,7 +616,7 @@ export class ChannelService {
 			}
 			myChannel.hashedPassword = await bcrypt.hash(updateChannelDto.newPassword, this.saltRounds);
 			await this.channelRepo.save(myChannel);
-			console.log(myChannel)
+			//console.log(myChannel)
 		}
 		else {
 			if (myChannel.isProtected == true) {
@@ -688,7 +688,7 @@ export class ChannelService {
 
 		let myTimeout = new Date();
 		myTimeout.setSeconds(myTimeout.getSeconds() + Number(banUserFromChannelDto.timeout));
-		console.log("// should be restricted until " + myTimeout);
+		//console.log("// should be restricted until " + myTimeout);
 
 		const myModerationTO = await this.moderationTimeOutRepo.create({
 			channel: myChannel,

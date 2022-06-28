@@ -33,7 +33,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		// @UseGuards(WsGuard)
 		@SubscribeMessage('find_match')
 		async findMatch(socket: CustomSocket, data: {mode: number}) {
-			console.log("finding matchs")		//add checks if slave & master != username
+			//console.log("finding matchs")		//add checks if slave & master != username
 			const username = getUsernameFromSocket(socket)
 			let match = await this.matchService.matchmaking(username, data.mode );
 			socket.join("match#" + match.id);
@@ -41,17 +41,17 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			this.matchService.updateMatch(username, match.id.toString(), match);
 			if (match.status == MatchStatus.ACTIVE)
 			{
-				console.log("IS ACTIVE")
+				//console.log("IS ACTIVE")
 				this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user1.username);
 				this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
 				activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 				activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 				this.server.to("match#" + match.id).emit('launch_match', match);
-				console.log(`matchID = ${match.id}`);
+				//console.log(`matchID = ${match.id}`);
 			}
 			else
 			{
-				console.log("waiting for another player");
+				//console.log("waiting for another player");
 				this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
 				activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
 			}
@@ -70,7 +70,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		// @UseGuards(WsGuard)
 		@SubscribeMessage('accept_challenge')
 		async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
-			console.log("accepting match...")
+			//console.log("accepting match...")
 			const username = getUsernameFromSocket(socket)
 			const user = await this.userService.findByUsername(username);
 			let match = await this.matchService.updateMatch(username, data.match_id, {status: MatchStatus.ACTIVE});

@@ -26,7 +26,7 @@ export class AuthSocketAdapter extends IoAdapter {
 
 	createIOServer(port: number, options?: ServerOptions): any {
 
-		console.log("##### createIOServer #######");
+		//console.log("##### createIOServer #######");
 		const server = super.createIOServer(port); // , { cors: true }
 		server.use((socket: CustomSocket, next: any) => {
 			let decoded;
@@ -48,7 +48,7 @@ export class AuthSocketAdapter extends IoAdapter {
 					this.userService.findByUsername(decoded.username)
 					.then((myUser)=>{
 						socket.user = myUser;
-						console.log(myUser);
+						//console.log(myUser);
 						activeUsers.add(socket.user.id, socket.id);
 						next();
 					})

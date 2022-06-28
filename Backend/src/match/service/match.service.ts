@@ -74,7 +74,7 @@ export class MatchService {
 
     async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
-		// console.log(updateMatchDto);
+		// //console.log(updateMatchDto);
         const match = await this.matchsRepository.preload({
 			id: +id,
 			...updateMatchDto
@@ -86,7 +86,7 @@ export class MatchService {
 		await this.notificationService.actionPerformedMatch(match)
         await this.matchsRepository.save(match);
 		activeUsers.display();
-		console.log("match : ", match);
+		//console.log("match : ", match);
 		return Match.toDto(match, activeUsers)
     }
 
@@ -119,12 +119,12 @@ export class MatchService {
 				status: MatchStatus.ACTIVE
 			}
 		)
-		console.log("match : ", match)
+		//console.log("match : ", match)
 		if (match)
 			this.matchsRepository.save(match);
 		else
 		{
-			console.log("creating match...")
+			//console.log("creating match...")
 			match = await this.matchsRepository.create({
 				user1: user1,
 				user2: user2,

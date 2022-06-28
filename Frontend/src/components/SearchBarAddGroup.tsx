@@ -60,7 +60,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 						}, 300);
 					}*/
 				})
-				.catch((err) => console.log(err.data))
+				.catch((err) => //console.log(err.data))
 		else
 			axios
 				.post(`http://localhost:8000/api/channels`, {
@@ -71,7 +71,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 				.then((response) => {
 					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
 				})
-				.catch((err) => console.log(err.data))
+				.catch((err) => //console.log(err.data))
 	}
 
 	return (

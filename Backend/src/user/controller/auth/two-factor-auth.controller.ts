@@ -64,7 +64,7 @@ export class TwoFactorAuth {
         @Body(ValidationPipe) twoFaAuthDto: TwoFaAuthDto,
         @Res({ passthrough: true}) res: Response
     ) {
-        console.log(twoFaAuthDto.code)
+        //console.log(twoFaAuthDto.code)
         const isCodeValid = await this.twoFactorAuthService.verifyTwoFaCode(twoFaAuthDto.code, username);
         if (!isCodeValid) {
             throw new UnauthorizedException('Invalid authentication code');

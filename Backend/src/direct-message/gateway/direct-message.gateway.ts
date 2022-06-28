@@ -34,14 +34,14 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 	async handleMessage(socket: Socket, data: { receiver: string, content: string }) {
 
 		const username = getUsernameFromSocket(socket);
-		console.log("// msg_to_server " + data.receiver + " from " + username + " : " + data.content);
+		//console.log("// msg_to_server " + data.receiver + " from " + username + " : " + data.content);
 		const isFriend = await this.friendshipService.checkFriendship(data.receiver, username);
 		if (isFriend)
 		{
 
 			const message = await this.directMessageService.saveMsg(data.content, data.receiver, username);
 			this.socket.to("user#" + message.sender.id).to("user#" + message.receiver.id).emit('direct_msg_to_client', message);
-			console.log(message)
+			//console.log(message)
 		}
 		else
 			console.log("failed to send msg...")

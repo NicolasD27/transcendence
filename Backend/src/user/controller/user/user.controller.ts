@@ -51,7 +51,7 @@ export class UserController {
     @Get('me/channels')
     @UseGuards(TwoFactorGuard)
     async findJoinedChannels(@Req() request: Request) {
-        console.log('me/channels');
+        //console.log('me/channels');
         return await this.channelService.getJoinedChannels(request.cookies.username);
     }
 
@@ -66,7 +66,7 @@ export class UserController {
         @Query() paginationQueryDto?: PaginationQueryDto,
         @Query('search') search?: string,
     ): Promise<UserDto[]> {
-        console.log('findAllUsers');
+        //console.log('findAllUsers');
         if (search && search.length)
             return this.userService.searchForUsers(paginationQueryDto, search);
         return this.userService.findAll(paginationQueryDto);
@@ -125,7 +125,7 @@ export class UserController {
     @ApiFile('avatar', true, { fileFilter: fileMimetypeFilter('image') })
     @UseInterceptors(FileInterceptor('file'))
     async addAvatar(@GetUsername() username, @UploadedFile() file: Express.Multer.File) {
-        console.log("uploading img**************")
+        //console.log("uploading img**************")
         return this.userService.addAvatar(username, file.buffer, file.originalname);
     }
 
@@ -157,7 +157,7 @@ export class UserController {
     @UseGuards(TwoFactorGuard)
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: string): Promise<UserDto> {
-        console.log('findOneUser ', id);
+        //console.log('findOneUser ', id);
         return this.userService.findOne(id);
     }
 
@@ -165,7 +165,7 @@ export class UserController {
     // @UseGuards(TwoFactorGuard)
     // @Patch(':id')
     // updateAvatar(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @GetUsername() username): Promise<UserDto> {
-    //     console.log('updateUser ', id);
+    //     //console.log('updateUser ', id);
 
     //     return this.userService.updateAvatar(username, id, updateAvatarDto);
     // }
