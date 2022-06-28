@@ -81,3 +81,15 @@
 	text-align: center;
 	font-weight: normal;
 }
+
+#blockedByFriend {
+	position: absolute;
+	width: 100%;
+	top: 11px;
+	right: 18px;
+	/*margin-top: 14px;*/
+	font-size: 12px;
+	/*margin-right: 12px;*/
+	font-weight: normal;
+	text-align: center;
+}

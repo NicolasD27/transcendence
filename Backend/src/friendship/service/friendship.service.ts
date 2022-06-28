@@ -99,6 +99,20 @@ export class FriendshipService {
         return Friendship.toDto(friendship, activeUsers)
     }
 
+    async block(username: string, id: number): Promise<FriendshipDto> {
+        const user = await this.usersRepository.findOne({username})
+        const friendship = await this.friendshipsRepository.findOne(id);
+        if (!friendship)
+            throw new NotFoundException(`Friendship #${id} not found`);
+        if ((username == friendship.follower.username && friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWING) || (username == friendship.following.username && friendship.status == FriendshipStatus.BLOCKED_BY_FOLLOWER))
+            throw new UnauthorizedException("you can't do that !");
+        if (username == friendship.follower.username)
+            friendship.status = FriendshipStatus.BLOCKED_BY_FOLLOWER;
+        else if (username == friendship.following.username)
+            friendship.status = FriendshipStatus.BLOCKED_BY_FOLLOWING;
+        return Friendship.toDto(await this.friendshipsRepository.save(friendship), activeUsers);
+    }
+
     async update(username: string, id: number, newStatus: number): Promise<FriendshipDto> {
         const user = await this.usersRepository.findOne({username})
         const friendship = await this.friendshipsRepository.findOne(id);

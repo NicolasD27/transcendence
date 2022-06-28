@@ -13,6 +13,7 @@ interface PropsPrintUnfriendBlockProfile {
 	deleteFriend : Function;
 	isBlocked : boolean;
 	setIsBlocked : Dispatch<SetStateAction<boolean>>;
+	blockedByFriend : boolean;
 }
 
 const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (props) => {
@@ -51,11 +52,11 @@ const PrintUnfriendBlockProfile : React.FC<PropsPrintUnfriendBlockProfile> = (pr
 						<p>Unfriend</p>
 				</button>
 				{
-						(!props.isBlocked &&
+						(!props.blockedByFriend && !props.isBlocked &&
 						(<button id='block_buttons' onClick={handleClick}>
 							Block
 						</button>)) ||
-						(<button id='unblock_buttons' onClick={handleClick}>
+						(!props.blockedByFriend && <button id='unblock_buttons' onClick={handleClick}>
 							Unblock
 						</button>)
 				}

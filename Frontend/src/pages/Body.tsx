@@ -19,6 +19,7 @@ interface PropsBody {
 	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
 	friendRequestsReceived : FriendsFormat[];
 	setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>>;
+	blockedByUsers : number[];
 }
 
 const Body: React.FC<PropsBody> = (props) => {
@@ -29,7 +30,7 @@ const Body: React.FC<PropsBody> = (props) => {
 			<div className='gameArea' id='gameArea'>
 			{<Match socket={props.socket} idMatch={searchParams.get('id')}/>}
 			</div>
-			<Chat idMe={props.idMe} socket={props.socket} friends={props.friends} setFriends={props.setFriends} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friendRequestsSent={props.friendRequestsSent} setFriendRequestsSent={props.setFriendRequestsSent} friendRequestsReceived={props.friendRequestsReceived} setFriendRequestsReceived={props.setFriendRequestsReceived}/>
+			<Chat idMe={props.idMe} socket={props.socket} friends={props.friends} setFriends={props.setFriends} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friendRequestsSent={props.friendRequestsSent} setFriendRequestsSent={props.setFriendRequestsSent} friendRequestsReceived={props.friendRequestsReceived} setFriendRequestsReceived={props.setFriendRequestsReceived} blockedByUsers={props.blockedByUsers}/>
 		</section>
 	)
 }

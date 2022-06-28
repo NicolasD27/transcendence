@@ -19,6 +19,7 @@ interface PropsSectionUsers {
 	setFriendRequestsSent : Dispatch<SetStateAction<number[]>>;
 	friendRequestsReceived : FriendsFormat[];
 	setFriendRequestsReceived :  Dispatch<SetStateAction<FriendsFormat[]>>;
+	blockedByUsers : number[];
 }
 
 export interface  PropsStateUsers {
@@ -155,6 +156,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked}
 							matchs={matchs}
 							goToMatch={goToMatch}
+							blockedByUsers={props.blockedByUsers}
 						/>
 					}
 				</>

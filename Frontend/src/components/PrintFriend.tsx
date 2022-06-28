@@ -25,6 +25,7 @@ interface PropsPrintFriend {
 	received : boolean;
 	sent : boolean;
 	sendFriendshipRequest : Function;
+	blockedByFriend : boolean;
 	setChatParamsState : Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState : chatStateFormat;
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
@@ -118,10 +119,10 @@ const PrintFriend : React.FC<PropsPrintFriend> = (props) => {
 				</div>
 				{
 					(props.isFriend &&
-						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch}/>)
+						!friendDeleteColumnState && <PrintNormalFriendProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} sendMatchInvit={sendMatchInvit} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend}/>)
 					||
 					(props.isFriend &&
-						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked}/>)
+						friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} friendshipStatus={friendshipStatus} setFriendshipStatus={setFriendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked} blockedByFriend={props.blockedByFriend}/>)
 					||
 					(props.received &&
 					

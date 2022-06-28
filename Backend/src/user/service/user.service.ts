@@ -159,4 +159,30 @@ export class UserService {
 		return blocked_users;
 	}
 
+	async getBlockersUsers(username: string): Promise<UserDto[]> {
+		const user = await this.usersRepository.findOne({ username });
+		if (!user)
+			throw new NotFoundException(`User ${username} not found`);
+		const blockers_users = []
+		await this.friendshipsRepository.find({
+			where: [
+				{ follower: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWING }
+			]
+		})
+			.then(friendships => friendships.forEach(friendship => {
+				blockers_users.push(User.toDto(friendship.following, activeUsers))
+			})
+			)
+		await this.friendshipsRepository.find({
+			where: [
+				{ following: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWER }
+			]
+		})
+			.then(friendships => friendships.forEach(friendship => {
+				blockers_users.push(User.toDto(friendship.follower, activeUsers))
+			})
+			)
+		return blockers_users;
+	}
+
 }

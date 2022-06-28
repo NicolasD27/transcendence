@@ -15,7 +15,7 @@ import { FriendsFormat } from '../App';
 import Chat from '../components/Chat';
 import Header from './Header';
 
-const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequestsSent, setFriendRequestsSent, friendRequestsReceived, setFriendRequestsReceived }: { socket: any,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequestsSent : number[], setFriendRequestsSent : Dispatch<SetStateAction<number[]>>, friendRequestsReceived : FriendsFormat[], setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>> }) => {
+const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequestsSent, setFriendRequestsSent, friendRequestsReceived, setFriendRequestsReceived, blockedByUsers }: { socket: any,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequestsSent : number[], setFriendRequestsSent : Dispatch<SetStateAction<number[]>>, friendRequestsReceived : FriendsFormat[], setFriendRequestsReceived : Dispatch<SetStateAction<FriendsFormat[]>>, blockedByUsers : number[] }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -135,7 +135,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 							<Achievement historys={matchID} />
 						</div>
 					</div>
-					<Chat idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} />
+					<Chat idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} friendRequestsSent={friendRequestsSent} setFriendRequestsSent={setFriendRequestsSent} friendRequestsReceived={friendRequestsReceived} setFriendRequestsReceived={setFriendRequestsReceived} blockedByUsers={blockedByUsers}/>
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
 			</div>

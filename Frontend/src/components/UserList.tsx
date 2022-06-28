@@ -30,6 +30,7 @@ interface  PropsUserList {
 	setIsFriendshipButtonClicked : Dispatch<SetStateAction<boolean>>;
 	matchs : PropsMatchs[];
 	goToMatch : Function;
+	blockedByUsers : number[];
 }
 
 const UserList : React.FC<PropsUserList> = (props) => {
@@ -104,10 +105,18 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		return -1;
 	}
 
+	const checkIfBlockedByFriend = (id:number) => {
+		for (let i = 0; i < props.blockedByUsers.length; i++)
+		{
+			if (props.blockedByUsers[i] === id)
+				return true
+		}
+		return false;
+	}
+
 	var isFriend = false;
 	var received = false;
 	var sent = false;
-
 
 	return (
 			<div className='usersList'>
@@ -142,13 +151,15 @@ const UserList : React.FC<PropsUserList> = (props) => {
 								statusIcon = statusIconBlue
 							let friendshipId = Number(catchFriendshipId(user_.id));
 							let matchId = catchUserMatch(user_.username)
+							let blockedByFriend = checkIfBlockedByFriend(user_.id)
 							if (Boolean(isAlreadyFriend(user_.id)) === true)
 								isFriend = true;
 							else if (Boolean(isThereAFriendshipRequestReceived(user_.id)) === true)
 								received = true;
 							else if (Boolean(isThereAFriendshipRequestSent(user_.id)) === true)
 								sent = true;
-							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} statusIcon={statusIcon} isFriend={isFriend} received={received} sent={sent} sendFriendshipRequest={sendFriendshipRequest} /*friendshipInfo={friendshipInfo}*/ setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
+							
+							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} statusIcon={statusIcon} isFriend={isFriend} received={received} sent={sent} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
 						})
 				}
 				{
@@ -175,7 +186,8 @@ const UserList : React.FC<PropsUserList> = (props) => {
 								else
 									statusIcon = statusIconBlue
 								let matchId = catchUserMatch(friend.username)
-								return <PrintFriend idMe={props.idMe} socket={props.socket} user={friend} friendshipId={friend.friendshipId} statusIcon={statusIcon} isFriend={true} received={false} sent={false} sendFriendshipRequest={sendFriendshipRequest} /*friendshipInfo={friendshipInfo}*/ setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={friend.id} />
+								let blockedByFriend = checkIfBlockedByFriend(friend.id)
+								return <PrintFriend idMe={props.idMe} socket={props.socket} user={friend} friendshipId={friend.friendshipId} statusIcon={statusIcon} isFriend={true} received={false} sent={false} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={friend.id} />
 							})
 				}
 			</div>
