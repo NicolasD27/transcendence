@@ -42,11 +42,13 @@ const Chat: React.FC<PropsChat> = (props) => {
 					props.setFriends([])
 					users.forEach((friendship: any) => {
 						let friends_tmp: FriendsFormat;
+						let userId : number;
 						if (friendship.following.id === props.idMe) {
+							userId = friendship.follower.id
 							friends_tmp = {
 								friendshipId: friendship.id,
 								friendshipStatus: friendship.status,
-								id: friendship.follower.id,
+								id: userId,
 								username: friendship.follower.username,
 								pseudo: friendship.follower.pseudo,
 								avatarId: friendship.follower.avatarId,
@@ -54,10 +56,11 @@ const Chat: React.FC<PropsChat> = (props) => {
 							}
 						}
 						else {
+							userId = friendship.following.id
 							friends_tmp = {
 								friendshipId: friendship.id,
 								friendshipStatus: friendship.status,
-								id: friendship.following.id,
+								id: userId,
 								username: friendship.following.username,
 								pseudo: friendship.following.pseudo,
 								avatarId: friendship.following.avatarId,
@@ -69,6 +72,12 @@ const Chat: React.FC<PropsChat> = (props) => {
 							let friendRequests_tmp = props.friendRequests.filter((requestId) => requestId !== friends_tmp.id)
 							props.setFriendRequests(friendRequests_tmp)
 						}
+						else if (friendship.status === FriendshipStatus.BLOCKED_BY_FOLLOWER || friendship.status === FriendshipStatus.BLOCKED_BY_FOLLOWING) {
+							props.setFriends(friends => [...friends, friends_tmp])
+						}
+						else
+							props.setFriendRequests(friendRequests => [...friendRequests, userId])
+		
 					})
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
