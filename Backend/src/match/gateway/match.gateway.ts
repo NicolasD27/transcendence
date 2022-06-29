@@ -76,7 +76,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		match.room_size++;
 		// this.matchService.updateMatch(username, match.id.toString(), match)
 		this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
-		activeUsers.updateState(socket.user.id, UserStatus.PLAYING);
+		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
+		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
 		this.server.to("match#" + match.id).emit('launch_match', match)
 	}
