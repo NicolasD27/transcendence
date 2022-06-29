@@ -62,7 +62,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
-	const [ usersBlocked, setUsersBlocked ] = React.useState<boolean[]>([]);
+	const [usersBlocked, setUsersBlocked] = React.useState<boolean[]>([]);
 
 	const newMessageChannel = (message: any) => {
 		let singleMessage: messagesFormat;
@@ -217,7 +217,7 @@ const Conversation: React.FC<Props> = (props) => {
 					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
-	}, [props.id, showConv, status, muted, props.type]);//Recuperer les anciens messages
+	}, [props.id, showConv, status, muted, props.type]);// eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (props.socket) {
@@ -234,7 +234,7 @@ const Conversation: React.FC<Props> = (props) => {
 				});
 			}
 		}
-	}, [props.socket]);//Ecouter les sockets
+	}, [props.socket]);// eslint-disable-line react-hooks/exhaustive-deps
 
 
 
@@ -286,7 +286,7 @@ const Conversation: React.FC<Props> = (props) => {
 				</div>
 				<button className="sendIcon" onClick={handleSubmit} />
 			</div>}
-			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} activePrivate={activePrivate} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} setRecupList={props.setRecupList}/>}
+			{props.type === "channel" && showConv === false && <OptionAdmin idMe={props.idMe} nameChat={props.nameChat} adminLevel={adminLevel} socket={props.socket} id={props.id} activePass={activePass} activePrivate={activePrivate} users={users} moderators={moderators} userRestricted={userRestricted} setShowConv={setShowConv} setChatState={props.setChatState} setRecupList={props.setRecupList} />}
 		</div>
 	);
 };

@@ -19,6 +19,8 @@ interface PropsBody {
 	setFriendRequests : Dispatch<SetStateAction<number[]>>;
 	blockedByUsers : number[];
 	setInPlay: Dispatch<SetStateAction<boolean>>;
+	matchLaunched : boolean;
+	setMatchLaunched: Dispatch<SetStateAction<boolean>>;
 }
 
 const Body: React.FC<PropsBody> = (props) => {
@@ -27,7 +29,7 @@ const Body: React.FC<PropsBody> = (props) => {
 	return (
 		<section className="gameAndChatSection">
 			<div className='gameArea' id='gameArea'>
-				{<Match socket={props.socket} idMatch={searchParams.get('id')} setInPlay={props.setInPlay} />}
+				{<Match socket={props.socket} matchLaunched={props.matchLaunched} setMatchLaunched={props.setMatchLaunched} idMatch={searchParams.get('id')} setInPlay={props.setInPlay} />}
 			</div>
 			<Chat idMe={props.idMe} socket={props.socket} friends={props.friends} setFriends={props.setFriends} chatParamsState={props.chatParamsState} setChatParamsState={props.setChatParamsState} isFriendshipButtonClicked={props.isFriendshipButtonClicked} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers}/>
 		</section>

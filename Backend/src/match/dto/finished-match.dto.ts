@@ -3,19 +3,13 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { MatchStatus } from "../entity/match.entity";
 
-export class UpdateMatchDto {
+export class FinishedMatchDto {
+	@ApiProperty()
+	@IsEnum(MatchStatus)
+	status: MatchStatus;
 
-    @ApiProperty()
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    score1?: number;
-
-    @ApiProperty()
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    score2?: number;
-
-
+	@ApiProperty()
+	@IsOptional()
+	@IsString()
+	winner?: string;
 }
