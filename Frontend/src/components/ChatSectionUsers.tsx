@@ -117,7 +117,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 
 	const goToMatch = (id: number) => {
         navigate("/mainpage?id=" + id)
-		//window.location.reload()
+		window.location.reload()
     }
 
 	return (
