@@ -66,7 +66,7 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	// }
 
 
-	@SubscribeMessage('disconnect')
+	@SubscribeMessage('set_offline')
 	disconnect_me(socket:CustomSocket)
 	{
 		this.logger.log(`${socket.user.username} left the page`);
