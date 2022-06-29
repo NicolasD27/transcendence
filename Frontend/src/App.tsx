@@ -54,6 +54,7 @@ const App = () => {
   const [friends, setFriends] = useState<FriendsFormat[]>([])
   const [blockedByUsers, setBlockedByUsers] = useState<number[]>([])
   const [friendRequests, setFriendRequests] = useState<number[]>([])
+  const [matchLaunched, setMatchLaunched] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,6 +86,7 @@ const App = () => {
   useEffect(() => {
     if (socket) {
       socket.on('nav_to_mainpage', () => {
+        socket.emit("resetValues")
         navigate('/mainpage')
       })
       window.addEventListener('beforeunload', () => {
@@ -92,7 +94,7 @@ const App = () => {
         socket.emit('disconnect')
       })
     }
-  }, [socket])
+  }, [socket, navigate])
 
   useEffect(() => {
     axios
@@ -112,7 +114,7 @@ const App = () => {
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth} />} />
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/mainpage" element={<MainPage socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
+          <Route path="/mainpage" element={<MainPage socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
           <Route path="/profil/:id" element={<Profil socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
         </Route>
         <Route path="*" element={<NotFound />} />

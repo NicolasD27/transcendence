@@ -1,5 +1,4 @@
-import axios from 'axios';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction} from 'react';
 import { chatStateFormat } from '../App';
 import { PropsStateUsers } from './ChatSectionUsers'
 import './PrintNormalFriendProfile.css'

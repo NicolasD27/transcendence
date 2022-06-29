@@ -20,7 +20,7 @@ const Header: React.FC<PropsHeader> = (props) => {
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
-		//window.location.reload()
+		// window.location.reload()
 	}
 
 	const onLogout = () => {
@@ -32,7 +32,6 @@ const Header: React.FC<PropsHeader> = (props) => {
 
 	const goToMainPage = () => {
 		navigate("/mainpage")
-		//window.location.reload()
 	}
 
 	return (

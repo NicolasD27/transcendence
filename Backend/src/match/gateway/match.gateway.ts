@@ -69,7 +69,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
-		//console.log("accepting match...")
 		const username = getUsernameFromSocket(socket)
 		const user = await this.userService.findByUsername(username);
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
@@ -88,9 +87,15 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			socket.join("match#" + data.match_id);
 	}
 
+	@SubscribeMessage('askForReload')
+	async askForReload(socket: CustomSocket) {
+		socket.emit('resetValues');
+	}
+
 	//@UseGuards(WsGuard)
 	@SubscribeMessage('askForMyID')
 	async askForMyID(socket: CustomSocket) {
+		console.log("askForMyID : ", getUsernameFromSocket(socket))
 		socket.emit('receiveMyID', getUsernameFromSocket(socket));
 	}
 

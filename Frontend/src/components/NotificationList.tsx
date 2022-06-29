@@ -54,22 +54,22 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 
 	}, [myId, socket])
 
-	// useEffect(() => {
-	// 	return () => {
-	// 		socket.off("new_channel_invite_received", data => {
-	// 			refreshNotificationList(myId)
-	// 		})
-	// 		socket.off("match_invite_to_client", data => {
-	// 			refreshNotificationList(myId)
-	// 		})
-	// 		socket.off("notifyFriendRequest", data => {
-	// 			refreshNotificationList(myId)
-	// 		})
-	// 		socket.off("notifyFriendRequestAccepted", data => {
-	// 			refreshNotificationList(myId)
-	// 		})
-	// 	}
-	// }, [])
+	useEffect(() => {
+		return () => {
+			socket.off("new_channel_invite_received", data => {
+				refreshNotificationList(myId)
+			})
+			socket.off("match_invite_to_client", data => {
+				refreshNotificationList(myId)
+			})
+			socket.off("notifyFriendRequest", data => {
+				refreshNotificationList(myId)
+			})
+			socket.off("notifyFriendRequestAccepted", data => {
+				refreshNotificationList(myId)
+			})
+		}
+	}, [myId, socket])
 
 
 	useEffect(() => {

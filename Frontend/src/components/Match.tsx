@@ -168,6 +168,8 @@ interface Props {
 	socket: any,
 	idMatch: any
 	setInPlay: Dispatch<SetStateAction<boolean>>;
+	matchLaunched: boolean;
+	setMatchLaunched: Dispatch<SetStateAction<boolean>>;
 }
 
 export class Match extends React.Component<Props>
@@ -179,15 +181,22 @@ export class Match extends React.Component<Props>
 	type = "";
 	started = 0;
 	countdown = 3;
-	match_id: number;
-	slaveId: string;
-	masterId: string;
-	myId: string;
+	match_id: -1;
+	slaveId: "";
+	masterId: "";
+	myId = "";
 	leftClick = false;
 	modeSelected = false;
 	mode = "";
 	tooSmall = false;
-	launched = false;
+
+	componentWillUnmount() {
+		this.props.socket.off('launch_match')
+		this.props.socket.off('resetValues')
+		this.props.socket.off('updateMatch')
+		this.props.socket.off('serverGameFinished')
+		this.props.socket.off('receiveMyID')
+	}
 
 	windowResized = (p5: any) => {
 		this.width = document.getElementById("gameArea")!.offsetWidth - 8;
@@ -196,7 +205,6 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		this.launched = false
 		if (this.props.idMatch)
 			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch })
 		this.width = document.getElementById("gameArea")!.offsetWidth - 8;
@@ -218,11 +226,24 @@ export class Match extends React.Component<Props>
 		p5.textAlign(p5.CENTER, p5.CENTER);
 		p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
 
+		this.props.socket.on('resetValues', (data) => {
+			this.winner = "";
+			this.type = "";
+			this.started = 0;
+			this.countdown = 3;
+			this.match_id = -1;
+			this.slaveId = "";
+			this.masterId = "";
+			this.myId = "";
+			this.leftClick = false;
+			this.modeSelected = false;
+			this.mode = "";
+			this.tooSmall = false;
+			this.props.setMatchLaunched(false)
+			scored = false;
+		});
+
 		this.props.socket.on('updateMatch', (data) => {
-			if (this.type === "") {
-				console.log("I'm Spect")
-				this.type = "spect";
-			}
 			p5.clear();
 			p5.background(0);
 			if (data && this.tooSmall !== true)
@@ -230,25 +251,22 @@ export class Match extends React.Component<Props>
 		});
 
 		this.props.socket.on('serverGameFinished', (data) => {
-			this.launched = false
 			if (this.type !== "master" && this.type !== "slave")
 				this.winner = data;
 		});
 
-		if (!this.launched) {
-			this.launched = true
-			this.props.socket.on('launch_match', (data) => {
-				console.log("launching match...")
-				this.match_id = data.id;
-				this.slaveId = data.user2.username;
-				this.masterId = data.user1.username;
+		this.props.socket.on('launch_match', (data) => {
+			console.log("launching match...")
+			this.match_id = data.id;
+			this.slaveId = data.user2.username;
+			this.masterId = data.user1.username;
 
-				this.props.socket.emit("askForMyID");
-			})
-		}
+			this.props.socket.emit("askForMyID");
+		})
+		
 		this.props.socket.on("receiveMyID", (data) => {
 			this.myId = data
-
+			console.log("receiveMyID ", this.masterId, this.slaveId)
 			if (this.myId === this.masterId && this.masterId)		//Master
 			{
 				console.log("IM A MASTER")
@@ -354,7 +372,6 @@ export class Match extends React.Component<Props>
 				this.started = 1;
 
 				this.props.socket.on('serverGameFinished', (data) => {
-					this.launched = false
 					this.started = -1;
 					this.winner = data;
 				});
@@ -366,8 +383,6 @@ export class Match extends React.Component<Props>
 
 			}
 		});
-
-
 	}
 
 	draw = (p5: any) => {
@@ -382,13 +397,12 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-				this.launched = false;
-				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-					window.location.reload();
+				// p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
+				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
+				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
-					window.location.reload();
-				}, 2000);
+					this.props.socket.emit('askForReload');
+				}, 1500)
 			}
 			if (this.width < 400)	//change values here
 			{
@@ -466,13 +480,12 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
-				this.launched = false;
-				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-					window.location.reload();
+				// p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
+				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
+				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
-					window.location.reload();
-				}, 2000);
+					this.props.socket.emit('askForReload');
+				}, 1500)
 			}
 		}
 	}
@@ -501,7 +514,7 @@ export class Match extends React.Component<Props>
 	render() {
 		return (
 			<Fragment>
-				{this.winner && <div className="pyro">
+				{this.started === -1 && <div className="pyro">
 					<div className="before"></div>
 					<div className="after"></div>
 				</div>}
