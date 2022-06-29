@@ -51,14 +51,9 @@ const OptionAdmin: React.FC<Props> = (props) => {
 	}
 
 	const leaveChannel = () => {
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
-			.then(res => {
-				const infoChannel = res.data;
-				if (infoChannel.owner.id !== props.idMe)
-					axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/leave`, { withCredentials: true })
-						.then(res => { })
-						props.setRecupList(true)
-			})
+		axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/leave`, { withCredentials: true })
+			.then(res => { })
+		props.setRecupList(true)
 		props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })
 		props.setShowConv(true)
 	}
