@@ -25,7 +25,7 @@ import { ApiTags } from "@nestjs/swagger";
 @Controller('friendships')
 @UseFilters(HttpExceptionFilter)
 export class FriendshipController {
-    constructor(private readonly friendshipService: FriendshipService) {}
+    constructor(private readonly friendshipService: FriendshipService) { }
 
     @UseGuards(TwoFactorGuard)
     @Get(':user_id')
@@ -33,6 +33,8 @@ export class FriendshipController {
         //console.log('findAllFriendshipsByUser', user_id);
         return this.friendshipService.findAllByUser(user_id);
     }
+
+
 
     @UseGuards(TwoFactorGuard)
     @Post()
@@ -64,7 +66,7 @@ export class FriendshipController {
     @Delete(':id')
     async destroy(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
         //console.log('destroyFriendship', id);
-        return this.friendshipService.destroy(username,id);
+        return this.friendshipService.destroy(username, id);
     }
 
 }
