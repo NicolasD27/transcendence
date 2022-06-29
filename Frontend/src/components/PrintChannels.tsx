@@ -63,10 +63,15 @@ const PrintChannels : React.FC<PropsPrintChannelsToJoin> = (props) => {
                     ) ||
                     (
                         props.channel.isProtected === true && 
+                        <>
+                            <div className='flex-v-centered'>
+                                    <div id='channelAvatar'></div>
+                            </div>
                             <div id="channelPassword">
                                 <input type="password" placeholder="Password" onChange={handleEnteredPassword} required/>
                                 <button id="confirmPassword" onClick={sendPassword}/>
-                            </div>				 
+                            </div>	
+                        </>			 
                     )
                 )
 			}
