@@ -91,7 +91,7 @@ const App = () => {
       })
       window.addEventListener('beforeunload', () => {
         console.log('disconnecting...')
-        socket.emit('disconnect')
+        socket.emit('set_offline')
       })
     }
   }, [socket, navigate])
