@@ -96,22 +96,22 @@ const App = () => {
     }
   }, [socket, navigate])
 
-  useEffect(() => {
-    axios
-      .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
-      .then((res) => {
-        res.data.forEach((user) =>
-          setBlockedByUsers([...blockedByUsers, user.id])
-        )
-      })
-      .catch((err) => console.log(err))
-  }, [blockedByUsers])
+  useEffect(() => 	{
+	if (isAuth)
+    {
+		axios
+      	.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
+      	.then((res) => {
+       	   setBlockedByUsers(res.data)
+      	})
+    }
+	}, [isAuth])
 
   return (
     <Fragment>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth} />} />
+        <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth} setSocket={setSocket} />} />
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/mainpage" element={<MainPage socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
