@@ -36,7 +36,7 @@ export class UserService {
 	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;
 		return await this.usersRepository.find({
-			where: `"username" ILIKE '${search}%'`,
+			where: `"pseudo" ILIKE '${search}%'`,
 			order: { pseudo: "ASC" },
 			take: limit,
 			skip: offset
@@ -73,7 +73,7 @@ export class UserService {
 
 	async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
 
-		if (!filename || filename.length < 1)
+		if (!filename || filename.length < 1 || filename.length > 100)
 			throw new UnauthorizedException("invalid file name");
 		let ext: string = filename.split('.').pop();
 		if (!ext || (ext !== "png" && ext !== "jpg" && ext !== "jpeg"))
