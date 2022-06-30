@@ -59,14 +59,12 @@ const Notification: React.FC<Props> = ({ notification, newNotifsLength, setNewNo
 			setNewNotifsLength(newNotifsLength - 1)
 			navigate("/mainpage")
 			socket.emit("accept_challenge", { match_id: notification.entityId })
-			console.log("sending accept event")
 		}
 		else if (notification.entityType === "ChannelInvite") {
 			axios.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${notification.receiver.id}/invites/${notification.entityId}`, {}, { withCredentials: true })
 				.then(res => {
 					setAwaitingAction(false)
 					setNewNotifsLength(newNotifsLength - 1)
-					//console.log("to do : navigate to channel etc...")
 				})
 		}
 	}

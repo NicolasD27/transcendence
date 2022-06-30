@@ -259,7 +259,6 @@ export class Match extends React.Component<Props>
 		});
 
 		this.props.socket.on('launch_match', (data) => {
-			console.log("launching match...")
 			this.match_id = data.id;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
@@ -269,10 +268,8 @@ export class Match extends React.Component<Props>
 		
 		this.props.socket.on("receiveMyID", (data) => {
 			this.myId = data
-			console.log("receiveMyID ", this.masterId, this.slaveId)
 			if (this.myId === this.masterId && this.masterId)		//Master
 			{
-				console.log("IM A MASTER")
 				this.modeSelected = true;
 				this.type = "master";
 
@@ -368,7 +365,6 @@ export class Match extends React.Component<Props>
 			}
 			else if (this.myId === this.slaveId && this.slaveId)	//Slave
 			{
-				console.log("IM A SLAVE")
 				this.modeSelected = true;
 				this.type = "slave";
 

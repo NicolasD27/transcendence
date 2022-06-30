@@ -6,7 +6,6 @@ import Header from './Header'
 import Body from './Body'
 import { chatStateFormat } from '../App';
 import { FriendsFormat } from '../App';
-import { userBlockedFormat } from '../App'
 
 
 const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers, setBlockedByUsers}: {socket: any, matchLaunched: boolean, setMatchLaunched: Dispatch<SetStateAction<boolean>>, friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[], setBlockedByUsers : Dispatch<SetStateAction<number[]>>}) => {

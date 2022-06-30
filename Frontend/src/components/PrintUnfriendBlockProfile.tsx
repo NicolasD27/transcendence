@@ -2,9 +2,6 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
 import { FriendshipStatus } from './PrintFriend'
-import axios from 'axios';
-import { userInfo } from 'os';
-
 interface PropsPrintUnfriendBlockProfile {
 	socket : any;
 	user: PropsStateUsers;

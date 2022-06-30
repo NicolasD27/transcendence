@@ -98,7 +98,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					.fetchSockets();
 				if (targetedClientSocket.length)
 				{
-					//console.log(`${banUserFromChannelDto.userId} kicked from channel#${banUserFromChannelDto.channelId}`);
 					targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
 					this.server.to("user#" + bannedUser.id)
 						.emit('mute', {
@@ -108,8 +107,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					);
 				}
 			}
-			else
-				console.log(`${banUserFromChannelDto.userId} is not active`);
+			
 		}
 		catch (e) {
 			//console.log(e.message);
@@ -183,8 +181,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					}
 				);
 			}
-			else
-				console.log(`${data.userId} is not active`);
+			
 		}
 		catch(e)
 		{
@@ -207,8 +204,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				this.server.to("user#" + newInviteDto.receiver.id)
 					.emit('new_channel_invite_received', newInviteDto);
 			}
-			else
-				console.log(`${newInviteDto.receiver.id} in not active`);
+			
 		}
 		catch (e)
 		{

@@ -35,7 +35,6 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 	}
 
 	const handleSubmit = () => {
-		console.log("submitting")
 		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
 		.then(() => {
 			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, { code: code }, { withCredentials: true })
