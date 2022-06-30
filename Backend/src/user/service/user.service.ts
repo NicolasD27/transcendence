@@ -191,7 +191,7 @@ export class UserService {
 			]
 		})
 			.then(friendships => friendships.forEach(friendship => {
-				blockers_users.push(User.toDto(friendship.following, activeUsers))
+				blockers_users.push(friendship.following.id)
 			})
 			)
 		await this.friendshipsRepository.find({
@@ -200,7 +200,7 @@ export class UserService {
 			]
 		})
 			.then(friendships => friendships.forEach(friendship => {
-				blockers_users.push(User.toDto(friendship.follower, activeUsers))
+				blockers_users.push(friendship.follower.id)
 			})
 			)
 		return blockers_users;

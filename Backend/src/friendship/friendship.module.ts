@@ -10,6 +10,7 @@ import { FriendshipController } from './controller/friendship.controller';
 import { Friendship } from './entity/friendship.entity';
 import { FriendshipService } from './service/friendship.service';
 import { FriendshipRepository } from './repository/friendship.repository';
+import { FriendshipGateway } from './gateway/friendship.gateway';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Friendship, FriendshipRepository, User, Notification, NotificationRepository]),
@@ -20,6 +21,6 @@ import { FriendshipRepository } from './repository/friendship.repository';
         }
     }),],
     controllers: [FriendshipController],
-    providers: [FriendshipService, AuthService, NotificationService]
+    providers: [FriendshipService, AuthService, NotificationService, FriendshipGateway]
 })
 export class FriendshipModule {}

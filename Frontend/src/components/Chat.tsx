@@ -28,17 +28,23 @@ export interface PropsChat {
 
 const Chat: React.FC<PropsChat> = (props) => {
 	const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
-
 	const { idMe, setIsFriendshipButtonClicked } = props;
-
 	const [recupList, setRecupList] = useState(false)
 	const [usersBlocked, setUsersBlocked] = useState<number[]>([])
+
+	//console.log("Chat.tsx")
 
 	 useEffect(() => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => setUsersBlocked(res.data))	
 	}, [])
+	
+	props.socket.on('friendship_state_updated', () => {
+		axios
+		.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+		.then(res => setUsersBlocked(res.data))
+	})
 
 	useEffect(() => {
 		if (props.idMe && props.isFriendshipButtonClicked === true)
