@@ -2,11 +2,11 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import './PrintUnfriendBlockProfile.css'
 import { PropsStateUsers } from './ChatSectionUsers'
 import { FriendshipStatus } from './PrintFriend'
-import axios from 'axios';
-
 interface PropsPrintUnfriendBlockProfile {
+	socket : any;
 	user: PropsStateUsers;
 	friendshipId: number;
+	friendshipStatus : number;
 	setFriendDeleteColumnState: Dispatch<SetStateAction<boolean>>;
 	deleteFriend: Function;
 	isUserBlocked: boolean;
@@ -20,21 +20,12 @@ const PrintUnfriendBlockProfile: React.FC<PropsPrintUnfriendBlockProfile> = (pro
 
 	const handleClick = () => {
 		if (!props.isUserBlocked) {
-			axios
-				.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}/block`, {}, { withCredentials: true })
-				.then(res => {
-					setIsBlocked(!isBlocked)
-				})
-				.catch((err) => console.log(err))
+			props.socket.emit(`update_friendship_state`, { receiver: props.user.id , status: FriendshipStatus.BLOCKED_BY_FOLLOWER})
+			setIsBlocked(!isBlocked)
 		}
 		else {
-			axios
-				.patch(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.friendshipId}`, { status: FriendshipStatus.ACTIVE }, { withCredentials: true })
-				.then(res => {
-					setIsBlocked(!isBlocked)
-					//props.setIsBlocked(!props.isBlocked)
-				})
-				.catch((err) => console.log(err))
+			props.socket.emit(`update_friendship_state`, { receiver: props.user.id , status: FriendshipStatus.ACTIVE})
+			setIsBlocked(!isBlocked)
 		}
 	}
 

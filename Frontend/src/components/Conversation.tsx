@@ -62,7 +62,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [users, setUsers] = React.useState<userFormat[]>([]);
 	const [moderators, setModerators] = React.useState<userFormat[]>([]);
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
-	const [usersBlocked, setUsersBlocked] = React.useState<boolean[]>([]);
+	const [usersBlocked, setUsersBlocked] = React.useState<number[]>([]);
 
 	const newMessageChannel = (message: any) => {
 		let singleMessage: messagesFormat;
@@ -73,8 +73,8 @@ const Conversation: React.FC<Props> = (props) => {
 				avatartmp = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
 			else
 				avatartmp = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${message.user.avatarId}`;
-			usersBlocked.forEach(element => {
-				if (message.user.id === element) {
+			usersBlocked.forEach(user_id => {
+				if (message.user.id === user_id) {
 					const nbtmp = message.content.length
 					message.content = "" + "*".repeat(nbtmp)
 				}
@@ -110,12 +110,15 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	useEffect(() => {
-		props.setRecupList(false)
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => {
-				const tmpUsersBlocked = res.data
-				tmpUsersBlocked.forEach(element => setUsersBlocked([...usersBlocked, element.id]))
+				setUsersBlocked(res.data)
 			})
+	})
+
+	useEffect(() => {
+		props.setRecupList(false)
+		
 		setTimeout(() => { }, 500)
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
@@ -185,7 +188,7 @@ const Conversation: React.FC<Props> = (props) => {
 				})
 		}
 
-	}, [props, showConv, status, props.id, props.idMe, props.type, usersBlocked]);//Recuperer les infos du channels
+	}, [props, showConv, status, props.id, props.idMe, props.type]);//Recuperer les infos du channels
 
 	useEffect(() => {
 		if (props.id > 0 && props.type) {
@@ -217,7 +220,7 @@ const Conversation: React.FC<Props> = (props) => {
 					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
 				})
 		}
-	}, [props.id, showConv, status, muted, props.type]);// eslint-disable-line react-hooks/exhaustive-deps
+	}, [props.id, showConv, status, muted, props.type, usersBlocked]);// eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (props.socket) {

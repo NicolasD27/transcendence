@@ -86,7 +86,6 @@ export class MatchService {
 			throw new UnauthorizedException();
 		// await this.notificationService.actionPerformedMatch(match)
 		await this.matchsRepository.save(match);
-		console.log("match after update : ", match);
 		return Match.toDto(match, activeUsers)
 	}
 
@@ -102,7 +101,6 @@ export class MatchService {
 		if ((match.user1.username != current_username && match.user2.username != current_username))
 			throw new UnauthorizedException();
 		await this.matchsRepository.save(match);
-		console.log("match after update score: ", match);
 		return Match.toDto(match, activeUsers)
 	}
 
@@ -117,7 +115,6 @@ export class MatchService {
 		if ((match.user1.username != current_username && match.user2.username != current_username) || finishedMatchDto.status < match.status)
 			throw new UnauthorizedException();
 		await this.matchsRepository.save(match);
-		console.log("match after update finished: ", match);
 		return Match.toDto(match, activeUsers)
 	}
 
@@ -163,11 +160,9 @@ export class MatchService {
 				status: MatchStatus.ACTIVE
 			}
 		)
-		console.log("match : ", match)
 		if (match)
 			this.matchsRepository.save(match);
 		else {
-			console.log("creating match...")
 			match = await this.matchsRepository.create({
 				user1: user1,
 				user2: user2,

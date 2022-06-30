@@ -12,14 +12,15 @@ import { getUsernameFromSocket } from 'src/user/get-user-ws.function';
 import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
 import { UserService } from 'src/user/service/user.service';
 import { FriendshipService } from '../service/friendship.service';
+import { FriendshipStatus } from '../entity/friendship.entity';
 
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class FriendshipGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
 	@WebSocketServer()
 	server: Server;
 
-	private logger: Logger = new Logger('ChatGateway');
+	private logger: Logger = new Logger('FriendshipGateway');
 
 	constructor(
 		private readonly friendshipService: FriendshipService,
@@ -36,6 +37,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		const myUser = await this.userService.findByUsername(username);
 		try {
 			const myFriendship = await this.friendshipService.findOne(myUser.id, data.receiver);
+			if (data.status == FriendshipStatus.ACTIVE)
+				data.status;
+			else if (myFriendship.follower.id == data.receiver)
+				data.status = FriendshipStatus.BLOCKED_BY_FOLLOWING;
+			else 
+				data.status = FriendshipStatus.BLOCKED_BY_FOLLOWER;
 			await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
 
 			this.server.to("user#" + myUser.id)

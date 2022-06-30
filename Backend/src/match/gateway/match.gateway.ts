@@ -84,8 +84,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	@SubscribeMessage('connect_to_match')
 	async connectToMatch(socket: CustomSocket, data: { match_id: string }) {
-		if (this.matchService.isActive(data.match_id))
+		if (await this.matchService.isActive(data.match_id))
 			socket.join("match#" + data.match_id);
+		else
+			socket.emit('resetValues')
 	}
 
 	@SubscribeMessage('askForReload')
@@ -96,7 +98,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	//@UseGuards(WsGuard)
 	@SubscribeMessage('askForMyID')
 	async askForMyID(socket: CustomSocket) {
-		console.log("askForMyID : ", getUsernameFromSocket(socket))
 		socket.emit('receiveMyID', getUsernameFromSocket(socket));
 	}
 
@@ -105,7 +106,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async masterScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
 		match.score1++;
-		console.log("master scored")
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 
@@ -114,7 +114,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async slaveScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
 		match.score2++;
-		console.log("slave scored")
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 

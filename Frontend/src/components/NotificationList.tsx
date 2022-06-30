@@ -39,7 +39,6 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 				refreshNotificationList(myId)
 			})
 			socket.on("match_invite_to_client", data => {
-				console.log("match_invite_to_client")
 				refreshNotificationList(myId)
 			})
 			socket.on("notifyFriendRequest", data => {
