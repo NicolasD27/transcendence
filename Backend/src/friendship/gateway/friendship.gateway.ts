@@ -30,26 +30,26 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('update_friendship_state')
     async update(
 		socket: CustomSocket,
-		data: { targetUserId: number, status: number }
+		data: { receiver: number, status: number }
 	) {
 		const username = getUsernameFromSocket(socket);
 		const myUser = await this.userService.findByUsername(username);
-		const myFriendship = await this.friendshipService.findOne(myUser.id, data.targetUserId);
+		const myFriendship = await this.friendshipService.findOne(myUser.id, data.receiver);
 		await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
 
 		this.server.to("user#" + myUser.id)
 			.emit('friendship_state_updated', {
 				updater: myUser.id,
-				receiver: data.targetUserId,
+				receiver: data.receiver,
 				status: data.status
 			}
 		);
-		if (activeUsers.isActiveUser(data.targetUserId) == true)
+		if (activeUsers.isActiveUser(data.receiver) == true)
 		{
-			this.server.to("user#" + data.targetUserId)
+			this.server.to("user#" + data.receiver)
 				.emit('friendship_state_updated', {
 					updater: myUser.id,
-					receiver: data.targetUserId,
+					receiver: data.receiver,
 					status: data.status
 				}
 			);
