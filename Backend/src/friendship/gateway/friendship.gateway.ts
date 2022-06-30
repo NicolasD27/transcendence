@@ -1,4 +1,4 @@
-import { HttpCode, Logger, Request, UnauthorizedException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -27,24 +27,30 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	)
 	{}
 
-    @SubscribeMessage('update_friendship')
+    @SubscribeMessage('update_friendship_state')
     async update(
 		socket: CustomSocket,
 		data: { targetUserId: number, status: number }
 	) {
-
 		const username = getUsernameFromSocket(socket);
 		const myUser = await this.userService.findByUsername(username);
-		await this.friendshipService.update(username, data.targetUserId, data.status);
+		const myFriendship = await this.friendshipService.findOne(myUser.id, data.targetUserId);
+		await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
 
 		this.server.to("user#" + myUser.id)
-			.emit('block_successful', { targetUserId: data.targetUserId });
-
+			.emit('friendship_state_updated', {
+				updater: myUser.id,
+				receiver: data.targetUserId,
+				status: data.status
+			}
+		);
 		if (activeUsers.isActiveUser(data.targetUserId) == true)
 		{
 			this.server.to("user#" + data.targetUserId)
-				.emit('blocked_by_another_user', {
-					user: myUser.id,
+				.emit('friendship_state_updated', {
+					updater: myUser.id,
+					receiver: data.targetUserId,
+					status: data.status
 				}
 			);
 		}
