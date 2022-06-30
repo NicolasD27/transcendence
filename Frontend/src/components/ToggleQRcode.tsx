@@ -35,12 +35,13 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 	}
 
 	const handleSubmit = () => {
-		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
+		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, { code: code }, { withCredentials: true })
 		.then(() => {
-			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, { code: code }, { withCredentials: true })
+			axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/turn-on-2FA`, {}, { withCredentials: true })
 			.then(() => {
 				setShowQRCode(false)
 				setIsChecked(true)
+			})
 			})
 			.catch(err => {
 				const input = document.getElementById("input");
@@ -53,7 +54,7 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 				}
 				
 
-		})})
+		})
 		setCode("")
 
 		
@@ -77,8 +78,7 @@ const ToggleQRcode = ({isTwoFactorEnable}: {isTwoFactorEnable: boolean}) => {
 				<div>
 					<img src={URL.createObjectURL(QRcode)} alt='QR code' className="qrcode" />
 					<p className='login-title'>Scan with Google Authenticator</p>
-					<input autoFocus autoComplete='off' type="text" id="input" onChange={handleChangeCode}  value={code} placeholder="______" onKeyDown={handleKeyPress} />
-					<button onClick={handleSubmit} className="ButtonStyle navButton">Valider</button>
+					<input autoFocus autoComplete='off' type="text" id="input" onChange={handleChangeCode} onBlur={() => setShowQRCode(false)} value={code} placeholder="______" onKeyDown={handleKeyPress} />
 				</div>
 			</div>}
 		</Fragment>
