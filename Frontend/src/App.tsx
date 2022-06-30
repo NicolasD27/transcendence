@@ -45,7 +45,7 @@ export interface FriendsFormat {
   status: number;
 }
 
-interface userBlockedFormat {
+export interface userBlockedFormat {
   id : number;
   username : string;
   pseudo : string;
@@ -106,16 +106,13 @@ const App = () => {
   useEffect(() => 	{
 	if (isAuth)
     {
-		axios
-      	.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
-      	.then((res) => {
-          let tmp : userBlockedFormat[]
-          tmp = res.data
-          tmp.map((user) => setBlockedByUsers(blockedByUsers => [...blockedByUsers, user.id]))
-      	})
+      axios
+          .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
+          .then((res) => {
+            setBlockedByUsers(res.data)
+          })
     }
 	}, [isAuth])
-
 
   return (
     <Fragment>
@@ -124,7 +121,7 @@ const App = () => {
         <Route path="/login-2FA" element={<Login2FA setIsAuth={setIsAuth} setSocket={setSocket} />} />
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/mainpage" element={<MainPage socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
+          <Route path="/mainpage" element={<MainPage socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} setBlockedByUsers={setBlockedByUsers}/>} />
           <Route path="/profil/:id" element={<Profil socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
         </Route>
         <Route path="*" element={<NotFound />} />

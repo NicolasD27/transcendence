@@ -19,6 +19,7 @@ interface PropsPrintFriend {
 	socket: any;
 	user: PropsStateUsers;
 	friendshipId: number;
+	friendshipStatus : number;
 	statusIcon: string;
 	isFriend: boolean;
 	pendingRequest: boolean;
@@ -40,7 +41,6 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 	const [friendDeleteColumnState, setFriendDeleteColumnState] = useState(false)
 	//const [isBlocked, setIsBlocked] = useState(false)
 	const navigate = useNavigate()
-
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
@@ -78,7 +78,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 					!friendDeleteColumnState && <PrintNormalFriendProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isUserBlocked={props.isUserBlocked} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend} />)
 				||
 				(props.isFriend &&
-					friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isUserBlocked={props.isUserBlocked} /*setIsBlocked={setIsBlocked}*/ blockedByFriend={props.blockedByFriend} />)
+					friendDeleteColumnState && <PrintUnfriendBlockProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} friendshipStatus={props.friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isUserBlocked={props.isUserBlocked} /*setIsBlocked={setIsBlocked}*/ blockedByFriend={props.blockedByFriend} />)
 				||
 				(props.pendingRequest &&
 

@@ -110,12 +110,15 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	useEffect(() => {
-		props.setRecupList(false)
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => {
-				const tmpUsersBlocked = res.data
-				tmpUsersBlocked.forEach(element => setUsersBlocked([...usersBlocked, element.id]))
+				setUsersBlocked(res.data)
 			})
+	})
+
+	useEffect(() => {
+		props.setRecupList(false)
+		
 		setTimeout(() => { }, 500)
 		if (props.type === "channel") {
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })

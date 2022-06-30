@@ -6,9 +6,10 @@ import Header from './Header'
 import Body from './Body'
 import { chatStateFormat } from '../App';
 import { FriendsFormat } from '../App';
+import { userBlockedFormat } from '../App'
 
 
-const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers}: {socket: any, matchLaunched: boolean, setMatchLaunched: Dispatch<SetStateAction<boolean>>, friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[]}) => {
+const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers, setBlockedByUsers}: {socket: any, matchLaunched: boolean, setMatchLaunched: Dispatch<SetStateAction<boolean>>, friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[], setBlockedByUsers : Dispatch<SetStateAction<number[]>>}) => {
 	const [idMe, setIdMe] = useState(0);
 	const [getIDMe, setGetIDMe] = useState(false);
 	const [inPlay, setInPlay] = useState(false)
@@ -21,6 +22,15 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 			})
 		setGetIDMe(getIDMe => true)
 	}, [])
+
+	socket.on('friendship_state_updated', () => {
+		axios
+			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
+			.then((res) => {
+				setBlockedByUsers(res.data)
+			})
+	})
+	//console.log("MainPage.tsx")
 
 	return (
 		<div id='bloc'>
