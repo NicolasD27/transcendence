@@ -34,27 +34,38 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	) {
 		const username = getUsernameFromSocket(socket);
 		const myUser = await this.userService.findByUsername(username);
-		const myFriendship = await this.friendshipService.findOne(myUser.id, data.receiver);
-		await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
+		try {
+			const myFriendship = await this.friendshipService.findOne(myUser.id, data.receiver);
+			await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
 
-		this.server.to("user#" + myUser.id)
-			.emit('friendship_state_updated', {
-				updater: myUser.id,
-				receiver: data.receiver,
-				status: data.status
-			}
-		);
-		if (activeUsers.isActiveUser(data.receiver) == true)
-		{
-			this.server.to("user#" + data.receiver)
+			this.server.to("user#" + myUser.id)
 				.emit('friendship_state_updated', {
 					updater: myUser.id,
 					receiver: data.receiver,
-					status: data.status
+					status: data.status,
+					state: 1
 				}
 			);
+			if (activeUsers.isActiveUser(data.receiver) == true)
+			{
+				this.server.to("user#" + data.receiver)
+					.emit('friendship_state_updated', {
+						updater: myUser.id,
+						receiver: data.receiver,
+						status: data.status,
+						state: 1
+					}
+				);
+			}
 		}
-    }
+		catch(e)
+		{
+			this.server.to("user#" + myUser.id)
+				.emit('friendship_state_updated', {
+					state: 0,
+				});
+		}
+	}
 
 	afterInit(server: Server) {}
 	handleConnection(client: CustomSocket) {}
