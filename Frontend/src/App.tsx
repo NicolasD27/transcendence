@@ -45,6 +45,13 @@ export interface FriendsFormat {
   status: number;
 }
 
+interface userBlockedFormat {
+  id : number;
+  username : string;
+  pseudo : string;
+  avatarId : string;
+}
+
 const App = () => {
   const [isAuth, setIsAuth] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -102,10 +109,13 @@ const App = () => {
 		axios
       	.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
       	.then((res) => {
-       	   setBlockedByUsers(res.data)
+          let tmp : userBlockedFormat[]
+          tmp = res.data
+          tmp.map((user) => setBlockedByUsers(blockedByUsers => [...blockedByUsers, user.id]))
       	})
     }
 	}, [isAuth])
+
 
   return (
     <Fragment>

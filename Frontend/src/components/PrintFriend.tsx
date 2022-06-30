@@ -24,6 +24,7 @@ interface PropsPrintFriend {
 	pendingRequest: boolean;
 	sendFriendshipRequest: Function;
 	blockedByFriend: boolean;
+	isUserBlocked: boolean;
 	setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>;
 	chatParamsState: chatStateFormat;
 	setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>;
@@ -37,13 +38,13 @@ interface PropsPrintFriend {
 const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 	const [profileAvatar, setProfileAvatar] = useState("")
 	const [friendDeleteColumnState, setFriendDeleteColumnState] = useState(false)
-	const [isBlocked, setIsBlocked] = useState(false)
+	//const [isBlocked, setIsBlocked] = useState(false)
 	const navigate = useNavigate()
 
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
-		// window.location.reload()
+		//window.location.reload()
 	}
 
 	const defaultAvatar = 'https://steamuserimages-a.akamaihd.net/ugc/907918060494216024/0BA39603DCF9F81CE0EC0384D7A35764852AD486/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false';
@@ -63,8 +64,6 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 				console.log(err))
 	}
 
-
-
 	return (
 		<div className='user'>
 			<div className='flex-v-centered'>
@@ -76,10 +75,10 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 			</div>
 			{
 				(props.isFriend &&
-					!friendDeleteColumnState && <PrintNormalFriendProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isBlocked={isBlocked} setIsBlocked={setIsBlocked} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend} />)
+					!friendDeleteColumnState && <PrintNormalFriendProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isUserBlocked={props.isUserBlocked} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend} />)
 				||
 				(props.isFriend &&
-					friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isBlocked={isBlocked} setIsBlocked={setIsBlocked} blockedByFriend={props.blockedByFriend} />)
+					friendDeleteColumnState && <PrintUnfriendBlockProfile user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isUserBlocked={props.isUserBlocked} /*setIsBlocked={setIsBlocked}*/ blockedByFriend={props.blockedByFriend} />)
 				||
 				(props.pendingRequest &&
 

@@ -26,6 +26,7 @@ interface PropsBody {
 const Body: React.FC<PropsBody> = (props) => {
 	const [searchParams] = useSearchParams();
 
+
 	return (
 		<section className="gameAndChatSection">
 			<div className='gameArea' id='gameArea'>

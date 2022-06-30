@@ -145,26 +145,39 @@ export class UserService {
 		const user = await this.usersRepository.findOne({ username });
 		if (!user)
 			throw new NotFoundException(`User ${username} not found`);
-		const blocked_users = []
+		const blocked_users = [];
 		await this.friendshipsRepository.find({
 			where: [
 				{ follower: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWER }
 			]
 		})
-			.then(friendships => friendships.forEach(friendship => {
-				blocked_users.push(User.toDto(friendship.following, activeUsers))
-			})
-			)
+		.then(friendships => friendships.forEach(friendship => {
+			blocked_users.push(friendship.following.id)
+		}))
 		await this.friendshipsRepository.find({
 			where: [
 				{ following: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWING }
 			]
 		})
-			.then(friendships => friendships.forEach(friendship => {
-				blocked_users.push(User.toDto(friendship.follower, activeUsers))
-			})
-			)
+		.then(friendships => friendships.forEach(friendship => {
+			blocked_users.push(friendship.follower.id)
+		}))
 		return blocked_users;
+	}
+
+	async isBlocked(username: string, id: number): Promise<boolean> {
+		const user = await this.usersRepository.findOne({ username });
+		if (!user)
+			throw new NotFoundException(`User ${username} not found`);
+		const blocked_user = await this.friendshipsRepository.findOne({
+			where: [
+				{ follower: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWER },
+				{ following: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWING }
+			]
+		})
+		if (blocked_user)
+			return true;
+		return false
 	}
 
 	async getBlockersUsers(username: string): Promise<UserDto[]> {
