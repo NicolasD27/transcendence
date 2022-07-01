@@ -40,7 +40,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const searchValue = props.searchValue;
 	const searchUsers = props.searchUsers;
 	const friendRequests = props.friendRequests;
-	
+
 	const isAlreadyFriend = (id:number) => {
 		for(let i = 0; i < friends.length; i++ )
 		{
@@ -138,6 +138,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							return false
 						})
 						.map((user_) => {
+							
 							let statusIcon = "";
 							if (user_.status === 1)
 								statusIcon = statusIconGreen
@@ -174,6 +175,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							})
 							.map((friend) => {
 								let statusIcon = ""
+								console.log(`${friend.pseudo} = ${friend.status}`)
 								if (friend.status === 1)
 									statusIcon = statusIconGreen
 								else if (friend.status === 0)

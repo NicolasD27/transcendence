@@ -47,6 +47,9 @@ const Chat: React.FC<PropsChat> = (props) => {
 	})
 
 	useEffect(() => {
+		props.socket.on('refreshFriendList', () => {
+			setIsFriendshipButtonClicked(true)
+		});
 		if (props.idMe && props.isFriendshipButtonClicked === true)
 		{
 			setTimeout(()=> {
@@ -55,6 +58,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 				.then(res => {
 					let users = res.data;
 					props.setFriends([])
+					console.log("JE passe ici")
 					users.forEach((friendship: any) => {
 						let friends_tmp: FriendsFormat;
 						let userId : number;
@@ -97,7 +101,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 			})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
-	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked])
+	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked, props.socket])
 
 	if (props.idMe && props.socket)
 	{

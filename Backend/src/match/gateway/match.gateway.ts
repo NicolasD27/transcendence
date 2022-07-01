@@ -47,13 +47,14 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
 			activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 			activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
+			this.server.emit('refreshFriendList');
 			this.server.to("match#" + match.id).emit('launch_match', match);
-			//console.log(`matchID = ${match.id}`);
 		}
 		else {
 			//console.log("waiting for another player");
 			this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
+			this.server.emit('refreshFriendList');
 		}
 	}
 
@@ -81,6 +82,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
 		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
+		this.server.emit('refreshFriendList');
 		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
 		this.server.to("match#" + match.id).emit('launch_match', match)
 	}
@@ -160,6 +162,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
 		activeUsers.updateState(match.user1.id, UserStatus.ONLINE);
 		activeUsers.updateState(match.user2.id, UserStatus.ONLINE);
+		this.server.emit('refreshFriendList');
 		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
 	}
 
@@ -186,5 +189,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	handleDisconnect(client: CustomSocket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
 		this.server.emit('clientDisconnect', getUsernameFromSocket(client));
+		this.server.emit('refreshFriendList');
 	}
 }
