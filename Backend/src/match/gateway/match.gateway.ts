@@ -189,6 +189,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	handleDisconnect(client: CustomSocket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
 		this.server.emit('clientDisconnect', getUsernameFromSocket(client));
-		this.server.emit('refreshFriendList');
+		this.server.emit('refreshFriendList'); //mettre en rouge
 	}
 }
