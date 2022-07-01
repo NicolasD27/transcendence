@@ -36,7 +36,7 @@ export class UserService {
 	async searchForUsers(paginationQuery: PaginationQueryDto, search: string): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;
 		return await this.usersRepository.find({
-			where: `"username" ILIKE '${search}%'`,
+			where: `"pseudo" ILIKE '${search}%'`,
 			order: { pseudo: "ASC" },
 			take: limit,
 			skip: offset
@@ -73,7 +73,7 @@ export class UserService {
 
 	async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
 
-		if (!filename || filename.length < 1)
+		if (!filename || filename.length < 1 || filename.length > 100)
 			throw new UnauthorizedException("invalid file name");
 		let ext: string = filename.split('.').pop();
 		if (!ext || (ext !== "png" && ext !== "jpg" && ext !== "jpeg"))
@@ -145,26 +145,39 @@ export class UserService {
 		const user = await this.usersRepository.findOne({ username });
 		if (!user)
 			throw new NotFoundException(`User ${username} not found`);
-		const blocked_users = []
+		const blocked_users = [];
 		await this.friendshipsRepository.find({
 			where: [
 				{ follower: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWER }
 			]
 		})
-			.then(friendships => friendships.forEach(friendship => {
-				blocked_users.push(User.toDto(friendship.following, activeUsers))
-			})
-			)
+		.then(friendships => friendships.forEach(friendship => {
+			blocked_users.push(friendship.following.id)
+		}))
 		await this.friendshipsRepository.find({
 			where: [
 				{ following: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWING }
 			]
 		})
-			.then(friendships => friendships.forEach(friendship => {
-				blocked_users.push(User.toDto(friendship.follower, activeUsers))
-			})
-			)
+		.then(friendships => friendships.forEach(friendship => {
+			blocked_users.push(friendship.follower.id)
+		}))
 		return blocked_users;
+	}
+
+	async isBlocked(username: string, id: number): Promise<boolean> {
+		const user = await this.usersRepository.findOne({ username });
+		if (!user)
+			throw new NotFoundException(`User ${username} not found`);
+		const blocked_user = await this.friendshipsRepository.findOne({
+			where: [
+				{ follower: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWER },
+				{ following: user, status: FriendshipStatus.BLOCKED_BY_FOLLOWING }
+			]
+		})
+		if (blocked_user)
+			return true;
+		return false
 	}
 
 	async getBlockersUsers(username: string): Promise<UserDto[]> {
@@ -178,7 +191,7 @@ export class UserService {
 			]
 		})
 			.then(friendships => friendships.forEach(friendship => {
-				blockers_users.push(User.toDto(friendship.following, activeUsers))
+				blockers_users.push(friendship.following.id)
 			})
 			)
 		await this.friendshipsRepository.find({
@@ -187,7 +200,7 @@ export class UserService {
 			]
 		})
 			.then(friendships => friendships.forEach(friendship => {
-				blockers_users.push(User.toDto(friendship.follower, activeUsers))
+				blockers_users.push(friendship.follower.id)
 			})
 			)
 		return blockers_users;

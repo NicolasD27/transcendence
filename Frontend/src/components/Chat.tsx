@@ -28,10 +28,23 @@ export interface PropsChat {
 
 const Chat: React.FC<PropsChat> = (props) => {
 	const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
-
 	const { idMe, setIsFriendshipButtonClicked } = props;
-
 	const [recupList, setRecupList] = useState(false)
+	const [usersBlocked, setUsersBlocked] = useState<number[]>([])
+
+	//console.log("Chat.tsx")
+
+	 useEffect(() => {
+		axios
+			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+			.then(res => setUsersBlocked(res.data))	
+	}, [])
+	
+	props.socket.on('friendship_state_updated', () => {
+		axios
+		.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+		.then(res => setUsersBlocked(res.data))
+	})
 
 	useEffect(() => {
 		if (props.idMe && props.isFriendshipButtonClicked === true)
@@ -165,7 +178,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 
 	return (
 		<>
-			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers} recupList={recupList}/>}
+			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers} usersBlocked={usersBlocked} setUsersBlocked={setUsersBlocked} recupList={recupList}/>}
 			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} setRecupList={setRecupList} />}
 		</>
 	)

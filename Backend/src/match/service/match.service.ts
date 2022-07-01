@@ -12,6 +12,8 @@ import { MatchRepository } from '../repository/match.repository';
 import { NotificationRepository } from '../../notification/repository/notification.repository';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { activeUsers } from 'src/auth-socket.adapter';
+import { FinishedMatchDto } from '../dto/finished-match.dto';
+import { UpdateScoreDto } from '../dto/update-score.dto';
 
 @Injectable()
 export class MatchService {
@@ -21,46 +23,48 @@ export class MatchService {
 		@InjectRepository(User)
 		private usersRepository: Repository<User>,
 		private readonly notificationService: NotificationService,
-	) {}
+	) { }
 
 	async findAll(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
-        return this.matchsRepository.find({
-			where:{
+		return this.matchsRepository.find({
+			where: {
 			},
 			take: paginationQuery.limit,
 			skip: paginationQuery.offset,
-			})
-			.then(items => items.map(e=> Match.toDto(e, activeUsers)));
-    }
+		})
+			.then(items => items.map(e => Match.toDto(e, activeUsers)));
+	}
 
 	async findAllActive(paginationQuery: PaginationQueryDto): Promise<MatchDto[]> {
-        return this.matchsRepository.find({
-			where:{
+		return this.matchsRepository.find({
+			where: {
 				status: MatchStatus.ACTIVE
 			},
 			take: paginationQuery.limit,
 			skip: paginationQuery.offset,
-			})
-			.then(items => items.map(e=> Match.toDto(e, activeUsers)));
-    }
+		})
+			.then(items => items.map(e => Match.toDto(e, activeUsers)));
+	}
 
-    async findOne(id: string): Promise<MatchDto> {
-        const match = await this.matchsRepository.findOne(id);
-        if (!match)
-            throw new NotFoundException(`Match #${id} not found`);
-        return Match.toDto(match, activeUsers);
-    }
+	async findOne(id: string): Promise<MatchDto> {
+		const match = await this.matchsRepository.findOne(id);
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		return Match.toDto(match, activeUsers);
+	}
 
 	async isActive(id: string): Promise<boolean> {
-        const match = await this.matchsRepository.findOne(id);
-        if (!match)
-            throw new NotFoundException(`Match #${id} not found`);
+		const match = await this.matchsRepository.findOne(id);
+		if (!match)
+		{
+			console.log(`Match #${id} not found`);
+			return null;
+		}
 		return match.status == MatchStatus.ACTIVE
-    }
+	}
 
-	async findAllMatchsByUser(id: string,paginationQueryDto: PaginationQueryDto): Promise<MatchDto[]>
-    {
-        return this.matchsRepository.find({
+	async findAllMatchsByUser(id: string, paginationQueryDto: PaginationQueryDto): Promise<MatchDto[]> {
+		return this.matchsRepository.find({
 			where: [
 				{ user1: +id },
 				{ user2: +id },
@@ -69,45 +73,85 @@ export class MatchService {
 			take: paginationQueryDto.limit,
 			skip: paginationQueryDto.offset,
 		})
-		.then(items => items.map(e=> Match.toDto(e, activeUsers)));
-    }
+			.then(items => items.map(e => Match.toDto(e, activeUsers)));
+	}
 
-    async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
+	async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
 		// //console.log(updateMatchDto);
-        const match = await this.matchsRepository.preload({
+		const match = await this.matchsRepository.preload({
 			id: +id,
 			...updateMatchDto
 		});
-        if (!match)
-            throw new NotFoundException(`Match #${id} not found`);
-        if ((match.user1.username != current_username && match.user2.username != current_username) || updateMatchDto.status < match.status)
-            throw new UnauthorizedException();
-		await this.notificationService.actionPerformedMatch(match)
-        await this.matchsRepository.save(match);
-		activeUsers.display();
-		//console.log("match : ", match);
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		if ((match.user1.username != current_username && match.user2.username != current_username))
+			throw new UnauthorizedException();
+		// await this.notificationService.actionPerformedMatch(match)
+		await this.matchsRepository.save(match);
 		return Match.toDto(match, activeUsers)
-    }
+	}
+
+	async updateScore(current_username: string, id: string, updateScoreDto: UpdateScoreDto): Promise<MatchDto> {
+
+		// //console.log(updateScoreDto);
+		const match = await this.matchsRepository.preload({
+			id: +id,
+			...updateScoreDto
+		});
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		if ((match.user1.username != current_username && match.user2.username != current_username))
+			throw new UnauthorizedException();
+		await this.matchsRepository.save(match);
+		return Match.toDto(match, activeUsers)
+	}
+
+	async matchIsFinished(current_username: string, id: string, finishedMatchDto: FinishedMatchDto): Promise<MatchDto> {
+
+		const match = await this.matchsRepository.preload({
+			id: +id,
+			...finishedMatchDto
+		});
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		if ((match.user1.username != current_username && match.user2.username != current_username) || finishedMatchDto.status < match.status)
+			throw new UnauthorizedException();
+		await this.matchsRepository.save(match);
+		return Match.toDto(match, activeUsers)
+	}
+
+	async acceptChallenge(current_username: string, id: string): Promise<MatchDto> {
+
+		const match = await this.matchsRepository.findOne(id);
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		if ((match.user1.username != current_username && match.user2.username != current_username))
+			throw new UnauthorizedException();
+		match.status = MatchStatus.ACTIVE;
+		await this.notificationService.actionPerformedMatch(match)
+		await this.matchsRepository.save(match);
+		return Match.toDto(match, activeUsers)
+	}
 
 	async destroyMatch(current_username: string, id: string): Promise<MatchDto> {
 
-        let match = await this.matchsRepository.findOne(id);
-        if (!match)
-            throw new NotFoundException(`Match #${id} not found`);
-        if ((match.user1.username != current_username && match.user2.username != current_username))
-            throw new UnauthorizedException();
+		let match = await this.matchsRepository.findOne(id);
+		if (!match)
+			throw new NotFoundException(`Match #${id} not found`);
+		if ((match.user1.username != current_username && match.user2.username != current_username))
+			throw new UnauthorizedException();
 		this.notificationService.actionPerformedMatch(match)
-        this.matchsRepository.remove(match);
+		this.matchsRepository.remove(match);
 		return Match.toDto(match, activeUsers)
-    }
+	}
 
-    async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
+	async createMatch(createMatchDto: CreateMatchDto): Promise<MatchDto> {
 		if (createMatchDto.user1_id == createMatchDto.user2_id)
 			throw new BadRequestException("Cannot self match")
 		const user1 = await this.usersRepository.findOne(createMatchDto.user1_id)
 		if (!user1)
-            throw new NotFoundException(`User #${createMatchDto.user1_id} not found`);
+			throw new NotFoundException(`User #${createMatchDto.user1_id} not found`);
 		const user2 = await this.usersRepository.findOne(createMatchDto.user2_id)
 		if (!user2)
 			throw new NotFoundException(`User #${createMatchDto.user2_id} not found`);
@@ -119,12 +163,9 @@ export class MatchService {
 				status: MatchStatus.ACTIVE
 			}
 		)
-		//console.log("match : ", match)
 		if (match)
 			this.matchsRepository.save(match);
-		else
-		{
-			//console.log("creating match...")
+		else {
 			match = await this.matchsRepository.create({
 				user1: user1,
 				user2: user2,
@@ -134,20 +175,19 @@ export class MatchService {
 			await this.notificationService.create(match, match.user2)
 		}
 		return Match.toDto(match, activeUsers)
-    }
+	}
 
 	async matchmaking(username: string, mode: number): Promise<Match> {
 		const user = await this.usersRepository.findOne({ username })
 		if (!user)
-            throw new NotFoundException(`User ${username} not found`);
+			throw new NotFoundException(`User ${username} not found`);
 		const match = await this.matchsRepository.findOne(
 			{
 				mode: mode,
 				status: MatchStatus.MATCH_MAKING
 			}
 		)
-		if (match && match.user1.id == user.id)
-		{
+		if (match && match.user1.id == user.id) {
 			this.destroyMatch(username, match.id.toString())
 			return this.matchsRepository.save({
 				user1: user,
@@ -155,7 +195,7 @@ export class MatchService {
 				status: MatchStatus.MATCH_MAKING
 			})
 		}
-		else if (match)  {
+		else if (match) {
 			match.status = MatchStatus.ACTIVE
 			match.user2 = user;
 			return this.matchsRepository.save(match)
@@ -174,7 +214,7 @@ export class MatchService {
 	// 		throw new BadRequestException("Cannot self match")
 	// 	const user1 = await this.usersRepository.findOne(assignCurrentMatch.user1_id)
 	// 	if (!user1)
-    //         throw new NotFoundException(`User #${assignCurrentMatch.user1_id} not found`);
+	//         throw new NotFoundException(`User #${assignCurrentMatch.user1_id} not found`);
 	// 	const user2 = await this.usersRepository.findOne(assignCurrentMatch.user2_id)
 	// 	if (!user2)
 	// 		throw new NotFoundException(`User #${assignCurrentMatch.user2_id} not found`);

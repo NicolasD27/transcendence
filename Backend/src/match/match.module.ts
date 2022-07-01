@@ -11,6 +11,7 @@ import { NotificationService } from 'src/notification/service/notification.servi
 import { NotificationRepository } from 'src/notification/repository/notification.repository';
 import { Notification } from 'src/notification/entity/notification.entity';
 import { MatchRepository } from './repository/match.repository';
+import { FriendshipService } from 'src/friendship/service/friendship.service';
 
 @Module({
 	imports: [
@@ -23,7 +24,7 @@ import { MatchRepository } from './repository/match.repository';
         }),
 	],
 	controllers: [MatchController],
-	providers: [MatchService, MatchGateway, AuthService, NotificationService],
+	providers: [MatchService, MatchGateway, AuthService, NotificationService, FriendshipService],
 	exports: [MatchService]
 })
 export class MatchModule {}

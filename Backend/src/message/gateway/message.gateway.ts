@@ -38,17 +38,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('msg_to_server')
 	async handleMessage(socket: CustomSocket, data: { activeChannelId: string, content: string })
 	{
-		//console.log("// msg_to_server " + data.activeChannelId);
-
 		const username = getUsernameFromSocket(socket);
 		const user = await this.userService.findByUsername(username);
 		try{
 			await this.channelService.checkUserJoinedChannel(username, data.activeChannelId);
-			//console.log("user joined the channel", data.content);
 			await this.channelService.checkUserRestricted(username, data.activeChannelId);
-			//console.log("registering message", data.content);
 			const message = await this.chatService.saveMsg(data.content, data.activeChannelId, username);
-			//console.log(message);
 			if (activeUsers.isActiveUser(+user.id) == true)
 			{
 				socket.join("channel#" + data.activeChannelId)
@@ -56,7 +51,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			this.server.to("channel#" + data.activeChannelId).emit('msg_to_client', message);
 		}
 		catch(e){
-			//console.log(e.message); // could be nice to emit an error
 			this.server.to("user#" + user.id).emit("error_msg");
 		}
 		return ;
@@ -65,23 +59,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('connect_to_channel')
 	async connectToChannel(socket: CustomSocket, data: { channelId: string })
 	{
-
-		// //console.log(socket.request.headers.cookie);
-
 		const username = getUsernameFromSocket(socket);
-		//console.log(`// connectToChannel ${username} on ${data.channelId}`);
-
-		// this.channelService.checkUserJoinedChannelWS(username, data.channelId)
-		// .catch(()=>{
-		// 	//console.log("can not join the channel");
-		// })
-		// .then(()=>{
-		// 	socket.join("channel#" + data.channelId);
-		// });
-
 		await this.channelService.checkUserJoinedChannel(username, data.channelId);
 		socket.join("channel#" + data.channelId);
-
 		return ;
 	}
 
@@ -118,7 +98,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					.fetchSockets();
 				if (targetedClientSocket.length)
 				{
-					//console.log(`${banUserFromChannelDto.userId} kicked from channel#${banUserFromChannelDto.channelId}`);
 					targetedClientSocket[0].leave("channel#" + banUserFromChannelDto.channelId.toString());
 					this.server.to("user#" + bannedUser.id)
 						.emit('mute', {
@@ -128,8 +107,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					);
 				}
 			}
-			else
-				console.log(`${banUserFromChannelDto.userId} is not active`);
+			
 		}
 		catch (e) {
 			//console.log(e.message);
@@ -203,8 +181,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 					}
 				);
 			}
-			else
-				console.log(`${data.userId} is not active`);
+			
 		}
 		catch(e)
 		{
@@ -227,8 +204,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				this.server.to("user#" + newInviteDto.receiver.id)
 					.emit('new_channel_invite_received', newInviteDto);
 			}
-			else
-				console.log(`${newInviteDto.receiver.id} in not active`);
+			
 		}
 		catch (e)
 		{

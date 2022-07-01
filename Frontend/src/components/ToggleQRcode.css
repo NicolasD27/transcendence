@@ -17,14 +17,14 @@
 
 #login-modal {
 	width: 100%;
-    height: calc(20px + 100%);
-    position: absolute;
-    z-index: 100;
-    top: -10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(30, 30, 30, 0.9);
+	height: 100%;
+	position: absolute;
+	z-index: 100;
+	top: -10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(30, 30, 30, 0.9);
 }
 
 .switch {

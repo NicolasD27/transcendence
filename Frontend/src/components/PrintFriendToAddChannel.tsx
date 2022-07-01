@@ -21,6 +21,7 @@ const PrintFriendToAddChannel : React.FC<PropsPrintFriendToAddChannel> = (props)
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
+		// window.location.reload()
 	}
 
 	const checkSelectionStatus = (user:any) => {

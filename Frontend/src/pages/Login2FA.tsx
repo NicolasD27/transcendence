@@ -2,18 +2,26 @@ import React, { Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Login2FA.css';
 import { useNavigate } from 'react-router-dom';
-
+import { io } from 'socket.io-client';
 import mainTitle from '../asset/Pong-Legacy.svg'
 
 
 
 
-const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> }) => {
+const Login2FA = ({ setIsAuth, setSocket }: { setIsAuth: Dispatch<SetStateAction<boolean>>, setSocket: Dispatch<SetStateAction<any>> }) => {
 	const [code, setCode] = React.useState("");
 
 	const navigate = useNavigate()
 
-
+	function getAccessTokenFromCookies() {
+		try {
+		  const cookieString = document.cookie.split('; ').find((cookie) => cookie.startsWith('accessToken'))
+		  if (cookieString)
+			return ('bearer ' + cookieString.split('=')[1]);
+		} catch (ex) {
+		  return '';
+		}
+	  }
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setCode(code => e.target.value)
@@ -23,6 +31,17 @@ const Login2FA = ({ setIsAuth }: { setIsAuth: Dispatch<SetStateAction<boolean>> 
 		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/2fa/authenticate`, { code: code }, { withCredentials: true })
 			.then(res => {
 				setIsAuth(true)
+				setSocket(io(`http://${process.env.REACT_APP_HOST || "localhost"}:8000`, {
+				reconnection: true,
+				transports: ['websocket', 'polling', 'flashsocket'],
+				transportOptions: {
+				polling: {
+					extraHeaders: {
+					Authorization: getAccessTokenFromCookies()
+					}
+				}
+				}
+          }))
 				navigate("/mainpage")
 			})
 			.catch(err => {

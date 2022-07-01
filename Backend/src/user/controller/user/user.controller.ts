@@ -148,6 +148,13 @@ export class UserController {
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
+    @Get('blocked/:id')
+    async isBlocked(@Param('id', ParseIntPipe) id: string, @GetUsername() username) {
+        return this.userService.isBlocked(username, +id);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
     @Get('blockers')
     async getBlockersUsers(@GetUsername() username) {
         return this.userService.getBlockersUsers(username);

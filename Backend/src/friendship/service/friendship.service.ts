@@ -25,6 +25,25 @@ export class FriendshipService {
             // friendshipsRepository = connection.getCustomRepository(FriendshipRepository)
         }
 
+	async findOne(userId1: number, userId2: number)
+	{
+		const user1 = await this.usersRepository.findOne(userId1);
+		if (!user1)
+			throw new NotFoundException(`user #${user1.id} not found`);
+		const user2 = await this.usersRepository.findOne(userId2);
+		if (!user1)
+			throw new NotFoundException(`user #${user2.id} not found`);
+		const myFriendship = await this.friendshipsRepository.findOne({
+			where: [
+				{ follower: user1, following: user2 },
+				{ follower: user2, following: user1 },
+			],
+		});
+		if (!myFriendship)
+			throw new NotFoundException("Invitation or friendship not found with this user");
+		return myFriendship;
+	}
+
     async findAllByUser(user_id: string): Promise<FriendshipDto[]> {
         const user = await this.usersRepository.findOne(user_id);
         if (!user)

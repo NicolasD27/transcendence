@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 10;
+let finalScore = 5;
 let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
@@ -168,6 +168,8 @@ interface Props {
 	socket: any,
 	idMatch: any
 	setInPlay: Dispatch<SetStateAction<boolean>>;
+	matchLaunched: boolean;
+	setMatchLaunched: Dispatch<SetStateAction<boolean>>;
 }
 
 export class Match extends React.Component<Props>
@@ -179,14 +181,22 @@ export class Match extends React.Component<Props>
 	type = "";
 	started = 0;
 	countdown = 3;
-	match_id: number;
-	slaveId: string;
-	masterId: string;
-	myId: string;
+	match_id: -1;
+	slaveId: "";
+	masterId: "";
+	myId = "";
 	leftClick = false;
 	modeSelected = false;
 	mode = "";
 	tooSmall = false;
+
+	componentWillUnmount() {
+		this.props.socket.off('launch_match')
+		this.props.socket.off('resetValues')
+		this.props.socket.off('updateMatch')
+		this.props.socket.off('serverGameFinished')
+		this.props.socket.off('receiveMyID')
+	}
 
 	windowResized = (p5: any) => {
 		this.width = document.getElementById("gameArea")!.offsetWidth - 8;
@@ -195,8 +205,11 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		if (this.props.idMatch)
-			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch })
+		if (this.props.idMatch >= 0)
+		{
+			this.type = "spect";
+			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch });
+		}
 		this.width = document.getElementById("gameArea")!.offsetWidth - 8;
 		this.height = document.getElementById("gameArea")!.offsetHeight - 8;
 		let cvn = p5.createCanvas(this.width, this.height);
@@ -216,9 +229,24 @@ export class Match extends React.Component<Props>
 		p5.textAlign(p5.CENTER, p5.CENTER);
 		p5.text(`Hardcore mode`, basicW * 0.75, basicH / 2);
 
+		this.props.socket.on('resetValues', (data) => {
+			this.winner = "";
+			this.type = "";
+			this.started = 0;
+			this.countdown = 3;
+			this.match_id = -1;
+			this.slaveId = "";
+			this.masterId = "";
+			this.myId = "";
+			this.leftClick = false;
+			this.modeSelected = false;
+			this.mode = "";
+			this.tooSmall = false;
+			this.props.setMatchLaunched(false)
+			scored = false;
+		});
+
 		this.props.socket.on('updateMatch', (data) => {
-			if (this.type === "")
-				this.type = "spect";
 			p5.clear();
 			p5.background(0);
 			if (data && this.tooSmall !== true)
@@ -231,131 +259,128 @@ export class Match extends React.Component<Props>
 		});
 
 		this.props.socket.on('launch_match', (data) => {
-			//console.log("launching match...")
 			this.match_id = data.id;
 			this.slaveId = data.user2.username;
 			this.masterId = data.user1.username;
 
 			this.props.socket.emit("askForMyID");
-			this.props.socket.on("receiveMyID", (data) => {
-				this.myId = data
+		})
+		
+		this.props.socket.on("receiveMyID", (data) => {
+			this.myId = data
+			if (this.myId === this.masterId && this.masterId)		//Master
+			{
+				this.modeSelected = true;
+				this.type = "master";
 
-				if (this.myId === this.masterId && this.masterId)		//Master
-				{
-					//console.log("IM A MASTER")
-					this.modeSelected = true;
-					this.type = "master";
+				var game = new Game(
+					new Player(0, basicH / 2 - 50, playerWidth, 100, 0),
+					new Player(basicW - playerWidth, basicH / 2 - 50, playerWidth, 100, 0),
+					new Ball(basicW / 2, basicH / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
+						(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
 
-					var game = new Game(
-						new Player(0, basicH / 2 - 50, playerWidth, 100, 0),
-						new Player(basicW - playerWidth, basicH / 2 - 50, playerWidth, 100, 0),
-						new Ball(basicW / 2, basicH / 2, (magicBallSpeed * Math.cos((Math.random() - 0.5))) * negRand(),
-							(magicBallSpeed * - Math.sin((Math.random() - 0.5))) * negRand(), 20, 20), this.countdown, this.mode);
+				var playerInput = new PlayerInput();
 
-					var playerInput = new PlayerInput();
+				p5.background(0);
+				p5.fill(p5.color(255, 255, 255));
+				p5.textAlign(p5.CENTER, p5.CENTER);
+				p5.text('Waiting for other player...', basicW / 2, basicH / 2);
 
-					p5.background(0);
-					p5.fill(p5.color(255, 255, 255));
-					p5.textAlign(p5.CENTER, p5.CENTER);
-					p5.text('Waiting for other player...', basicW / 2, basicH / 2);
+				this.props.socket.on('masterToMasterKeyPressed', data => {
+					if (data === 'a')
+						playerInput.masterA = true;
+					else if (data === 'z')
+						playerInput.masterZ = true;
+				});
 
-					this.props.socket.on('masterToMasterKeyPressed', data => {
-						if (data === 'a')
-							playerInput.masterA = true;
-						else if (data === 'z')
-							playerInput.masterZ = true;
-					});
+				this.props.socket.on('slaveToMasterKeyPressed', data => {
+					if (data === 'a')
+						playerInput.slaveA = true;
+					else if (data === 'z')
+						playerInput.slaveZ = true;
+				});
 
-					this.props.socket.on('slaveToMasterKeyPressed', data => {
-						if (data === 'a')
-							playerInput.slaveA = true;
-						else if (data === 'z')
-							playerInput.slaveZ = true;
-					});
+				this.props.socket.on('masterToMasterKeyReleased', data => {
+					if (data === 'a')
+						playerInput.masterA = false;
+					else if (data === 'z')
+						playerInput.masterZ = false;
+					playerInput.masterAcc = 0;
+				});
 
-					this.props.socket.on('masterToMasterKeyReleased', data => {
-						if (data === 'a')
-							playerInput.masterA = false;
-						else if (data === 'z')
-							playerInput.masterZ = false;
-						playerInput.masterAcc = 0;
-					});
+				this.props.socket.on('slaveToMasterKeyReleased', data => {
+					if (data === 'a')
+						playerInput.slaveA = false;
+					else if (data === 'z')
+						playerInput.slaveZ = false;
+					playerInput.slaveAcc = 0;
+				});
 
-					this.props.socket.on('slaveToMasterKeyReleased', data => {
-						if (data === 'a')
-							playerInput.slaveA = false;
-						else if (data === 'z')
-							playerInput.slaveZ = false;
-						playerInput.slaveAcc = 0;
-					});
-
-					var counter = 0;
-					this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
-					this.props.socket.on('serverTick', () => {
-						if (counter <= fq * this.countdown)
-							counter++;
-						if (counter % fq === 0 && counter > 0) {
-							game.countdown--;
-							this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
-						}
-						if (counter > fq * this.countdown) {
-							this.started = 1;
-							playerMove(this.started, game, playerInput, basicW, basicH);
-							if (scored === false)
-								gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
-							else {
-								game.scoredCt++;
-								if (game.scoredCt >= 3 * fq) {
-									game.scoredCt = 0;
-									scored = false;
-								}
+				var counter = 0;
+				this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
+				this.props.socket.on('serverTick', () => {
+					if (counter <= fq * this.countdown)
+						counter++;
+					if (counter % fq === 0 && counter > 0) {
+						game.countdown--;
+						this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
+					}
+					if (counter > fq * this.countdown) {
+						this.started = 1;
+						playerMove(this.started, game, playerInput, basicW, basicH);
+						if (scored === false)
+							gameEngine(game, this.props.socket, this.match_id, basicW, basicH);
+						else {
+							game.scoredCt++;
+							if (game.scoredCt >= 3 * fq) {
+								game.scoredCt = 0;
+								scored = false;
 							}
-							this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
 						}
-						if (game.playerOne.score >= finalScore) {
-							this.props.socket.off('serverTick');
-							this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score });
-						}
-						else if (game.playerTwo.score >= finalScore) {
-							this.props.socket.off('serverTick');
-							this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score });
-						}
-					});
-
-					this.props.socket.on('serverGameFinished', (data) => {
-						this.started = -1;
+						this.props.socket.emit('sendUpdateMatch', { match_id: this.match_id, game: game });
+					}
+					if (game.playerOne.score >= finalScore) {
 						this.props.socket.off('serverTick');
-						this.winner = data;
-					});
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score });
+					}
+					else if (game.playerTwo.score >= finalScore) {
+						this.props.socket.off('serverTick');
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score });
+					}
+				});
 
-					this.props.socket.on('clientDisconnect', (data) => {
-						if (data === this.slaveId && this.started !== -1) {
-							this.props.socket.off('serverTick');
-							this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0 });
-						}
-					});
+				this.props.socket.on('serverGameFinished', (data) => {
+					this.started = -1;
+					this.props.socket.off('serverTick');
+					this.winner = data;
+				});
 
-				}
-				else if (this.myId === this.slaveId && this.slaveId)	//Slave
-				{
-					//console.log("IM A SLAVE")
-					this.modeSelected = true;
-					this.type = "slave";
+				this.props.socket.on('clientDisconnect', (data) => {
+					if (data === this.slaveId && this.started !== -1) {
+						this.props.socket.off('serverTick');
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0 });
+					}
+				});
 
-					this.started = 1;
+			}
+			else if (this.myId === this.slaveId && this.slaveId)	//Slave
+			{
+				this.modeSelected = true;
+				this.type = "slave";
 
-					this.props.socket.on('serverGameFinished', (data) => {
-						this.started = -1;
-						this.winner = data;
-					});
+				this.started = 1;
 
-					this.props.socket.on('clientDisconnect', (data) => {
-						if (data === this.masterId && this.started !== -1)
-							this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0 });
-					});
+				this.props.socket.on('serverGameFinished', (data) => {
+					this.started = -1;
+					this.winner = data;
+				});
 
-				}
-			});
+				this.props.socket.on('clientDisconnect', (data) => {
+					if (data === this.masterId && this.started !== -1)
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0 });
+				});
+
+			}
 		});
 	}
 
@@ -371,9 +396,12 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-					window.location.reload();
+				// p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
+				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
+				// 	this.props.socket.emit('askForReload');
+				setTimeout(() => {
+					this.props.socket.emit('askForReload');
+				}, 1500)
 			}
 			if (this.width < 400)	//change values here
 			{
@@ -451,9 +479,12 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
-				if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-					window.location.reload();
+				// p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
+				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
+				// 	this.props.socket.emit('askForReload');
+				setTimeout(() => {
+					this.props.socket.emit('askForReload');
+				}, 1500)
 			}
 		}
 	}
@@ -482,7 +513,7 @@ export class Match extends React.Component<Props>
 	render() {
 		return (
 			<Fragment>
-				{this.winner && <div className="pyro">
+				{this.started === -1 && <div className="pyro">
 					<div className="before"></div>
 					<div className="after"></div>
 				</div>}
