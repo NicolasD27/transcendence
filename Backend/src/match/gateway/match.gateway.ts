@@ -29,7 +29,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	constructor(
 		private readonly matchService: MatchService,
 		private readonly userService: UserService,
+<<<<<<< HEAD
 		private readonly friendshipService: FriendshipService,
+=======
+>>>>>>> master
 	) { }
 
 	// @UseGuards(WsGuard)
@@ -47,14 +50,22 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
 			activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 			activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
+<<<<<<< HEAD
 			this.server.emit('refreshFriendList');
 			this.server.to("match#" + match.id).emit('launch_match', match);
+=======
+			this.server.to("match#" + match.id).emit('launch_match', match);
+			//console.log(`matchID = ${match.id}`);
+>>>>>>> master
 		}
 		else {
 			//console.log("waiting for another player");
 			this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
+<<<<<<< HEAD
 			this.server.emit('refreshFriendList');
+=======
+>>>>>>> master
 		}
 	}
 
@@ -63,7 +74,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async challengeUser(socket: CustomSocket, data: { opponent_id: string }) {
 		const username = getUsernameFromSocket(socket)
 		const user = await this.userService.findByUsername(username);
+<<<<<<< HEAD
 		await this.friendshipService.findOne(user.id, +data.opponent_id);
+=======
+>>>>>>> master
 		const match: MatchDto = await this.matchService.createMatch({ user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		match.room_size++;
@@ -82,7 +96,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
 		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
+<<<<<<< HEAD
 		this.server.emit('refreshFriendList');
+=======
+>>>>>>> master
 		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
 		this.server.to("match#" + match.id).emit('launch_match', match)
 	}
@@ -162,7 +179,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
 		activeUsers.updateState(match.user1.id, UserStatus.ONLINE);
 		activeUsers.updateState(match.user2.id, UserStatus.ONLINE);
+<<<<<<< HEAD
 		this.server.emit('refreshFriendList');
+=======
+>>>>>>> master
 		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
 	}
 
@@ -189,6 +209,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	handleDisconnect(client: CustomSocket, ...args) {
 		this.logger.log(`Client disconnected: ${client.id}`);
 		this.server.emit('clientDisconnect', getUsernameFromSocket(client));
+<<<<<<< HEAD
 		this.server.emit('refreshFriendList'); //mettre en rouge
+=======
+>>>>>>> master
 	}
 }
