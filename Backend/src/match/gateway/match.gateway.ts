@@ -41,8 +41,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		// this.matchService.updateMatch(username, match.id.toString(), match);
 		if (match.status == MatchStatus.ACTIVE) {
 			//console.log("IS ACTIVE")
-			this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user1.username);
-			this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
+			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user1.username);
+			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
 			activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 			activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 			this.server.to("match#" + match.id).emit('launch_match', match);
@@ -50,7 +50,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 		else {
 			//console.log("waiting for another player");
-			this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
+			// await this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
 		}
 	}
@@ -59,27 +59,41 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('challenge_user')
 	async challengeUser(socket: CustomSocket, data: { opponent_id: string }) {
 		const username = getUsernameFromSocket(socket)
-		const user = await this.userService.findByUsername(username);
-		const match: MatchDto = await this.matchService.createMatch({ user1_id: user.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
+		const user1 = await this.userService.findByUsername(username);
+		const user2 = await this.userService.findOne(data.opponent_id);
+		
+		const an_invite_is_still_waiting = await this.matchService.check_match_invite_already_sent(user1, user2);
+		if (an_invite_is_still_waiting)
+			return ;
+		const match: MatchDto = await this.matchService.createMatch({ user1_id: user1.id, user2_id: +data.opponent_id, mode: CustomModes.NORMAL });
 		socket.join("match#" + match.id);
 		match.room_size++;
-		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match)
+		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match);
 	}
 
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
 		const username = getUsernameFromSocket(socket)
-		const user = await this.userService.findByUsername(username);
+		const user_accepting = await this.userService.findByUsername(username);
+
+		const myMatch = await this.matchService.findOne(data.match_id);
+		console.log(myMatch);
+
+		const user_inviting = await this.userService.findOne(myMatch.user1.id.toString());
+
+		if (await this.matchService.check_user_in_match(user_accepting)
+			|| await this.matchService.check_user_in_match(user_inviting))
+			return ;
+
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
 		socket.join("match#" + match.id);
 		match.room_size++;
-		// this.matchService.updateMatch(username, match.id.toString(), match)
-		this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
+		// await this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
 		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
-		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
-		this.server.to("match#" + match.id).emit('launch_match', match)
+		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage');
+		this.server.to("match#" + match.id).emit('launch_match', match);
 	}
 
 	@SubscribeMessage('connect_to_match')
@@ -153,8 +167,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.logger.log("ITS FINISHED")
 		let match = await this.matchService.findOne(data.match_id);
 		this.matchService.matchIsFinished(getUsernameFromSocket(socket), match.id.toString(), { status: MatchStatus.FINISHED, winner: data.winner });
-		this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user1.username);
-		this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
+		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user1.username);
+		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
 		activeUsers.updateState(match.user1.id, UserStatus.ONLINE);
 		activeUsers.updateState(match.user2.id, UserStatus.ONLINE);
 		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner

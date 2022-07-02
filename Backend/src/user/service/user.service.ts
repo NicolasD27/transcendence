@@ -58,14 +58,14 @@ export class UserService {
 		return User.toDto(user, activeUsers);
 	}
 
-	async findByUsername(username: string): Promise<User> {
+	async findByUsername(username: string): Promise<UserDto> {
 		const user = this.usersRepository.findOne({ username });
 		return new Promise((resolve, reject) => {
 			return user.then(user => {
 				if (!user) {
 					reject(false);
 				} else {
-					resolve(user);
+					resolve(User.toDto(user, activeUsers));
 				}
 			});
 		});
