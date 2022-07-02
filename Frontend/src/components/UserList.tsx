@@ -155,11 +155,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							else if (Boolean(isThereAFriendshipRequest(user_.id)) === true)
 								pendingRequest = true;
 							
-<<<<<<< HEAD
 							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} friendshipStatus={0} statusIcon={statusIcon} isFriend={isFriend} pendingRequest={pendingRequest} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} setUsersBlocked={props.setUsersBlocked} key={user_.id} />
-=======
-							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} friendshipStatus={0} statusIcon={statusIcon} isFriend={isFriend} pendingRequest={pendingRequest} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
->>>>>>> master
 						})
 				}
 				{

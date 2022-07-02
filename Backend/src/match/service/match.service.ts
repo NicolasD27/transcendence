@@ -56,14 +56,10 @@ export class MatchService {
 	async isActive(id: string): Promise<boolean> {
 		const match = await this.matchsRepository.findOne(id);
 		if (!match)
-<<<<<<< HEAD
 		{
 			console.log(`Match #${id} not found`);
 			return null;
 		}
-=======
-			throw new NotFoundException(`Match #${id} not found`);
->>>>>>> master
 		return match.status == MatchStatus.ACTIVE
 	}
 
