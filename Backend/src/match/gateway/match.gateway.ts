@@ -32,7 +32,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		private readonly friendshipService: FriendshipService,
 	) { }
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('find_match')
 	async findMatch(socket: CustomSocket, data: { mode: number }) {
 		//console.log("finding matchs")		//add checks if slave & master != username
@@ -58,7 +57,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 	}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('challenge_user')
 	async challengeUser(socket: CustomSocket, data: { opponent_id: string }) {
 		const username = getUsernameFromSocket(socket)
@@ -78,7 +76,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 // ! spec into profile
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
 		const username = getUsernameFromSocket(socket)
@@ -91,6 +88,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		if (await this.matchService.check_user_in_match(user_accepting)
 			|| await this.matchService.check_user_in_match(user_inviting))
+			return ;
+		if (!activeUsers.isActiveUser(user_accepting.id)
+			|| !activeUsers.isActiveUser(user_inviting.id))
 			return ;
 
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
@@ -118,13 +118,11 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		socket.emit('resetValues');
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('askForMyID')
 	async askForMyID(socket: CustomSocket) {
 		socket.emit('receiveMyID', getUsernameFromSocket(socket));
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterScored')
 	async masterScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
@@ -132,7 +130,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveScored')
 	async slaveScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
@@ -140,37 +137,31 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('sendUpdateMatch')
 	async sendUpdateMatch(socket: CustomSocket, data: { match_id: number, game: Game }) {
 		this.server.to("match#" + data.match_id).emit('updateMatch', data.game);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveKeyPressed')
 	async slaveKeyPressed(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterKeyPressed')
 	async masterKeyPressed(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveKeyReleased')
 	async slaveKeyReleased(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('slaveToMasterKeyReleased', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterKeyReleased')
 	async masterKeyReleased(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('masterToMasterKeyReleased', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('gameFinished')
 	async gameFinished(socket: CustomSocket, data: { match_id: string, winner: string, score1: number, score2: number }) {
 		this.logger.log("ITS FINISHED")
@@ -184,8 +175,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
 	}
 
-	//@UseGuards(WsGuard)
 	async handleConnection(socket: CustomSocket) {
+		this.server.emit('refreshFriendList');
 		this.logger.log(`match socket connected: ${socket.id}`);
 		if (!socket.handshake.headers.cookie)
 			return;
