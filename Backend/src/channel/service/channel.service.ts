@@ -145,10 +145,12 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`Username ${username} not found`);
-		// const myUser = await this.userRepo.findOne(1);
-		const myChannel = await this.channelRepo.findOne(id);
-		if (!myChannel)
-			throw new NotFoundException(`Channel #${id} not found`);
+		console.log("// 1")
+		let myChannel = await this.channelRepo.findOne({where : {id : id} })
+			.catch(() => {
+				throw new NotFoundException(`Channel #${id} not found`);
+			})
+
 		const myParticipation = await this.participationRepo.findOne({
 			where: {
 				user: myUser,
