@@ -76,6 +76,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match);
 	}
 
+// ! spec into profile
+
 	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
@@ -83,7 +85,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const user_accepting = await this.userService.findByUsername(username);
 
 		const myMatch = await this.matchService.findOne(data.match_id);
-		console.log(myMatch);
+		// ! console.log(myMatch);
 
 		const user_inviting = await this.userService.findOne(myMatch.user1.id.toString());
 
