@@ -181,9 +181,9 @@ export class Match extends React.Component<Props>
 	type = "";
 	started = 0;
 	countdown = 3;
-	match_id: -1;
-	slaveId: "";
-	masterId: "";
+	match_id = -1;
+	slaveId = "";
+	masterId = "";
 	myId = "";
 	leftClick = false;
 	modeSelected = false;
@@ -205,7 +205,7 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		if (this.props.idMatch >= 0)
+		if (this.props.idMatch)
 		{
 			this.type = "spect";
 			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch });
@@ -385,7 +385,7 @@ export class Match extends React.Component<Props>
 	}
 
 	draw = (p5: any) => {
-		if (this.started === 1)
+		if (this.masterId !== "")
 			this.props.setInPlay(true)
 		else
 			this.props.setInPlay(false)
@@ -396,9 +396,6 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				// p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
 					this.props.socket.emit('askForReload');
 				}, 1500)
@@ -479,9 +476,6 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				// p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
-				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
 					this.props.socket.emit('askForReload');
 				}, 1500)

@@ -109,7 +109,7 @@ const App = () => {
           .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
           .then((res) => {
             setBlockedByUsers(res.data)
-          })
+          }).catch(error => {})
     }
 	}, [isAuth])
 

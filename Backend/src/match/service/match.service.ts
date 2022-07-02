@@ -57,6 +57,7 @@ export class MatchService {
 		const match = await this.matchsRepository.findOne(id);
 		if (!match)
 		{
+			//throw new NotFoundException(`Match #${id} not found`);
 			console.log(`Match #${id} not found`);
 			return null;
 		}
