@@ -114,7 +114,7 @@ const Conversation: React.FC<Props> = (props) => {
 			.then(res => {
 				setUsersBlocked(res.data)
 			})
-	})
+	}, [])
 
 	useEffect(() => {
 		props.setRecupList(false)

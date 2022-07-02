@@ -29,10 +29,15 @@ const PrintUnfriendBlockProfile: React.FC<PropsPrintUnfriendBlockProfile> = (pro
 		}
 	}
 
+	const handleDelete  = () => {
+		props.deleteFriend(props.user)
+		//setIsBlocked(false)
+	}
+
 	return (
 		<>
 			<div className='optionButtons'>
-				<button id='unfriend_button' onClick={() => props.deleteFriend(props.user)}>
+				<button id='unfriend_button' onClick={handleDelete}>
 					<p>Unfriend</p>
 				</button>
 				{

@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 5;
+let finalScore = 20;
 let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
@@ -205,7 +205,7 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		if (this.props.idMatch)
+		if (this.props.idMatch >= 0)
 		{
 			this.type = "spect";
 			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch });

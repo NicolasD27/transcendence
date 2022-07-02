@@ -1,4 +1,5 @@
-import React, { Dispatch ,SetStateAction} from 'react';
+import React, { useState, useEffect,  Dispatch ,SetStateAction} from 'react';
+import axios from 'axios';
 import statusIconBlue from "../asset/statusIconBlue.svg"
 import statusIconGreen from "../asset/statusIconGreen.svg"
 import statusIconRed from "../asset/statusIconRed.svg"
@@ -30,6 +31,7 @@ interface  PropsUserList {
 	goToMatch : Function;
 	blockedByUsers : number[];
 	usersBlocked : number[];
+	setUsersBlocked: Dispatch<SetStateAction<number[]>>;
 }
 
 const UserList : React.FC<PropsUserList> = (props) => {
@@ -39,7 +41,16 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const searchValue = props.searchValue;
 	const searchUsers = props.searchUsers;
 	const friendRequests = props.friendRequests;
+	const [ ImPlaying, setImPlaying ] = useState(false)
+
 	
+	useEffect(() => {
+		axios
+			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, {withCredentials: true})
+			.then((response) => response.data.status === 3 && setImPlaying(true))
+			.catch((error) => console.log(error))
+	}, [])
+
 	const isAlreadyFriend = (id:number) => {
 		for(let i = 0; i < friends.length; i++ )
 		{
@@ -83,10 +94,10 @@ const UserList : React.FC<PropsUserList> = (props) => {
 		return false;
 	}
 
-	const catchUserMatch = (name:string) => {
+	const catchUserMatch = () => {
 		for (let i = 0; i < props.matchs.length; i++)
 		{
-			if (props.matchs[i].pseudo1 === name || props.matchs[i].pseudo2 === name)
+			if (props.matchs[i].user1Id !== props.idMe && props.matchs[i].user2Id !== props.idMe)
 				return (props.matchs[i].idMatch)
 		}
 		return -1;
@@ -137,6 +148,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							return false
 						})
 						.map((user_) => {
+							
 							let statusIcon = "";
 							if (user_.status === 1)
 								statusIcon = statusIconGreen
@@ -145,7 +157,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							else
 								statusIcon = statusIconBlue
 							let friendshipId = Number(catchFriendshipId(user_.id));
-							let matchId = catchUserMatch(user_.username)
+							let matchId = catchUserMatch()
 							let blockedByFriend = checkIfBlockedByFriend(user_.id)
 							let isUserBlocked = checkIfUserIsBLocked(user_.id)
 							if (Boolean(isAlreadyFriend(user_.id)) === true)
@@ -153,7 +165,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							else if (Boolean(isThereAFriendshipRequest(user_.id)) === true)
 								pendingRequest = true;
 							
-							return <PrintFriend idMe={props.idMe} socket={props.socket} user={user_} friendshipId={friendshipId} friendshipStatus={0} statusIcon={statusIcon} isFriend={isFriend} pendingRequest={pendingRequest} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={user_.id} />
+							return <PrintFriend idMe={props.idMe} socket={props.socket} ImPlaying={ImPlaying} user={user_} friendshipId={friendshipId} friendshipStatus={0} statusIcon={statusIcon} isFriend={isFriend} pendingRequest={pendingRequest} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} setUsersBlocked={props.setUsersBlocked} key={user_.id} />
 						})
 				}
 				{
@@ -173,16 +185,17 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							})
 							.map((friend) => {
 								let statusIcon = ""
+								console.log(`${friend.pseudo} = ${friend.status}`)
 								if (friend.status === 1)
 									statusIcon = statusIconGreen
 								else if (friend.status === 0)
 									statusIcon = statusIconRed
 								else
 									statusIcon = statusIconBlue
-								let matchId = catchUserMatch(friend.username)
+								let matchId = catchUserMatch()
 								let blockedByFriend = checkIfBlockedByFriend(friend.id)
 								let isUserBlocked = checkIfUserIsBLocked(friend.id)
-								return <PrintFriend idMe={props.idMe} socket={props.socket} user={friend} friendshipId={friend.friendshipId} friendshipStatus={friend.friendshipStatus} statusIcon={statusIcon} isFriend={true} pendingRequest={false} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} key={friend.id} />
+								return <PrintFriend idMe={props.idMe} socket={props.socket} ImPlaying={ImPlaying} user={friend} friendshipId={friend.friendshipId} friendshipStatus={friend.friendshipStatus} statusIcon={statusIcon} isFriend={true} pendingRequest={false} sendFriendshipRequest={sendFriendshipRequest} blockedByFriend={blockedByFriend} isUserBlocked={isUserBlocked} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} matchId={matchId} goToMatch={props.goToMatch} setUsersBlocked={props.setUsersBlocked} key={friend.id} />
 							})
 				}
 			</div>

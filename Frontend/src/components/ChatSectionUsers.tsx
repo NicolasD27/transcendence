@@ -19,6 +19,7 @@ interface PropsSectionUsers {
 	setFriendRequests : Dispatch<SetStateAction<number[]>>;
 	blockedByUsers : number[];
 	usersBlocked : number[];
+	setUsersBlocked : Dispatch<SetStateAction<number[]>>;
   	recupList:boolean;
 }
 
@@ -40,9 +41,13 @@ export interface PropsStateChannel {
 
 export interface PropsMatchs {
     idMatch: number,
+	user1Id : number,
     pseudo1: string,
+	username1: string,
     pseudo1Avatar: string,
+	user2Id : number,
     pseudo2: string
+	username2: string,
     pseudo2Avatar: string,
     score1: number,
     score2: number
@@ -107,8 +112,7 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 						if (match.user2.avatarId != null)
 							pseudo2_avatar = `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${match.user2.avatarId}`
 
-						match_tmp = {idMatch: match.id, pseudo1: match.user1.pseudo, pseudo1Avatar: pseudo1_avatar, pseudo2: match.user2.pseudo, pseudo2Avatar: pseudo2_avatar, score1: match.score1, score2: match.score2 }
-						//console.log("match_tmp:", match_tmp)
+						match_tmp = {idMatch: match.id, user1Id: match.user1.id ,pseudo1: match.user1.pseudo, username1: match.user1.username , pseudo1Avatar: pseudo1_avatar, user2Id: match.user2.id , pseudo2: match.user2.pseudo, username2: match.user2.username, pseudo2Avatar: pseudo2_avatar, score1: match.score1, score2: match.score2 }
 						setMatchs(matchs => [...matchs, match_tmp])
 					}
                 })
@@ -156,13 +160,14 @@ const ChatSectionUsers : React.FC<PropsSectionUsers> = (props) => {
 							goToMatch={goToMatch}
 							blockedByUsers={props.blockedByUsers}
 							usersBlocked={props.usersBlocked}
+							setUsersBlocked={props.setUsersBlocked}
 						/>
 					}
 				</>
 			}
 			{
 				!chatGamesState &&
-				<OngoingMatch matchs={matchs} goToMatch={goToMatch}/>
+				<OngoingMatch idMe={props.idMe} matchs={matchs} goToMatch={goToMatch}/>
 			}
 		</div>
 	)

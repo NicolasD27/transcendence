@@ -29,7 +29,6 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 				setBlockedByUsers(res.data)
 			})
 	})
-	//console.log("MainPage.tsx")
 
 	return (
 		<div id='bloc'>
