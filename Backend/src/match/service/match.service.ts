@@ -1,19 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotificationService } from 'src/notification/service/notification.service';
-import { Connection, Repository } from 'typeorm';
+import { Repository, Not, In } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { MatchDto } from '../dto/match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
 import { Match, MatchStatus } from '../entity/match.entity';
-import { MatchRepository } from '../repository/match.repository';
-import { NotificationRepository } from '../../notification/repository/notification.repository';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { activeUsers } from 'src/auth-socket.adapter';
 import { FinishedMatchDto } from '../dto/finished-match.dto';
 import { UpdateScoreDto } from '../dto/update-score.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 
 @Injectable()
 export class MatchService {
@@ -77,9 +75,49 @@ export class MatchService {
 			.then(items => items.map(e => Match.toDto(e, activeUsers)));
 	}
 
+	async check_match_invite_already_sent(user1: UserDto, user2: UserDto)
+	{
+		const myMatch = await this.matchsRepository.find({
+			where: [
+				{
+					user1: user1,
+					user2: user2,
+					status: Not(MatchStatus.FINISHED)
+				},
+				{
+					user1: user2,
+					user2: user1,
+					status: Not(MatchStatus.FINISHED)
+				}
+			],
+		});
+		if (!myMatch || !myMatch.length)
+			return false;
+		return true;
+	}
+
+	// ? add a event to avoid infinite matches
+	async check_user_in_match(user: UserDto)
+	{
+		const myMatch = await this.matchsRepository.find({
+			where: [
+				{
+					user1: user,
+					status: In([MatchStatus.ACTIVE, MatchStatus.MATCH_MAKING])
+				},
+				{
+					user2: user,
+					status: In([MatchStatus.ACTIVE, MatchStatus.MATCH_MAKING])
+				}
+			],
+		});
+		if (!myMatch || !myMatch.length)
+			return false;
+		return true;
+	}
+
 	async updateMatch(current_username: string, id: string, updateMatchDto: UpdateMatchDto): Promise<MatchDto> {
 
-		// //console.log(updateMatchDto);
 		const match = await this.matchsRepository.preload({
 			id: +id,
 			...updateMatchDto

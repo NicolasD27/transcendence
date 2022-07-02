@@ -6,7 +6,7 @@ import { PolymorphicChildren } from "typeorm-polymorphic"
 import { ActiveUsers } from "src/user/entity/active-user";
 
 export enum MatchStatus {
-    INVITE_SEND,
+    INVITE_SENT,
     MATCH_MAKING,
     ACTIVE,
     FINISHED
@@ -37,15 +37,14 @@ export class Match {
     @Column({ default: 0})
     public score2: number;
 
-
     @Column({
         nullable: false,
         default: () => 'CURRENT_TIMESTAMP' ,
         type: 'timestamp',
-      })
+    })
     public date: Date;
 
-    @Column({ default: MatchStatus.INVITE_SEND })
+    @Column({ default: MatchStatus.INVITE_SENT })
     public status: MatchStatus;
 
     @Column({ default: CustomModes.NORMAL })
