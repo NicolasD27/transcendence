@@ -183,7 +183,9 @@ export class Match extends React.Component<Props>
 	countdown = 3;
 	match_id = -1;
 	slaveId = "";
+	slavePseudo = "";
 	masterId = "";
+	masterPseudo = "";
 	myId = "";
 	leftClick = false;
 	modeSelected = false;
@@ -261,7 +263,9 @@ export class Match extends React.Component<Props>
 		this.props.socket.on('launch_match', (data) => {
 			this.match_id = data.id;
 			this.slaveId = data.user2.username;
+			this.slavePseudo = data.user2.pseudo;
 			this.masterId = data.user1.username;
+			this.masterPseudo = data.user1.pseudo;
 
 			this.props.socket.emit("askForMyID");
 		})
@@ -341,11 +345,11 @@ export class Match extends React.Component<Props>
 					}
 					if (game.playerOne.score >= finalScore) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterPseudo, score1: game.playerOne.score, score2: game.playerTwo.score });
 					}
 					else if (game.playerTwo.score >= finalScore) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slavePseudo, score1: game.playerOne.score, score2: game.playerTwo.score });
 					}
 				});
 
@@ -358,7 +362,7 @@ export class Match extends React.Component<Props>
 				this.props.socket.on('clientDisconnect', (data) => {
 					if (data === this.slaveId && this.started !== -1) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0 });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterPseudo, score1: 0, score2: 0 });
 					}
 				});
 
@@ -377,7 +381,7 @@ export class Match extends React.Component<Props>
 
 				this.props.socket.on('clientDisconnect', (data) => {
 					if (data === this.masterId && this.started !== -1)
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0 });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slavePseudo, score1: 0, score2: 0 });
 				});
 
 			}
