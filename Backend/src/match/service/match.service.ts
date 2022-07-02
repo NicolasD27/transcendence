@@ -107,11 +107,8 @@ export class MatchService {
 				}
 			],
 		});
-		// console.log(myMatch);
 		if (!myMatch || !myMatch.length)
-		{
 			return false;
-		}
 		return true;
 	}
 

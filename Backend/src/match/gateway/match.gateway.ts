@@ -77,7 +77,13 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const username = getUsernameFromSocket(socket)
 		const user_accepting = await this.userService.findByUsername(username);
 
-		if (await this.matchService.check_user_in_match(user_accepting))
+		const myMatch = await this.matchService.findOne(data.match_id);
+		console.log(myMatch);
+
+		const user_inviting = await this.userService.findOne(myMatch.user1.id.toString());
+
+		if (await this.matchService.check_user_in_match(user_accepting)
+			|| await this.matchService.check_user_in_match(user_inviting))
 			return ;
 
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
