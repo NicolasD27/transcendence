@@ -17,6 +17,7 @@ export enum FriendshipStatus {
 interface PropsPrintFriend {
 	idMe: number;
 	socket: any;
+	ImPlaying : boolean;
 	user: PropsStateUsers;
 	friendshipId: number;
 	friendshipStatus : number;
@@ -81,7 +82,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 			</div>
 			{
 				(props.isFriend &&
-					!friendDeleteColumnState && <PrintNormalFriendProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isUserBlocked={props.isUserBlocked} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend} />)
+					!friendDeleteColumnState && <PrintNormalFriendProfile socket={props.socket} ImPlaying={props.ImPlaying} user={props.user} friendshipId={props.friendshipId} setFriendDeleteColumnState={setFriendDeleteColumnState} setChatParamsState={props.setChatParamsState} chatParamsState={props.chatParamsState} isUserBlocked={props.isUserBlocked} matchId={props.matchId} goToMatch={props.goToMatch} blockedByFriend={props.blockedByFriend} />)
 				||
 				(props.isFriend &&
 					friendDeleteColumnState && <PrintUnfriendBlockProfile socket={props.socket} user={props.user} friendshipId={props.friendshipId} friendshipStatus={props.friendshipStatus} setFriendDeleteColumnState={setFriendDeleteColumnState} deleteFriend={deleteFriend} isUserBlocked={props.isUserBlocked} /*setIsBlocked={setIsBlocked}*/ blockedByFriend={props.blockedByFriend} />)

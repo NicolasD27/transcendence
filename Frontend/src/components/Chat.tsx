@@ -58,7 +58,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 				.then(res => {
 					let users = res.data;
 					props.setFriends([])
-					console.log("JE passe ici")
+					//console.log("JE passe ici")
 					users.forEach((friendship: any) => {
 						let friends_tmp: FriendsFormat;
 						let userId : number;
