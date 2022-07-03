@@ -13,6 +13,7 @@ import { Participation } from 'src/channel/entity/participation.entity';
 import { ModerationTimeOut } from 'src/channel/entity/moderationTimeOut.entity';
 import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
 import { NotificationService } from '../notification/service/notification.service';
+import { GlobalSocketService } from 'src/channel/global.socket.service';
 
 @Module({
 	imports: [

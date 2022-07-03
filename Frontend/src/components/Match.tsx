@@ -196,6 +196,7 @@ export class Match extends React.Component<Props>
 		this.props.socket.off('updateMatch')
 		this.props.socket.off('serverGameFinished')
 		this.props.socket.off('receiveMyID')
+		console.log("testing dismounts")
 	}
 
 	windowResized = (p5: any) => {

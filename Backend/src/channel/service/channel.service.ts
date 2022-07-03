@@ -28,6 +28,7 @@ import { ChannelDtoWithModeration } from '../dto/channel-with-moderation.dto';
 import { UpdateChannelDto } from '../dto/update-channel-visibility.dto';
 import { number } from 'joi';
 import { activeUsers } from 'src/auth-socket.adapter';
+import { GlobalSocketService } from '../global.socket.service';
 
 @Injectable()
 export class ChannelService {
@@ -54,7 +55,9 @@ export class ChannelService {
 		@InjectRepository(Friendship)
 		private friendshipRepo: Repository<Friendship>,
 
-		private notificationService: NotificationService
+		private notificationService: NotificationService,
+
+		private socketService: GlobalSocketService,
 	) { }
 
 	private saltRounds = 12;
@@ -163,6 +166,7 @@ export class ChannelService {
 		if (!myUser)
 			throw new NotFoundException(`Username ${username} not found`);
 
+		// ! finish this
 		const myChannel = await this.findOneById(id);
 		console.log(myChannel)
 		// if (!myChannel)
@@ -879,7 +883,7 @@ export class ChannelService {
 			.where("id = :channelId", { channelId: myChannel.id })
 			.execute();
 
-		// todo: maybe close the room for active users
-		// todo: send users a ping ?
+		// todo: maybe close the room for active users (not time for now, just sending a ping)
+		this.socketService.channelDeleted(myChannel.id);
 	}
 }

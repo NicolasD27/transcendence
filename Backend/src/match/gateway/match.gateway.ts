@@ -80,10 +80,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
 		const username = getUsernameFromSocket(socket)
 		const user_accepting = await this.userService.findByUsername(username);
-
 		const myMatch = await this.matchService.findOne(data.match_id);
-		// ! console.log(myMatch);
-
+		console.log(myMatch.id);
 		const user_inviting = await this.userService.findOne(myMatch.user1.id.toString());
 
 		if (await this.matchService.check_user_in_match(user_accepting)
@@ -93,6 +91,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			|| !activeUsers.isActiveUser(user_inviting.id))
 			return ;
 
+		console.log("/// passed")
+
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
 		socket.join("match#" + match.id);
 		match.room_size++;
@@ -101,8 +101,8 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 
 		this.server.emit('refreshFriendList');
-		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
-		this.server.to("match#" + match.id).emit('launch_match', match)
+		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage');
+		this.server.to("match#" + match.id).emit('launch_match', match);
 	}
 
 	@SubscribeMessage('connect_to_match')

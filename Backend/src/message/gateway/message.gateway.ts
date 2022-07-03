@@ -16,9 +16,7 @@ import { activeUsers, CustomSocket } from 'src/auth-socket.adapter';
 import { BanUserFromChannelDto } from 'src/channel/dto/ban-user-from-channel.dto';
 import { CreateChannelInviteDto } from 'src/channel/dto/create-channel-invite.dto';
 import { UserService } from 'src/user/service/user.service';
-import { ChannelInvite } from 'src/channel/entity/channelInvite.entity';
-import { ChannelInviteDto } from 'src/channel/dto/channel-invite.dto';
-import { User } from 'src/user/entity/user.entity';
+import { GlobalSocketService } from 'src/channel/global.socket.service'
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -32,6 +30,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		private readonly chatService: ChatService,
 		private readonly channelService: ChannelService,
 		private readonly userService: UserService,
+		private socketService: GlobalSocketService
 	)
 	{}
 

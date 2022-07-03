@@ -11,6 +11,8 @@ import { MatchModule } from './match/match.module';
 import { ChannelModule } from './channel/channel.module';
 import { DirectMessageModule } from './direct-message/direct-message.module';
 import { NotificationModule } from './notification/notification.module';
+import { SocketModule } from './channel/global.module';
+import { AppGateway } from './app.gateway';
 
 @Module({
 	imports: [
@@ -25,7 +27,9 @@ import { NotificationModule } from './notification/notification.module';
 		ChatModule,
 		MatchModule,
 		DirectMessageModule,
-		NotificationModule
+		NotificationModule,
+		SocketModule,
+		AppGateway
 	],
 	controllers: [AppController]
 })
