@@ -27,6 +27,7 @@ const PrintUnfriendBlockProfile: React.FC<PropsPrintUnfriendBlockProfile> = (pro
 			props.socket.emit(`update_friendship_state`, { receiver: props.user.id , status: FriendshipStatus.ACTIVE})
 			setIsBlocked(!isBlocked)
 		}
+		props.socket.emit('refreshFriendList');
 	}
 
 	const handleDelete  = () => {
@@ -37,14 +38,17 @@ const PrintUnfriendBlockProfile: React.FC<PropsPrintUnfriendBlockProfile> = (pro
 	return (
 		<>
 			<div className='optionButtons'>
-				<button id='unfriend_button' onClick={handleDelete}>
-					<p>Unfriend</p>
-				</button>
 				{
 					(!props.blockedByFriend && !isBlocked &&
-						(<button id='block_buttons' onClick={handleClick}>
-							Block
-						</button>)) ||
+						<>
+							<button id='unfriend_button' onClick={handleDelete}>
+								<p>Unfriend</p>
+							</button>
+							<button id='block_buttons' onClick={handleClick}>
+								Block
+							</button>
+						</>) 
+					||
 					(!props.blockedByFriend && <button id='unblock_buttons' onClick={handleClick}>
 						Unblock
 					</button>)
