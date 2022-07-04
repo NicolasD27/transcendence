@@ -50,7 +50,10 @@ export class MatchService {
 		try {
 			const match = await this.matchsRepository.findOne(id);
 			if (!match)
-				throw new NotFoundException(`Match #${id} not found`);
+			{
+				console.log(`Match #${id} not found`);
+				return null;
+			}
 			return Match.toDto(match, activeUsers);
 		}
 		catch(e)
@@ -63,7 +66,6 @@ export class MatchService {
 		const match = await this.findOne(id);
 		if (!match)
 		{
-			//throw new NotFoundException(`Match #${id} not found`);
 			console.log(`Match #${id} not found`);
 			return null;
 		}
@@ -261,10 +263,8 @@ export class MatchService {
 	async handleInterval() {
 		// console.log("handleInterval")
 		let now = new Date();
-		
 		const ghosts = await this.matchsRepository.find({
 			where : {
-				// id : 1,
 				status: 2,
 				score1: 0,
 				score2: 0,
@@ -276,10 +276,7 @@ export class MatchService {
 			);
 			// console.log(diff);
 			if (diff > 90)
-			{
-				// console.log("remove match")
 				this.matchsRepository.remove(g);
-			}
 		}));
 	}
 

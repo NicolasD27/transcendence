@@ -41,7 +41,7 @@ export class FriendshipGateway implements OnGatewayInit, OnGatewayConnection, On
 				data.status;
 			else if (myFriendship.follower.id == data.receiver)
 				data.status = FriendshipStatus.BLOCKED_BY_FOLLOWING;
-			else 
+			else
 				data.status = FriendshipStatus.BLOCKED_BY_FOLLOWER;
 			await this.friendshipService.update(username, myFriendship.id, data.status); // todo fix it
 
@@ -64,6 +64,7 @@ export class FriendshipGateway implements OnGatewayInit, OnGatewayConnection, On
 					}
 				);
 			}
+			this.server.emit('refreshFriendList');
 		}
 		catch(e)
 		{
