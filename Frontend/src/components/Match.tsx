@@ -193,8 +193,8 @@ export class Match extends React.Component<Props>
 	tooSmall = false;
 
 	componentWillUnmount() {
+		this.props.socket.emit('askForReload', { match_id: this.props.idMatch });
 		this.props.socket.off('launch_match')
-		this.props.socket.off('resetValues')
 		this.props.socket.off('updateMatch')
 		this.props.socket.off('serverGameFinished')
 		this.props.socket.off('receiveMyID')
@@ -246,6 +246,7 @@ export class Match extends React.Component<Props>
 			this.tooSmall = false;
 			this.props.setMatchLaunched(false)
 			scored = false;
+			//leave socket ?
 		});
 
 		this.props.socket.on('updateMatch', (data) => {
@@ -401,7 +402,7 @@ export class Match extends React.Component<Props>
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
 				setTimeout(() => {
-					this.props.socket.emit('askForReload');
+					this.props.socket.emit('askForReload', {match_id: this.props.idMatch});
 				}, 1500)
 			}
 			if (this.width < 400)	//change values here
@@ -481,7 +482,7 @@ export class Match extends React.Component<Props>
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
 				setTimeout(() => {
-					this.props.socket.emit('askForReload');
+					this.props.socket.emit('askForReload', {match_id: this.props.idMatch});
 				}, 1500)
 			}
 		}

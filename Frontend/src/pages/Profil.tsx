@@ -37,6 +37,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
 	const [isTwoFactorEnable, setIsTwoFactorEnable] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -46,8 +47,10 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	useEffect(() => {
 		setId(Number(idstring.id))
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
-		.catch(error => {
-			navigate("/404NotFound/") })
+		.then( res => {
+			setIsLoading(false)
+		})
+		.catch(error => { navigate("/profil/" + idMe) })
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
@@ -114,9 +117,13 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 			return (<button className='profileSendFriendRequest' onClick={() => sendFriendshipRequest(id)}>Add Friend</button>)
 	}
 
+	if (isLoading) {
+		return <div></div>
+	}
+
 	return (
 		<Fragment>
-			<div id='bloc'>
+			{<div id='bloc'>
 				<Header idMe={idMe} inPlay={false} />
 				<section className="gameAndChatSection">
 					<div className='boxProfil' id='gameArea'>
@@ -133,7 +140,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 					<Chat idMe={idMe} socket={socket} friends={friends} setFriends={setFriends} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers}/>
 				</section>
 				{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} />}
-			</div>
+			</div>}
 		</Fragment>
 	);
 };
