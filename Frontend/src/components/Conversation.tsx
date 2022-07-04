@@ -114,7 +114,7 @@ const Conversation: React.FC<Props> = (props) => {
 			.then(res => {
 				setUsersBlocked(res.data)
 			})
-			.catch(err => console.log("Error: ", err))
+			.catch(err => console.log("Error02:", err))
 	}, [])
 
 	useEffect(() => {
@@ -166,9 +166,7 @@ const Conversation: React.FC<Props> = (props) => {
 								//console.log("muted +++")
 								setMuted(true);
 							}
-
 						}
-
 					});
 				})
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
