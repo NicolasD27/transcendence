@@ -49,7 +49,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 			.then((response) => {
 				if(response.data.status === 3)
 					setImPlaying(true)
-				props.socket.emit('refreshFriendList')
+				props.socket.emit('askForRefreshFriendList')
 				})
 			.catch((error) => console.log(error))
 	}, [])

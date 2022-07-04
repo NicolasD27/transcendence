@@ -126,6 +126,11 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		match.score2++;
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
+	
+	@SubscribeMessage('askForRefreshFriendList')
+	async asfkForRefreshFriendList(socket: CustomSocket) {
+		this.server.emit('refreshFriendList');
+	}
 
 	@SubscribeMessage('sendUpdateMatch')
 	async sendUpdateMatch(socket: CustomSocket, data: { match_id: number, game: Game }) {
