@@ -27,6 +27,7 @@ const OngoingMatch = ({idMe, matchs, goToMatch} : {idMe : number, matchs : Props
                         </div>
                     )
                 }
+                return null;
             })
         }
         </div>

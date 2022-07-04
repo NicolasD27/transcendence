@@ -2,8 +2,10 @@ import React, {  Dispatch, SetStateAction, useEffect } from "react";
 import axios from 'axios';
 import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
+import { Socket } from "socket.io-client";
 
 export interface Props {
+	socket: any;
 	id: number;
 	idMe: number;
 	setGetMatch?: Dispatch<SetStateAction<boolean>>;
@@ -54,6 +56,8 @@ const Pseudo: React.FC<Props> = (props) => {
 							settmpPseudo("")
 						}
 					}).catch(error => {})
+					if (props.socket)
+						props.socket.emit('askForRefreshFriendList');
 			}
 		}
 	}
