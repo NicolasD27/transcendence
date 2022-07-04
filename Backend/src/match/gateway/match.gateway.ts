@@ -107,11 +107,9 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	@SubscribeMessage('askForReload')
 	async askForReload(socket: CustomSocket, data: { match_id: string }) {
-		if (data.match_id != "null" && data.match_id != "-1")
-		{
+		if (data.match_id != null && data.match_id != "-1")
 			socket.leave("match#" + data.match_id);
-			socket.emit('resetValues');
-		}
+		socket.emit('resetValues');
 	}
 
 	@SubscribeMessage('askForMyID')
@@ -163,12 +161,10 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.logger.log("ITS FINISHED")
 		let match = await this.matchService.findOne(data.match_id);
 		this.matchService.matchIsFinished(getUsernameFromSocket(socket), match.id.toString(), { status: MatchStatus.FINISHED, winner: data.winner });
-		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user1.username);
-		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
 		activeUsers.updateState(match.user1.id, UserStatus.ONLINE);
 		activeUsers.updateState(match.user2.id, UserStatus.ONLINE);
 		this.server.emit('refreshFriendList');
-		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
+		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);
 	}
 
 	async handleConnection(socket: CustomSocket) {
