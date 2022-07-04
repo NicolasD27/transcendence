@@ -2,6 +2,7 @@ import React, {  Dispatch, SetStateAction, useEffect } from "react";
 import axios from 'axios';
 import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
+import { Socket } from "socket.io-client";
 
 export interface Props {
 	socket: any;

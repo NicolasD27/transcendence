@@ -82,6 +82,7 @@ const Profil = ({ socket, idmeApp, friends, setFriends, isFriendshipButtonClicke
 
 
 
+
 	if (getIDMe === false) {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, { withCredentials: true })
 			.then(res => {
