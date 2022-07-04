@@ -55,6 +55,14 @@ export class UserController {
         return await this.channelService.getJoinedChannels(request.cookies.username);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(TwoFactorGuard)
+    @Get('count')
+    async countUsers(): Promise<number> {
+        //console.log('findOneUser ', id);
+        return await this.userService.getUserCount();
+    }
+
     @ApiQuery({
         name: "search",
         type: String,
@@ -168,18 +176,4 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
-    // @ApiBearerAuth()
-    // @UseGuards(TwoFactorGuard)
-    // @Patch(':id')
-    // updateAvatar(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) updateAvatarDto: UpdateAvatarDto, @GetUsername() username): Promise<UserDto> {
-    //     //console.log('updateUser ', id);
-
-    //     return this.userService.updateAvatar(username, id, updateAvatarDto);
-    // }
-
-    //seulement pour tester
-    /*@Post()
-    create(): Promise<User> {
-        return this.userService.create();
-    }*/
 }

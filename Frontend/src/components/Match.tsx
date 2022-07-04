@@ -207,7 +207,7 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		if (this.props.idMatch)
+		if (this.props.idMatch && this.props.idMatch < "2147483647")
 		{
 			this.type = "spect";
 			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch });
