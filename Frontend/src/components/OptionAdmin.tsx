@@ -58,14 +58,6 @@ const OptionAdmin: React.FC<Props> = (props) => {
 		props.setShowConv(true)
 	}
 
-	const destroyChannel = () => {
-		axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
-			.then(res => {
-				props.setRecupList(true)
-			})
-		props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })
-	}
-
 	return (
 		<Fragment>
 			{optionSelected === false && <div className="optionArea">
@@ -80,7 +72,6 @@ const OptionAdmin: React.FC<Props> = (props) => {
 				{props.adminLevel > 0 && <button className="option" onClick={() => changeStep(9)}>Add to channel</button>}
 				{props.adminLevel === 1 && <button className="option" onClick={() => changeStep(10)}>Change Owner</button>}
 				{<button className="option" onClick={() => leaveChannel()}>Leave Channel</button>}
-				{props.adminLevel === 1 && <button className="option" onClick={() => destroyChannel()}>Destroy Channel</button>}
 			</div >}
 			{optionSelected === true && mode <= 3 && <ChangePassword mode={mode} id={props.id} users={props.users} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} activePass={props.activePass} />}
 			{optionSelected === true && mode >= 4 && mode <= 5 && <ChangeModerators mode={mode} id={props.id} users={props.users} moderators={props.moderators} setShowConv={props.setShowConv} setOptionSelected={setOptionSelected} />}

@@ -70,7 +70,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 			}).catch(error => {})
 
 		setGetMatch(true);
-	}, [getmatch, idstring, id])
+	}, [getmatch, idstring, id, idMe, navigate])
 
 
 
