@@ -42,10 +42,6 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 
 	useEffect(() => {
 		setId(Number(idstring.id))
-	}, [idstring])
-
-	useEffect(() => {
-		setId(Number(idstring.id))
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
 		.then( res => {
 			setIsLoading(false)

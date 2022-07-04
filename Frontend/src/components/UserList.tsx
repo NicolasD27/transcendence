@@ -43,13 +43,14 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friendRequests = props.friendRequests;
 	const [ ImPlaying, setImPlaying ] = useState(false)
 
-	
 	useEffect(() => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, {withCredentials: true})
 			.then((response) => {
 				if(response.data.status === 3)
-			setImPlaying(true)})
+					setImPlaying(true)
+				props.socket.emit('refreshFriendList')
+				})
 			.catch((error) => console.log(error))
 	}, [])
 

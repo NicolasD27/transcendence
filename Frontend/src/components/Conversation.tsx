@@ -19,6 +19,7 @@ interface Props {
 	id: number;
 	type: string;
 	nameChat: string;
+	pseudo: string;
 	socket: any;
 	setChatState: Dispatch<SetStateAction<chatStateFormat>>;
 	setRecupList: Dispatch<SetStateAction<boolean>>;
@@ -274,8 +275,8 @@ const Conversation: React.FC<Props> = (props) => {
 	return (
 		<div className='convArea'>
 			<div id='chatTop'>
-				<button id='chatCloseButton' onClick={() => props.setChatState({ 'chatState': false, id: 0, chatName: "", type: "directM" })} />
-				<div id="chatUsername">{props.nameChat}</div>
+				<button id='chatCloseButton' onClick={() => props.setChatState({ 'chatState': false, id: 0, chatName: "", chatPseudo: "", type: "directM" })} />
+				<div id="chatUsername">{props.pseudo}</div>
 				{props.type === "channel" && <ShowOptionAdmin showConv={showConv} setShowConv={setShowConv} />}
 			</div>
 			{showConv === true && <div className='messages'>

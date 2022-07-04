@@ -27,7 +27,7 @@ export interface PropsChat {
 }
 
 const Chat: React.FC<PropsChat> = (props) => {
-	const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
+	const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", chatPseudo: "", type: "directMessage" })
 	const { idMe, setIsFriendshipButtonClicked } = props;
 	const [recupList, setRecupList] = useState(false)
 	const [usersBlocked, setUsersBlocked] = useState<number[]>([])
@@ -188,7 +188,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 	return (
 		<>
 			{!chatParamsState.chatState && <ChatSectionUsers socket={props.socket} idMe={idMe} setChatParamsState={setChatParamsState} chatParamsState={chatParamsState} setIsFriendshipButtonClicked={props.setIsFriendshipButtonClicked} friends={props.friends} friendRequests={props.friendRequests} setFriendRequests={props.setFriendRequests} blockedByUsers={props.blockedByUsers} usersBlocked={usersBlocked} setUsersBlocked={setUsersBlocked} recupList={recupList}/>}
-			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} socket={props.socket} setChatState={setChatParamsState} setRecupList={setRecupList} />}
+			{chatParamsState.chatState && <Conversation idMe={idMe} id={chatParamsState.id} type={chatParamsState.type} nameChat={chatParamsState.chatName} pseudo={chatParamsState.chatPseudo} socket={props.socket} setChatState={setChatParamsState} setRecupList={setRecupList} />}
 		</>
 	)
 }
