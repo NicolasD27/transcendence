@@ -28,13 +28,6 @@ export class FriendshipGateway implements OnGatewayInit, OnGatewayConnection, On
 	)
 	{}
 
-	@SubscribeMessage('world_reload')
-	worldReload()
-	{
-		this.server.emit('refreshFriendList');
-	}
-
-
     @SubscribeMessage('update_friendship_state')
     async update(
 		socket: CustomSocket,

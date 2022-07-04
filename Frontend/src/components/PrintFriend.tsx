@@ -67,7 +67,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 						props.setUsersBlocked(res.data)
 					})
 					.catch(err => console.log("Error:", err))
-				props.socket.emit("world_reload", {})
+				props.socket.emit("askForRefreshFriend")
 			})
 			.catch((err) =>
 				console.log(err))
