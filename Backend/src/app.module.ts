@@ -12,6 +12,8 @@ import { ChannelModule } from './channel/channel.module';
 import { DirectMessageModule } from './direct-message/direct-message.module';
 import { NotificationModule } from './notification/notification.module';
 
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -25,7 +27,8 @@ import { NotificationModule } from './notification/notification.module';
 		ChatModule,
 		MatchModule,
 		DirectMessageModule,
-		NotificationModule
+		NotificationModule,
+		ScheduleModule.forRoot(),
 	],
 	controllers: [AppController]
 })

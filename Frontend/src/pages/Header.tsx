@@ -21,13 +21,12 @@ const Header: React.FC<PropsHeader> = (props) => {
 
 	const onProfil = (idstring: string) => {
 		navigate("/profil/" + idstring)
-		// window.location.reload()
 	}
 
 	const onLogout = () => {
 		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
 			.then(res => { props.socket.emit("set_offline", {})
-				props.socket.leave();
+				//props.socket.leave();
 				window.location.reload();
 			})
 			.catch(() => {})
