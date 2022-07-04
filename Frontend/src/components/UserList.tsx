@@ -52,7 +52,7 @@ const UserList : React.FC<PropsUserList> = (props) => {
 				props.socket.emit('askForRefreshFriendList')
 				})
 			.catch((error) => console.log(error))
-	}, [])
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 	const isAlreadyFriend = (id:number) => {
 		for(let i = 0; i < friends.length; i++ )

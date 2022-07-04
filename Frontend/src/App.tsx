@@ -63,6 +63,7 @@ const App = () => {
   const [blockedByUsers, setBlockedByUsers] = useState<number[]>([])
   const [friendRequests, setFriendRequests] = useState<number[]>([])
   const [matchLaunched, setMatchLaunched] = useState(false)
+  const [idmeApp, setIdmeApp] = useState(0)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const App = () => {
           }))
           setIsAuth(true)
           setIsLoading(false)
-
+          setIdmeApp(res.data.id)
         })
         .catch(err => {
           setIsAuth(false)
@@ -122,7 +123,7 @@ const App = () => {
         <Route element={<ProtectedRoute isAuth={isAuth} isLoading={isLoading} />}>
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/mainpage" element={<MainPage socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} setBlockedByUsers={setBlockedByUsers}/>} />
-          <Route path="/profil/:id" element={<Profil socket={socket} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
+          <Route path="/profil/:id" element={<Profil socket={socket} idmeApp={idmeApp} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
