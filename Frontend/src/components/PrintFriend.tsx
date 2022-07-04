@@ -65,7 +65,9 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 					.then(res => {
 						props.setUsersBlocked(res.data)
-					}).catch(error => {})
+					})
+					.catch(err => console.log("Error:", err))
+				props.socket.emit("world_reload", {})
 			})
 			.catch((err) =>
 				console.log(err))
@@ -90,7 +92,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 				(props.pendingRequest &&
 
 					<div id='friendRequest_buttons'>
-						<p>Pending ...</p>
+						Pending ...
 					</div>
 				)
 				||

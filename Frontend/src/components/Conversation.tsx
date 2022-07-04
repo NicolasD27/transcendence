@@ -166,9 +166,7 @@ const Conversation: React.FC<Props> = (props) => {
 								//console.log("muted +++")
 								setMuted(true);
 							}
-
 						}
-
 					});
 				})
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
