@@ -16,7 +16,7 @@ import { FriendsFormat } from '../App';
 import Chat from '../components/Chat';
 import Header from './Header';
 
-const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers }: { socket: any,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[] }) => {
+const Profil = ({ socket, idmeApp, friends, setFriends, isFriendshipButtonClicked, setIsFriendshipButtonClicked, chatParamsState, setChatParamsState, friendRequests, setFriendRequests, blockedByUsers }: { socket: any, idmeApp : number,  friends : FriendsFormat[], setFriends : Dispatch<SetStateAction<FriendsFormat[]>>, isFriendshipButtonClicked: boolean, setIsFriendshipButtonClicked: Dispatch<SetStateAction<boolean>>, chatParamsState: chatStateFormat, setChatParamsState: Dispatch<SetStateAction<chatStateFormat>>, friendRequests : number[], setFriendRequests : Dispatch<SetStateAction<number[]>>, blockedByUsers : number[] }) => {
 	interface matchFormat {
 		winner: string;
 		idMatch: number;
@@ -42,31 +42,43 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 
 	useEffect(() => {
 		setId(Number(idstring.id))
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
-		.then( res => {
-			setIsLoading(false)
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/count/`, { withCredentials: true })
+		.then(res => {
+			if (id > res.data|| id <= 0)
+			{
+				navigate("/profil/" + idmeApp);
+				return;
+			}
+			else
+			{
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
+			.then( res => {
+				setIsLoading(false)
+			})
+			.catch(error => { navigate("/profil/" + idmeApp) })
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
+				.then(res => {
+					const matchs = res.data;
+					setMatchID(matchID => [])
+					const matchstmp = matchs.map((list: any) => {
+						let singleMatch: matchFormat;
+						if (list.user1.id === id)
+							singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
+						else
+							singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
+						return singleMatch
+					});
+					const matchTri = matchstmp.sort((a, b) => {
+						return b.idMatch - a.idMatch;
+					});
+					setMatchID(matchTri);
+				}).catch(error => {})
+			}
 		})
-		.catch(error => { navigate("/profil/" + idMe) })
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
-			.then(res => {
-				const matchs = res.data;
-				setMatchID(matchID => [])
-				const matchstmp = matchs.map((list: any) => {
-					let singleMatch: matchFormat;
-					if (list.user1.id === id)
-						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user1.username, nameO: list.user2.username, pseudoP: list.user1.pseudo, pseudoO: list.user2.pseudo, avatarP: list.user1.avatarId, avatarO: list.user2.avatarId, scoreP: list.score1, scoreO: list.score2 };
-					else
-						singleMatch = { winner: list.winner, idMatch: list.id, nameP: list.user2.username, nameO: list.user1.username, pseudoP: list.user2.pseudo, pseudoO: list.user1.pseudo, avatarP: list.user2.avatarId, avatarO: list.user1.avatarId, scoreP: list.score2, scoreO: list.score1 };
-					return singleMatch
-				});
-				const matchTri = matchstmp.sort((a, b) => {
-					return b.idMatch - a.idMatch;
-				});
-				setMatchID(matchTri);
-			}).catch(error => {})
+
 
 		setGetMatch(true);
-	}, [getmatch, idstring, id, idMe, navigate])
+	}, [getmatch, idstring, id, navigate]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 
