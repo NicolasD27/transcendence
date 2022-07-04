@@ -67,8 +67,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 					return b.idMatch - a.idMatch;
 				});
 				setMatchID(matchTri);
-			}).catch(error => {
-				navigate("/404NotFound/") })
+			}).catch(error => {})
 
 		setGetMatch(true);
 	}, [getmatch, idstring, id])
