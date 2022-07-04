@@ -66,6 +66,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 					.then(res => {
 						props.setUsersBlocked(res.data)
 					})
+					.catch(err => console.log(err))
 			})
 			.catch((err) =>
 				console.log(err))
@@ -90,7 +91,7 @@ const PrintFriend: React.FC<PropsPrintFriend> = (props) => {
 				(props.pendingRequest &&
 
 					<div id='friendRequest_buttons'>
-						<p>Pending ...</p>
+						Pending ...
 					</div>
 				)
 				||

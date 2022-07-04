@@ -114,6 +114,7 @@ const Conversation: React.FC<Props> = (props) => {
 			.then(res => {
 				setUsersBlocked(res.data)
 			})
+			.catch(err => console.log("Error: ", err))
 	}, [])
 
 	useEffect(() => {

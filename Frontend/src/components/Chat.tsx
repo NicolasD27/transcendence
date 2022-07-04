@@ -42,8 +42,9 @@ const Chat: React.FC<PropsChat> = (props) => {
 	
 	props.socket.on('friendship_state_updated', () => {
 		axios
-		.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
-		.then(res => setUsersBlocked(res.data))
+			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+			.then(res => setUsersBlocked(res.data))
+			.catch(err => console.log("Errors:", err))
 	})
 
 	useEffect(() => {
