@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable,
+	NotFoundException,
+	UnauthorizedException,
+	BadRequestException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../entity/channel.entity';
 import { getConnection, Repository, MoreThan, ILike } from 'typeorm';
@@ -68,6 +72,19 @@ export class ChannelService {
 			skip: offset,
 		})
 			.then(items => items.map(e => Channel.toDto(e, activeUsers)));
+	}
+
+	async findOneById(userId: number)
+	{
+		try {
+			return await this.channelRepo.findOne({
+				where: { id : userId }
+			});
+		}
+		catch(e) {
+			throw new NotFoundException("Channel not found");
+		}
+		return null;
 	}
 
 	async searchForChannel(
@@ -145,11 +162,11 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException(`Username ${username} not found`);
-		console.log("// 1")
-		let myChannel = await this.channelRepo.findOne({where : {id : id} })
-			.catch(() => {
-				throw new NotFoundException(`Channel #${id} not found`);
-			})
+
+		const myChannel = await this.findOneById(id);
+		console.log(myChannel)
+		// if (!myChannel)
+		// 	throw new NotFoundException(`Channel #${id} not found`);
 
 		const myParticipation = await this.participationRepo.findOne({
 			where: {
