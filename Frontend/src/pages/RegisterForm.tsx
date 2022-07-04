@@ -31,7 +31,7 @@ const RegisterForm = () => {
 				<h1>Welcome to Pong Legacy !</h1>
 				<p>You can change your pseudo and avatar</p>
 				{idMe !== 0 && <Avatar id={idMe} idMe={idMe} />}
-				{idMe !== 0 && <Pseudo id={idMe} idMe={idMe} />}
+				{idMe !== 0 && <Pseudo socket={null} id={idMe} idMe={idMe} />}
 				<button onClick={onMainPage} className='ButtonStyle navButton'>Home</button>
 			</div>
 		</Fragment>

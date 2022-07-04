@@ -12,6 +12,8 @@ import { activeUsers } from 'src/auth-socket.adapter';
 import { FinishedMatchDto } from '../dto/finished-match.dto';
 import { UpdateScoreDto } from '../dto/update-score.dto';
 import { UserDto } from 'src/user/dto/user.dto';
+import { MatchRepository } from '../repository/match.repository';
+import { Interval } from '@nestjs/schedule';
 
 @Injectable()
 export class MatchService {
@@ -241,6 +243,7 @@ export class MatchService {
 			})
 		}
 		else if (match) {
+			match.date = new Date();
 			match.status = MatchStatus.ACTIVE
 			match.user2 = user;
 			return this.matchsRepository.save(match)
@@ -254,25 +257,30 @@ export class MatchService {
 		}
 	}
 
-	// async assignCurrentMatch(assignCurrentMatch: AssignCurrentMatch): Promise<MatchDto> {
-	// 	if (assignCurrentMatch.user1_id == assignCurrentMatch.user2_id)
-	// 		throw new BadRequestException("Cannot self match")
-	// 	const user1 = await this.usersRepository.findOne(assignCurrentMatch.user1_id)
-	// 	if (!user1)
-	//         throw new NotFoundException(`User #${assignCurrentMatch.user1_id} not found`);
-	// 	const user2 = await this.usersRepository.findOne(assignCurrentMatch.user2_id)
-	// 	if (!user2)
-	// 		throw new NotFoundException(`User #${assignCurrentMatch.user2_id} not found`);
-	// 	const match = await this.findOne(assignCurrentMatch.match_id)
-	// 	if (!match)
-	// 		throw new NotFoundException(`Match #${assignCurrentMatch.match_id} not found`);
-	// 	user1.currentMatch = match;
-	// 	user2.currentMatch = match;
-	// 	// match.user1 = user1;
-	// 	// match.user2 = user2;
-	// 	await this.usersRepository.save(user1);
-	// 	await this.usersRepository.save(user2);
-	// 	return this.matchsRepository.save(match);
-	// }
+	@Interval(5000)
+	async handleInterval() {
+		// console.log("handleInterval")
+		let now = new Date();
+		
+		const ghosts = await this.matchsRepository.find({
+			where : {
+				// id : 1,
+				status: 2,
+				score1: 0,
+				score2: 0,
+			}
+		}).then(items => items.map(g =>{
+			let diff = Math.abs(
+				(now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds())
+				- (new Date(g.date).getHours() * 3600 + new Date(g.date).getMinutes() * 60 + new Date(g.date).getSeconds())
+			);
+			// console.log(diff);
+			if (diff > 90)
+			{
+				// console.log("remove match")
+				this.matchsRepository.remove(g);
+			}
+		}));
+	}
 
 }

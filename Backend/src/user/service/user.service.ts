@@ -206,4 +206,9 @@ export class UserService {
 		return blockers_users;
 	}
 
+	async getUserCount()
+	{
+		return await this.usersRepository.count();
+	}
+
 }

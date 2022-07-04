@@ -4,6 +4,7 @@ import './Pseudo.css';
 import edit from '../asset/edit-button.svg';
 
 export interface Props {
+	socket: any;
 	id: number;
 	idMe: number;
 	setGetMatch?: Dispatch<SetStateAction<boolean>>;
@@ -54,6 +55,8 @@ const Pseudo: React.FC<Props> = (props) => {
 							settmpPseudo("")
 						}
 					}).catch(error => {})
+					if (props.socket)
+						props.socket.emit('askForRefreshFriendList');
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 import React, {  Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Avatar.css';
-import { useNavigate } from 'react-router-dom'
 
 export interface Props {
 	id: number;

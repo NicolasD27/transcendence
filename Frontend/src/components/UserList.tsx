@@ -43,15 +43,16 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	const friendRequests = props.friendRequests;
 	const [ ImPlaying, setImPlaying ] = useState(false)
 
-	
 	useEffect(() => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, {withCredentials: true})
 			.then((response) => {
 				if(response.data.status === 3)
-			setImPlaying(true)})
+					setImPlaying(true)
+				props.socket.emit('askForRefreshFriendList')
+				})
 			.catch((error) => console.log(error))
-	}, [])
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 	const isAlreadyFriend = (id:number) => {
 		for(let i = 0; i < friends.length; i++ )
