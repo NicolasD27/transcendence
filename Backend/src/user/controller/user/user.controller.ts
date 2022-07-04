@@ -72,6 +72,7 @@ export class UserController {
         return this.userService.findAll(paginationQueryDto);
     }
 
+	@ApiBearerAuth()
     @Get(':userId/invites')
     @UseGuards(TwoFactorGuard)
     async getInvites(
@@ -83,6 +84,7 @@ export class UserController {
             userId, paginationQueryDto);
     }
 
+	@ApiBearerAuth()
     @Patch(':userId/invites/:inviteId')
     @UseGuards(TwoFactorGuard)
     async acceptChannelInvite(
@@ -94,6 +96,7 @@ export class UserController {
         return;
     }
 
+	@ApiBearerAuth()
     @Delete(':userId/invites/:inviteId')
     @UseGuards(TwoFactorGuard)
     async deleteChannelInvite(
@@ -104,8 +107,6 @@ export class UserController {
         await this.channelService.removeInvitation(request.cookies.username, userId, inviteId);
         return;
     }
-
-
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
@@ -128,8 +129,6 @@ export class UserController {
         //console.log("uploading img**************")
         return this.userService.addAvatar(username, file.buffer, file.originalname);
     }
-
-
 
     @ApiBearerAuth()
     @UseGuards(TwoFactorGuard)

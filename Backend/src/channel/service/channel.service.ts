@@ -165,8 +165,8 @@ export class ChannelService {
 
 		const myChannel = await this.findOneById(id);
 		console.log(myChannel)
-		// if (!myChannel)
-		// 	throw new NotFoundException(`Channel #${id} not found`);
+		if (!myChannel)
+			throw new NotFoundException(`Channel #${id} not found`);
 
 		const myParticipation = await this.participationRepo.findOne({
 			where: {
@@ -259,7 +259,7 @@ export class ChannelService {
 		const myUser = await this.userRepo.findOne({ username });
 		if (!myUser)
 			throw new NotFoundException("Username not found");
-		const myChannel = await this.channelRepo.findOne(channelId);
+		const myChannel = await this.findOneById(+channelId);//await this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException("Channel not found");
 		if (myChannel.isPrivate)
@@ -294,7 +294,7 @@ export class ChannelService {
 		const user = await this.userRepo.findOne({ username });
 		if (!user)
 			throw new NotFoundException("username not found");
-		const channel = await this.channelRepo.findOne(channelId);
+		const channel = await this.findOneById(+channelId); //this.channelRepo.findOne(channelId);
 		if (!channel)
 			throw new NotFoundException("channel not found");
 
@@ -318,7 +318,7 @@ export class ChannelService {
 
 	async getChannelUsers(id: string, paginationQuery: PaginationQueryDto): Promise<UserDto[]> {
 		const { limit, offset } = paginationQuery;
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id);//this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException("channel not found");
 		const myParticipations = await this.participationRepo.find({
@@ -340,7 +340,7 @@ export class ChannelService {
 		id: string,
 		paginationQuery: PaginationQueryDto
 	): Promise<MsgDto[]> {
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id);//this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`channel ${id} not found`);
 		const { limit, offset } = paginationQuery;
@@ -363,7 +363,7 @@ export class ChannelService {
 		// channelId: number,
 		createChannelInviteDto: CreateChannelInviteDto
 	): Promise<ChannelInviteDto> {
-		const myChannel = await this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
+		const myChannel = await this.findOneById(createChannelInviteDto.channelId);//this.channelRepo.findOne(createChannelInviteDto.channelId.toString());
 		if (!myChannel)
 			throw new NotFoundException();
 		const mySender = await this.userRepo.findOne({ username });
@@ -453,7 +453,7 @@ export class ChannelService {
 		if (myInvite.receiver.id != myUser.id)
 			throw new UnauthorizedException();
 
-		const myChannel = await this.channelRepo.findOne({ where: { id: myInvite.channel.id } });
+		const myChannel = await this.findOneById(myInvite.channel.id); //this.channelRepo.findOne({ where: { id: myInvite.channel.id } });
 		if (!myChannel) {
 			await this.channelInviteRepo.delete(myInvite.id);
 			throw new UnauthorizedException("The Channel doesn't exist anymore");	// in case removing a channel in CASCADE is not fast enough
@@ -507,7 +507,7 @@ export class ChannelService {
 		if (!myUser)
 			throw new NotFoundException(`username ${username} not found`);
 
-		const myChannel = await this.channelRepo.findOne({ where: { id: channelId } });
+		const myChannel = await this.findOneById(+channelId);//this.channelRepo.findOne({ where: { id: channelId } });
 		if (!myChannel)
 			throw new NotFoundException(`channel ${channelId} not found`);
 
@@ -529,7 +529,7 @@ export class ChannelService {
 
 	async checkUserJoinedChannel(username: string, channelId: string) // : Promise<boolean>
 	{
-		const myChannel = await this.channelRepo.findOne(channelId);
+		const myChannel = await this.findOneById(+channelId); //this.channelRepo.findOne(channelId);
 		if (!myChannel)
 			throw new NotFoundException(`channel ${channelId} not found`);
 
@@ -613,7 +613,7 @@ export class ChannelService {
 	}
 
 	async updateChannelProtection(id: string, username: string, updateChannelDto: UpdateChannelDto) {
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id); //this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found`);
 
@@ -652,7 +652,7 @@ export class ChannelService {
 		newBanStatus: number) {
 		const banhammer = await this.userRepo.findOne({ username });
 
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id); //this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
 
@@ -723,7 +723,7 @@ export class ChannelService {
 	async revertBanStatus(id: string, username: string, futureUnBannedID: string) {
 		const banhammer = await this.userRepo.findOne({ username });
 
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id); //this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
 
@@ -781,7 +781,7 @@ export class ChannelService {
 	async giveModerationRights(channelID: string, username: string, futureModoID: string, isGiven: boolean) {
 		const myOwner = await this.userRepo.findOne({ username });
 
-		const myChannel = await this.channelRepo.findOne({ where: { id: channelID } });
+		const myChannel = await this.findOneById(+channelID); //this.channelRepo.findOne({ where: { id: channelID } });
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${channelID} not found.`);
 		if (myChannel.owner.id != myOwner.id)
@@ -817,7 +817,7 @@ export class ChannelService {
 	async changeOwner(id: string, username: string, changeChannelOwnerDto: ChangeChannelOwnerDto) {
 		const myUser = await this.userRepo.findOne({ username });
 
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id); //this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
 		if (myChannel.owner.id != myUser.id)
@@ -852,7 +852,7 @@ export class ChannelService {
 	async remove(id: string, username: string) {
 		const myUser = await this.userRepo.findOne({ username });
 
-		const myChannel = await this.channelRepo.findOne(id);
+		const myChannel = await this.findOneById(+id); //this.channelRepo.findOne(id);
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found.`);
 

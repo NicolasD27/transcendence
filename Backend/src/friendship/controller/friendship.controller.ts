@@ -5,7 +5,6 @@ import {
     Delete,
     Get,
     Param,
-    Patch,
     Post,
     UseFilters,
     UseGuards,
@@ -19,6 +18,7 @@ import { FriendshipDto } from '../dto/friendship.dto';
 import { FriendshipService } from '../service/friendship.service';
 import { ParseIntPipe } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Friendships')
 @Controller('friendships')
@@ -26,12 +26,14 @@ import { ApiTags } from "@nestjs/swagger";
 export class FriendshipController {
     constructor(private readonly friendshipService: FriendshipService) { }
 
+	@ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Get(':user_id')
-    findAllByUser(@Param('user_id') user_id: string): Promise<FriendshipDto[]> {
-        return this.friendshipService.findAllByUser(user_id);
+    findAllByUser(@Param('user_id', ParseIntPipe) user_id: number): Promise<FriendshipDto[]> {
+        return this.friendshipService.findAllByUser(user_id.toString());
     }
 
+	@ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post()
     create(@Body(ValidationPipe) body: createFriendshipDto): Promise<FriendshipDto> {
@@ -42,24 +44,19 @@ export class FriendshipController {
         return this.friendshipService.create(body);
     }
 
+	@ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Post(':id/block')
     block(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
-        console.log("*****$hello")
         return this.friendshipService.block(username, +id);
     }
 
-    // @UseGuards(TwoFactorGuard)
-    // @Patch(':id')
-    // update(@Param('id', ParseIntPipe) id: string, @Body(ValidationPipe) body: updateFriendshipDto, @GetUsername() username): Promise<FriendshipDto> {
-    //     return this.friendshipService.update(username, +id, body.status);
-    // }
-
     //pour supprimer les invitations (status == 0)
+	@ApiBearerAuth()
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
-    async destroy(@Param('id', ParseIntPipe) id: string, @GetUsername() username): Promise<FriendshipDto> {
-        return this.friendshipService.destroy(username, id);
+    async destroy(@Param('id', ParseIntPipe) id: number, @GetUsername() username): Promise<FriendshipDto> {
+        return this.friendshipService.destroy(username, id.toString());
     }
 
 }

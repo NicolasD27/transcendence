@@ -8,17 +8,15 @@ import {
 	Post,
 	Query,
 	UseGuards,
-	ValidationPipe
+	ValidationPipe,
+	ParseIntPipe
 } from '@nestjs/common';
-import { Request } from 'express';
 import { PaginationQueryDto } from 'src/channel/dto/pagination-query.dto';
 import { GetUsername } from 'src/user/decorator/get-username.decorator';
 import { TwoFactorGuard } from '../../guards/two-factor.guard';
-import { AssignCurrentMatch } from '../dto/assign-current-match.dto';
 import { CreateMatchDto } from '../dto/create-match.dto';
 import { MatchDto } from '../dto/match.dto';
 import { UpdateMatchDto } from '../dto/update-match.dto';
-import { Match } from '../entity/match.entity';
 import { MatchService } from '../service/match.service';
 
 @Controller('matchs')
@@ -40,37 +38,35 @@ export class MatchController {
 
     @UseGuards(TwoFactorGuard)
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<MatchDto> {
-        return this.matchService.findOne(id);
+    findOne(@Param('id', ParseIntPipe) id: number): Promise<MatchDto> {
+        return this.matchService.findOne(id.toString());
     }
 
     @UseGuards(TwoFactorGuard)
     @Patch(':id')
-    updateMatch(@Param('id') id: string, @Body(ValidationPipe) updateMatchDto: UpdateMatchDto, @GetUsername() username: string): Promise<MatchDto> {        
-        return this.matchService.updateMatch(username, id, updateMatchDto);
+    updateMatch(
+		@Param('id', ParseIntPipe) id: number,
+		@Body(ValidationPipe) updateMatchDto: UpdateMatchDto,
+		@GetUsername() username: string
+	): Promise<MatchDto> {        
+        return this.matchService.updateMatch(username, id.toString(), updateMatchDto);
     }
 
     @UseGuards(TwoFactorGuard)
     @Post()
-    createMatch(@Body(ValidationPipe) createMatchDto: CreateMatchDto): Promise<MatchDto> {
+    createMatch(
+		@Body(ValidationPipe) createMatchDto: CreateMatchDto
+	): Promise<MatchDto> {
         return this.matchService.createMatch(createMatchDto);
     }
 
     @UseGuards(TwoFactorGuard)
     @Delete(':id')
-    destroyMatch(@Param('id') id: string, @GetUsername() username: string): Promise<MatchDto> {
-        return this.matchService.destroyMatch(username, id);
+    destroyMatch(
+		@Param('id', ParseIntPipe) id: number,
+		@GetUsername() username: string
+	): Promise<MatchDto> {
+        return this.matchService.destroyMatch(username, id.toString());
     }
 
-    // @UseGuards(TwoFactorGuard)
-    // @Post('matchmaking')
-    // matchmaking(@Req() req): Promise<MatchDto> {
-    //     return this.matchService.matchmaking(req.user.username);
-    // }
-
-    // @UseGuards(TwoFactorGuard)
-    // @Post('/current')
-    // aassignCurrentMatch(@Body(ValidationPipe) assignCurrentMatch: AssignCurrentMatch): Promise<MatchDto> {
-    //     return this.matchService.assignCurrentMatch(assignCurrentMatch);
-    // }
 }

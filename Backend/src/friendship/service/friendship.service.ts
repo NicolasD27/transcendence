@@ -48,13 +48,19 @@ export class FriendshipService {
         const user = await this.usersRepository.findOne(user_id);
         if (!user)
             throw new NotFoundException(`user #${user_id} not found`)
-        return this.friendshipsRepository.find({
-            where: [
-                { follower: user },
-                { following: user },
-            ],
-        })
-        .then(items => items.map(e=> Friendship.toDto(e, activeUsers)));
+		try {
+			return this.friendshipsRepository.find({
+				where: [
+					{ follower: user },
+					{ following: user },
+				],
+			})
+			.then(items => items.map(e=> Friendship.toDto(e, activeUsers)));
+		}
+		catch(e)
+		{
+			throw new NotFoundException();
+		}
     }
 
     async findAllActiveFriendsByUser(user_id: number): Promise<UserDto[]> {

@@ -45,14 +45,20 @@ export class MatchService {
 	}
 
 	async findOne(id: string): Promise<MatchDto> {
-		const match = await this.matchsRepository.findOne(id);
-		if (!match)
+		try {
+			const match = await this.matchsRepository.findOne(id);
+			if (!match)
+				throw new NotFoundException(`Match #${id} not found`);
+			return Match.toDto(match, activeUsers);
+		}
+		catch(e)
+		{
 			throw new NotFoundException(`Match #${id} not found`);
-		return Match.toDto(match, activeUsers);
+		}
 	}
 
 	async isActive(id: string): Promise<boolean> {
-		const match = await this.matchsRepository.findOne(id);
+		const match = await this.findOne(id);
 		if (!match)
 		{
 			//throw new NotFoundException(`Match #${id} not found`);
@@ -128,7 +134,7 @@ export class MatchService {
 			throw new UnauthorizedException();
 		// await this.notificationService.actionPerformedMatch(match)
 		await this.matchsRepository.save(match);
-		return Match.toDto(match, activeUsers)
+		return match; //Match.toDto(match, activeUsers)
 	}
 
 	async updateScore(current_username: string, id: string, updateScoreDto: UpdateScoreDto): Promise<MatchDto> {
@@ -143,7 +149,7 @@ export class MatchService {
 		if ((match.user1.username != current_username && match.user2.username != current_username))
 			throw new UnauthorizedException();
 		await this.matchsRepository.save(match);
-		return Match.toDto(match, activeUsers)
+		return match; //Match.toDto(match, activeUsers)
 	}
 
 	async matchIsFinished(current_username: string, id: string, finishedMatchDto: FinishedMatchDto): Promise<MatchDto> {
@@ -257,7 +263,7 @@ export class MatchService {
 	// 	const user2 = await this.usersRepository.findOne(assignCurrentMatch.user2_id)
 	// 	if (!user2)
 	// 		throw new NotFoundException(`User #${assignCurrentMatch.user2_id} not found`);
-	// 	const match = await this.matchsRepository.findOne(assignCurrentMatch.match_id)
+	// 	const match = await this.findOne(assignCurrentMatch.match_id)
 	// 	if (!match)
 	// 		throw new NotFoundException(`Match #${assignCurrentMatch.match_id} not found`);
 	// 	user1.currentMatch = match;
