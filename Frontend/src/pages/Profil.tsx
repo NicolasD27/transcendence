@@ -42,10 +42,6 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 
 	useEffect(() => {
 		setId(Number(idstring.id))
-	}, [idstring])
-
-	useEffect(() => {
-		setId(Number(idstring.id))
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
 		.then( res => {
 			setIsLoading(false)
@@ -70,7 +66,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 			}).catch(error => {})
 
 		setGetMatch(true);
-	}, [getmatch, idstring, id])
+	}, [getmatch, idstring, id, idMe, navigate])
 
 
 
@@ -129,7 +125,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 						{id === idMe && <ToggleQRcode isTwoFactorEnable={isTwoFactorEnable} />}
 						{id !== idMe && isFriend(id) === false && checkStatus(id)}
 						<Avatar id={id} idMe={idMe} setGetMatch={setGetMatch} />
-						<Pseudo id={id} idMe={idMe} setGetMatch={setGetMatch} />
+						<Pseudo socket={socket} id={id} idMe={idMe} setGetMatch={setGetMatch} />
 						<ProgressBar matchs={matchID} />
 						<div className='boxStats'>
 							<HistoryMatch historys={matchID} />

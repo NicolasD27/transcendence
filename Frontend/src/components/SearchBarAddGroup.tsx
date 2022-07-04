@@ -51,7 +51,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					"password": passwordEntered
 				}, { withCredentials: true })
 				.then((response) => {
-					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" }) //print the channel message window
+					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, chatPseudo: channelNameEntered, type: "channel" }) //print the channel message window
 					/*if (response.data.message === "This channel name is already taken.")
 					{
 						channelName.classList.add('error');
@@ -69,7 +69,7 @@ const SearchBarAddGroup: React.FC<PropsSearchBarAddGroup> = (props) => {
 					"isProtected": tmpProtected
 				}, { withCredentials: true })
 				.then((response) => {
-					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, type: "channel" })
+					props.setChatParamsState({ 'chatState': true, id: response.data.id, chatName: channelNameEntered, chatPseudo: channelNameEntered, type: "channel" })
 				})
 				.catch((err) => console.log(err.data))
 	}

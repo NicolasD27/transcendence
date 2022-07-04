@@ -32,6 +32,7 @@ export interface chatStateFormat {
   chatState: boolean;
   id: number;
   chatName: string;
+  chatPseudo: string;
   type: string;
 }
 
@@ -57,7 +58,7 @@ const App = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [socket, setSocket] = React.useState<any>();
   const [isFriendshipButtonClicked, setIsFriendshipButtonClicked] = useState<boolean>(true)
-  const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", type: "directMessage" })
+  const [chatParamsState, setChatParamsState] = useState<chatStateFormat>({ 'chatState': false, id: 0, chatName: "", chatPseudo:"", type: "directMessage" })
   const [friends, setFriends] = useState<FriendsFormat[]>([])
   const [blockedByUsers, setBlockedByUsers] = useState<number[]>([])
   const [friendRequests, setFriendRequests] = useState<number[]>([])
