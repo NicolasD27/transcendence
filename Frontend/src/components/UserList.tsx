@@ -47,7 +47,9 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	useEffect(() => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, {withCredentials: true})
-			.then((response) => response.data.status === 3 && setImPlaying(true))
+			.then((response) => {
+				if(response.data.status === 3)
+			setImPlaying(true)})
 			.catch((error) => console.log(error))
 	}, [])
 
