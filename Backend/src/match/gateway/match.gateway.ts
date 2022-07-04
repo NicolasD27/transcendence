@@ -34,24 +34,17 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 	@SubscribeMessage('find_match')
 	async findMatch(socket: CustomSocket, data: { mode: number }) {
-		//console.log("finding matchs")		//add checks if slave & master != username
 		const username = getUsernameFromSocket(socket)
 		let match = await this.matchService.matchmaking(username, data.mode);
 		socket.join("match#" + match.id);
 		match.room_size++;
-		// this.matchService.updateMatch(username, match.id.toString(), match);
 		if (match.status == MatchStatus.ACTIVE) {
-			//console.log("IS ACTIVE")
-			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user1.username);
-			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
 			activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 			activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 			this.server.emit('refreshFriendList');
 			this.server.to("match#" + match.id).emit('launch_match', match);
 		}
 		else {
-			//console.log("waiting for another player");
-			// await this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
 			this.server.emit('refreshFriendList');
 		}
@@ -96,7 +89,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
 		socket.join("match#" + match.id);
 		match.room_size++;
-		// await this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
 		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 
@@ -114,8 +106,12 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	@SubscribeMessage('askForReload')
-	async askForReload(socket: CustomSocket) {
-		socket.emit('resetValues');
+	async askForReload(socket: CustomSocket, data: { match_id: string }) {
+		if (data.match_id != "null" && data.match_id != "-1")
+		{
+			socket.leave("match#" + data.match_id);
+			socket.emit('resetValues');
+		}
 	}
 
 	@SubscribeMessage('askForMyID')

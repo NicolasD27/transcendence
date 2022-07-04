@@ -185,7 +185,6 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							})
 							.map((friend) => {
 								let statusIcon = ""
-								console.log(`${friend.pseudo} = ${friend.status}`)
 								if (friend.status === 1)
 									statusIcon = statusIconGreen
 								else if (friend.status === 0)

@@ -18,7 +18,7 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
-			})
+			}).catch(error => {})
 		setGetIDMe(getIDMe => true)
 	}, [])
 
@@ -27,7 +27,7 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
 			.then((res) => {
 				setBlockedByUsers(res.data)
-			})
+			}).catch(error => {})
 	})
 
 	return (

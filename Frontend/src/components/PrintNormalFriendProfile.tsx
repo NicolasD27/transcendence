@@ -27,7 +27,7 @@ const PrintNormalFriendProfile: React.FC<PropsPrintNormalFriendProfile> = (props
 		}
 	}
 
-	console.log("matchid:", props.matchId)
+	//console.log("matchid:", props.matchId)
 	return (
 		<>
 			<div id='friend_buttons'>

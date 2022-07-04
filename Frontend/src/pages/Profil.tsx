@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { Avatar } from '../components/Avatar';
 import ProgressBar from '../components/Progress-bar';
@@ -36,12 +37,20 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 	const [matchID, setMatchID] = React.useState<matchFormat[]>([]);
 	const [getmatch, setGetMatch] = useState(false);
 	const [isTwoFactorEnable, setIsTwoFactorEnable] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		setId(Number(idstring.id))
 	}, [idstring])
 
 	useEffect(() => {
+		setId(Number(idstring.id))
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/`, { withCredentials: true })
+		.then( res => {
+			setIsLoading(false)
+		})
+		.catch(error => { navigate("/profil/" + idMe) })
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/${id}/matchs/`, { withCredentials: true })
 			.then(res => {
 				const matchs = res.data;
@@ -58,10 +67,10 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 					return b.idMatch - a.idMatch;
 				});
 				setMatchID(matchTri);
-			})
+			}).catch(error => {})
 
 		setGetMatch(true);
-	}, [getmatch, id])
+	}, [getmatch, idstring, id])
 
 
 
@@ -71,7 +80,7 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
 				setIsTwoFactorEnable(res.data.isTwoFactorEnable)
-			})
+			}).catch(error => {})
 		setGetIDMe(getIDMe => true)
 	}
 
@@ -105,6 +114,10 @@ const Profil = ({ socket, friends, setFriends, isFriendshipButtonClicked, setIsF
 			return (<p className='profileFriendRequestReceived'>Pending...</p>)
 		else
 			return (<button className='profileSendFriendRequest' onClick={() => sendFriendshipRequest(id)}>Add Friend</button>)
+	}
+
+	if (isLoading) {
+		return <div></div>
 	}
 
 	return (
