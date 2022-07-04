@@ -1,6 +1,7 @@
 import React, {  Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
 import './Avatar.css';
+import { useNavigate } from 'react-router-dom'
 
 export interface Props {
 	id: number;
@@ -14,7 +15,7 @@ export class Avatar extends React.Component<Props> {
 		profileImg: '',
 		selectfile: null
 	}
-
+	
 	imageHandler = (event: any) => {
 		this.setState({
 			selectfile: event.target.files[0]
@@ -30,11 +31,9 @@ export class Avatar extends React.Component<Props> {
 							this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
 						if (this.props.setGetMatch)
 							this.props.setGetMatch(false)
-					})
+					}).catch(error => {})
 			})
-			.catch(err => {
-				//console.log("upload error")
-			})
+			.catch(error => {})
 	};
 
 	componentDidMount() {
@@ -45,7 +44,7 @@ export class Avatar extends React.Component<Props> {
 					this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
 				else
 					this.setState({ profileImg: this.state.imgDefault })
-			})
+			}).catch(error => {})
 	}
 
 	componentDidUpdate(prevProps: Props) {
@@ -58,7 +57,7 @@ export class Avatar extends React.Component<Props> {
 				this.setState({ profileImg: `http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/database-files/${user.avatarId}` })
 				else
 				this.setState({ profileImg: this.state.imgDefault })
-			})
+			}).catch(error => {})
 		}
 	}
 

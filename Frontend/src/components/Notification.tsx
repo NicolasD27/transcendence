@@ -65,7 +65,7 @@ const Notification: React.FC<Props> = ({ notification, newNotifsLength, setNewNo
 				.then(res => {
 					setAwaitingAction(false)
 					setNewNotifsLength(newNotifsLength - 1)
-				})
+				}).catch(error => {})
 		}
 	}
 
@@ -90,7 +90,7 @@ const Notification: React.FC<Props> = ({ notification, newNotifsLength, setNewNo
 					//console.log("todo refuse invite")
 					setAwaitingAction(false)
 					setNewNotifsLength(newNotifsLength - 1)
-				})
+				}).catch(error => {})
 		}
 	}
 

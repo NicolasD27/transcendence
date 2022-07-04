@@ -22,7 +22,7 @@ const Pseudo: React.FC<Props> = (props) => {
 			.then(res => {
 				const profil = res.data;
 				setPseudo(pseudo => profil.pseudo)
-			})
+			}).catch(error => {})
 		setGetPseudo(true);
 	}, [getpseudo, id])
 
@@ -53,7 +53,7 @@ const Pseudo: React.FC<Props> = (props) => {
 							setOnChange(false)
 							settmpPseudo("")
 						}
-					})
+					}).catch(error => {})
 			}
 		}
 	}

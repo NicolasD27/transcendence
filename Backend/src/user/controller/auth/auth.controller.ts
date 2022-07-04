@@ -7,12 +7,15 @@ import { Profile } from "passport-42"
 import { Response, Request } from "express"
 import { TwoFactorGuard } from '../../../guards/two-factor.guard';
 import { GetProfile42 } from "../../decorator/get-profile-42.decorator"
+import { activeUsers } from "src/auth-socket.adapter";
+import { UserService } from "src/user/service/user.service";
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(
-        private authService: AuthService
+        private authService: AuthService,
+		private userService: UserService,
     ) {}
 
     @Get('42')
@@ -56,9 +59,13 @@ export class AuthController {
         if (userExist)
             payload = (await this.authService.getTokens(username));
         else
-            throw new NotFoundException("user not found")
-        res.clearCookie('accessToken', payload.accessToken)
-        res.clearCookie('username', payload.user.username)
-        req.logout(null);
+            throw new NotFoundException("user not found");
+        res.clearCookie('accessToken', payload.accessToken);
+        res.clearCookie('username', payload.user.username);
+
+		const myUser = await this.userService.findByUsername(username);
+		activeUsers.remove(myUser.id);
+        
+		req.logout(null);
     }
 }

@@ -34,7 +34,7 @@ const PrintNormalFriendProfile: React.FC<PropsPrintNormalFriendProfile> = (props
 					(!props.isUserBlocked && !props.blockedByFriend &&
 						<>
 							{props.user.status !== 3 && props.ImPlaying === false && <button id="friendPlay_button" onClick={sendMatchInvit} />}
-							{props.user.status === 3 && props.matchId !== -1 && <button id="friendWatch_button" onClick={() => props.goToMatch(props.matchId)} />}
+							{props.user.status === 3 && props.ImPlaying === false && <button id="friendWatch_button" onClick={() => props.goToMatch(props.matchId)} />}
 							<button id="friendChat_button" onClick={() => props.setChatParamsState({ 'chatState': !props.chatParamsState.chatState, 'id': props.user.id, 'chatName': props.user.username, type: 'directMessage' })} />
 							<button id="friendColumn_button" onClick={() => props.setFriendDeleteColumnState(true)} />
 						</>

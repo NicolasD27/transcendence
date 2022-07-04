@@ -47,7 +47,9 @@ const UserList : React.FC<PropsUserList> = (props) => {
 	useEffect(() => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/me`, {withCredentials: true})
-			.then((response) => response.data.status === 3 && setImPlaying(true))
+			.then((response) => {
+				if(response.data.status === 3)
+			setImPlaying(true)})
 			.catch((error) => console.log(error))
 	}, [])
 
@@ -185,7 +187,6 @@ const UserList : React.FC<PropsUserList> = (props) => {
 							})
 							.map((friend) => {
 								let statusIcon = ""
-								//console.log(`${friend.pseudo} = ${friend.status}`)
 								if (friend.status === 1)
 									statusIcon = statusIconGreen
 								else if (friend.status === 0)

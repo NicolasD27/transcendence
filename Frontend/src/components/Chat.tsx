@@ -38,14 +38,14 @@ const Chat: React.FC<PropsChat> = (props) => {
 		axios
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => setUsersBlocked(res.data))	
-			.catch(err => console.log("Error00:", err))
+			.catch(error => {})
 	}, [])
 	
 	props.socket.on('friendship_state_updated', () => {
 		axios
-			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
-			.then(res => setUsersBlocked(res.data))
-			.catch(err => console.log("Error01:", err))
+      .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+      .then(res => setUsersBlocked(res.data))
+      .catch(error => {})
 	})
 
 	useEffect(() => {
@@ -101,6 +101,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 		
 					})
 			})
+			.catch(error => {})
 			setIsFriendshipButtonClicked(false)}, 1000)
 		}
 	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked, props.socket])
@@ -145,6 +146,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 							}
 					})
 				})
+				.catch(error => {})
 			})
 
 			props.socket.on('notifyFriendRequest', data => {
@@ -165,6 +167,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 						}
 					})
 				})
+				.catch(error => {})
 			})
 	}
 

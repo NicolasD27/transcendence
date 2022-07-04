@@ -10,7 +10,8 @@ import './Header.css'
 
 interface PropsHeader {
 	idMe: number;
-	inPlay: boolean
+	inPlay: boolean;
+	socket : any;
 }
 
 const Header: React.FC<PropsHeader> = (props) => {
@@ -25,8 +26,11 @@ const Header: React.FC<PropsHeader> = (props) => {
 
 	const onLogout = () => {
 		axios.post(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/auth/logout`, {}, { withCredentials: true })
-			.then(res => {
+			.then(res => { props.socket.emit("set_offline", {})
+				props.socket.leave();
+				window.location.reload();
 			})
+			.catch(() => {})
 		navigate("/")
 	}
 

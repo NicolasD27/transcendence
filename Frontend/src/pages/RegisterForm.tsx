@@ -14,7 +14,7 @@ const RegisterForm = () => {
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
-			})
+			}).catch(error => {})
 
 	}, [idMe])
 

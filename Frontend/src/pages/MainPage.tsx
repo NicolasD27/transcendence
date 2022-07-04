@@ -18,7 +18,7 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 			.then(res => {
 				const id_tmp = res.data;
 				setIdMe(id_tmp.id)
-			})
+			}).catch(error => {})
 		setGetIDMe(getIDMe => true)
 	}, [])
 
@@ -27,12 +27,12 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
 			.then((res) => {
 				setBlockedByUsers(res.data)
-			})
+			}).catch(error => {})
 	})
 
 	return (
 		<div id='bloc'>
-			<Header idMe={idMe} inPlay={inPlay}/>
+			<Header idMe={idMe} inPlay={inPlay} socket={socket}/>
 			<Body idMe={idMe} socket={socket} matchLaunched={matchLaunched} setMatchLaunched={setMatchLaunched} friends={friends} setFriends={setFriends} isFriendshipButtonClicked={isFriendshipButtonClicked} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked} chatParamsState={chatParamsState} setChatParamsState={setChatParamsState} friendRequests={friendRequests} setFriendRequests={setFriendRequests} blockedByUsers={blockedByUsers} setInPlay={setInPlay}/>
 			{getIDMe && <NotificationList myId={idMe} socket={socket} setIsFriendshipButtonClicked={setIsFriendshipButtonClicked}/>}
 		</div>

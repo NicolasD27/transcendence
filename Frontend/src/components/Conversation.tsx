@@ -113,8 +113,7 @@ const Conversation: React.FC<Props> = (props) => {
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
 			.then(res => {
 				setUsersBlocked(res.data)
-			})
-			.catch(err => console.log("Error02:", err))
+			}).catch(error => {})
 	}, [])
 
 	useEffect(() => {

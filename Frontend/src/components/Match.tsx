@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 import './Match.css'
 
 let playerWidth = 15;
-let finalScore = 20;
+let finalScore = 3;
 let buttonAdder = 5;
 let ballSpeed = 10;
 let magicBallSpeed = ballSpeed;
@@ -181,9 +181,11 @@ export class Match extends React.Component<Props>
 	type = "";
 	started = 0;
 	countdown = 3;
-	match_id: -1;
-	slaveId: "";
-	masterId: "";
+	match_id = -1;
+	slaveId = "";
+	slavePseudo = "";
+	masterId = "";
+	masterPseudo = "";
 	myId = "";
 	leftClick = false;
 	modeSelected = false;
@@ -191,8 +193,8 @@ export class Match extends React.Component<Props>
 	tooSmall = false;
 
 	componentWillUnmount() {
+		this.props.socket.emit('askForReload', { match_id: this.props.idMatch });
 		this.props.socket.off('launch_match')
-		this.props.socket.off('resetValues')
 		this.props.socket.off('updateMatch')
 		this.props.socket.off('serverGameFinished')
 		this.props.socket.off('receiveMyID')
@@ -205,7 +207,7 @@ export class Match extends React.Component<Props>
 	}
 
 	setup = (p5: any) => {
-		if (this.props.idMatch >= 0)
+		if (this.props.idMatch)
 		{
 			this.type = "spect";
 			this.props.socket.emit('connect_to_match', { match_id: this.props.idMatch });
@@ -261,7 +263,9 @@ export class Match extends React.Component<Props>
 		this.props.socket.on('launch_match', (data) => {
 			this.match_id = data.id;
 			this.slaveId = data.user2.username;
+			this.slavePseudo = data.user2.pseudo;
 			this.masterId = data.user1.username;
+			this.masterPseudo = data.user1.pseudo;
 
 			this.props.socket.emit("askForMyID");
 		})
@@ -341,11 +345,11 @@ export class Match extends React.Component<Props>
 					}
 					if (game.playerOne.score >= finalScore) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: game.playerOne.score, score2: game.playerTwo.score });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterPseudo, score1: game.playerOne.score, score2: game.playerTwo.score });
 					}
 					else if (game.playerTwo.score >= finalScore) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: game.playerOne.score, score2: game.playerTwo.score });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slavePseudo, score1: game.playerOne.score, score2: game.playerTwo.score });
 					}
 				});
 
@@ -358,7 +362,7 @@ export class Match extends React.Component<Props>
 				this.props.socket.on('clientDisconnect', (data) => {
 					if (data === this.slaveId && this.started !== -1) {
 						this.props.socket.off('serverTick');
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterId, score1: 0, score2: 0 });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.masterPseudo, score1: 0, score2: 0 });
 					}
 				});
 
@@ -377,7 +381,7 @@ export class Match extends React.Component<Props>
 
 				this.props.socket.on('clientDisconnect', (data) => {
 					if (data === this.masterId && this.started !== -1)
-						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slaveId, score1: 0, score2: 0 });
+						this.props.socket.emit('gameFinished', { match_id: this.match_id, winner: this.slavePseudo, score1: 0, score2: 0 });
 				});
 
 			}
@@ -385,7 +389,7 @@ export class Match extends React.Component<Props>
 	}
 
 	draw = (p5: any) => {
-		if (this.started === 1)
+		if (this.masterId !== "")
 			this.props.setInPlay(true)
 		else
 			this.props.setInPlay(false)
@@ -396,11 +400,8 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				// p5.text('Left click to play another match', basicW / 2, basicH * 0.75)
-				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
-					this.props.socket.emit('askForReload');
+					this.props.socket.emit('askForReload', {match_id: this.match_id});
 				}, 1500)
 			}
 			if (this.width < 400)	//change values here
@@ -479,11 +480,8 @@ export class Match extends React.Component<Props>
 				p5.fill(p5.color(255, 255, 255));
 				p5.textAlign(p5.CENTER, p5.CENTER);
 				p5.text(`The winner is : ${this.winner}`, basicW / 2, basicH / 2);
-				// p5.text('Left click to play a match', basicW / 2, basicH * 0.75)
-				// if (this.leftClick === true && p5.mouseX > 0 && p5.mouseX < this.width && p5.mouseY > 0 && p5.mouseY < this.height)
-				// 	this.props.socket.emit('askForReload');
 				setTimeout(() => {
-					this.props.socket.emit('askForReload');
+					this.props.socket.emit('askForReload', {match_id: this.match_id});
 				}, 1500)
 			}
 		}

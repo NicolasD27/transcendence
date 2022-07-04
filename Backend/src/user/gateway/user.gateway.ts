@@ -70,6 +70,8 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	disconnect_me(socket:CustomSocket)
 	{
 		this.logger.log(`${socket.user.username} left the page`);
+		this.server.emit('refreshFriendList');
+		this.server.emit('clientDisconnect', getUsernameFromSocket(socket));
 		activeUsers.remove(socket.user.id);
 	}
 

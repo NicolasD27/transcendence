@@ -32,33 +32,23 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		private readonly friendshipService: FriendshipService,
 	) { }
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('find_match')
 	async findMatch(socket: CustomSocket, data: { mode: number }) {
-		//console.log("finding matchs")		//add checks if slave & master != username
 		const username = getUsernameFromSocket(socket)
 		let match = await this.matchService.matchmaking(username, data.mode);
 		socket.join("match#" + match.id);
 		match.room_size++;
-		// this.matchService.updateMatch(username, match.id.toString(), match);
-		if (match.status == MatchStatus.ACTIVE) {
-			//console.log("IS ACTIVE")
-			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user1.username);
-			// await this.userService.updateStatusByUsername(UserStatus.PLAYING, match.user2.username);
+		if (match.status == MatchStatus.ACTIVE)
+		{
 			activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 			activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
-			this.server.emit('refreshFriendList');
 			this.server.to("match#" + match.id).emit('launch_match', match);
 		}
-		else {
-			//console.log("waiting for another player");
-			// await this.userService.updateStatusByUsername(UserStatus.SEARCHING, match.user1.username);
+		else
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
-			this.server.emit('refreshFriendList');
-		}
+		this.server.emit('refreshFriendList');
 	}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('challenge_user')
 	async challengeUser(socket: CustomSocket, data: { opponent_id: string }) {
 		const username = getUsernameFromSocket(socket)
@@ -76,31 +66,31 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.to("user#" + data.opponent_id).emit('match_invite_to_client', match);
 	}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('accept_challenge')
 	async acceptMatchInvite(socket: CustomSocket, data: { match_id: string }) {
 		const username = getUsernameFromSocket(socket)
 		const user_accepting = await this.userService.findByUsername(username);
 
 		const myMatch = await this.matchService.findOne(data.match_id);
-		console.log(myMatch);
 
 		const user_inviting = await this.userService.findOne(myMatch.user1.id.toString());
 
 		if (await this.matchService.check_user_in_match(user_accepting)
 			|| await this.matchService.check_user_in_match(user_inviting))
 			return ;
+		if (!activeUsers.isActiveUser(user_accepting.id)
+			|| !activeUsers.isActiveUser(user_inviting.id))
+			return ;
 
 		let match = await this.matchService.acceptChallenge(username, data.match_id);
 		socket.join("match#" + match.id);
 		match.room_size++;
-		// await this.userService.updateStatusByUsername(UserStatus.PLAYING, username);
 		activeUsers.updateState(match.user1.id, UserStatus.PLAYING);
 		activeUsers.updateState(match.user2.id, UserStatus.PLAYING);
 
-		this.server.emit('refreshFriendList');
 		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
 		this.server.to("match#" + match.id).emit('launch_match', match)
+		this.server.emit('refreshFriendList');
 	}
 
 	@SubscribeMessage('connect_to_match')
@@ -112,17 +102,17 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	@SubscribeMessage('askForReload')
-	async askForReload(socket: CustomSocket) {
+	async askForReload(socket: CustomSocket, data: { match_id: string }) {
+		if (data.match_id != null && data.match_id != "-1")
+			socket.leave("match#" + data.match_id);
 		socket.emit('resetValues');
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('askForMyID')
 	async askForMyID(socket: CustomSocket) {
 		socket.emit('receiveMyID', getUsernameFromSocket(socket));
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterScored')
 	async masterScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
@@ -130,7 +120,6 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveScored')
 	async slaveScored(socket: CustomSocket, data: { match_id: string }) {
 		let match = await this.matchService.findOne(data.match_id);
@@ -138,51 +127,42 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.matchService.updateScore(getUsernameFromSocket(socket), match.id.toString(), { score1: match.score1, score2: match.score2 })
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('sendUpdateMatch')
 	async sendUpdateMatch(socket: CustomSocket, data: { match_id: number, game: Game }) {
 		this.server.to("match#" + data.match_id).emit('updateMatch', data.game);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveKeyPressed')
 	async slaveKeyPressed(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('slaveToMasterKeyPressed', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterKeyPressed')
 	async masterKeyPressed(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('masterToMasterKeyPressed', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('slaveKeyReleased')
 	async slaveKeyReleased(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('slaveToMasterKeyReleased', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('masterKeyReleased')
 	async masterKeyReleased(socket: CustomSocket, data: { match_id: string, command: number }) {
 		this.server.to("match#" + data.match_id).emit('masterToMasterKeyReleased', data.command);
 	}
 
-	//@UseGuards(WsGuard)
 	@SubscribeMessage('gameFinished')
 	async gameFinished(socket: CustomSocket, data: { match_id: string, winner: string, score1: number, score2: number }) {
 		this.logger.log("ITS FINISHED")
 		let match = await this.matchService.findOne(data.match_id);
 		this.matchService.matchIsFinished(getUsernameFromSocket(socket), match.id.toString(), { status: MatchStatus.FINISHED, winner: data.winner });
-		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user1.username);
-		// await this.userService.updateStatusByUsername(UserStatus.ONLINE, match.user2.username);
 		activeUsers.updateState(match.user1.id, UserStatus.ONLINE);
 		activeUsers.updateState(match.user2.id, UserStatus.ONLINE);
+		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);
 		this.server.emit('refreshFriendList');
-		this.server.to("match#" + data.match_id).emit('serverGameFinished', data.winner);	//sends back the winner
 	}
 
-	//@UseGuards(WsGuard)
 	async handleConnection(socket: CustomSocket) {
 		this.logger.log(`match socket connected: ${socket.id}`);
 		if (!socket.handshake.headers.cookie)
@@ -193,6 +173,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			const user = await this.userService.findByUsername(username);
 			socket.join("user#" + user.id);
 		}
+		this.server.emit('refreshFriendList');
 	}
 
 	afterInit(server: Server) {
