@@ -65,7 +65,7 @@ const Conversation: React.FC<Props> = (props) => {
 	const [userRestricted, setUserRestricted] = React.useState<restrictedFormat[]>([]);
 	const [usersBlocked, setUsersBlocked] = React.useState<number[]>([]);
 
-	const newMessageChannel = (message: any) => {
+	 const newMessageChannel = async (message: any) => {
 		let singleMessage: messagesFormat;
 		let avatartmp: string;
 
@@ -84,11 +84,11 @@ const Conversation: React.FC<Props> = (props) => {
 				singleMessage = { id: message.id, message: message.content, name: message.user.pseudo, avatar: avatartmp, own: true };
 			else
 				singleMessage = { id: message.id, message: message.content, name: message.user.pseudo, avatar: avatartmp, own: false };
-			setMessages(messages => [...messages, singleMessage]);
+			await setMessages(messages => [...messages, singleMessage]);
 		}
 	}
 
-	const newMessageDirect = (message: any) => {
+	const newMessageDirect = async (message: any) => {
 		let singleMessage: messagesFormat;
 		let avatartmp: string;
 		if ((message.sender.username === props.nameChat) || (message.receiver.username === props.nameChat)) {
@@ -106,7 +106,7 @@ const Conversation: React.FC<Props> = (props) => {
 				singleMessage = { id: message.id, message: message.content, name: message.sender.pseudo, avatar: avatartmp, own: true };
 			else
 				singleMessage = { id: message.id, message: message.content, name: message.sender.pseudo, avatar: avatartmp, own: false };
-			setMessages(messages => [...messages, singleMessage]);
+			await setMessages(messages => [...messages, singleMessage]);
 		}
 	}
 
@@ -254,19 +254,31 @@ const Conversation: React.FC<Props> = (props) => {
 	}, [props.id, showConv, status, muted, props.type, usersBlocked]);// eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
+		const fetchData = async (message) => {
+			await newMessageChannel(message)
+					await setStatus(!status)
+		  }
+		  const fetchDataDirect = async (message) => {
+			await newMessageDirect(message)
+					await setStatus(!status)
+		  }
 		let isMounted = true
 		if (props.socket && isMounted) {
 			if (props.type === "channel") {
-				props.socket.emit('connect_to_channel', { channelId: props.id.toString() })
 				props.socket.on('msg_to_client', (message) => {
-					newMessageChannel(message)
-					setStatus(!status)
+					if (isMounted)
+					{
+						fetchData(message)
+					}
 				});
 				props.socket.on('error_msg', () => { setStatus(status => !status) })
 			}
 			else if (props.type === "directMessage") {
 				props.socket.on('direct_msg_to_client', (message) => {
-					newMessageDirect(message);
+					if (isMounted)
+					{
+						fetchDataDirect(message)
+					}
 				});
 			}
 		}

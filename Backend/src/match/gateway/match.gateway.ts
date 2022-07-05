@@ -129,7 +129,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	
 	@SubscribeMessage('askForRefreshFriendList')
 	async asfkForRefreshFriendList(socket: CustomSocket) {
-		console.log("Call to refresh")
+		// console.log("Call to refresh")
 		this.server.emit('refreshFriendList');
 	}
 

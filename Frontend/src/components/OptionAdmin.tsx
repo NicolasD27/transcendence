@@ -52,7 +52,8 @@ const OptionAdmin: React.FC<Props> = (props) => {
 
 	const leaveChannel = () => {
 		axios.delete(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/leave`, { withCredentials: true })
-			.then(res => { props.setRecupList(true) })
+			.then(res => { props.setRecupList(true) 
+				props.socket.emit('leave_channel', { channelId: props.id.toString() });})
 		props.setChatState({ 'chatState': false, id: 0, chatName: "", chatPseudo: "", type: "directM" })
 		props.setShowConv(true)
 	}

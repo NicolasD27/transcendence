@@ -41,29 +41,34 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
+			.catch((err) => {})
 			})
 			socket.on("match_invite_to_client", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
+			.catch((err) => {})
 			})
 			socket.on("notifyFriendRequest", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
+			.catch((err) => {})
 			})
 			socket.on("notifyFriendRequestAccepted", data => {
 				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
+			.catch((err) => {})
 			})
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
+			.catch((err) => {})
 		}
 		return () => { abortController.abort() }
 	}, [myId, socket])

@@ -150,7 +150,7 @@ export class UserController {
     @UseGuards(TwoFactorGuard)
     @Get('blocked')
     async getBlockedUsers(@GetUsername() username) {
-		console.log("blocked ", username)
+		// console.log("blocked ", username)
         return this.userService.getBlockedUsers(username);
     }
 
@@ -165,7 +165,7 @@ export class UserController {
     @UseGuards(TwoFactorGuard)
     @Get('blockers')
     async getBlockersUsers(@GetUsername() username) {
-		console.log("blockers ", username)
+		// console.log("blockers ", username)
         return this.userService.getBlockersUsers(username);
     }
 

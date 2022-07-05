@@ -164,7 +164,7 @@ export class ChannelService {
 			throw new NotFoundException(`Username ${username} not found`);
 
 		const myChannel = await this.findOneById(id);
-		console.log(myChannel)
+		// console.log(myChannel)
 		if (!myChannel)
 			throw new NotFoundException(`Channel #${id} not found`);
 
@@ -378,6 +378,10 @@ export class ChannelService {
 		const myReceiver = await this.userRepo.findOne({ where: { id: createChannelInviteDto.userId } });
 		if (!myReceiver)
 			throw new NotFoundException();
+
+		if (myReceiver.id === mySender.id)
+			throw new UnauthorizedException("You can not invite yourself.");
+
 		//? check the black list of the receiver to avoid spam
 		const blacklisted = await this.friendshipRepo.find({
 			where: [

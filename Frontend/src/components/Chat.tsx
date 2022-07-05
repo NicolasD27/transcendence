@@ -42,16 +42,16 @@ const Chat: React.FC<PropsChat> = (props) => {
 	}, [])
 
 	useEffect(() => {
-		let isMounted = true
-		if(props.socket && isMounted) {
+		const abortController = new AbortController()
+		if(props.socket) {
 			props.socket.on('friendship_state_updated', () => {
 				axios
-			  .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+			  .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true, signal : abortController.signal  })
 			  .then(res => setUsersBlocked(res.data))
 			  .catch(error => {})
 			})
 		}
-		return () => {isMounted = false}
+		return () => { abortController.abort() }
 	}, [props.socket])
 
 	useEffect(() => {

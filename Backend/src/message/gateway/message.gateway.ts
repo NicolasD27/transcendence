@@ -213,6 +213,19 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 	}
 
+	@SubscribeMessage('leave_channel')
+	async leaveChannel(client: CustomSocket, data: { channelId: number } )
+	{
+		try{
+			const targetedClientSocket = await this.server
+				.in(activeUsers.getSocketId(client.user.id).socketId)
+				.fetchSockets();
+			if (targetedClientSocket.length)
+				targetedClientSocket[0].leave("channel#" + data.channelId.toString());
+		}
+		catch (e) {}
+	}
+
 	afterInit(server: Server)
 	{
 		this.logger.log('Init');
