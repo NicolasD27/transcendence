@@ -41,6 +41,9 @@ const Profil = ({ socket, idmeApp, friends, setFriends, isFriendshipButtonClicke
 	const navigate = useNavigate()
 
 	useEffect(() => {
+		let isMounted = true
+		if (isMounted)
+		{
 		setId(Number(idstring.id))
 		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/count/`, { withCredentials: true })
 		.then(res => {
@@ -74,10 +77,11 @@ const Profil = ({ socket, idmeApp, friends, setFriends, isFriendshipButtonClicke
 					setMatchID(matchTri);
 				}).catch(error => {})
 			}
-		})
-
-
+		}
+		)
+	}
 		setGetMatch(true);
+		return () => {isMounted = false}
 	}, [getmatch, idstring, id]) // eslint-disable-line react-hooks/exhaustive-deps
 
 

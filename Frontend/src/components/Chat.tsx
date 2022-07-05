@@ -42,7 +42,8 @@ const Chat: React.FC<PropsChat> = (props) => {
 	}, [])
 
 	useEffect(() => {
-		if(props.socket) {
+		let isMounted = true
+		if(props.socket && isMounted) {
 			props.socket.on('friendship_state_updated', () => {
 				axios
 			  .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
@@ -50,15 +51,17 @@ const Chat: React.FC<PropsChat> = (props) => {
 			  .catch(error => {})
 			})
 		}
+		return () => {isMounted = false}
 	}, [props.socket])
 
 	useEffect(() => {
-		if (props.socket) {
+		let isMounted = true
+		if (props.socket && isMounted) {
 			props.socket.on('refreshFriendList', () => {
 				setIsFriendshipButtonClicked(true)
 			});
 		}
-		if (props.idMe && props.isFriendshipButtonClicked === true)
+		if (props.idMe && props.isFriendshipButtonClicked === true && isMounted)
 		{
 			setTimeout(()=> {
 			axios
@@ -109,12 +112,14 @@ const Chat: React.FC<PropsChat> = (props) => {
 			})
 			.catch(error => {})
 			setIsFriendshipButtonClicked(false)}, 1000)
+			return () => {isMounted = false}
 		}
 	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked, props.socket])
 
 	
 		useEffect(() => {
-			if (props.idMe && props.socket)
+			let isMounted = true
+			if (props.idMe && props.socket && isMounted)
 			{
 				console.log("Chat00")
 				props.socket.on('notifyFriendRequestAccepted', data => {
@@ -178,7 +183,9 @@ const Chat: React.FC<PropsChat> = (props) => {
 					})
 					.catch(error => {})
 				})
-			}} , [props.idMe, props.socket]) // eslint-disable-line react-hooks/exhaustive-deps
+			}
+				return() => { isMounted = false }
+			} , [props.idMe, props.socket]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 	const handleResize = () => {
@@ -193,7 +200,7 @@ const Chat: React.FC<PropsChat> = (props) => {
 	useEffect(() => {
 		handleResize()
 		window.addEventListener('resize', handleResize)
-	})
+	},[])
 
 	return (
 		<>

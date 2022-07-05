@@ -55,7 +55,10 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 
 
 	useEffect(() => {
+		let isMounted = true
+		if (isMounted)
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif => notif.awaitingAction).length)
+		return () => {isMounted = false}
 	}, [notifications])
 
 	const handleResize = () => {

@@ -111,18 +111,30 @@ const Conversation: React.FC<Props> = (props) => {
 	}
 
 	useEffect(() => {
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+		const abortController = new AbortController()
+
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true, signal : abortController.signal })
 			.then(res => {
 				setUsersBlocked(res.data)
-			}).catch(error => {})
-	}, [])
+			}).catch(error => {
+				if (error.name === 'AbortError')
+				{
+					throw error
+				}
+			})
+			if (props.type === "channel")
+			props.socket.emit('connect_to_channel', { channelId: props.id.toString() });
+			return () => { abortController.abort() }
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
+		const abortController = new AbortController()
+		//let isMounted = true
 		props.setRecupList(false)
 		
 		setTimeout(() => { }, 500)
 		if (props.type === "channel") {
-			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true })
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}`, { withCredentials: true, signal : abortController.signal })
 				.then(res => {
 					setModerators([])
 					setUserRestricted([])
@@ -169,6 +181,12 @@ const Conversation: React.FC<Props> = (props) => {
 						}
 					});
 				})
+				.catch(error => {
+					if (error.name === 'AbortError')
+					{
+						throw error
+					}
+				})
 			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
 				.then(res => {
 					const tmpusers = res.data;
@@ -185,11 +203,19 @@ const Conversation: React.FC<Props> = (props) => {
 						}
 					});
 				})
+				.catch(error => {
+					if (error.name === 'AbortError')
+					{
+						throw error
+					}
+				})
 		}
+		return () => { abortController.abort() }
 
 	}, [props, showConv, status, props.id, props.idMe, props.type]);//Recuperer les infos du channels
 
 	useEffect(() => {
+		const abortController = new AbortController()
 		if (props.id > 0 && props.type) {
 			//console.log("retrieving msgs")
 			let recupMessage = "";
@@ -215,18 +241,24 @@ const Conversation: React.FC<Props> = (props) => {
 					msgDiv?.scroll(0, msgDiv.scrollHeight)
 				})
 				.catch((err) => {
-					setMessages(messages => []);
-					newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
+						if (err.name === 'AbortError')
+						{
+							setMessages(messages => []);
+							newMessageChannel({ id: 0, channel: { id: props.id }, user: { id: 0, avatarId: null }, content: "You are banned !", name: "moderator", avatar: null, own: false })
+							throw err
+						}
+					
 				})
 		}
+		return () => { abortController.abort() }
 	}, [props.id, showConv, status, muted, props.type, usersBlocked]);// eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
-		if (props.socket) {
+		let isMounted = true
+		if (props.socket && isMounted) {
 			if (props.type === "channel") {
-				props.socket.emit('connect_to_channel', { channelId: props.id.toString() });
 				props.socket.on('msg_to_client', (message) => {
-					setStatus(status => !status)
+					setStatus(!status)
 				});
 				props.socket.on('error_msg', () => { setStatus(status => !status) })
 			}
@@ -236,6 +268,7 @@ const Conversation: React.FC<Props> = (props) => {
 				});
 			}
 		}
+		return () => { isMounted = false }
 	}, [props.socket]);// eslint-disable-line react-hooks/exhaustive-deps
 
 
