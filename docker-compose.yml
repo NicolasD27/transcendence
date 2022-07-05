@@ -68,6 +68,6 @@ services:
   #     - ./pgadmin-data:/pgadmin
   #   depends_on:
   #     - db
-volumes:
-  pgdata:
-  pgadmin-data:
+  # volumes:
+  #   pgdata:
+  #   pgadmin-data:
