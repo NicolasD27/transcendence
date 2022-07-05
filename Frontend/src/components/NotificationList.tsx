@@ -25,40 +25,54 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 	const [open, setOpen] = React.useState(false)
 	const [newNotifsLength, setNewNotifsLength] = React.useState(-1)
 
-	const refreshNotificationList = (id) => {
-		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${id}`, { withCredentials: true })
+	/*const refreshNotificationList = (id) => {
+		axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${id}`, { withCredentials: true})
 			.then(res => {
 				setNotifications(notifications => res.data.reverse());
 			})
-	}
+	}*/
 
 	useEffect(() => {
-		let isMounted = true
+		const abortController = new AbortController()
 
-		if (myId !== 0 && socket && isMounted) {
+		if (myId !== 0 && socket) {
 			socket.on("new_channel_invite_received", data => {
-				refreshNotificationList(myId)
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());
+			})
 			})
 			socket.on("match_invite_to_client", data => {
-				refreshNotificationList(myId)
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());
+			})
 			})
 			socket.on("notifyFriendRequest", data => {
-				refreshNotificationList(myId)
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());
+			})
 			})
 			socket.on("notifyFriendRequestAccepted", data => {
-				refreshNotificationList(myId)
+				axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());
 			})
-			refreshNotificationList(myId)
+			})
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/notifications/${myId}`, { withCredentials: true, signal : abortController.signal })
+			.then(res => {
+				setNotifications(notifications => res.data.reverse());
+			})
 		}
-		return () =>  { isMounted = false }
+		return () => { abortController.abort() }
 	}, [myId, socket])
 
 
 	useEffect(() => {
-		let isMounted = true
-		if (isMounted)
+		const abortController = new AbortController()
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif => notif.awaitingAction).length)
-		return () => {isMounted = false}
+		return () => { abortController.abort() }
 	}, [notifications])
 
 	const handleResize = () => {

@@ -257,7 +257,9 @@ const Conversation: React.FC<Props> = (props) => {
 		let isMounted = true
 		if (props.socket && isMounted) {
 			if (props.type === "channel") {
+				props.socket.emit('connect_to_channel', { channelId: props.id.toString() })
 				props.socket.on('msg_to_client', (message) => {
+					newMessageChannel(message)
 					setStatus(!status)
 				});
 				props.socket.on('error_msg', () => { setStatus(status => !status) })
