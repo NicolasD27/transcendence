@@ -27,7 +27,7 @@ const PrintUnfriendBlockProfile: React.FC<PropsPrintUnfriendBlockProfile> = (pro
 			props.socket.emit(`update_friendship_state`, { receiver: props.user.id , status: FriendshipStatus.ACTIVE})
 			setIsBlocked(!isBlocked)
 		}
-		props.socket.emit('askForRefreshFriendList');
+		//props.socket.emit('askForRefreshFriendList');
 	}
 
 	const handleDelete  = () => {

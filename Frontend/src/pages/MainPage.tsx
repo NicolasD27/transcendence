@@ -22,13 +22,18 @@ const MainPage = ({socket, matchLaunched, setMatchLaunched, friends, setFriends,
 		setGetIDMe(getIDMe => true)
 	}, [])
 
-	socket.on('friendship_state_updated', () => {
-		axios
-			.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
-			.then((res) => {
-				setBlockedByUsers(res.data)
-			}).catch(error => {})
-	})
+	useEffect(() => {
+		if (socket) 
+		{
+			socket.on('friendship_state_updated', () => {
+				axios
+					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blockers`, { withCredentials: true })
+					.then((res) => {
+						setBlockedByUsers(res.data)
+					}).catch(error => {})
+			})
+		}
+}, [socket, setBlockedByUsers])
 
 	return (
 		<div id='bloc'>

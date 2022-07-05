@@ -46,7 +46,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 		else
 			activeUsers.updateState(socket.user.id, UserStatus.SEARCHING);
-		this.server.emit('refreshFriendList');
+		//this.server.emit('refreshFriendList');
 	}
 
 	@SubscribeMessage('challenge_user')
@@ -90,7 +90,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 		this.server.to('user#' + match.user1.id).emit('nav_to_mainpage')
 		this.server.to("match#" + match.id).emit('launch_match', match)
-		this.server.emit('refreshFriendList');
+		//this.server.emit('refreshFriendList');
 	}
 
 	@SubscribeMessage('connect_to_match')
@@ -129,6 +129,7 @@ export class MatchGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	
 	@SubscribeMessage('askForRefreshFriendList')
 	async asfkForRefreshFriendList(socket: CustomSocket) {
+		console.log("Call to refresh")
 		this.server.emit('refreshFriendList');
 	}
 

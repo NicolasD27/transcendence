@@ -64,7 +64,7 @@ export class FriendshipGateway implements OnGatewayInit, OnGatewayConnection, On
 					}
 				);
 			}
-			this.server.emit('refreshFriendList');
+			//this.server.emit('refreshFriendList');
 		}
 		catch(e)
 		{

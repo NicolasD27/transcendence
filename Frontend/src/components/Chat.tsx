@@ -40,18 +40,24 @@ const Chat: React.FC<PropsChat> = (props) => {
 			.then(res => setUsersBlocked(res.data))	
 			.catch(error => {})
 	}, [])
-	
-	props.socket.on('friendship_state_updated', () => {
-		axios
-      .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
-      .then(res => setUsersBlocked(res.data))
-      .catch(error => {})
-	})
 
 	useEffect(() => {
-		props.socket.on('refreshFriendList', () => {
-			setIsFriendshipButtonClicked(true)
-		});
+		if(props.socket) {
+			props.socket.on('friendship_state_updated', () => {
+				axios
+			  .get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/users/blocked`, { withCredentials: true })
+			  .then(res => setUsersBlocked(res.data))
+			  .catch(error => {})
+			})
+		}
+	}, [props.socket])
+
+	useEffect(() => {
+		if (props.socket) {
+			props.socket.on('refreshFriendList', () => {
+				setIsFriendshipButtonClicked(true)
+			});
+		}
 		if (props.idMe && props.isFriendshipButtonClicked === true)
 		{
 			setTimeout(()=> {
@@ -106,11 +112,14 @@ const Chat: React.FC<PropsChat> = (props) => {
 		}
 	}, [props, props.idMe, props.isFriendshipButtonClicked, props.friendRequests, idMe, setIsFriendshipButtonClicked, props.socket])
 
-	if (props.idMe && props.socket)
-	{
-			props.socket.on('notifyFriendRequestAccepted', data => {
+	
+		useEffect(() => {
+			if (props.idMe && props.socket)
+			{
+				console.log("Chat00")
+				props.socket.on('notifyFriendRequestAccepted', data => {
 				axios
-					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${idMe}`, { withCredentials: true })
+					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
 					.then (res => {
 						let users = res.data;
 						props.setFriends([])
@@ -144,32 +153,33 @@ const Chat: React.FC<PropsChat> = (props) => {
 								let friendRequests_tmp = props.friendRequests.filter((requestId) => requestId !== friends_tmp.id)
 								props.setFriendRequests(friendRequests_tmp)
 							}
+						})
 					})
+					.catch(error => {})
 				})
-				.catch(error => {})
-			})
 
-			props.socket.on('notifyFriendRequest', data => {
-			axios
-				.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
-				.then(res => {
-					let users = res.data;
-					props.setFriendRequests([])
-					users.forEach((friendship: any) => {
-						let userId : number;
-						if (friendship.status === FriendshipStatus.PENDING)
-						{
-							if (friendship.following.id === props.idMe)
-									userId = friendship.follower.id;
-							else
-								userId = friendship.following.id;
-							props.setFriendRequests(friendRequests => [...friendRequests, userId])
-						}
+				props.socket.on('notifyFriendRequest', data => {
+				axios
+					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
+					.then(res => {
+						let users = res.data;
+						props.setFriendRequests([])
+						users.forEach((friendship: any) => {
+							let userId : number;
+							if (friendship.status === FriendshipStatus.PENDING)
+							{
+								if (friendship.following.id === props.idMe)
+										userId = friendship.follower.id;
+								else
+									userId = friendship.following.id;
+								props.setFriendRequests(friendRequests => [...friendRequests, userId])
+							}
+						})
 					})
+					.catch(error => {})
 				})
-				.catch(error => {})
-			})
-	}
+			}} , [props.idMe, props.socket]) // eslint-disable-line react-hooks/exhaustive-deps
+
 
 	const handleResize = () => {
 		const gameArea = document.getElementById("gameArea")
