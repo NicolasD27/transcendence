@@ -121,7 +121,6 @@ const Chat: React.FC<PropsChat> = (props) => {
 			let isMounted = true
 			if (props.idMe && props.socket && isMounted)
 			{
-				console.log("Chat00")
 				props.socket.on('notifyFriendRequestAccepted', data => {
 				axios
 					.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/friendships/${props.idMe}`, { withCredentials: true })
