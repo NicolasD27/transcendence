@@ -78,7 +78,7 @@ const Profil = ({ socket, idmeApp, friends, setFriends, isFriendshipButtonClicke
 
 
 		setGetMatch(true);
-	}, [getmatch, idstring, id, navigate]) // eslint-disable-line react-hooks/exhaustive-deps
+	}, [getmatch, idstring, id]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 

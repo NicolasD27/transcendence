@@ -33,8 +33,9 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 	}
 
 	useEffect(() => {
+		let isMounted = true
 
-		if (myId !== 0 && socket) {
+		if (myId !== 0 && socket && isMounted) {
 			socket.on("new_channel_invite_received", data => {
 				refreshNotificationList(myId)
 			})
@@ -48,31 +49,10 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 				refreshNotificationList(myId)
 			})
 			refreshNotificationList(myId)
-
 		}
-
+		return () =>  { isMounted = false }
 	}, [myId, socket])
 
-	useEffect(() => {
-		if (socket) {
-
-			return () => {
-				socket.off("new_channel_invite_received", data => {
-					refreshNotificationList(myId)
-				})
-				socket.off("match_invite_to_client", data => {
-				refreshNotificationList(myId)
-			})
-			socket.off("notifyFriendRequest", data => {
-				refreshNotificationList(myId)
-			})
-			socket.off("notifyFriendRequestAccepted", data => {
-				refreshNotificationList(myId)
-			})
-		}
-	}
-	}, [myId, socket])
-	
 
 	useEffect(() => {
 		setNewNotifsLength(newNotifsLength => notifications.filter(notif => notif.awaitingAction).length)
@@ -117,4 +97,4 @@ const NotificationList = ({ myId, socket, setIsFriendshipButtonClicked }: { myId
 	);
 };
 
-export default NotificationList; 
+export default NotificationList;
