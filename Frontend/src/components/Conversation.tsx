@@ -255,12 +255,10 @@ const Conversation: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		const fetchData = async (message) => {
-			await newMessageChannel(message)
-					await setStatus(!status)
+					await setStatus(status => !status)
 		  }
 		  const fetchDataDirect = async (message) => {
 			await newMessageDirect(message)
-					await setStatus(!status)
 		  }
 		let isMounted = true
 		if (props.socket && isMounted) {
@@ -284,9 +282,6 @@ const Conversation: React.FC<Props> = (props) => {
 		}
 		return () => { isMounted = false }
 	}, [props.socket]);// eslint-disable-line react-hooks/exhaustive-deps
-
-
-
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTmpText(tmpText => e.target.value)
