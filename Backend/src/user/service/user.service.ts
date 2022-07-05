@@ -73,7 +73,8 @@ export class UserService {
 
 	async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
 
-		if (!filename || filename.length < 1 || filename.length > 100)
+		if (!filename || filename.length < 1 || filename.length > 100
+			|| !(/^[\x00-\x7F]*$/.test(filename)))
 			throw new UnauthorizedException("invalid file name");
 		let ext: string = filename.split('.').pop();
 		if (!ext || (ext !== "png" && ext !== "jpg" && ext !== "jpeg"))
