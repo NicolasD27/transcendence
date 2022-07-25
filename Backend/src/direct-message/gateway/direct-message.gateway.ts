@@ -22,39 +22,35 @@ export class DirectMessageGateway implements OnGatewayInit, OnGatewayConnection,
 	@WebSocketServer()
 	socket: Server;
 
-
 	constructor(
 		private readonly directMessageService: DirectMessageService,
 		private readonly friendshipService: FriendshipService,
 		// private readonly participationService: ParticipationService,
 		) {}
 
-	// @UseGuards(WsGuard)
 	@SubscribeMessage('direct_msg_to_server')						// this runs the function when the event msg_to_server is triggered
 	async handleMessage(socket: Socket, data: { receiver: string, content: string }) {
 
-		const username = getUsernameFromSocket(socket);
-		//console.log("// msg_to_server " + data.receiver + " from " + username + " : " + data.content);
-		const isFriend = await this.friendshipService.checkFriendship(data.receiver, username);
-		if (isFriend)
-		{
-
-			const message = await this.directMessageService.saveMsg(data.content, data.receiver, username);
-			this.socket.to("user#" + message.sender.id).to("user#" + message.receiver.id).emit('direct_msg_to_client', message);
-			//console.log(message)
+		try {
+			const username = getUsernameFromSocket(socket);
+			//console.log("// msg_to_server " + data.receiver + " from " + username + " : " + data.content);
+			const isFriend = await this.friendshipService.checkFriendship(data.receiver, username);
+			if (isFriend)
+			{
+	
+				const message = await this.directMessageService.saveMsg(data.content, data.receiver, username);
+				this.socket.to("user#" + message.sender.id).to("user#" + message.receiver.id).emit('direct_msg_to_client', message);
+				//console.log(message)
+			}
+			else
+				console.log("failed to send msg...")
 		}
-		else
-			console.log("failed to send msg...")
+		catch(e) {}
 	}
-
-	
-
-	
 
 	afterInit(server: Server) {
 	}
 	
-	// @UseGuards(WsGuard)
 	async handleConnection(socket: Socket, @Request() req, ...args: any[]) {
 	}
 

@@ -187,7 +187,7 @@ const Conversation: React.FC<Props> = (props) => {
 						throw error
 					}
 				})
-			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true })
+			axios.get(`http://${process.env.REACT_APP_HOST || "localhost"}:8000/api/channels/${props.id}/users`, { withCredentials: true, signal : abortController.signal })
 				.then(res => {
 					const tmpusers = res.data;
 					setUsers(users => [])
@@ -254,7 +254,7 @@ const Conversation: React.FC<Props> = (props) => {
 	}, [props.id, showConv, status, muted, props.type, usersBlocked]);// eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
-		const fetchData = async (message) => {
+		const fetchData = async () => {
 					await setStatus(status => !status)
 		  }
 		  const fetchDataDirect = async (message) => {
@@ -266,10 +266,10 @@ const Conversation: React.FC<Props> = (props) => {
 				props.socket.on('msg_to_client', (message) => {
 					if (isMounted)
 					{
-						fetchData(message)
+						fetchData()
 					}
 				});
-				props.socket.on('error_msg', () => { setStatus(status => !status) })
+				props.socket.on('error_msg', () => { fetchData()})
 			}
 			else if (props.type === "directMessage") {
 				props.socket.on('direct_msg_to_client', (message) => {

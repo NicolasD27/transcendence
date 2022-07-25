@@ -117,8 +117,8 @@ export class ChannelController {
 		@Param('id', ParseIntPipe) id: number,
 		@Req() request: Request
 	): Promise<MsgDto[]> {
-		if (! await this.channelService.checkUserJoinedChannel(request.cookies.username, id.toString()))
-			throw new HttpException('channel not joined', HttpStatus.FORBIDDEN);
+
+		await this.channelService.checkUserJoinedChannel(request.cookies.username, id.toString());
 		return this.channelService.getChannelMessages(id.toString(), paginationQuery);
 	}
 

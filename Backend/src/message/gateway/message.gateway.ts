@@ -60,8 +60,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	async connectToChannel(socket: CustomSocket, data: { channelId: string })
 	{
 		const username = getUsernameFromSocket(socket);
-		await this.channelService.checkUserJoinedChannel(username, data.channelId);
-		socket.join("channel#" + data.channelId);
+		try {
+			await this.channelService.checkUserJoinedChannel(username, data.channelId);
+			socket.join("channel#" + data.channelId);
+		}
+		catch(e) {}
 		return ;
 	}
 
